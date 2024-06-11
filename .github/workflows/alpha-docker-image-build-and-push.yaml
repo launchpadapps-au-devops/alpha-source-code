@@ -1,0 +1,55 @@
+name: Build And Push Image
+
+env:
+  AZURE_CLIENT_ID: 'eb8e34da-17ef-4aaf-8fd3-2f7125aa9cf4'
+  AZURE_TENANT_ID: '885a3fc1-5c28-466f-8209-f1d17de3c94a'
+  AZURE_SUBSCRIPTION_ID: '925c9761-eb7c-46bb-a39d-0465b67037db'
+  AZURE_CONTAINER_REGISTRY: 'alphadev'
+
+
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - 'build and push'
+        default: 'build and push' 
+
+jobs:
+  build-and-push:
+    permissions:
+      issues: 'write'
+      contents: 'read'
+      id-token: 'write'
+      pull-requests: 'write' #Needed to comment on the PR
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        microservice:
+          ["alpha-backend-user-ms-v1", "alpha-backend-api-gateway-v1"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to Container Registry
+        shell: bash
+        run: |
+            az acr login --name ${{ env.AZURE_CONTAINER_REGISTRY }}
+
+      - name: Build and push Docker image to Azure Container Registry
+        continue-on-error: true
+        run: |
+          cd ${{ matrix.microservice }}
+          docker build --build-arg NPM_AUTH_TOKEN=${{ secrets.NPM_GITHUB_TOKEN }} -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ matrix.microservice }}:latest -f Dockerfile .
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ matrix.microservice }}:latest
