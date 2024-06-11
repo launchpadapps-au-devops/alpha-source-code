@@ -1,0 +1,53 @@
+name: Push to Single Private Repo for ALPHA 
+
+env:
+  REMOTE_ORG_NAME: 'launchpadapps-au-devops'
+  REMOTE_REPO_NAME: 'alpha-source-code'
+  CURRENT_REPO_NAME: 'alpha-backend-user-ms-v1'
+
+on:
+  push:
+    branches:
+      - main  # or the branch you want to trigger this workflow
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - 'push'
+        default: 'push'
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Current Repo
+      uses: actions/checkout@v4
+
+    - name: Setup Git
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+    - name: Clone Target Repository
+      env:
+        PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      run: |
+        git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ env.REMOTE_ORG_NAME }}/${{ env.REMOTE_REPO_NAME }}.git target-repo
+
+    - name: Create Directory in Target Repo and Copy Files
+      run: |
+        mkdir -p target-repo/${{ env.CURRENT_REPO_NAME }}
+        rsync -av --exclude='target-repo' --exclude='.git' ./ target-repo/${{ env.CURRENT_REPO_NAME }}
+
+    - name: Commit and Push to Target Repository
+      env:
+        PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      run: |
+        cd target-repo
+        git add .
+        git commit -m "Pushed from ${{ env.CURRENT_REPO_NAME }}"
+        git push origin main
