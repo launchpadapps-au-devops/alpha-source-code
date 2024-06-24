@@ -42,7 +42,7 @@ jobs:
       run: |
         mkdir -p target-repo/${{ env.CURRENT_REPO_NAME }}
         rsync -av --exclude='target-repo' --exclude='.git' ./ target-repo/${{ env.CURRENT_REPO_NAME }}
-        rsync -av --exclude='target-repo' --exclude='.git' --exclude='.github' ./ target-repo
+        #rsync -av --exclude='target-repo' --exclude='.git' --exclude='.github' ./ target-repo
 
 
     - name: Commit and Push to Target Repository
