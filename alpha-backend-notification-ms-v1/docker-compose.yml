@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: alpha-notification-ms-v1
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # pass build args from .env file
+      args:
+        NPM_AUTH_TOKEN: ${NPM_AUTH_TOKEN}
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
+    # Removed the explicit environment section to rely on .env
+    # volumes:
+      # - .:/usr/src/app
+      # Commented out explicit .env bind-mounting since Docker Compose automatically uses .env
+      # - ./.env:/.env
+    # command: "npm start" # Uncomment if you need to override CMD defined in Dockerfile
