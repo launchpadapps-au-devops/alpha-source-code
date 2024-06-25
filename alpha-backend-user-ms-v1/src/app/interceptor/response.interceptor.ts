@@ -8,13 +8,11 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ISuccessRespo
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<ISuccessResponse<T>> {
     return next.handle().pipe(
       map(data => {
-        const { meta, ...rest } = data as any;
         return {
+          data: data['data'] || null,
+          message: data['message'] || 'Success',
+          meta: data['meta'] || {},
           statusCode: context.switchToHttp().getResponse().statusCode,
-          data: rest,
-          meta: typeof data === 'object'
-            ? data['meta']
-            : undefined,
         }
       })
     );

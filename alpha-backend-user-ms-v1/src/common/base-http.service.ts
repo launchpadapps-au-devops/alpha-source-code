@@ -10,7 +10,7 @@ export class BaseHttpService {
   private async send<T>(config: AxiosRequestConfig): Promise<T> {
     try {
       const response = await firstValueFrom(this.httpService.request<T>(config));
-      return response?.data?.['data']
+      return response?.data;
     } catch (error) {
       this.handleError(error);
     }
