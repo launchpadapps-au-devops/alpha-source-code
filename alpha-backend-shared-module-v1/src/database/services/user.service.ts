@@ -18,7 +18,7 @@ class UserService implements IUserService {
     return ['role', 'permission']
   }
 
-  async createUser(data: UserDto): Promise<UserDto & TimeStamp> {
+  async createUser(data: Partial<User>): Promise<User> {
     const user = new User();
 
     Object.assign(user, data);
@@ -26,14 +26,14 @@ class UserService implements IUserService {
     return this.findUserById(user.id);
   }
   
-  async findUserById(id: string): Promise<UserDto & TimeStamp | null> {
+  async findUserById(id: string): Promise<User> {
     return UserService.userRepository.findOne({
       relations: UserService.relations,
       where: { id }
     });
   }
 
-  async findUsersByIds(ids: string[]): Promise<(UserDto & TimeStamp)[]> {
+  async findUsersByIds(ids: string[]): Promise<User[]> {
     return UserService.userRepository.find({
       relations: UserService.relations,
       where: {
@@ -42,7 +42,7 @@ class UserService implements IUserService {
     });
   }
 
-  async findUserBy(key: string, value: any): Promise<UserDto & TimeStamp | null> {
+  async findUserBy(key: string, value: any): Promise<User> {
     return UserService.userRepository.findOne({ 
       relations: UserService.relations, 
       where: { [key]: value } 
@@ -53,7 +53,7 @@ class UserService implements IUserService {
     pagination: PaginationDto = { page: 1, limit: 10 },
     sortOptions: SortingDto = { sortField: 'updatedAt', sortOrder: 'DESC' },
     filters: GenericFilterDto = {},
-  ): Promise<(UserDto & TimeStamp)[]> {
+  ): Promise<User[]> {
     
     const queryBuilder = UserService.userRepository.createQueryBuilder('users');
     PaginationUtil.applyFilters(queryBuilder, filters);
@@ -63,7 +63,7 @@ class UserService implements IUserService {
     return queryBuilder.getMany();
   }
 
-  async updateUser(id: string, data: UserDto): Promise<UserDto & TimeStamp | null> {
+  async updateUser(id: string, data: Partial<User>): Promise<User>{
     await UserService.userRepository.update(id, data);
     return this.findUserById(id);
   }
@@ -75,7 +75,7 @@ class UserService implements IUserService {
     return user.validatePassword(password);
   }
 
-  async findUserByEmailOrFail(email: string): Promise<UserDto> {
+  async findUserByEmailOrFail(email: string): Promise<User> {
     return UserService.userRepository.findOneByOrFail({ email });
   }
 
