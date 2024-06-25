@@ -25,7 +25,7 @@ class UserService implements IUserService {
     await UserService.userRepository.save(user);
     return this.findUserById(user.id);
   }
-  
+
   async findUserById(id: string): Promise<User> {
     return UserService.userRepository.findOne({
       relations: UserService.relations,
@@ -43,9 +43,9 @@ class UserService implements IUserService {
   }
 
   async findUserBy(key: string, value: any): Promise<User> {
-    return UserService.userRepository.findOne({ 
-      relations: UserService.relations, 
-      where: { [key]: value } 
+    return UserService.userRepository.findOne({
+      relations: UserService.relations,
+      where: { [key]: value }
     });
   }
 
@@ -53,17 +53,30 @@ class UserService implements IUserService {
     pagination: PaginationDto = { page: 1, limit: 10 },
     sortOptions: SortingDto = { sortField: 'updatedAt', sortOrder: 'DESC' },
     filters: GenericFilterDto = {},
-  ): Promise<User[]> {
-    
+  ): Promise<{
+    data: User[],
+    totalRecords: number
+    limit?: number,
+    page?: number
+  }> {
+
     const queryBuilder = UserService.userRepository.createQueryBuilder('users');
     PaginationUtil.applyFilters(queryBuilder, filters);
+
+    const totalRecords = await queryBuilder.getCount();
+
     PaginationUtil.sort(queryBuilder, sortOptions);
     PaginationUtil.paginate(queryBuilder, pagination);
 
-    return queryBuilder.getMany();
+    return {
+      data: await queryBuilder.getMany(),
+      totalRecords,
+      limit: pagination.limit,
+      page: pagination.page
+    }
   }
 
-  async updateUser(id: string, data: Partial<User>): Promise<User>{
+  async updateUser(id: string, data: Partial<User>): Promise<User> {
     await UserService.userRepository.update(id, data);
     return this.findUserById(id);
   }

@@ -16,7 +16,7 @@ export class PaginationUtil {
     }
   
     static sort(queryBuilder: any, { sortField = 'updatedAt', sortOrder = 'ASC' }: SortingDto) {
-      return queryBuilder.orderBy(sortField, sortOrder);
+      return queryBuilder.orderBy(`${queryBuilder.alias}.${sortField}`, sortOrder);
     }
 
     static applyFilters<T>(queryBuilder: SelectQueryBuilder<T>, filters: GenericFilterDto) {
