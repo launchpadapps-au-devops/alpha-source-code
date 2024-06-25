@@ -7,10 +7,10 @@ import { firstValueFrom } from 'rxjs';
 export class BaseHttpService {
   constructor(private httpService: HttpService) {}
 
-  async send<T>(config: AxiosRequestConfig): Promise<T> {
+  private async send<T>(config: AxiosRequestConfig): Promise<T> {
     try {
       const response = await firstValueFrom(this.httpService.request<T>(config));
-      return response.data;
+      return response?.data?.['data']
     } catch (error) {
       this.handleError(error);
     }
@@ -24,5 +24,22 @@ export class BaseHttpService {
     } else {
       throw new HttpException('Error setting up request', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  async  invoke(
+    endpoint: string, 
+    method: string, 
+    data?: object, 
+    queryParams?: object
+  ): Promise<any> 
+  {
+     const request: AxiosRequestConfig = {
+        url: endpoint,
+        method: method,
+        data: data,
+        params: queryParams,
+      };
+
+      return this.send(request)
   }
 }

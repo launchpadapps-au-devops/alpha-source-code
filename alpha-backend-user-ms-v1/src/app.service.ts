@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { AxiosRequestConfig } from 'axios';
 import { BaseHttpService } from './common/base-http.service';
 import { MessagingService } from './common/messaging.service';
 @Injectable()
@@ -14,10 +13,10 @@ export class AppService {
   }
 
   async getTestExternal() {
-    return this.baseHttpService.send({
-      url: 'TEST_EXTERNAL_URL',
-      method: 'TEST_EXTERNAL_METHOD',
-    } as AxiosRequestConfig);
+    return this.baseHttpService.invoke(
+      'TEST_EXTERNAL_URL',
+      'TEST_EXTERNAL_METHOD',
+   );
   }
 
   async testMessageQueue() {

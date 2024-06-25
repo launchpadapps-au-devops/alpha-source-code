@@ -16,10 +16,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
           if (Array.isArray(exceptionData.message)) {
             errorMessage = exceptionData.message.join(', ');
           } else {
-            errorMessage = exceptionData.message;
+            errorMessage = exceptionData.message || exceptionData.error.message || exceptionData.error || exceptionData.message || 'Internal service error';
           }
           status = exceptionData.statusCode;
-        } else if (!exception.response) {
+        } // TypeORM error handling
+        else if (exception instanceof Error && exception.name === 'QueryFailedError') {
+          errorMessage = exception.message;
+          status = HttpStatus.BAD_REQUEST;
+        }
+        else if (!exception.response) {
           errorMessage = 'Internal service error';
           status = 500;
         } else if (exception.response?.data) {
@@ -40,7 +45,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 urlPath: request.url,
                 timestamp: new Date().toISOString(),
                 message: errorMessage,
-                details: exceptionData.response?.error || [],
+                details: exceptionData?.response?.error || [],
                 debug: process.env.NODE_ENV === 'development' ? { stack: exception.stack } : undefined
             }
         };
