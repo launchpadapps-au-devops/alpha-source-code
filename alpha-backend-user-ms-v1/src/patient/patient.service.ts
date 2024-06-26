@@ -28,7 +28,8 @@ export class PatientService {
             bmi: patient.bmi,
             patientDetailsEditConsent: patient.patientDetailsEditConsent,
             platform: patient.platform,
-            userType: patient.userType
+            userType: patient.userType,
+            isPasswordSet: patient.isPasswordSet
         }
     }
 

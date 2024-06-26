@@ -69,4 +69,5 @@ import { SuccessResponse, ValidationError, InternalServerError } from './common/
 
   // save documentation to file
   await app.listen(configService.app.port);
+  console.log(`🚀 Server running on http://localhost:${configService.app.port}${configService.app.apiPrefix}`);
 }());

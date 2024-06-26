@@ -7,6 +7,7 @@ import { BaseHttpService } from './common/base-http.service';
 import { MessagingService } from './common/messaging.service';
 import { EnvConfigService } from './common/config/envConfig.service';
 import { PatientModule } from './patient/patient.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { PatientModule } from './patient/patient.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-    }), PatientModule,
+    }), PatientModule, AuthModule,
   ],
   controllers: [AppController],
   providers: [
