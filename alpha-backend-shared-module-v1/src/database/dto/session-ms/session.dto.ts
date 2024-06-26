@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import { IsDateString, IsString } from "class-validator";
 
 export class CreateSessionDto {
@@ -17,8 +18,10 @@ export class CreateSessionDto {
     deviceInfo: string;
 
     @IsDateString()
-    accessTokenExpiresAt: string;
+    @Type(() => Date)
+    accessTokenExpiresAt: Date;
 
     @IsDateString()
-    refreshTokenExpiresAt: string;
+    @Type(() => Date)
+    refreshTokenExpiresAt: Date;
 }

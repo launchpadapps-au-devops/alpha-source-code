@@ -85,7 +85,7 @@ class UserService implements IUserService {
     const user = await UserService.userRepository.findOne({ where: { email } });
     if (!user) return false;
 
-    return user.validatePassword(password);
+    return await user.validatePassword(password);
   }
 
   async findUserByEmailOrFail(email: string): Promise<User> {
@@ -97,6 +97,7 @@ class UserService implements IUserService {
     // hashPassword hook in the user entity, we must call the .save method!!
     const user = await this.findUserById(userId);
     user.password = password;
+    user.isPasswordSet = true;
     await UserService.userRepository.save(user);
     return this.findUserById(userId);
   }

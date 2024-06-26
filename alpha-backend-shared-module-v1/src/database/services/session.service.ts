@@ -9,6 +9,8 @@ class SessionService implements ISessionService {
     }
 
     async createSession(sessionData: CreateSessionDto) {
+        this.revokeAllSessionsForUser(sessionData.userId);
+        
         const sessionRepository = DatabaseModule.getRepository(Session)
         return sessionRepository.save(sessionData);
     }
