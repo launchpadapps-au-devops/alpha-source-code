@@ -19,8 +19,7 @@ export class AppService {
    );
   }
 
-  async testMessageQueue() {
-    return await this.messagingService.publish('hello', { message: 'Hello World!' });
-  }
-
+  // async testMessageQueue() {
+  //   return await this.messagingService.publish('hello', { message: 'Hello World!' });
+  // }
 }

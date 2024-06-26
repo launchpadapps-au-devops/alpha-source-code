@@ -36,14 +36,14 @@ export class AppController {
     return this.appService.getTestExternal();
   }
 
-  /**
-   * Tests the message queue.
-   * @returns {Promise<any>} The message queue test result.
-   */
-  @Get('test-message-queue')
-  async testMessageQueue() {
-    return this.appService.testMessageQueue();
-  }
+  // /**
+  //  * Tests the message queue.
+  //  * @returns {Promise<any>} The message queue test result.
+  //  */
+  // @Get('test-message-queue')
+  // async testMessageQueue() {
+  //   return this.appService.testMessageQueue();
+  // }
 
   /**
    * Handles the test message queue.
