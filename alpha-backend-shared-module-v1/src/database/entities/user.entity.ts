@@ -4,6 +4,7 @@ import { Session } from './session.entity';
 import { Role } from './role.entity';
 import { Permission } from './permission.entity';
 import { Exclude, Type, instanceToPlain } from 'class-transformer';
+import { IsBoolean } from 'class-validator';
 
 @Entity('users')
 export class User {
@@ -101,6 +102,10 @@ export class User {
 
   @ManyToOne(() => Permission, permission => permission.users)
   permission: Permission;
+
+  @IsBoolean()
+  @Column({ type: 'boolean', default: false })
+  isPasswordSet: boolean;
 
   toJSON() {
     return instanceToPlain(this);

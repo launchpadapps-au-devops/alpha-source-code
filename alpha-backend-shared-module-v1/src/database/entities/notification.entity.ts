@@ -30,10 +30,10 @@ export class Notification {
     @Column({ nullable: true })
     subcategoryId: number;
 
-    @Column()
+    @Column({ nullable: true })
     title: string;
 
-    @Column()
+    @Column({ nullable: true })
     body: string;
 
     @Column({ nullable: true })
@@ -68,4 +68,7 @@ export class Notification {
 
     @Column({ type: 'jsonb', nullable: true })
     bcc: string[];
+
+    @Column({ type: 'jsonb', nullable: true })
+    error: string;
 }
