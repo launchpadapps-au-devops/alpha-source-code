@@ -8,7 +8,7 @@ env:
 on:
   push:
     branches:
-      - main  # or the branch you want to trigger this workflow
+      - master  # or the branch you want to trigger this workflow
   workflow_dispatch:
     inputs:
       action:
