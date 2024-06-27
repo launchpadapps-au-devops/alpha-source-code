@@ -9,6 +9,10 @@ export class AuthService {
         private readonly jwtService: JwtService,
     ) { }
 
+    async getUserByEmail(payload: { email: string }) {
+        return userService.findUserBy('email', payload.email);
+    }
+
     async validateUser(email: string, pass: string): Promise<Partial<User>> {
         const user = await userService.findUserBy('email', email);
         if (user && await userService.isPasswordMatched(email, pass)) {
@@ -68,6 +72,24 @@ export class AuthService {
 
     async changePassword(payload: { userId: string, password: string }) {
         return userService.updatePassword(payload.userId, payload.password);
+    }
+
+    async getForgotPasswordOtp(email: string) {
+        const user = await userService.findUserBy('email', email);
+        if (!user) {
+            throw new UnauthorizedException('Invalid email');
+        }
+
+        const otp = Math.floor(1000 + Math.random() * 9000);
+        const otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+        await userService.updateUser(user.id, { forgotPasswordOtp: otp.toString(), forgotPasswordOtpExpiresAt: otpExpiresAt });
+
+        // Send OTP to user email
+        return {
+            otp,
+            otpExpiresAt,
+        };
     }
 
     async validateToken(token: string): Promise<any> {

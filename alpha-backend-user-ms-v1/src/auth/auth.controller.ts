@@ -1,10 +1,15 @@
-import { Controller, Post, Body, UseGuards, Request, Get, Headers, Query } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Get, Headers, Query, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
+  @Post('user/details')
+  async getUserByEmail(@Body() payload: { email: string }) {
+    return this.authService.getUserByEmail(payload);
+  }
+  
   @Post('/login')
   async login(
     @Body() payload: {
@@ -39,6 +44,17 @@ export class AuthController {
     await this.authService.changePassword(payload);
     return {
       message: 'Password changed successfully',
+    }
+  }
+
+  @Get('/password/otp')
+  async getForgotPasswordOtp(
+    @Query('email') email: string,
+  ) {
+    const data = await this.authService.getForgotPasswordOtp(email);
+    return {
+      message: 'OTP fetched successfully',
+      data,
     }
   }
 

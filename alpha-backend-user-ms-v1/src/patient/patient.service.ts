@@ -29,7 +29,8 @@ export class PatientService {
             patientDetailsEditConsent: patient.patientDetailsEditConsent,
             platform: patient.platform,
             userType: patient.userType,
-            isPasswordSet: patient.isPasswordSet
+            isPasswordSet: patient.isPasswordSet,
+            isPasswordLinkSent: !!patient.password
         }
     }
 
