@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { PERMISSION_NAMES } from "../enum/auth/permission";
 import { Role } from "./role.entity";
 import { User } from "./user.entity";
@@ -17,4 +17,17 @@ export class Permission {
 
     @OneToMany(() => User, user => user.permission)
     users: User[];
+
+    @CreateDateColumn()
+    createdAt: Date;
+  
+    @UpdateDateColumn()
+    updatedAt: Date;
+  
+    @ManyToOne(() => User, { nullable: true })
+    createdBy: User;
+  
+    @ManyToOne(() => User, { nullable: true })
+    updatedBy: User;
+  
 }

@@ -1,8 +1,6 @@
 import { User } from "./user.entity";
 
 import { Notification, NotificationType } from "./notification.entity";
-import { NotificationCategory } from "./notificationCategory.entity";
-import { NotificationSubcategory } from "./notificationSubCategory.entity";
 import { Session } from "./session.entity";
 
 
@@ -12,8 +10,6 @@ export {
 
   Notification, 
   NotificationType,
-  NotificationCategory, 
-  NotificationSubcategory, 
 
   Session
 };

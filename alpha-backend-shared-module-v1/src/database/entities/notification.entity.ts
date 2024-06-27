@@ -1,7 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from './user.entity';
-import { NotificationCategory } from './notificationCategory.entity';
-import { NotificationSubcategory } from './notificationSubCategory.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 export enum NotificationType {
     SMS = 'sms',
