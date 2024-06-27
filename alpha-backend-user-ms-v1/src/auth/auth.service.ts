@@ -83,13 +83,30 @@ export class AuthService {
         const otp = Math.floor(1000 + Math.random() * 9000);
         const otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-        await userService.updateUser(user.id, { forgotPasswordOtp: otp.toString(), forgotPasswordOtpExpiresAt: otpExpiresAt });
+        await userService.updateUser(user.id, { forgotPasswordOtp: otp.toString() });
 
         // Send OTP to user email
         return {
             otp,
             otpExpiresAt,
         };
+    }
+
+    async resetPassword(payload: { email: string, otp: number, password: string }) {
+        const user = await userService.findUserBy('email', payload.email);
+        if (!user) {
+            throw new UnauthorizedException('Invalid email');
+        }
+
+        if (!user.validateForgotPasswordOtp(payload.otp.toString())) {
+            throw new UnauthorizedException('Invalid OTP');
+        }
+
+        await userService.updateUser(user.id, {
+            password: payload.password,
+            forgotPasswordOtp: null,
+            forgotPasswordOtpExpiresAt: null,
+        });
     }
 
     async validateToken(token: string): Promise<any> {

@@ -5,9 +5,13 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-  @Post('user/details')
+  @Post('/user/details')
   async getUserByEmail(@Body() payload: { email: string }) {
-    return this.authService.getUserByEmail(payload);
+    const data = await this.authService.getUserByEmail(payload);
+    return {
+      message: 'User fetched successfully',
+      data,
+    }
   }
   
   @Post('/login')
@@ -55,6 +59,20 @@ export class AuthController {
     return {
       message: 'OTP fetched successfully',
       data,
+    }
+  }
+
+  @Put('/password/reset')
+  async resetPassword(
+    @Body() payload: {
+      email: string,
+      otp: number,
+      password: string,
+    },
+  ) {
+    await this.authService.resetPassword(payload);
+    return {
+      message: 'Password reset successfully',
     }
   }
 
