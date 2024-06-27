@@ -8,6 +8,7 @@ import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EnvConfigService } from 'src/common/config/envConfig.service';
 import { BaseHttpService } from 'src/common/base-http.service';
+import { MessagingService } from 'src/common/messaging.service';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { BaseHttpService } from 'src/common/base-http.service';
     ConfigModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, EnvConfigService, BaseHttpService],
+  providers: [AuthService, JwtStrategy, EnvConfigService, BaseHttpService, MessagingService],
   exports: [AuthService],
 })
 

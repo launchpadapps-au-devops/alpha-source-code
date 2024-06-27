@@ -4,11 +4,16 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 import { Roles } from './roles.decorator';
 import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiHeader, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { notificationService } from '@launchpadapps-au/alpha-shared';
+import { MessagingService } from 'src/common/messaging.service';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly messageService: MessagingService
+  ) {}
 
   @ApiHeader({
      name: 'alpha-x-platform', 
@@ -126,6 +131,70 @@ export class AuthController {
   }) {
     return this.authService.changePassword(req.user.userId, payload);
   }
+
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          example: 'gajanand+pt10@launchpadapps.co',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: {
+          type: 'number',
+          example: 200,
+        },
+        message: {
+          type: 'string',
+          example: 'OTP sent successfully',
+        },
+        data: {
+          type: 'object',
+          example: null
+        },
+        meta: {
+          type: 'object',
+        }
+      },
+    }
+  })
+  @Post('/password/otp') 
+  async sendForgotPasswordOtp(
+    @Body() payload: {
+      email: string;
+    }
+  ) {
+    const user = await this.authService.getUserByEmail(payload);
+    const { data } = await this.authService.getForgotPasswordOtp(payload.email);
+    this.messageService.publishToNotification(
+      'notication.forgot-password-otp',
+      {
+        recipients: [user.data.id],
+        type: 'email',
+        categoryId: 2, // Account Auth
+        subcategoryId: 2, // Forgot Password OTP
+        data: {
+          ...user,
+          ...data
+        }
+      }
+    )
+
+    return {
+      message: 'OTP sent successfully',
+      data: null,
+      meta: {}
+    }
+  }
+
+
 
   @ApiExcludeEndpoint()
   @ApiBearerAuth()

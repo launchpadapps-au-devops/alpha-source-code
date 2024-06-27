@@ -51,6 +51,15 @@ export class AuthService {
         );
     }
 
+    async getForgotPasswordOtp(email: string) {
+        return this.baseHttpService.invoke(
+            `${this.userApiUrl}${this.userApiPrefix}/auth/password/otp`,
+            'GET',
+            {},
+            { email }
+        );
+    }
+
     async validateToken(token: string) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/validate/token`,
