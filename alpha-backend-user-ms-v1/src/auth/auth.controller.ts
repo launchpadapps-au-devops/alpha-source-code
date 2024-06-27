@@ -6,7 +6,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Post('/user/details')
-  async getUserByEmail(@Body() payload: { email: string }) {
+  async getUserByEmail(
+    @Headers('x-request-userId') reqUserId: string, // No use case
+    @Body() payload: { email: string }
+  ) {
     const data = await this.authService.getUserByEmail(payload);
     return {
       message: 'User fetched successfully',
@@ -16,6 +19,7 @@ export class AuthController {
   
   @Post('/login')
   async login(
+    @Headers('x-request-userId') reqUserId: string, // No use case
     @Body() payload: {
       email: string;
       password: string,
@@ -40,12 +44,13 @@ export class AuthController {
 
   @Post('/password')
   async changePassword(
+    @Headers('x-request-userId') reqUserId: string,
     @Body() payload: { 
       userId: string,
       password: string 
     },
   ) {
-    await this.authService.changePassword(payload);
+    await this.authService.changePassword(payload, { userId: reqUserId });
     return {
       message: 'Password changed successfully',
     }
@@ -53,9 +58,10 @@ export class AuthController {
 
   @Get('/password/otp')
   async getForgotPasswordOtp(
+    @Headers('x-request-userId') reqUserId: string,
     @Query('email') email: string,
   ) {
-    const data = await this.authService.getForgotPasswordOtp(email);
+    const data = await this.authService.getForgotPasswordOtp(email, { userId: reqUserId });
     return {
       message: 'OTP fetched successfully',
       data,
@@ -64,13 +70,14 @@ export class AuthController {
 
   @Put('/password/reset')
   async resetPassword(
+    @Headers('x-request-userId') reqUserId: string,
     @Body() payload: {
       email: string,
       otp: number,
       password: string,
     },
   ) {
-    await this.authService.resetPassword(payload);
+    await this.authService.resetPassword(payload, { userId: reqUserId });
     return {
       message: 'Password reset successfully',
     }
@@ -83,6 +90,7 @@ export class AuthController {
 
   @Get('validate/token')
   async validateToken(
+    @Headers('x-request-userId') reqUserId: string, // No use case
     @Query('token') token: string,
   ) {
     return this.authService.validateToken(token);

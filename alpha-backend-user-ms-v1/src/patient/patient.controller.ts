@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Headers, Req } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { CreatePatientDetailsDto } from './patient.dto';
 
@@ -10,9 +10,10 @@ export class PatientController {
 
     @Post()
     async createPatientUserProfile(
+        @Headers('x-request-userId') reqUserId: string,
         @Body() payload: CreatePatientDetailsDto
     ) {
-        const patient = await this.patientService.createPatientUserProfile(payload);
+        const patient = await this.patientService.createPatientUserProfile(payload, { userId: reqUserId });
         return {
             message: `Patient ${payload.firstName} ${payload.lastName} has been added successfully`,
             data: {
@@ -24,6 +25,7 @@ export class PatientController {
 
     @Get('/')
     async getPatientUserProfiles(
+        @Headers('x-request-userId') reqUserId: string,
         @Query('page') page: number = 1,
         @Query('limit') limit: number = 10,
         @Query('searchKey') searchKey: string = '',
@@ -50,6 +52,7 @@ export class PatientController {
 
     @Get('/:patientId')
     async getPatientUserProfile(
+        @Headers('x-request-userId') reqUserId: string,
         @Param('patientId') patientId: string
     ) {
         const patient = await this.patientService.getPatientUserProfile(patientId);
@@ -62,6 +65,7 @@ export class PatientController {
 
     @Put('/:patientId')
     async updatePatientUserProfile(
+        @Headers('x-request-userId') reqUserId: string,
         @Param('patientId') patientId: string,
         @Body() payload: CreatePatientDetailsDto,
     ) {

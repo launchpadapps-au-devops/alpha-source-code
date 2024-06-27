@@ -7,8 +7,11 @@ export class PatientService {
     constructor(
     ) { }
 
-    async createPatientUserProfile(payload: CreatePatientDetailsDto) {
-        return userService.createUser(payload);
+    async createPatientUserProfile(payload: CreatePatientDetailsDto, reqUser = { userId: null }) {
+        return userService.createUser({
+            ...payload,
+            createdBy: reqUser.userId
+        });
     }
 
     #formatPatientData(patient) {
@@ -64,7 +67,10 @@ export class PatientService {
         return this.#formatPatientData(patient);
     }
 
-    async updatePatientUserProfile(patientId: string, payload: CreatePatientDetailsDto) {
-        return userService.updateUser(patientId, payload);
+    async updatePatientUserProfile(patientId: string, payload: CreatePatientDetailsDto, reqUser = { userId: null }) {
+        return userService.updateUser(patientId, {
+            ...payload,
+            updatedBy: reqUser.userId
+        });
     }
 }

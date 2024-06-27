@@ -70,20 +70,20 @@ export class AuthService {
         return { accessToken, refreshToken };
     }
 
-    async changePassword(payload: { userId: string, password: string }) {
-        return userService.updatePassword(payload.userId, payload.password);
+    async changePassword(payload: { userId: string, password: string }, reqUser = { userId: null }) {
+        return userService.updateUser(payload.userId, { password: payload.password, updatedBy: reqUser.userId, isPasswordSet: true });
     }
 
-    async getForgotPasswordOtp(email: string) {
+    async getForgotPasswordOtp(email: string, reqUser = { userId: null }) {
         const user = await userService.findUserBy('email', email);
         if (!user) {
             throw new UnauthorizedException('Invalid email');
         }
 
         const otp = Math.floor(1000 + Math.random() * 9000);
-        const otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
+        const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-        await userService.updateUser(user.id, { forgotPasswordOtp: otp.toString() });
+        await userService.updateUser(user.id, { forgotPasswordOtp: otp.toString(), updatedBy: reqUser.userId });
 
         // Send OTP to user email
         return {
@@ -92,7 +92,7 @@ export class AuthService {
         };
     }
 
-    async resetPassword(payload: { email: string, otp: number, password: string }) {
+    async resetPassword(payload: { email: string, otp: number, password: string }, reqUser = { userId: null }) {
         const user = await userService.findUserBy('email', payload.email);
         if (!user) {
             throw new UnauthorizedException('Invalid email');
@@ -106,6 +106,7 @@ export class AuthService {
             password: payload.password,
             forgotPasswordOtp: null,
             forgotPasswordOtpExpiresAt: null,
+            updatedBy: reqUser.userId,
         });
     }
 
