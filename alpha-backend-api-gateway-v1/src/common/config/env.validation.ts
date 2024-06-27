@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsString, IsBoolean, IsOptional } from 'class-validator';
 
 export class EnvironmentVariables {
     // APP Config
@@ -8,17 +8,17 @@ export class EnvironmentVariables {
     NODE_ENV: string = 'development';
 
     @IsNumber()
+    @IsOptional()
     @Type(() => Number)
     PORT: number = 3000;
 
     @IsString()
-    HOST: string;
+    @IsOptional()
+    APP_NAME: string = 'alpha-user-ms-v1';
 
     @IsString()
-    APP_NAME: string = 'alpha-backend-api-gateway-v1';
-
-    @IsString()
-    APP_API_PREFIX: string = '/api/v1';
+    @IsOptional()
+    APP_API_PREFIX: string = '/api/user';
 
     @IsBoolean()
     @IsOptional()
@@ -49,39 +49,32 @@ export class EnvironmentVariables {
     @IsString()
     DB_NAME: string;
 
+    // RabbitMQ Config
     @IsString()
-    REFRESH_TOKEN_EXPIRES_IN: string;
+    RABBITMQ_HOST: string;
+
+    @IsNumber()
+    RABBITMQ_PORT: number;
 
     @IsString()
-    RESET_TOKEN_EXPIRES_IN: string;
+    RABBITMQ_USERNAME: string;
 
     @IsString()
-    CMS_MICROSERVICE_BASE_URL: string;
+    RABBITMQ_PASSWORD: string;
 
     @IsString()
-    CMS_MICROSERVICE_API_PREFIX: string = 'api/cms-ms/v1';
+    RABBITMQ_QUEUE: string;
 
+    // External Microservices
+    // Health Service
     @IsString()
-    GOALS_ACTIVITY_MICROSERVICE_BASE_URL: string;
+    HEALTH_SERVICE_BASE_URL: string;
+    @IsString()
+    HEALTH_SERVICE_API_PREFIX: string;
 
+    // User Service
     @IsString()
-    GOALS_ACTIVITY_MICROSERVICE_API_PREFIX: string = 'api/goals-activity-ms/v1';
-
+    USER_SERVICE_BASE_URL: string;
     @IsString()
-    HEALTH_MICROSERVICE_BASE_URL: string;
-
-    @IsString()
-    HEALTH_MICROSERVICE_API_PREFIX: string = 'api/health-ms/v1';
-
-    @IsString()
-    NOTIFICATION_MICROSERVICE_BASE_URL: string;
-
-    @IsString()
-    NOTIFICATION_MICROSERVICE_API_PREFIX: string = 'api/notification-ms/v1';
-
-    @IsString()
-    USER_MICROSERVICE_BASE_URL: string;
-
-    @IsString()
-    USER_MICROSERVICE_API_PREFIX: string = 'api/user-ms/v1';
+    USER_SERVICE_API_PREFIX: string;
 }

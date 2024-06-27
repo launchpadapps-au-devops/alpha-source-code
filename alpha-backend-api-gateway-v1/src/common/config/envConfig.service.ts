@@ -21,7 +21,6 @@ export class EnvConfigService {
         return {
             env: this.get('NODE_ENV') as string,
             port: this.get('PORT') as number,
-            host: this.get('HOST') as string,
             name: this.get('APP_NAME') as string,
             apiPrefix: this.get('APP_API_PREFIX') as string,
             debug: this.get('APP_DEBUG') as boolean
@@ -31,9 +30,7 @@ export class EnvConfigService {
     get jwt(){
         return {
             secret: this.get('JWT_SECRET') as string,
-            expiresIn: this.get('JWT_EXPIRES_IN') as string,
-            refreshTokenExpiresIn: this.get('REFRESH_TOKEN_EXPIRES_IN') as string,
-            resetTokenExpiresIn: this.get('RESET_TOKEN_EXPIRES_IN') as string
+            expiresIn: this.get('JWT_EXPIRES_IN') as string
         }
     }
 
@@ -47,27 +44,26 @@ export class EnvConfigService {
         }
     }
 
+    get rabbitmq() {
+        return {
+            host: this.get('RABBITMQ_HOST') as string,
+            port: this.get('RABBITMQ_PORT') as number,
+            username: this.get('RABBITMQ_USERNAME') as string,
+            password: this.get('RABBITMQ_PASSWORD') as string,
+            queue: this.get('RABBITMQ_QUEUE') as string
+        }
+    }
+
     get microservices() {
         return {
-            cms: {
-                baseUrl: this.get('CMS_MICROSERVICE_BASE_URL') as string,
-                apiPrefix: this.get('CMS_MICROSERVICE_API_PREFIX') as string
+            health: {
+                host: this.get('HEALTH_SERVICE_BASE_URL') as string,
+                port: this.get('HEALTH_SERVICE_API_PREFIX') as string
             },
-            goalsActivity: {
-                baseUrl: this.get('GOALS_ACTIVITY_MICROSERVICE_BASE_URL') as string,
-                apiPrefix: this.get('GOALS_ACTIVITY_MICROSERVICE_API_PREFIX') as string
-            },
-            healthCheck: {
-                baseUrl: this.get('HEALTH_MICROSERVICE_BASE_URL') as string,
-                apiPrefix: this.get('HEALTH_MICROSERVICE_API_PREFIX') as string
-            },
-            notification: {
-                baseUrl: this.get('NOTIFICATION_MICROSERVICE_BASE_URL') as string,
-                apiPrefix: this.get('NOTIFICATION_MICROSERVICE_API_PREFIX') as string
-            },
+
             user: {
-                baseUrl: this.get('USER_MICROSERVICE_BASE_URL') as string,
-                apiPrefix: this.get('USER_MICROSERVICE_API_PREFIX') as string
+                host: this.get('USER_SERVICE_BASE_URL') as string,
+                port: this.get('USER_SERVICE_API_PREFIX') as string
             }
         }
     }

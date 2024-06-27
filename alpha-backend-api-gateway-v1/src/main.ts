@@ -1,59 +1,75 @@
-import { DatabaseModule } from '@launchpadapps-au/alpha-shared';
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DatabaseModule } from '@launchpadapps-au/alpha-shared'
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { log } from 'console';
+import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
 import { AppModule } from './app.module';
+import { TransformInterceptor } from './app/interceptor/response.interceptor';
+import { HttpExceptionFilter } from './app/filters/http-exception.filter';
 import { EnvConfigService } from './common/config/envConfig.service';
-import { AllExceptionsFilter } from './common/filters/http-exception.filter';
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { SuccessResponse, ValidationError, InternalServerError } from './common/dto/response.dto';
+import { log } from 'console';
 
-async function bootstrap() {
+(async function () {
+
   const app = await NestFactory.create(AppModule);
+  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
+
   const configService = app.get(EnvConfigService);
 
-  app.setGlobalPrefix(configService.app.apiPrefix);
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true
-    })
-  );
-  app.useGlobalFilters(new AllExceptionsFilter());
-  app.useGlobalInterceptors(new ResponseInterceptor());
-
-  if (configService.app.env === 'development') {
+  // Holding this till we setup the database and rabbitmq in services
+  if (configService.app.env === 'local') {
     DatabaseModule.initialize({
       type: 'postgres',
-      ...configService.db
-    })
+      ...configService.db,
+    });
+
+    app.connectMicroservice<MicroserviceOptions>({
+      transport: Transport.RMQ,
+      options: {
+        urls: [`amqp://${configService.rabbitmq.host}:${configService.rabbitmq.port}`],
+        queue: configService.rabbitmq.queue,
+        queueOptions: {
+          durable: false
+        },
+      },
+    });
+  
+    await app.startAllMicroservices();
   }
 
-  // TODO: Whitelist to be added in prod.
-  app.enableCors();
+  app.setGlobalPrefix(configService.app.apiPrefix);
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle(configService.app.name)
-    .setDescription('API Gateway')
-    .setVersion('1.0')
-    .addBearerAuth(
-      { 
-        description: `[just text field] Please enter token in following format: Bearer <JWT>`,
-        name: 'Authorization',
-        bearerFormat: 'Bearer',
-        scheme: 'Bearer',
-        type: 'http',
-        in: 'Header'
-      },
-      'access-token', // This name here is important for matching up with @ApiBearerAuth() in your controller!
+  const config = new DocumentBuilder()
+    .setTitle('🙋‍♂️⚙️ Alpha Backend API Gateway')
+    .setDescription(
+  `🚀 **Welcome to the Alpha Project API Documentation!**
+      This API is the backbone of the Alpha project, designed to provide a secure and efficient user experience. Here’s what you can do with our API:
+  - **User Registration 📝**: Easily create new user accounts, kickstarting the onboarding process with simplicity.
+  - **Authentication and Security 🔒**: Leverage robust security measures for user login, including token generation and verification, to protect user data.
+  - **Profile Management 🔄**: Users can effortlessly view and update their profile information, maintaining control over their personal data.
+  - **Role-Based Access Control (RBAC) 🔑**: Access policies are defined and enforced to ensure users only interact with data and functionalities that are relevant to their roles.
+      
+  Dive into our detailed documentation for insights on integrating with our endpoints!`
     )
+    .setVersion('1.0')
+    .addBearerAuth()
     .build();
-    
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, document);
 
+  const document = SwaggerModule.createDocument(app, config, {
+    extraModels: [
+      SuccessResponse,
+      ValidationError,
+      InternalServerError
+    ],
+  });
+
+
+  const theme = new SwaggerTheme();
+  SwaggerModule.setup('api', app, document, { explorer: true, customCss: theme.getBuffer(SwaggerThemeNameEnum.NORD_DARK) });
+
+  // save documentation to file
   await app.listen(configService.app.port);
-
-  const url = `${configService.app.host}:${configService.app.port}`;
-  log(`Application is running on: ${url}`);
-}
-bootstrap();
+  log(`🚀 Server running on http://localhost:${configService.app.port}${configService.app.apiPrefix}`);
+}());

@@ -1,26 +1,26 @@
-import { MicroserviceName } from '@launchpadapps-au/alpha-shared';
 import { Injectable } from '@nestjs/common';
-import { MicroserviceClientService } from './common/microservice-client/microservice-client.service';
+import { AxiosRequestConfig } from 'axios';
+import { BaseHttpService } from './common/base-http.service';
+import { MessagingService } from './common/messaging.service';
 @Injectable()
 export class AppService {
-  constructor(private microserviceClientService: MicroserviceClientService) {}
+  constructor(
+    private readonly baseHttpService: BaseHttpService,
+    private readonly messagingService: MessagingService,
+  ) { }
 
   getHello(): string {
     return 'Hello World!';
   }
 
-  getMicroserviceHealth(microserviceName: MicroserviceName): Promise<string> {
-    switch (microserviceName) {
-      case 'cms-ms':
-        return this.microserviceClientService.execCms('health-check', 'GET');
-      case 'goals-activity-ms':
-        return this.microserviceClientService.execGoalsActivity('health-check', 'GET');
-      case 'health-ms':
-        return this.microserviceClientService.execHealth('health-check', 'GET');
-      case 'notification-ms':
-        return this.microserviceClientService.execNotification('health-check', 'GET');
-      case 'user-ms':
-        return this.microserviceClientService.execUser('health-check', 'GET');
-    }
+  async getTestExternal() {
+    return this.baseHttpService.invoke(
+      'TEST_EXTERNAL_URL',
+      'TEST_EXTERNAL_METHOD',
+   );
   }
+
+  // async testMessageQueue() {
+  //   return await this.messagingService.publish('hello', { message: 'Hello World!' });
+  // }
 }
