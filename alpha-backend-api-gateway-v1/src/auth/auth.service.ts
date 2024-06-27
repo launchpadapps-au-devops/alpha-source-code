@@ -16,71 +16,102 @@ export class AuthService {
         this.userApiPrefix = userApiPrefix;
     }
 
-    async getUserByEmail(payload: { email: string }) {
+    async getUserByEmail(payload: { email: string }, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/user/details`,
             'POST',
-            payload
+            payload,
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 
-    async matchPassword(payload: { email: string; password: string }) {
+    async matchPassword(payload: { email: string; password: string }, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/user/password/match`,
             'POST',
-            payload
+            payload,
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 
-    async login(payload: { email: string; password: string, deviceInfo: string, platform: string, ipAddress: string }) {
+    async login(payload: { email: string; password: string, deviceInfo: string, platform: string, ipAddress: string }, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/login`,
             'POST',
-            payload
+            payload,
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 
-    async changePassword(userId: string, payload: { password: string }) {
+    async changePassword(userId: string, payload: { password: string }, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/password`,
             'POST',
             {
                 ...payload,
                 userId
+            },
+            {},
+            {
+                'x-request-userId': reqUser.userId
             }
         );
     }
 
-    async getForgotPasswordOtp(email: string) {
+    async getForgotPasswordOtp(email: string, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/password/otp`,
             'GET',
             {},
-            { email }
+            { email },
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 
-    async resetPassword(payload: { email: string; otp: string; password: string }) {
+    async resetPassword(payload: { email: string; otp: string; password: string }, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/password/reset`,
             'PUT',
-            payload
+            payload,
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 
-    async validateToken(token: string) {
+    async validateToken(token: string, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/validate/token`,
             'GET',
             {},
-            { token }
+            { token },
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 
-    async validateUserById(userId: string) {
+    async validateUserById(userId: string, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/user/validate/${userId}`,
-            'GET'
+            'GET',
+            {},
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 }

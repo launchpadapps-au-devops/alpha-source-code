@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, ValidationPipe } from '@nestjs/common';
+import { Request, Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { PatientService } from './patient.service';
 import { CreatePatientDetailsDto, PatientResponseDto } from './patient.dto';
@@ -35,9 +35,10 @@ export class PatientController {
     })
     @Post('/')
     async createPatientUserProfile(
+        @Request() req,
         @Body() payload: CreatePatientDetailsDto
     ): Promise<object> {
-        return await this.patientService.createPatientUserProfile(payload);
+        return await this.patientService.createPatientUserProfile(payload, req.user);
     }
 
     @ApiQuery({ name: 'page', required: false, type: Number })
@@ -67,6 +68,7 @@ export class PatientController {
     })
     @Get('/')
     async getPatients(
+        @Request() req,
         @Query('page') page?: number,
         @Query('limit') limit?: number,
         @Query('searchKey') searchKey?: string,
@@ -77,7 +79,9 @@ export class PatientController {
             limit,
             searchKey,
             searchValue
-        });
+        },
+            req.user
+        );
     }
 
     @ApiParam({
@@ -102,9 +106,10 @@ export class PatientController {
 
     @Get('/:id')
     async getPatientUserProfile(
+        @Request() req,
         @Param('id') id: string
     ): Promise<object> {
-        return await this.patientService.getPatientUserProfile(id);
+        return await this.patientService.getPatientUserProfile(id, req.user);
     }
 
     @ApiParam({
@@ -134,10 +139,11 @@ export class PatientController {
     })
     @Put('/:id')
     async updatePatientUserProfile(
+        @Request() req,
         @Param('id') id: string,
         @Body() payload: CreatePatientDetailsDto
     ): Promise<object> {
-        return await this.patientService.updatePatientUserProfile(id, payload);
+        return await this.patientService.updatePatientUserProfile(id, payload, req.user);
     }
 
     // send invitation to patient
@@ -167,11 +173,12 @@ export class PatientController {
     })
     @Post('/:id/invite')
     async sendInvitation(
+        @Request() req,
         @Param('id') id: string
     ): Promise<object> {
         const tempPassword = Math.random().toString(36).slice(-8);
-        await this.patientService.updatePatientUserProfile(id, { password: tempPassword });
-        const { data } = await this.patientService.getPatientUserProfile(id);
+        await this.patientService.updatePatientUserProfile(id, { password: tempPassword }, req.user);
+        const { data } = await this.patientService.getPatientUserProfile(id, req.user);
         await this.messageService.publishToNotification(
             'notification.register',
             {

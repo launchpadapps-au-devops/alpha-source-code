@@ -30,7 +30,8 @@ export class BaseHttpService {
     endpoint: string, 
     method: string, 
     data?: object, 
-    queryParams?: object
+    queryParams?: object,
+    headers?: object
   ): Promise<any> 
   {
      const request: AxiosRequestConfig = {
@@ -38,6 +39,10 @@ export class BaseHttpService {
         method: method,
         data: data,
         params: queryParams,
+        headers: {
+          'x-request-userId': null,
+          ...headers
+        }
       };
 
       return this.send(request)

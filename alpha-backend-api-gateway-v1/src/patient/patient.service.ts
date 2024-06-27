@@ -17,11 +17,17 @@ export class PatientService {
         this.userApiPrefix = userApiPrefix;
     }
 
-    async createPatientUserProfile(payload: CreatePatientDetailsDto) {
+    async createPatientUserProfile(payload: CreatePatientDetailsDto, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/patient`,
             'POST',
-            payload
+            {
+                ...payload,
+            },
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 
@@ -30,28 +36,42 @@ export class PatientService {
         limit: 10,
         searchKey: '',
         searchValue: ''
-    }) {
+    },
+        reqUser = { userId: null }
+    ) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/patient`,
             'GET',
             {},
-            query
+            query,
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 
 
-    async getPatientUserProfile(patientId: string) {
+    async getPatientUserProfile(patientId: string, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/patient/${patientId}`,
-            'GET'
+            'GET',
+            {},
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 
-    async updatePatientUserProfile(patientId: string, payload: Partial<CreatePatientDetailsDto>) {
+    async updatePatientUserProfile(patientId: string, payload: Partial<CreatePatientDetailsDto>, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/patient/${patientId}`,
             'PUT',
-            payload
+            payload,
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
         );
     }
 }
