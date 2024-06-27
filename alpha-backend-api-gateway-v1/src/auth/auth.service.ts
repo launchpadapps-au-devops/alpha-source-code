@@ -60,6 +60,14 @@ export class AuthService {
         );
     }
 
+    async resetPassword(payload: { email: string; otp: string; password: string }) {
+        return this.baseHttpService.invoke(
+            `${this.userApiUrl}${this.userApiPrefix}/auth/password/reset`,
+            'PUT',
+            payload
+        );
+    }
+
     async validateToken(token: string) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/validate/token`,

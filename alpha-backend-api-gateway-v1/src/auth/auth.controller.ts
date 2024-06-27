@@ -173,8 +173,8 @@ export class AuthController {
   ) {
     const user = await this.authService.getUserByEmail(payload);
     const { data } = await this.authService.getForgotPasswordOtp(payload.email);
-    this.messageService.publishToNotification(
-      'notication.forgot-password-otp',
+    await this.messageService.publishToNotification(
+      'notification.register',
       {
         recipients: [user.data.id],
         type: 'email',
@@ -194,7 +194,57 @@ export class AuthController {
     }
   }
 
-
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          example: 'gajanand+pt01@launchpadapps.co',
+        },
+        otp: {
+          type: 'string',
+          example: '123456',
+        },
+        password: {
+          type: 'string',
+          example: 'password',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: {
+          type: 'number',
+          example: 200,
+        },
+        message: {
+          type: 'string',
+          example: 'Password reset successfully',
+        },
+        data: {
+          type: 'object',
+          example: null
+        },
+        meta: {
+          type: 'object',
+        }
+      },
+    }
+  })
+  @Put('/password/reset')
+  async resetPassword(
+    @Body() payload: {
+      email: string;
+      otp: string;
+      password: string;
+    }
+  ) {
+    return this.authService.resetPassword(payload);
+  }
 
   @ApiExcludeEndpoint()
   @ApiBearerAuth()
