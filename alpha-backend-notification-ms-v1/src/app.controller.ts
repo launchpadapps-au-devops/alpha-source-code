@@ -10,11 +10,15 @@ import {
 export class AppController {
   constructor(private readonly appService: AppService) { }
  
-  //@MessagePattern('hello')
   @Post('register')
   async createNotification(
     @Body() data: Notification
   ) {
+    return await this.appService.createNotification(data);
+  }
+
+  @MessagePattern('notification.register')
+  async createNotificationHandler(data: Notification) {
     return await this.appService.createNotification(data);
   }
 }

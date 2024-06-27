@@ -5,9 +5,10 @@ import * as handlebars from 'handlebars';
 import emailTemplate from './templates';
 import { 
     Notification,
+    notificationService,
+    userService
   } from '@launchpadapps-au/alpha-shared';
-import { NotificationCategory } from './notificationCategory';
-import { userService } from '@launchpadapps-au/alpha-shared';
+import { NotificationCategory, NotificationSubcategory } from './notificationCategory';
 
 @Injectable()
 export class EmailHandler {
@@ -25,10 +26,10 @@ export class EmailHandler {
             const { to, cc, bcc } = await this.getRecipient(notificationData.recipients || [], notificationData.cc || [], notificationData.bcc || []);
 
             await this.sendEmail(to, emailData.subject, htmlContent, cc, bcc);
-            //this.updateNotificationStatus(notificationData.id, true);  
+            this.updateNotificationStatus(notificationData.id, true);  
         } catch (error) {
             Logger.error('Error sending email:', error);
-            //this.updateNotificationStatus(notificationData.id, false, error.message);
+            this.updateNotificationStatus(notificationData.id, false, error.message);
         }
     }
 
@@ -41,10 +42,18 @@ export class EmailHandler {
         };
         
         switch (notificationData.categoryId) {
+
             case NotificationCategory.ACCOUNT_INVITATION:
-                emailObject.subject = 'You are invited on Alpha';
-                emailObject.template = emailTemplate[NotificationCategory.ACCOUNT_INVITATION]
+                switch (notificationData.subcategoryId) {
+                    case NotificationSubcategory.PATIENT_INVITATION:
+                        emailObject.subject = 'You are invited on Alpha';
+                        emailObject.template = emailTemplate[NotificationCategory.ACCOUNT_INVITATION]
+                        break;
+                    default:
+                        Logger.error('Invalid email category');
+                }
                 break;
+
             default:
                 Logger.error('Invalid email category');
         }
@@ -96,16 +105,11 @@ export class EmailHandler {
         }
     }
 
-    // protected async updateNotificationStatus(
-    //     notificationId: number,
-    //     processed: boolean = true,
-    //     error: string = 'No error found'
-    // ): Promise<void> {
-    //     const notification = await this.notificationRepository.findOneBy({ id: notificationId });
-
-    //     notification.processed = processed;
-    //     notification.error = error;
-
-    //     await this.notificationRepository.save(notification);
-    // }
+    protected async updateNotificationStatus(
+        notificationId: number,
+        processed: boolean = true,
+        error: string = 'No error found'
+    ): Promise<void> {
+       await notificationService.updateNotificationStatus(notificationId, processed, error);
+    }
 }

@@ -3,7 +3,6 @@ export const NotificationCategory = {
 }
 
 export const NotificationSubcategory = {
-    [NotificationCategory.ACCOUNT_INVITATION]: {
-       
-    }
+    // Account Invitation
+    PATIENT_INVITATION: 1,
 }

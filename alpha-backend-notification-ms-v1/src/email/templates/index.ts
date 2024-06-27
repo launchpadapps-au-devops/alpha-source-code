@@ -1,11 +1,11 @@
 // Import Area
-import { NotificationCategory } from "../notificationCategory";
-import staffInvitationTemplate from "./account-invitation.template";
+import {  NotificationSubcategory } from "../notificationCategory";
+import patientInvitationTemplate from "./patient-invitation.template";
 
 
 // Export Area
 const emailTemplates: { [key: string]: string } = {
-  [NotificationCategory.ACCOUNT_INVITATION]: staffInvitationTemplate,
+  [NotificationSubcategory.PATIENT_INVITATION]: patientInvitationTemplate,
 };
 
 export default emailTemplates;
