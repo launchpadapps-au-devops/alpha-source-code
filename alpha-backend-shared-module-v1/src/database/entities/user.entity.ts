@@ -107,6 +107,24 @@ export class User {
   @Column({ type: 'boolean', default: false })
   isPasswordSet: boolean;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  forgotPasswordOtp: string;
+  
+  @BeforeInsert()
+  @BeforeUpdate()
+  hashForgotPasswordOtp() {
+    if (this.forgotPasswordOtp) {
+      this.forgotPasswordOtp = bcrypt.hashSync(this.forgotPasswordOtp, 10);
+    }
+  }
+
+  validateForgotPasswordOtp(inputOtp: string): boolean {
+    return bcrypt.compare(inputOtp, this.forgotPasswordOtp);
+  }
+
+  @Column({ type: 'date', nullable: true })
+  forgotPasswordOtpExpiresAt: Date;
+
   toJSON() {
     return instanceToPlain(this);
   }
