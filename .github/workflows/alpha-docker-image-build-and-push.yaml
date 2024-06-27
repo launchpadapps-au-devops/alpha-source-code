@@ -7,8 +7,10 @@ env:
   AZURE_CONTAINER_REGISTRY: 'alphadev'
 
 
-
 on:
+  push:
+    branches:
+      - main  # or the branch you want to trigger this workflow
   workflow_dispatch:
     inputs:
       action:
