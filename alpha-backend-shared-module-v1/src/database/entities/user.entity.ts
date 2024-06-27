@@ -109,21 +109,27 @@ export class User {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   forgotPasswordOtp: string;
-  
+
+  @Column({ type: 'timestamp', nullable: true })
+  forgotPasswordOtpExpiresAt: Date;
+
+    
   @BeforeInsert()
   @BeforeUpdate()
   hashForgotPasswordOtp() {
     if (this.forgotPasswordOtp) {
       this.forgotPasswordOtp = bcrypt.hashSync(this.forgotPasswordOtp, 10);
+      this.forgotPasswordOtpExpiresAt = new Date(new Date().getTime() + 1 * 60000);
     }
   }
 
   validateForgotPasswordOtp(inputOtp: string): boolean {
+    if(this.forgotPasswordOtpExpiresAt < new Date()) {
+      return false;
+    }
+
     return bcrypt.compare(inputOtp, this.forgotPasswordOtp);
   }
-
-  @Column({ type: 'date', nullable: true })
-  forgotPasswordOtpExpiresAt: Date;
 
   toJSON() {
     return instanceToPlain(this);

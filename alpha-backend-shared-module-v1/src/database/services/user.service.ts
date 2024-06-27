@@ -77,7 +77,9 @@ class UserService implements IUserService {
   }
 
   async updateUser(id: string, data: Partial<User>): Promise<User> {
-    await UserService.userRepository.update(id, data);
+    const user = await this.findUserById(id);
+    Object.assign(user, data);
+    await UserService.userRepository.save(user);
     return this.findUserById(id);
   }
 
