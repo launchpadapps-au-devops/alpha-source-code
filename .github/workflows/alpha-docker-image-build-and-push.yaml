@@ -50,7 +50,7 @@ jobs:
             az acr login --name ${{ env.AZURE_CONTAINER_REGISTRY }}
 
       - name: Build and push Docker image to Azure Container Registry
-        #continue-on-error: true
+        continue-on-error: true
         run: |
           cd ${{ matrix.microservice }}
           docker build --build-arg NPM_AUTH_TOKEN=${{ secrets.NPM_GITHUB_TOKEN }} -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ matrix.microservice }}:latest -f Dockerfile .
