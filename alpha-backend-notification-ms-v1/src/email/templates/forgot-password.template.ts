@@ -567,7 +567,8 @@ export default`
 <br>
 Hi {{firstName}} {{lastName}},<br>
 <br>
-We’ve received a request to reset your password. To set a new password for your account, please click on the link below.</span></span><br>
+We’ve received a request to reset your password. To set a new password for your account, please use this one time password below.</span></span><br>
+{{otp}} this will expire in 5 minutes</p>
 &nbsp;</p>
 
                         </td>
@@ -584,23 +585,6 @@ We’ve received a request to reset your password. To set a new password for you
             </td>
         </tr>
     </tbody>
-</table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonBlock" style="min-width:100%;">
-    <tbody class="mcnButtonBlockOuter">
-        <tr>
-            <td style="padding-top:0; padding-right:18px; padding-bottom:18px; padding-left:18px;" valign="top" align="left" class="mcnButtonBlockInner">
-                <table border="0" cellpadding="0" cellspacing="0" class="mcnButtonContentContainer" style="border-collapse: separate !important;border-radius: 4px;background-color: #222222;">
-                    <tbody>
-                        <tr>
-                            <td align="center" valign="middle" class="mcnButtonContent" style="font-family: Tahoma, Verdana, Segoe, sans-serif; font-size: 16px; padding: 18px;">
-                                <a class="mcnButton " title="Reset Password" href="{{resetPasswordLink}}" target="_blank" style="font-weight: normal;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Reset Password</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-    </tbody>
-</table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
     <tbody class="mcnDividerBlockOuter">
         <tr>
             <td class="mcnDividerBlockInner" style="min-width:100%; padding:18px;">

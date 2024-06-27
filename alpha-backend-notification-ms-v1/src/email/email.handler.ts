@@ -53,7 +53,16 @@ export class EmailHandler {
                         Logger.error('Invalid email category');
                 }
                 break;
-
+            case NotificationCategory.ACCOUNT_AUTH:
+                switch (notificationData.subcategoryId) {
+                    case NotificationSubcategory.FORGOT_PASSWORD_OTP:
+                        emailObject.subject = 'Reset your password';
+                        emailObject.template = emailTemplate[NotificationCategory.ACCOUNT_AUTH]
+                        break;
+                    default:
+                        Logger.error('Invalid email category');
+                }
+                break;
             default:
                 Logger.error('Invalid email category');
         }
