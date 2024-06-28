@@ -159,9 +159,11 @@ export class User {
   @ManyToOne(() => Permission, (permission) => permission.users)
   permission: Permission;
 
-  // Term version number
   @Column({ type: 'int', nullable: true })
   termsVersion: number;
+
+  @Column({ type: 'int', nullable: true })
+  dataConsentVersion: number;
 
   @CreateDateColumn()
   createdAt: Date;

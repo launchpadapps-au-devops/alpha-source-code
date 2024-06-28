@@ -1,12 +1,12 @@
 import { userService } from "./user.service";
 import { notificationService } from "./notification.service";
 import { sessionService } from './session.service';
-import { termsConditionsService } from "./termisCondition.service";
+import { policyService } from "./policy.service";
 
 // Export all services
 export { 
   userService, 
   notificationService,
   sessionService,
-  termsConditionsService
+  policyService
 };
