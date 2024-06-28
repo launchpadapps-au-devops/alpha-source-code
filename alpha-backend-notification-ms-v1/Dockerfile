@@ -13,7 +13,7 @@ ARG NPM_AUTH_TOKEN
 RUN echo "@launchpadapps-au:registry=https://npm.pkg.github.com" >> .npmrc \
     && echo "//npm.pkg.github.com/:_authToken=${NPM_AUTH_TOKEN}" >> .npmrc
 
-RUN npm ci
+RUN npm i
 
 COPY . ./
 
