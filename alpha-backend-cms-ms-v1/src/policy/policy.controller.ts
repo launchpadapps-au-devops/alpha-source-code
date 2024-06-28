@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, Query, Headers, Req } from '@nestjs/common';
 import { PolicyService } from './policy.service';
-import { TermsConditions } from '@launchpadapps-au/alpha-shared';
+import { Policy, PolicyType } from '@launchpadapps-au/alpha-shared';
 
 @Controller('policy')
 export class PolicyController {
@@ -8,25 +8,33 @@ export class PolicyController {
         private readonly policyService: PolicyService
     ) { }
 
-    @Post('/terms-conditions')
-    async addT(
+    @Post('/:type')
+    async addPolicy(
         @Headers('x-request-userId') reqUserId: string,
-        @Body() payload: TermsConditions
+        @Param('type') type: PolicyType,
+        @Body() payload: Partial<Policy>
     ) {
-        const data = await this.policyService.addTermsConditions(payload, { userId: reqUserId });
+        const data = await this.policyService.addPolicy({
+            ...payload,
+            type
+        }, {
+            userId: reqUserId
+        });
         return {
-            message: 'Terms and conditions added successfully',
+            message: `Policy for ${type} has been added successfully`,
             data: {
                 id: data.id
             },
         };
     }
 
-    @Get('/terms-conditions')
-    async getTermsConditions() {
-        const data = await this.policyService.getTermsConditions();
+    @Get('/:type')
+    async getActivePolicy(
+        @Param('type') type: PolicyType
+    ) {
+        const data = await this.policyService.findActivePolicy(type);
         return {
-            message: 'Terms and conditions fetched successfully',
+            message: `Policy for ${type} fetched successfully`,
             data
         };
     }

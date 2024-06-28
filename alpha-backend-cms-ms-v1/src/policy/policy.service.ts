@@ -1,22 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { TermsConditions, termsConditionsService } from '@launchpadapps-au/alpha-shared';
+import { Policy, PolicyType, policyService } from '@launchpadapps-au/alpha-shared';
 
 @Injectable()
 export class PolicyService {
     constructor(
     ) { }
 
-    async addTermsConditions(payload: TermsConditions, reqUser = { userId: null }) 
-    {
-        return termsConditionsService.addTermsConditions({
-            ...payload,
-            createdBy: reqUser.userId,
-            updatedBy: reqUser.userId
-        });
-    }
-    
-    async getTermsConditions() 
-    {
-        return termsConditionsService.findActiveTermsConditions();
+   async addPolicy(data: Partial<Policy>, reqUser = { userId: null }): Promise<Policy> {
+    return policyService.addPolicy({
+        ...data,
+        createdBy: reqUser.userId,
+        updatedBy: reqUser.userId
+    });
+   }
+
+    async findActivePolicy(type: PolicyType): Promise<Policy> {
+     return policyService.findActivePolicy(type);
     }
 }
