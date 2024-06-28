@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Query, Headers, Req } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { CreatePatientDetailsDto } from './patient.dto';
+import { PolicyType } from '@launchpadapps-au/alpha-shared';
 
 @Controller('patient')
 export class PatientController {
@@ -79,15 +80,16 @@ export class PatientController {
         };
     }
 
-    @Put('/:patientId/accept-terms/:termsVersion')
+    @Put('/:patientId/accept/:policyType/:version')
     async acceptTerms(
         @Headers('x-request-userId') reqUserId: string,
         @Param('patientId') patientId: string,
-        @Param('termsVersion') termsVersion: string
+        @Param('policyType') policyType: PolicyType,
+        @Param('version') version: string
     ) {
-        await this.patientService.acceptTerms(patientId, termsVersion, { userId: reqUserId });
+        await this.patientService.acceptTerms(patientId, policyType, version, { userId: reqUserId });
         return {
-            message: `Patient ${patientId} has accepted terms version ${termsVersion}`,
+            message: `Patient ${patientId} has accepted terms of ${policyType} version ${version}`,
             data: {},
             meta: {}
         };

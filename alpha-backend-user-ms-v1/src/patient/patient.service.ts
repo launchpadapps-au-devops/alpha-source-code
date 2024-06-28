@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SortingDto, userService } from '@launchpadapps-au/alpha-shared';
+import { POLICY_TYPES, PolicyType, SortingDto, userService } from '@launchpadapps-au/alpha-shared';
 import { CreatePatientDetailsDto } from './patient.dto';
 
 @Injectable()
@@ -74,10 +74,19 @@ export class PatientService {
         });
     }
 
-    async acceptTerms(patientId: string, termsVersion: string, reqUser = { userId: null }) {
-        return userService.updateUser(patientId, {
-            termsVersion: parseInt(termsVersion),
-            updatedBy: reqUser.userId
-        });
+    async acceptTerms(patientId: string, type: PolicyType, version: string, reqUser = { userId: null }) {
+        const updateData = { 
+            updatedBy: reqUser.userId 
+        };
+
+        if(type === POLICY_TYPES.TERMS_AND_CONDITIONS) {
+            updateData["termsVersion"] = parseInt(version);
+        }
+
+        if(type === POLICY_TYPES.DATA_CONSENT) {
+            updateData["dataConsentVersion"] = parseInt(version);
+        }
+
+        return userService.updateUser(patientId, updateData);
     }
 }
