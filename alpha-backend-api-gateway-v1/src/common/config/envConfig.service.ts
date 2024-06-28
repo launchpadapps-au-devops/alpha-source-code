@@ -64,6 +64,11 @@ export class EnvConfigService {
             user: {
                 host: this.get('USER_SERVICE_BASE_URL') as string,
                 port: this.get('USER_SERVICE_API_PREFIX') as string
+            },
+
+            cms: {
+                host: this.get('CMS_SERVICE_BASE_URL') as string,
+                port: this.get('CMS_SERVICE_API_PREFIX') as string 
             }
         }
     }

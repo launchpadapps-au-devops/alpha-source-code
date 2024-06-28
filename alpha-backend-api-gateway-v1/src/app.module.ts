@@ -9,6 +9,7 @@ import { EnvConfigService } from './common/config/envConfig.service';
 import { PatientModule } from './patient/patient.module';
 import { NotificationModule } from './notification/notification.module';
 import { AuthModule } from './auth/auth.module';
+import { PolicyModule } from './policy/policy.module';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { AuthModule } from './auth/auth.module';
       envFilePath: '.env',
     }), 
     PatientModule, 
-    NotificationModule, AuthModule,
+    NotificationModule, AuthModule, PolicyModule,
   ],
   controllers: [AppController],
   providers: [

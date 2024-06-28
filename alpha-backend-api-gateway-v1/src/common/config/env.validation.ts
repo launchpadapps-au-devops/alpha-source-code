@@ -77,4 +77,10 @@ export class EnvironmentVariables {
     USER_SERVICE_BASE_URL: string;
     @IsString()
     USER_SERVICE_API_PREFIX: string;
+
+    // Content Service
+    @IsString()
+    CMS_SERVICE_BASE_URL: string;
+    @IsString()
+    CMS_SERVICE_API_PREFIX: string;
 }
