@@ -73,4 +73,11 @@ export class PatientService {
             updatedBy: reqUser.userId
         });
     }
+
+    async acceptTerms(patientId: string, termsVersion: string, reqUser = { userId: null }) {
+        return userService.updateUser(patientId, {
+            termsVersion: parseInt(termsVersion),
+            updatedBy: reqUser.userId
+        });
+    }
 }

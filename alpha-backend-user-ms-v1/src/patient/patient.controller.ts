@@ -78,5 +78,19 @@ export class PatientController {
             meta: {}
         };
     }
+
+    @Put('/:patientId/accept-terms/:termsVersion')
+    async acceptTerms(
+        @Headers('x-request-userId') reqUserId: string,
+        @Param('patientId') patientId: string,
+        @Param('termsVersion') termsVersion: string
+    ) {
+        await this.patientService.acceptTerms(patientId, termsVersion, { userId: reqUserId });
+        return {
+            message: `Patient ${patientId} has accepted terms version ${termsVersion}`,
+            data: {},
+            meta: {}
+        };
+    }
 }
  
