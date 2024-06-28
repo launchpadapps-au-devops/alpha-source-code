@@ -37,6 +37,16 @@ class SessionService implements ISessionService {
 
         return !!session;
     }
+
+    async validateRefreshToken(refreshToken: string) {
+        const sessionRepository = DatabaseModule.getRepository(Session);
+        const session = await sessionRepository.findOneBy({
+            refreshToken,
+            isInvalidated: false
+        });
+
+        return session;
+    }
 }
 
 export const sessionService = new SessionService();

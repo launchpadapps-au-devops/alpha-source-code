@@ -9,8 +9,11 @@ export class Session {
     @Column()
     userId: string;
 
-    @Column()
+    @Column({ type: 'varchar', nullable: true })
     deviceInfo: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    ipAddress: string;
 
     @Column({
         unique: true
