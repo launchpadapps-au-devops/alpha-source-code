@@ -32,7 +32,7 @@ jobs:
     strategy:
       matrix:
         microservice:
-          ["alpha-backend-user-ms-v1", "alpha-backend-api-gateway-v1", "alpha-backend-notification-ms-v1"]
+          ["alpha-backend-user-ms-v1", "alpha-backend-api-gateway-v1", "alpha-backend-notification-ms-v1", "alpha-backend-cms-ms-v1"]
     steps:
       - uses: actions/checkout@v4
         with:
