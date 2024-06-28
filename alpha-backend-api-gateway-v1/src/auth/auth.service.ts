@@ -52,6 +52,30 @@ export class AuthService {
         );
     }
 
+    async logout(userId: string, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.userApiUrl}${this.userApiPrefix}/auth/logout`,
+            'POST',
+            {},
+            {},
+            {
+                'x-request-userId': userId
+            }
+        );
+    }
+
+    async refreshToken(payload: { refreshToken: string }, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.userApiUrl}${this.userApiPrefix}/auth/refresh-token`,
+            'POST',
+            payload,
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
     async changePassword(userId: string, payload: { password: string }, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/password`,
@@ -90,7 +114,6 @@ export class AuthService {
             }
         );
     }
-
     async validateToken(token: string, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/validate/token`,

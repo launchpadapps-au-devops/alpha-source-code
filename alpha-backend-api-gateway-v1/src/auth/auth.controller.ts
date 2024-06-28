@@ -6,6 +6,7 @@ import { Roles } from './roles.decorator';
 import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiHeader, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { notificationService } from '@launchpadapps-au/alpha-shared';
 import { MessagingService } from 'src/common/messaging.service';
+import { access } from 'fs';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -55,9 +56,17 @@ export class AuthController {
               type: 'string',
               example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ',
             },
+            accessTokenExpiresAt: {
+              type: 'string',
+              example: '2021-08-25T06:58:42.000Z',
+            },
             refreshToken: {
               type: 'string',
               example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ',
+            },
+            refreshTokenExpiresAt: {
+              type: 'string',
+              example: '2021-08-25T06:58:42.000Z',
             },
           },
         },
@@ -87,7 +96,96 @@ export class AuthController {
     });
   }
 
-  // change password
+
+  // logout
+  @ApiBearerAuth()
+  @ApiResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: {
+          type: 'number',
+          example: 200,
+        },
+        message: {
+          type: 'string',
+          example: 'Logout successful',
+        },
+        data: {
+          type: 'object',
+          example: null
+        },
+        meta: {
+          type: 'object',
+        }
+      },
+    }
+  })
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Request() req) {
+    return this.authService.logout(req.user.userId);
+  }
+
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        refreshToken: {
+          type: 'string',
+          example: 'refreshToken',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: {
+          type: 'number',
+          example: 200,
+        },
+        message: {
+          type: 'string',
+          example: 'Token refreshed successfully',
+        },
+        data: {
+          type: 'object',
+          example: {
+            accessToken: {
+              type: 'string',
+              example: 'accessToken',
+            },
+            accessTokenExpiresAt: {
+              type: 'string',
+              example: '2021-08-25T06:58:42.000Z',
+            },
+            refreshToken: {
+              type: 'string',
+              example: 'refreshToken'
+            },
+            refreshTokenExpiresAt: {
+              type: 'string',
+              example: '2021-08-25T06:58:42.000Z',
+            }
+          }
+        },
+        meta: {
+          type: 'object',
+        }
+      },
+    }
+  })
+  @Post('/refresh-token')
+  async refreshToken(
+    @Body() payload: {
+      refreshToken: string;
+    }
+  ) {
+    return this.authService.refreshToken(payload);
+  }
+
   @ApiBearerAuth()
   @ApiBody({
     schema: {
