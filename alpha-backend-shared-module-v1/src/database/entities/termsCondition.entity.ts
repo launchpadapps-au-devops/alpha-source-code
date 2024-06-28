@@ -8,13 +8,19 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity('terms_conditions')
+@Entity('termConditions')
 export class TermsConditions {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column({ type: 'integer', default: 1 })
+    version: number;
 
     @Column({ type: 'jsonb', nullable: false })
     content: Array<{ heading: string; body: string }>;
+
+    @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVE'], default: 'ACTIVE' })
+    status: string;
 
     @CreateDateColumn()
     createdAt: Date;
