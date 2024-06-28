@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Headers, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post, Request } from '@nestjs/common';
 import { PolicyService } from './policy.service';
-import { TermsConditions } from '@launchpadapps-au/alpha-shared';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { POLICY_TYPES, Policy } from '@launchpadapps-au/alpha-shared';
+import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 
 @ApiTags('Policy')
@@ -16,6 +16,7 @@ export class PolicyController {
         schema: {
             type: 'object',
             properties: {
+                type: { type: 'string', enum: Array(POLICY_TYPES), example: 'terms_conditions' },
                 content: {
                     type: 'array',
                     items: {
@@ -24,11 +25,11 @@ export class PolicyController {
                             heading: { type: 'string', example: 'Introduction' },
                             body: { type: 'string', example: 'These are the terms and conditions...' },
                         },
-                        required: ['heading', 'body'],
+                        required: ['heading', 'body',],
                     },
                 },
             },
-            required: ['content', 'status'],
+            required: ['content', 'type'],
         },
     })
     @ApiResponse({
@@ -49,14 +50,21 @@ export class PolicyController {
             required: ['statusCode', 'data'],
         },
     })    
-    @Post('/terms-conditions')
-    async addTermsConditions(
+    @Post('/')
+    async addPolicy(
         @Request() req,
-        @Body() payload: Partial<TermsConditions>
+        @Body() payload: Partial<Policy>
     ) {
-        return this.policyService.addTermsConditions(payload, req.user);
+        return this.policyService.addPolicy(payload, req.user);
     }
 
+    @ApiParam({
+        name: 'type',
+        description: 'The type of policy to fetch',
+        required: true,
+        type: 'string',
+        enum: POLICY_TYPES
+    })
     @ApiResponse({
         status: 201,
         description: 'A successful response',
@@ -70,6 +78,7 @@ export class PolicyController {
                     properties: {
                         id: { type: 'number', example: '1' },
                         version: { type: 'number', example: '1' },
+                        type: { type: 'string', enum: Array(POLICY_TYPES), example: 'terms_conditions' },
                         content: {
                             type: 'array',
                             items: {
@@ -93,10 +102,11 @@ export class PolicyController {
             required: ['statusCode', 'data'],
         },
     })
-    @Get('/terms-conditions')
+    @Get('/:type')
     async getTermsConditions(
-        @Request() req
+        @Request() req,
+        @Param('type') type: string
     ) {
-        return this.policyService.getTermsConditions();
+        return this.policyService.getActivePolicy(req.params.type);
     }
 }

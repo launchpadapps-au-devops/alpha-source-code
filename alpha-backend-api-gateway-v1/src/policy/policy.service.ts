@@ -1,4 +1,4 @@
-import { TermsConditions } from '@launchpadapps-au/alpha-shared';
+import { Policy } from '@launchpadapps-au/alpha-shared';
 import { Injectable } from '@nestjs/common';
 import { BaseHttpService } from 'src/common/base-http.service';
 import { EnvConfigService } from 'src/common/config/envConfig.service';
@@ -18,9 +18,9 @@ export class PolicyService {
     }
 
 
-    async addTermsConditions(data: Partial<TermsConditions>, reqUser = { userId: null }) {
+    async addPolicy(data: Partial<Policy>, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
-            `${this.cmsApiUrl}${this.cmsApiPrefix}/policy/terms-conditions`,
+            `${this.cmsApiUrl}${this.cmsApiPrefix}/policy/${data.type}`,
             'POST',
             {
                 ...data,
@@ -32,9 +32,9 @@ export class PolicyService {
         );
     }
 
-    async getTermsConditions() {
+    async getActivePolicy(type: string) {
         return this.baseHttpService.invoke(
-            `${this.cmsApiUrl}${this.cmsApiPrefix}/policy/terms-conditions`,
+            `${this.cmsApiUrl}${this.cmsApiPrefix}/policy/${type}`,
             'GET',
             {},
             {},

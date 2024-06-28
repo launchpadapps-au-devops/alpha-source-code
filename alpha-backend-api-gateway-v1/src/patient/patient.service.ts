@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { BaseHttpService } from 'src/common/base-http.service';
 import { EnvConfigService } from 'src/common/config/envConfig.service';
 import { CreatePatientDetailsDto } from './patient.dto';
+import { PolicyType } from '@launchpadapps-au/alpha-shared';
 
 @Injectable()
 export class PatientService {
@@ -75,12 +76,11 @@ export class PatientService {
         );
     }
 
-    async acceptTerms(patientId: string, termsVersion: string, reqUser = { userId: null }) {
+    async acceptTerms(patientId: string, policyType: PolicyType, version: string, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
-            `${this.userApiUrl}${this.userApiPrefix}/patient/${patientId}/accept-terms/${termsVersion}`,
+            `${this.userApiUrl}${this.userApiPrefix}/patient/${patientId}/accept/${policyType}/${version}`,
             'PUT',
-            {
-            },
+            {},
             {},
             {
                 'x-request-userId': reqUser.userId

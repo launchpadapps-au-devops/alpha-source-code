@@ -5,6 +5,7 @@ import { CreatePatientDetailsDto, PatientResponseDto } from './patient.dto';
 import { MessagingService } from '../common/messaging.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
+import { POLICY_TYPES, PolicyType } from '@launchpadapps-au/alpha-shared';
 
 @ApiTags('Patient')
 @ApiExtraModels(PatientResponseDto)
@@ -205,9 +206,16 @@ export class PatientController {
 
     @ApiBearerAuth()
     @ApiParam({
-        name: 'termsVersion',
+        name: 'policyType',
         type: 'string',
-        description: 'Terms Version',
+        description: 'Policy Type',
+        enum: POLICY_TYPES,
+        required: true,
+    })
+    @ApiParam({
+        name: 'version',
+        type: 'string',
+        description: 'Policy Version',
         required: true,
     })
     @ApiResponse({
@@ -225,11 +233,12 @@ export class PatientController {
     })
     @UseGuards(JwtAuthGuard)
     @Roles('patient')
-    @Put('/accept-terms/:termsVersion')
+    @Put('/accept/:policyType/:version')
     async acceptTerms(
         @Request() req,
-        @Param('termsVersion') termsVersion: string
+        @Param('policyType') policyType: PolicyType,
+        @Param('version') termsVersion: string
     ): Promise<object> {
-        return this.patientService.acceptTerms(req.user.userId, termsVersion, req.user);
+        return this.patientService.acceptTerms(req.user.userId, policyType, termsVersion, req.user);
     }
 }
