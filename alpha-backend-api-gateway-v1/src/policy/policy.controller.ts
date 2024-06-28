@@ -83,7 +83,9 @@ export class PolicyController {
                         },
                         status: { type: 'string', enum: ['ACTIVE', 'ARCHIVE'], example: 'ACTIVE' },
                         createdAt: { type: 'string', format: 'date-time', example: '2021-09-01T00:00:00.000Z' },
+                        createdBy: { type: 'string', example: '1' },
                         updatedAt: { type: 'string', format: 'date-time', example: '2021-09-01T00:00:00.000Z' },
+                        updatedBy: { type: 'string', example: '1' },
 
                     },
                 }

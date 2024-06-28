@@ -74,4 +74,17 @@ export class PatientService {
             }
         );
     }
+
+    async acceptTerms(patientId: string, termsVersion: string, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.userApiUrl}${this.userApiPrefix}/patient/${patientId}/accept-terms/${termsVersion}`,
+            'PUT',
+            {
+            },
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
 }

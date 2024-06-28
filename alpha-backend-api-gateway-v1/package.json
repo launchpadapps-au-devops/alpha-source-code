@@ -41,7 +41,7 @@
     "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
-    "@launchpadapps-au/alpha-shared": "^2.0.1",
+    "@launchpadapps-au/alpha-shared": "^2.0.2",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",

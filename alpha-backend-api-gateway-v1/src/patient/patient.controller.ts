@@ -1,8 +1,10 @@
-import { Request, Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { Request, Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { PatientService } from './patient.service';
 import { CreatePatientDetailsDto, PatientResponseDto } from './patient.dto';
 import { MessagingService } from '../common/messaging.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
 
 @ApiTags('Patient')
 @ApiExtraModels(PatientResponseDto)
@@ -199,5 +201,35 @@ export class PatientController {
                 id
             }
         };
+    }
+
+    @ApiBearerAuth()
+    @ApiParam({
+        name: 'termsVersion',
+        type: 'string',
+        description: 'Terms Version',
+        required: true,
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'A successful response',
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'Terms and Condition accepted sucessfully' },
+                data: null
+            },
+            required: ['statusCode', 'data'],
+        },
+    })
+    @UseGuards(JwtAuthGuard)
+    @Roles('patient')
+    @Put('/accept-terms/:termsVersion')
+    async acceptTerms(
+        @Request() req,
+        @Param('termsVersion') termsVersion: string
+    ): Promise<object> {
+        return this.patientService.acceptTerms(req.user.userId, termsVersion, req.user);
     }
 }
