@@ -9,6 +9,7 @@ import {
   OneToMany,
   ManyToOne,
   AfterLoad,
+  JoinColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Session } from './session.entity';
@@ -158,6 +159,10 @@ export class User {
   @ManyToOne(() => Permission, (permission) => permission.users)
   permission: Permission;
 
+  // Term version number
+  @Column({ type: 'int', nullable: true })
+  termsVersion: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -165,9 +170,11 @@ export class User {
   updatedAt: Date;
 
   @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'createdBy' })
   createdBy: User;
 
   @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'updatedBy' })
   updatedBy: User;
 
   toJSON() {

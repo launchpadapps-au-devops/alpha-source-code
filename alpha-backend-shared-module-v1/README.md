@@ -280,6 +280,100 @@ To unlink the shared module and revert to using a version from an npm registry:
    ```
    This step ensures your `node_modules` directory and `package-lock.json` are correctly updated, removing the symlink.
 
+### Migration Generation Script
+
+The `generate-migration.ts` script generates new database migration files. This ensures that your database schema changes are properly versioned and can be applied consistently across different environments.
+
+```typescript
+generateMigration(migrationName).catch((err) => {
+  console.error('Error during migration generation:', err);
+  process.exit(1);
+});
+```
+
+### Migration Shell Script
+
+#### Purpose
+
+The `migrate.sh` script is a shell script that automates the execution of the `generate-migration.ts` script to create a new migration file.
+
+#### File: `migrate.sh`
+
+```sh
+#!/bin/bash
+
+# Load environment variables from .env file
+if [ -f .env ]; then
+  export $(cat .env | xargs)
+fi
+
+# Path to the migration script
+MIGRATION_SCRIPT="./src/database/generate-migration.ts"
+
+# Check if migration name is provided
+if [ -z "$1" ]; then
+  echo "Please provide a migration name."
+  exit 1
+fi
+
+MIGRATION_NAME=$1
+
+# Run the migration script with the provided migration name
+ts-node $MIGRATION_SCRIPT $MIGRATION_NAME
+
+if [ $? -ne 0 ]; then
+  echo "Error generating migration."
+  exit 1
+fi
+
+echo "Migration generated successfully."
+```
+
+#### Making the Shell Script Executable
+
+Make the `migrate.sh` script executable by running:
+
+```sh
+chmod +x migrate.sh
+```
+
+#### Running the Migration Generation Script
+
+To generate a new migration file, use the following command:
+
+```sh
+npm run generate-migration MigrationName
+```
+
+Replace `MigrationName` with the name of your migration. This script will:
+
+1. Load environment variables from the `.env` file.
+2. Call the `generate-migration.ts` script with the provided migration name.
+3. Create a new migration file in the `src/database/migrations` directory with a timestamped filename.
+#### Running the Migration
+
+This is handled automatically while creating data source in database/index.ts file
+
+```sh
+this.dataSource.initialize()
+      .then(() => {
+        console.log("Data Source has been initialized!")
+        console.log("Running migrations...");
+        this.dataSource.runMigrations()
+        .then(() => {
+          console.log("Migrations have been run.");
+        })
+        .catch((err) => {
+          console.error("Error running migrations:", err);
+          throw err;
+        });
+      })
+      .catch((err) => {
+        console.error("Error during Data Source initialization:", err);
+        throw err;
+      });
+```
+
 ### Future Todos
 
 - **Watching for Changes**: For a more automated workflow, consider implementing a watch mode in your shared module that automatically recompiles on changes. Tools like TypeScript's `tsc -w` or webpack's watch mode can facilitate this.

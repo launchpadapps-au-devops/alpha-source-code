@@ -1,5 +1,7 @@
 import { DataSource, EntityTarget, Repository } from 'typeorm';
 import { dirname } from 'path';
+import * as fs from 'fs';
+import { Project } from 'ts-morph';
 import { IDatabaseConfig } from './interfaces/IDatabaseConfig.interface';
 
 export class DatabaseModule {
@@ -18,12 +20,22 @@ export class DatabaseModule {
       password: config.password,
       database: config.database,
       entities: [dirname(__dirname) + '/database/entities/*.entity.js'],
+      migrations: [dirname(__dirname) + '/database/migrations/*.js'],
       synchronize: true, // Caution in production!
     });
 
     this.dataSource.initialize()
       .then(() => {
         console.log("Data Source has been initialized!")
+        console.log("Running migrations...");
+        this.dataSource.runMigrations()
+        .then(() => {
+          console.log("Migrations have been run.");
+        })
+        .catch((err) => {
+          console.error("Error running migrations:", err);
+          throw err;
+        });
       })
       .catch((err) => {
         console.error("Error during Data Source initialization:", err);
