@@ -45,7 +45,7 @@ export class AuthService {
             role: user.role,
             permission: user.permission,
             sub: user.id,
-        });
+        }, { expiresIn: '1h' });
 
         const refreshToken = this.jwtService.sign({
             email: user.email,
@@ -56,6 +56,9 @@ export class AuthService {
             sub: user.id,
         }, { expiresIn: '7d' });
 
+        const accessTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
+        const refreshTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
         await sessionService.revokeAllSessionsForUser(user.id);
         await sessionService.createSession({
             userId: user.id,
@@ -63,11 +66,61 @@ export class AuthService {
             refreshToken,
             deviceInfo,
             ipAddress,
-            accessTokenExpiresAt: new Date(Date.now() + 15 * 60 * 1000),
+            accessTokenExpiresAt: accessTokenExpiresAt,
+            refreshTokenExpiresAt: refreshTokenExpiresAt,
+        });
+
+        return { accessToken, accessTokenExpiresAt, refreshToken, refreshTokenExpiresAt };
+    }
+
+    async logout(userId: string) {
+        await sessionService.revokeAllSessionsForUser(userId);
+    }
+
+    async refreshToken(refreshToken: string) {
+        const session = await sessionService.validateRefreshToken(refreshToken);
+        if (!session) {
+            throw new UnauthorizedException('Invalid refresh token');
+        }
+
+        const user = await userService.findUserById(session.userId);
+        if (!user) {
+            throw new UnauthorizedException('Invalid user');
+        }
+
+        const accessToken = this.jwtService.sign({
+            email: user.email,
+            userType: user.userType,
+            platform: user.platform,
+            role: user.role,
+            permission: user.permission,
+            sub: user.id,
+        }, { expiresIn: '1h' });
+
+        const newRefreshToken = this.jwtService.sign({
+            email: user.email,
+            userType: user.userType,
+            platform: user.platform,
+            role: user.role,
+            permission: user.permission,
+            sub: user.id,
+        }, { expiresIn: '7d' });
+
+        
+        const accessTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
+        const refreshTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+        await sessionService.createSession({
+            userId: user.id,
+            accessToken,
+            refreshToken: newRefreshToken,
+            deviceInfo: session.deviceInfo,
+            ipAddress: session.ipAddress,
+            accessTokenExpiresAt: new Date(Date.now() + 60 * 60 * 1000),
             refreshTokenExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         });
 
-        return { accessToken, refreshToken };
+        return { accessToken, accessTokenExpiresAt,  refreshToken: newRefreshToken, refreshTokenExpiresAt};
     }
 
     async changePassword(payload: { userId: string, password: string }, reqUser = { userId: null }) {
@@ -115,7 +168,8 @@ export class AuthService {
         if (!session) {
             throw new UnauthorizedException();
         }
-        return this.jwtService.verify(token);
+        
+        return session;
     }
 
     async getUserById(userId: string): Promise<any> {

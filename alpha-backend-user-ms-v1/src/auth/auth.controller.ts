@@ -42,6 +42,30 @@ export class AuthController {
     }
   }
 
+  @Post('/logout')
+  async logout(
+    @Headers('x-request-userId') reqUserId: string,
+  ) {
+    await this.authService.logout(reqUserId);
+    return {
+      message: 'Logout successful',
+    }
+  }
+
+  @Post('/refresh-token')
+  async refreshToken(
+    @Headers('x-request-userId') reqUserId: string, // no use case
+    @Body() payload: {
+      refreshToken: string,
+    },
+  ) {
+    const data = await this.authService.refreshToken(payload.refreshToken);
+    return {
+      message: 'Token refreshed successfully',
+      data,
+    }
+  }
+
   @Post('/password')
   async changePassword(
     @Headers('x-request-userId') reqUserId: string,
@@ -93,6 +117,10 @@ export class AuthController {
     @Headers('x-request-userId') reqUserId: string, // No use case
     @Query('token') token: string,
   ) {
-    return this.authService.validateToken(token);
+    const data = await this.authService.validateToken(token);
+    return {
+      message: 'Token validated successfully',
+      data,
+    }
   }
 }
