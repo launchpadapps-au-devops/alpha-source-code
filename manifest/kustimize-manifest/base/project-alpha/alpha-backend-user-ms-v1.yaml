@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpha-backend-user-ms-v1-deployment
+  labels:
+    app: alpha-backend-user-ms-v1-deployment
+spec:
+  selector:
+    matchLabels:
+      app: alpha-backend-user-ms-v1-deployment
+  template:
+    metadata:
+      labels:
+        app: alpha-backend-user-ms-v1-deployment
+    spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          resources:
+            limits:
+              cpu: 250m
+              ephemeral-storage: .5Gi
+              memory: 0.5Gi
+            requests:
+              cpu: 250m
+              ephemeral-storage: .5Gi
+              memory: 0.5Gi
+          image: busybox:1.28
+          command: ['sh', '-c', 'until nc -z alpha-rabbitmq-service 5672; do echo waiting for rabbitmq ; sleep 2; done;']
+      containers:
+        - name: alpha-backend-user-ms-v1-conatiner
+          image: alphadevprojet.azurecr.io/alpha-backend-user-ms-v1@sha256:ab09f5bf6b8ee9ec437efd44e6f8066cacb727adffa6c7956cca3d950733618a
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3001
+          resources:
+            limits:
+              cpu: 250m
+              ephemeral-storage: 0.5Gi
+              memory: 0.5Gi
+            requests:
+              cpu: 250m
+              ephemeral-storage: 0.5Gi
+              memory: 0.5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpha-backend-user-ms-v1-service
+spec:
+  selector:
+    app: alpha-backend-user-ms-v1-deployment
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+  type: ClusterIP

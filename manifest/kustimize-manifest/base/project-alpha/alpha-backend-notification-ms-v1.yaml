@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpha-backend-notification-ms-v1-deployment
+  labels:
+    app: alpha-backend-notification-ms-v1-deployment
+spec:
+  selector:
+    matchLabels:
+      app: alpha-backend-notification-ms-v1-deployment
+  template:
+    metadata:
+      labels:
+        app: alpha-backend-notification-ms-v1-deployment
+    spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          resources:
+            limits:
+              cpu: 250m
+              ephemeral-storage: .5Gi
+              memory: 0.5Gi
+            requests:
+              cpu: 250m
+              ephemeral-storage: .5Gi
+              memory: 0.5Gi
+          image: busybox:1.28
+          command: ['sh', '-c', 'until nc -z alpha-rabbitmq-service 5672; do echo waiting for rabbitmq ; sleep 2; done;']
+      containers:
+        - name: alpha-backend-notification-ms-v1-container
+          image: alphadevprojet.azurecr.io/alpha-backend-notification-ms-v1@sha256:36f924d8bb0531754cc87ce53f8bde0c7d66f37ab2726abb2f47ac33b826312d
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3002
+          resources:
+            limits:
+              cpu: 250m
+              ephemeral-storage: 0.5Gi
+              memory: 0.5Gi
+            requests:
+              cpu: 250m
+              ephemeral-storage: 0.5Gi
+              memory: 0.5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpha-backend-notification-ms-v1-service
+spec:
+  selector:
+    app: alpha-backend-notification-ms-v1-deployment
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+  type: ClusterIP
