@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpha-backend-user-ms-v1-deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: alpha-backend-user-ms-v1-conatiner
+        env:
+          - name: NODE_ENV
+            value: "local"
+          - name: PORT
+            value: "3001"
+          - name: APP_NAME
+            value: "alpha-user-ms-v1"
+          - name: APP_API_PREFIX
+            value: "/api/user-ms/v1"
+          - name: APP_DEBUG
+            value: "true"
+          - name: JWT_SECRET
+            value: "secret"
+          - name: JWT_EXPIRES_IN
+            value: "1d"
+          - name: HEALTH_SERVICE_BASE_URL
+            value: "http://alpha-backend-user-ms-v1-service:3001"
+          - name: HEALTH_SERVICE_API_PREFIX
+            value: "/api/v1/health"
+          - name: DB_HOST
+            value: "alpha-database.postgres.database.azure.com"
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_USER
+            value: "alphaadmin"
+          - name: DB_PASSWORD
+            value: "alphaadminpasswd543"
+          - name: DB_NAME
+            value: "alpha_database"
+          - name: RABBITMQ_HOST
+            value: alpha-rabbitmq-service
+          - name: RABBITMQ_PORT
+            value: "5672"
+          - name: RABBITMQ_USERNAME
+            value: "guest"
+          - name: RABBITMQ_PASSWORD
+            value: "guest"
+          - name: RABBITMQ_QUEUE
+            value: "alpha-message"
