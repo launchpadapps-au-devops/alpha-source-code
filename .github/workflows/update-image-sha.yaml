@@ -1,0 +1,97 @@
+name: Update Image SHA Alpha
+
+env:
+  AZURE_CLIENT_ID: 'a254771c-c8a9-4549-8412-9d7758aa9f99'
+  AZURE_TENANT_ID: 'a8229132-efd4-4b3a-af5c-87298bd1a8ed'
+  AZURE_SUBSCRIPTION_ID: '64444c9b-6315-4b50-86c2-9ce5d9bd4bba'
+  AZURE_CONTAINER_REGISTRY: 'alphadevprojet'
+  WORKING_DIR: 'manifest/kustomize-manifest'
+  LIST_OF_IMAGES: 'alpha-backend-notification-ms-v1, alpha-backend-user-ms-v1, alpha-backend-api-gateway-v1, alpha-backend-cms-ms-v1'
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'manifest/kustomize-manifest/**'
+      - '.github/workflows/update-image-sha.yaml'
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        description: 'Action to perform (update)'
+        required: true
+        options:
+          - 'update'
+        default: 'update'
+
+jobs:
+  Terraform-Infra:
+    permissions:
+      contents: 'write'
+      id-token: 'write'
+      pull-requests: 'write' #Needed to comment on the PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 'main' # Ensure we're checking out the correct branch
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to Container Registry
+        shell: bash
+        run: |
+            az acr login --name ${{ env.AZURE_CONTAINER_REGISTRY }}
+
+      - name: Update Manifest
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ${{ env.WORKING_DIR }}
+        run: |
+
+          echo "${{ env.LIST_OF_IMAGES }}" | tr -s ', ' '\n' > images.txt
+
+          while IFS= read -r image_name; do
+            if [ -n "$image_name" ]; then
+              echo "Processing image: $image_name"
+              echo ""
+
+              # Updating Sha
+              sha=$(az acr repository show-manifests --name ${{ env.AZURE_CONTAINER_REGISTRY }} --repository ${image_name} --output table --query "[?tags[?contains(@, 'latest')]].digest" | grep 'sha256' |awk '{print $1}')
+              image_with_sha="${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${image_name}@${sha}"
+
+              if [ "$image_name" == "alpha-backend-notification-ms-v1" ]; then
+                ./change-image.sh base/project-alpha/alpha-backend-notification-ms-v1.yaml $image_with_sha
+              fi
+              if [ "$image_name" == "alpha-backend-user-ms-v1" ]; then
+                ./change-image.sh base/project-alpha/alpha-backend-user-ms-v1.yaml $image_with_sha
+              fi
+              if [ "$image_name" == "alpha-backend-api-gateway-v1" ]; then
+                ./change-image.sh base/project-alpha/alpha-backend-api-gateway-v1.yaml $image_with_sha
+              fi
+              if [ "$image_name" == "alpha-backend-cms-ms-v1" ]; then
+                ./change-image.sh base/project-alpha/alpha-backend-cms-ms-v1.yaml $image_with_sha
+              fi
+
+            fi
+          done < images.txt
+          rm -rf images.txt
+
+      - name: Update Kustomize Manifest
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ${{ env.WORKING_DIR }}
+        run: |
+          # Install Kustomize
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+          mv kustomize /usr/local/bin/kustomize
+
+          kustomize build ./overlays/non-prod/project-alpha > ./manifests/non-prod/project-alpha/manifest.yaml
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "Automated Image Updation commit"
+          git push origin HEAD:main
