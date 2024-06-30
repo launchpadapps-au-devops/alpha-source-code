@@ -35,7 +35,7 @@ spec:
           - name: CMS_SERVICE_API_PREFIX
             value: "/api/cms-ms/v1"
           - name: DB_HOST
-            value: "alpha-database.postgres.database.azure.com"
+            value: "alpha-postgressql.postgres.database.azure.com"
           - name: DB_PORT
             value: "5432"
           - name: DB_USER
