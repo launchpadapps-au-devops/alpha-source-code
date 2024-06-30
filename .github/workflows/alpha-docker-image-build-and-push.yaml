@@ -55,3 +55,8 @@ jobs:
           cd ${{ matrix.microservice }}
           docker build --build-arg NPM_AUTH_TOKEN=${{ secrets.NPM_GITHUB_TOKEN }} -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ matrix.microservice }}:latest -f Dockerfile .
           docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ matrix.microservice }}:latest
+
+          commit_id=$(git rev-parse HEAD)
+          docker tag ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ matrix.microservice }}:latest ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ matrix.microservice }}:${commit_id}
+
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ matrix.microservice }}:${commit_id}
