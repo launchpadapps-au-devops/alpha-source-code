@@ -1,10 +1,10 @@
 name: Update Image SHA Alpha
 
 env:
-  AZURE_CLIENT_ID: 'a254771c-c8a9-4549-8412-9d7758aa9f99'
-  AZURE_TENANT_ID: 'a8229132-efd4-4b3a-af5c-87298bd1a8ed'
-  AZURE_SUBSCRIPTION_ID: '64444c9b-6315-4b50-86c2-9ce5d9bd4bba'
-  AZURE_CONTAINER_REGISTRY: 'alphadevprojet'
+  AZURE_CLIENT_ID: 'eb8e34da-17ef-4aaf-8fd3-2f7125aa9cf4'
+  AZURE_TENANT_ID: '885a3fc1-5c28-466f-8209-f1d17de3c94a'
+  AZURE_SUBSCRIPTION_ID: '925c9761-eb7c-46bb-a39d-0465b67037db'
+  AZURE_CONTAINER_REGISTRY: 'alphadev'
   WORKING_DIR: 'manifest/kustomize-manifest'
   LIST_OF_IMAGES: 'alpha-backend-notification-ms-v1, alpha-backend-user-ms-v1, alpha-backend-api-gateway-v1, alpha-backend-cms-ms-v1'
 
