@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../base/project-alpha
+
+namespace: alpha
+
+patches:
+  - path: alpha-backend-api-gateway-v1.yaml
+  - path: alpha-backend-notification-ms-v1.yaml
+  - path: alpha-backend-user-ms-v1.yaml
+  - path: alpha-backend-cms-ms-v1.yaml
+  - path: alpha-rabbitmq.yaml
