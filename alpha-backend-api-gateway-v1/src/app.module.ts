@@ -10,6 +10,8 @@ import { PatientModule } from './patient/patient.module';
 import { NotificationModule } from './notification/notification.module';
 import { AuthModule } from './auth/auth.module';
 import { PolicyModule } from './policy/policy.module';
+import { HealthDataService } from './health-data/health-data.service';
+import { HealthDataModule } from './health-data/health-data.module';
 
 @Module({
   imports: [
@@ -19,14 +21,15 @@ import { PolicyModule } from './policy/policy.module';
       envFilePath: '.env',
     }), 
     PatientModule, 
-    NotificationModule, AuthModule, PolicyModule,
+    NotificationModule, AuthModule, PolicyModule, HealthDataModule,
   ],
   controllers: [AppController],
   providers: [
     AppService, 
     BaseHttpService, 
     MessagingService,
-    EnvConfigService
+    EnvConfigService,
+    HealthDataService
   ],
 })
 export class AppModule {}
