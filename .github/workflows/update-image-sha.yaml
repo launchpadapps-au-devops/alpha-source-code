@@ -6,7 +6,7 @@ env:
   AZURE_SUBSCRIPTION_ID: '925c9761-eb7c-46bb-a39d-0465b67037db'
   AZURE_CONTAINER_REGISTRY: 'alphadev'
   WORKING_DIR: 'manifest/kustomize-manifest'
-  LIST_OF_IMAGES: 'alpha-backend-notification-ms-v1, alpha-backend-user-ms-v1, alpha-backend-api-gateway-v1, alpha-backend-cms-ms-v1'
+  LIST_OF_IMAGES: 'alpha-backend-notification-ms-v1, alpha-backend-user-ms-v1, alpha-backend-api-gateway-v1, alpha-backend-cms-ms-v1, alpha-backend-health-ms-v1'
 
 on:
   pull_request:
