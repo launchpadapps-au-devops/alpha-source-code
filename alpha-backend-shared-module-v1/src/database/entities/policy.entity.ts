@@ -5,6 +5,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
+    JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { PolicyType, POLICY_TYPES } from '../enum';
@@ -31,10 +32,12 @@ export class Policy {
 
     @UpdateDateColumn()
     updatedAt: Date;
-
+  
     @ManyToOne(() => User, { nullable: true })
+    @JoinColumn({ name: 'createdBy' })
     createdBy: User;
-
+  
     @ManyToOne(() => User, { nullable: true })
+    @JoinColumn({ name: 'updatedBy' })
     updatedBy: User;
 }

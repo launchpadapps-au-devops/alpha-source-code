@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ROLE_NAMES, RoleName } from "../enum/auth/role";
 import { User } from "./user.entity";
 
@@ -27,9 +27,11 @@ export class Role {
     updatedAt: Date;
   
     @ManyToOne(() => User, { nullable: true })
+    @JoinColumn({ name: 'createdBy' })
     createdBy: User;
   
     @ManyToOne(() => User, { nullable: true })
+    @JoinColumn({ name: 'updatedBy' })
     updatedBy: User;
   
 }

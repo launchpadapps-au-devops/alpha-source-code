@@ -21,7 +21,7 @@ export class DatabaseModule {
       database: config.database,
       entities: [dirname(__dirname) + '/database/entities/*.entity.js'],
       migrations: [dirname(__dirname) + '/database/migrations/*.js'],
-      synchronize: true, // Caution in production!
+      synchronize: true, // Caution in production!,
     });
 
     this.dataSource.initialize()

@@ -3,6 +3,7 @@ import { User } from "./user.entity";
 import { Notification, NotificationType } from "./notification.entity";
 import { Session } from "./session.entity";
 import { Policy } from "./policy.entity";
+import { HealthProfileQuestionaries } from "./HealthProfileQuestionaries.entity";
 
 
 // Export all entities
@@ -13,5 +14,7 @@ export {
   NotificationType,
 
   Session,
-  Policy
+  Policy,
+
+  HealthProfileQuestionaries
 };

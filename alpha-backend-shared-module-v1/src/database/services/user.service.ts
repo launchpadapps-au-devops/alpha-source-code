@@ -2,8 +2,6 @@ import { Any, Repository } from "typeorm";
 import { DatabaseModule } from "../index";
 import { IUserService } from "../interfaces/IUserService.interface";
 import { User } from "../entities/user.entity";
-import { UserDto } from "../dto/user.dto";
-import { TimeStamp } from "../interface/base.interface";
 import { PaginationUtil } from "../utils/pagination.util";
 import { PaginationDto } from "../dto/pagination.dto";
 import { SortingDto } from "../dto/sorting.dto";

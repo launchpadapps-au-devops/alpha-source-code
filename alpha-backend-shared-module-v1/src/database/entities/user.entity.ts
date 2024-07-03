@@ -17,6 +17,7 @@ import { Role } from './role.entity';
 import { Permission } from './permission.entity';
 import { Exclude, Type, instanceToPlain } from 'class-transformer';
 import { IsBoolean } from 'class-validator';
+import { HealthProfileQuestionaries } from './HealthProfileQuestionaries.entity';
 
 @Entity('users')
 export class User {
@@ -40,6 +41,9 @@ export class User {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   username: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  profilePicture: string;
 
   @Column({ type: 'varchar', length: 255, unique: true, nullable: true })
   phone: string;
@@ -96,7 +100,7 @@ export class User {
   hashForgotPasswordOtp() {
     if (this.forgotPasswordOtp) {
       this.forgotPasswordOtp = bcrypt.hashSync(this.forgotPasswordOtp, 10);
-      this.forgotPasswordOtpExpiresAt = new Date(new Date().getTime() + 1 * 60000); // Expires in 1 minute
+      this.forgotPasswordOtpExpiresAt = new Date(new Date().getTime() + 5 * 60000); // Expires in 5 minute
     }
   }
 
@@ -152,6 +156,9 @@ export class User {
 
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[];
+
+  @OneToMany(() => HealthProfileQuestionaries, (healthProfile) => healthProfile.user)
+  healthProfileQuestionaries: HealthProfileQuestionaries[];
 
   @ManyToOne(() => Role, (role) => role.users)
   role: Role;
