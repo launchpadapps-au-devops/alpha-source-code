@@ -29,6 +29,20 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: alpha-backend-health-ms-v1-service
+  namespace: alpha
+spec:
+  ports:
+  - port: 3004
+    protocol: TCP
+    targetPort: 3004
+  selector:
+    app: alpha-backend-health-ms-v1-deployment
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: alpha-backend-notification-ms-v1-service
   namespace: alpha
 spec:
@@ -132,7 +146,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: alpha-message
-        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:8b5dbd7c72dbe6276c08f3de7764c1c2dc229d7e63741cafebf02ef93106bbec
+        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:d675236d80c3f4b41261561890a36aee2e81df787bc196e9d8a648f323b9f42e
         imagePullPolicy: IfNotPresent
         name: alpha-backend-api-gateway-v1-container
         ports:
@@ -220,7 +234,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: user_queue
-        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:823dc9272fbdee69276858b653fbbba6f3165a88e610cc718bd026f648bb3813
+        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:445971db22e31ab28d85cc55db73eb78f8cf4ae2915ef35aaa50a8b5cdb49065
         name: alpha-backend-cms-ms-v1-container
         ports:
         - containerPort: 3003
@@ -232,6 +246,94 @@ spec:
           requests:
             cpu: 250m
             ephemeral-storage: 0.5Gi
+            memory: 0.5Gi
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -z alpha-rabbitmq-service 5672; do echo waiting for rabbitmq ;
+          sleep 2; done;
+        image: busybox:1.28
+        name: wait-for-rabbitmq
+        resources:
+          limits:
+            cpu: 250m
+            ephemeral-storage: .5Gi
+            memory: 0.5Gi
+          requests:
+            cpu: 250m
+            ephemeral-storage: .5Gi
+            memory: 0.5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: alpha-backend-health-ms-v1-deployment
+  name: alpha-backend-health-ms-v1-deployment
+  namespace: alpha
+spec:
+  selector:
+    matchLabels:
+      app: alpha-backend-health-ms-v1-deployment
+  template:
+    metadata:
+      labels:
+        app: alpha-backend-health-ms-v1-deployment
+    spec:
+      containers:
+      - env:
+        - name: NODE_ENV
+          value: local
+        - name: PORT
+          value: "3004"
+        - name: APP_NAME
+          value: alpha-health-ms-v1
+        - name: APP_API_PREFIX
+          value: /api/health-ms/v1
+        - name: APP_DEBUG
+          value: "true"
+        - name: JWT_SECRET
+          value: secret
+        - name: JWT_EXPIRES_IN
+          value: 1d
+        - name: HEALTH_SERVICE_BASE_URL
+          value: http://alpha-backend-user-ms-v1-service:3001
+        - name: HEALTH_SERVICE_API_PREFIX
+          value: /api/v1/health
+        - name: DB_HOST
+          value: alpha-postgressql.postgres.database.azure.com
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_USER
+          value: alphaadmin
+        - name: DB_PASSWORD
+          value: alphaadminpasswd543
+        - name: DB_NAME
+          value: alpha_database
+        - name: RABBITMQ_HOST
+          value: alpha-rabbitmq-service
+        - name: RABBITMQ_PORT
+          value: "5672"
+        - name: RABBITMQ_USERNAME
+          value: guest
+        - name: RABBITMQ_PASSWORD
+          value: guest
+        - name: RABBITMQ_QUEUE
+          value: alpha-message
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:1e473fb5648c2329a9c2ef5ae3522543eb0c114ee2d04090f18b87ad7fad5bc4
+        imagePullPolicy: IfNotPresent
+        name: alpha-backend-health-ms-v1-container
+        ports:
+        - containerPort: 3004
+        resources:
+          limits:
+            cpu: 150m
+            ephemeral-storage: .5Gi
+            memory: 0.5Gi
+          requests:
+            cpu: 150m
+            ephemeral-storage: .5Gi
             memory: 0.5Gi
       initContainers:
       - command:
@@ -313,7 +415,7 @@ spec:
           value: admin@astercircular.co
         - name: SENDGRID_FROM_EMAIL
           value: Aster Admin
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:c8f79a1ec681fd0dce88701d34c479d4cab1f91c94346507550f388b137ddef9
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:0b3ffa9a8075225643bb361452d10f615442a89c3469a589ce3dfef31afa02fa
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -401,7 +503,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: alpha-message
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:78435d5323568bb5f69f1b98f236adc54c71544ffc6ede5e17338942d254d8b3
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:3d36e2c1d1e95043a5c546332df66f79628c9699f191f2364b592c9e95aabd6f
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
