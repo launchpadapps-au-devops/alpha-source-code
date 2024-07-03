@@ -103,6 +103,18 @@ export class AuthService {
         );
     }
 
+    async confirmForgotPasswordOtp(payload: { email: string; otp: number }, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.userApiUrl}${this.userApiPrefix}/auth/password/otp/verify`,
+            'POST',
+            payload,
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
     async resetPassword(payload: { email: string; otp: string; password: string }, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/password/reset`,

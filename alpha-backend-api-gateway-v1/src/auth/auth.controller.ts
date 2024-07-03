@@ -148,14 +148,14 @@ export class AuthController {
         },
         message: {
           type: 'string',
-          example: 'Token refreshed successfully',
+          example: 'Login successful',
         },
         data: {
           type: 'object',
-          example: {
+          properties: {
             accessToken: {
               type: 'string',
-              example: 'accessToken',
+              example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ',
             },
             accessTokenExpiresAt: {
               type: 'string',
@@ -163,13 +163,13 @@ export class AuthController {
             },
             refreshToken: {
               type: 'string',
-              example: 'refreshToken'
+              example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ',
             },
             refreshTokenExpiresAt: {
               type: 'string',
               example: '2021-08-25T06:58:42.000Z',
-            }
-          }
+            },
+          },
         },
         meta: {
           type: 'object',
@@ -292,6 +292,73 @@ export class AuthController {
     }
   }
 
+
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          example: 'abc@example.com',
+        },
+        otp: {
+          type: 'number',
+          example: 1234,
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: {
+          type: 'number',
+          example: 200,
+        },
+        message: {
+          type: 'string',
+          example: 'Login successful',
+        },
+        data: {
+          type: 'object',
+          properties: {
+            accessToken: {
+              type: 'string',
+              example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ',
+            },
+            accessTokenExpiresAt: {
+              type: 'string',
+              example: '2021-08-25T06:58:42.000Z',
+            },
+            refreshToken: {
+              type: 'string',
+              example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ',
+            },
+            refreshTokenExpiresAt: {
+              type: 'string',
+              example: '2021-08-25T06:58:42.000Z',
+            },
+          },
+        },
+        meta: {
+          type: 'object',
+        }
+      },
+    }
+  })
+  @Post('/password/otp/verify')
+  async confirmForgotPasswordOtp(
+    @Request() req,
+    @Body() payload: {
+      email: string;
+      otp: number;
+    }
+  ) {
+    return this.authService.confirmForgotPasswordOtp(payload, req.user);
+  }
+
+  @ApiExcludeEndpoint()
   @ApiBody({
     schema: {
       type: 'object',
