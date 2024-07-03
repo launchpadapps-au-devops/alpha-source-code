@@ -8,4 +8,5 @@ resources:
   - alpha-backend-user-ms-v1.yaml
   - alpha-backend-notification-ms-v1.yaml
   - alpha-backend-cms-ms-v1.yaml
+  - alpha-backend-health-ms-v1.yaml
   - alpha-rabbitmq.yaml

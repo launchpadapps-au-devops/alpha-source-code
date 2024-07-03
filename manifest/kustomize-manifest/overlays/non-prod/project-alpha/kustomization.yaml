@@ -11,4 +11,5 @@ patches:
   - path: alpha-backend-notification-ms-v1.yaml
   - path: alpha-backend-user-ms-v1.yaml
   - path: alpha-backend-cms-ms-v1.yaml
+  - path: alpha-backend-health-ms-v1.yaml
   - path: alpha-rabbitmq.yaml
