@@ -92,6 +92,21 @@ export class AuthController {
     }
   }
 
+  @Post('/password/otp/verify')
+  async confirmForgotPasswordOtp(
+    @Headers('x-request-userId') reqUserId: string,
+    @Body() payload: {
+      email: string,
+      otp: number,
+    },
+  ) {
+    const data = await this.authService.confirmForgotPasswordOtp(payload);
+    return {
+      message: 'OTP verified successfully',
+      data
+    }
+  }
+
   @Put('/password/reset')
   async resetPassword(
     @Headers('x-request-userId') reqUserId: string,

@@ -22,20 +22,10 @@ export class AuthService {
         return null;
     }
 
-    async login(
-        email: string,
-        password: string,
-        platform: string,
-        deviceInfo: string,
-        ipAddress: string,
-    ) {
-        const user = await this.validateUser(email, password);
-        if(!user) {
-            throw new UnauthorizedException('Invalid email or password');
-        }
-
-        if(user.platform !== platform) {
-            throw new UnauthorizedException('Invalid platform');
+    async getTokens(userId: string, deviceInfo?: string, ipAddress?: string) {
+        const user = await userService.findUserById(userId);
+        if (!user) {
+            throw new UnauthorizedException('Invalid user');
         }
 
         const accessToken = this.jwtService.sign({
@@ -64,13 +54,33 @@ export class AuthService {
             userId: user.id,
             accessToken,
             refreshToken,
-            deviceInfo,
-            ipAddress,
-            accessTokenExpiresAt: accessTokenExpiresAt,
-            refreshTokenExpiresAt: refreshTokenExpiresAt,
+            deviceInfo: deviceInfo,
+            ipAddress: ipAddress,
+            accessTokenExpiresAt,
+            refreshTokenExpiresAt,
         });
 
         return { accessToken, accessTokenExpiresAt, refreshToken, refreshTokenExpiresAt };
+    }
+
+
+    async login(
+        email: string,
+        password: string,
+        platform: string,
+        deviceInfo: string,
+        ipAddress: string,
+    ) {
+        const user = await this.validateUser(email, password);
+        if(!user) {
+            throw new UnauthorizedException('Invalid email or password');
+        }
+
+        if(user.platform !== platform) {
+            throw new UnauthorizedException('Invalid platform');
+        }
+
+       return this.getTokens(user.id, deviceInfo, ipAddress);
     }
 
     async logout(userId: string) {
@@ -88,39 +98,7 @@ export class AuthService {
             throw new UnauthorizedException('Invalid user');
         }
 
-        const accessToken = this.jwtService.sign({
-            email: user.email,
-            userType: user.userType,
-            platform: user.platform,
-            role: user.role,
-            permission: user.permission,
-            sub: user.id,
-        }, { expiresIn: '1h' });
-
-        const newRefreshToken = this.jwtService.sign({
-            email: user.email,
-            userType: user.userType,
-            platform: user.platform,
-            role: user.role,
-            permission: user.permission,
-            sub: user.id,
-        }, { expiresIn: '7d' });
-
-        
-        const accessTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
-        const refreshTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-        await sessionService.createSession({
-            userId: user.id,
-            accessToken,
-            refreshToken: newRefreshToken,
-            deviceInfo: session.deviceInfo,
-            ipAddress: session.ipAddress,
-            accessTokenExpiresAt: new Date(Date.now() + 60 * 60 * 1000),
-            refreshTokenExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        });
-
-        return { accessToken, accessTokenExpiresAt,  refreshToken: newRefreshToken, refreshTokenExpiresAt};
+        return this.getTokens(user.id, session.deviceInfo, session.ipAddress);
     }
 
     async changePassword(payload: { userId: string, password: string }, reqUser = { userId: null }) {
@@ -143,6 +121,19 @@ export class AuthService {
             otp,
             otpExpiresAt,
         };
+    }
+
+    async confirmForgotPasswordOtp(payload: { email: string, otp: number }) {
+        const user = await userService.findUserBy('email', payload.email);
+        if (!user) {
+            throw new UnauthorizedException('Invalid email');
+        }
+
+        if (!user.validateForgotPasswordOtp(payload.otp.toString())) {
+            throw new UnauthorizedException('Invalid OTP');
+        }
+
+       return this.getTokens(user.id);
     }
 
     async resetPassword(payload: { email: string, otp: number, password: string }, reqUser = { userId: null }) {
