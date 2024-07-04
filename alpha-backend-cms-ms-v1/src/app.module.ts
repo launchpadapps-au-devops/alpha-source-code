@@ -7,6 +7,7 @@ import { BaseHttpService } from './common/base-http.service';
 import { MessagingService } from './common/messaging.service';
 import { EnvConfigService } from './common/config/envConfig.service';
 import { PolicyModule } from './policy/policy.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { PolicyModule } from './policy/policy.module';
       isGlobal: true,
       envFilePath: '.env',
     }), 
-    PolicyModule,
+    PolicyModule, CategoryModule,
   ],
   controllers: [AppController],
   providers: [
