@@ -6,7 +6,6 @@ import { AppService } from './app.service';
 import { BaseHttpService } from './common/base-http.service';
 import { MessagingService } from './common/messaging.service';
 import { EnvConfigService } from './common/config/envConfig.service';
-import { PolicyModule } from './policy/policy.module';
 import { HealthDataModule } from './health-data/health-data.module';
 
 @Module({
@@ -16,7 +15,7 @@ import { HealthDataModule } from './health-data/health-data.module';
       isGlobal: true,
       envFilePath: '.env',
     }), 
-    PolicyModule, HealthDataModule,
+    HealthDataModule,
   ],
   controllers: [AppController],
   providers: [
