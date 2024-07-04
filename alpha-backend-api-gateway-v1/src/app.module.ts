@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { PolicyModule } from './policy/policy.module';
 import { HealthDataService } from './health-data/health-data.service';
 import { HealthDataModule } from './health-data/health-data.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { HealthDataModule } from './health-data/health-data.module';
       envFilePath: '.env',
     }), 
     PatientModule, 
-    NotificationModule, AuthModule, PolicyModule, HealthDataModule,
+    NotificationModule, AuthModule, PolicyModule, HealthDataModule, CategoryModule,
   ],
   controllers: [AppController],
   providers: [

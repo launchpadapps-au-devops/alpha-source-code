@@ -87,6 +87,28 @@ export class PatientController {
         );
     }
 
+    @ApiResponse({
+        status: 200,
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'Your profile fetched successfully' },
+                data: { $ref: getSchemaPath(PatientResponseDto) },
+                meta: { type: 'object' },
+            },
+            required: ['statusCode', 'data'],
+        },
+    })
+    @UseGuards(JwtAuthGuard)
+    @Roles('patient')
+    @Get('/my-profile/')
+    async getPatientOwnProfile(
+        @Request() req,
+    ): Promise<object> {
+        return await this.patientService.getPatientUserProfile(req.user.userId, req.user);
+    }
+
     @ApiParam({
         name: 'id',
         type: 'string',
@@ -106,7 +128,6 @@ export class PatientController {
             required: ['statusCode', 'data'],
         },
     })
-
     @Get('/:id')
     async getPatientUserProfile(
         @Request() req,
@@ -179,7 +200,7 @@ export class PatientController {
         @Request() req,
         @Param('id') id: string
     ): Promise<object> {
-        const tempPassword = Math.random().toString(36).slice(-8);
+        const tempPassword = generatePassword();
         await this.patientService.updatePatientUserProfile(id, { password: tempPassword }, req.user);
         const { data } = await this.patientService.getPatientUserProfile(id, req.user);
         await this.messageService.publishToNotification(
@@ -241,4 +262,33 @@ export class PatientController {
     ): Promise<object> {
         return this.patientService.acceptTerms(req.user.userId, policyType, termsVersion, req.user);
     }
+}
+
+function generatePassword(length = 12) {
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const digits = '0123456789';
+    const specialChars = '!@#$%^&*()_+[]{}|;:,.<>?';
+
+    const allChars = lowercase + uppercase + digits + specialChars;
+
+    let password = '';
+    password += lowercase[Math.floor(Math.random() * lowercase.length)];
+    password += uppercase[Math.floor(Math.random() * uppercase.length)];
+    password += digits[Math.floor(Math.random() * digits.length)];
+    password += specialChars[Math.floor(Math.random() * specialChars.length)];
+
+    // Fill the rest of the password length with a random mix of all character types
+    for (let i = password.length; i < length; i++) {
+        password += allChars[Math.floor(Math.random() * allChars.length)];
+    }
+
+    password = password.split('').sort(() => Math.random() - 0.5).join('');
+
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).+$/;
+    if (!regex.test(password)) {
+        return generatePassword(length);
+    }
+
+    return password;
 }

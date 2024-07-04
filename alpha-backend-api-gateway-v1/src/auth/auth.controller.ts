@@ -4,9 +4,8 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 import { Roles } from './roles.decorator';
 import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiHeader, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { notificationService } from '@launchpadapps-au/alpha-shared';
 import { MessagingService } from 'src/common/messaging.service';
-import { access } from 'fs';
+import { PasswordDto } from 'src/common/dto/password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -225,7 +224,7 @@ export class AuthController {
   async changePassword(
     @Request() req,
     @Body() payload: {
-    password: string;
+    password: PasswordDto;
   }) {
     return this.authService.changePassword(req.user.userId, payload);
   }
@@ -405,7 +404,7 @@ export class AuthController {
     @Body() payload: {
       email: string;
       otp: string;
-      password: string;
+      password: PasswordDto;
     }
   ) {
     return this.authService.resetPassword(payload);

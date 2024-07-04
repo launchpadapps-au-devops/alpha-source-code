@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseHttpService } from 'src/common/base-http.service';
 import { EnvConfigService } from 'src/common/config/envConfig.service';
+import { PasswordDto } from 'src/common/dto/password.dto';
 
 @Injectable()
 export class AuthService {
@@ -76,7 +77,7 @@ export class AuthService {
         );
     }
 
-    async changePassword(userId: string, payload: { password: string }, reqUser = { userId: null }) {
+    async changePassword(userId: string, payload: { password: PasswordDto }, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/password`,
             'POST',
@@ -115,7 +116,7 @@ export class AuthService {
         );
     }
 
-    async resetPassword(payload: { email: string; otp: string; password: string }, reqUser = { userId: null }) {
+    async resetPassword(payload: { email: string; otp: string; password: PasswordDto }, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.userApiUrl}${this.userApiPrefix}/auth/password/reset`,
             'PUT',

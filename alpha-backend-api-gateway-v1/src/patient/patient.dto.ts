@@ -85,6 +85,22 @@ export class CreatePatientDetailsDto {
     @IsEnum(['alpha-admin-web', 'alpha-patient-mobile'])
     platform: string = 'alpha-patient-mobile';
 
+    @ApiProperty({ example: 1 })
+    @IsNumber()
+    @IsOptional()
+    termsVersion: number = 1;
+
+    @ApiProperty({ example: 1 })
+    @IsNumber()
+    @IsOptional()
+    dataConsentVersion: number = 1;
+
+
+    @ApiProperty({ example: true })
+    @IsBoolean()
+    @IsOptional()
+    isOnboardingHealthQuestionariesCompleted?: boolean;
+
     @ApiProperty({ enum: ['patient'], example: 'patient' })
     @IsString()
     @IsEnum(['patient'])
