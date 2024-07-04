@@ -45,7 +45,7 @@ spec:
           - name: RABBITMQ_PASSWORD
             value: "guest"
           - name: RABBITMQ_QUEUE
-            value: "alpha-message"
+            value: "notification_queue"
           - name: SENDGRID_API_KEY
             value: "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"
           - name: SENDGRID_FROM_NAME

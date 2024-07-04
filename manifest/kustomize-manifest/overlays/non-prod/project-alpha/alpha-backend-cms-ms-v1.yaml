@@ -45,4 +45,4 @@ spec:
           - name: RABBITMQ_PASSWORD
             value: "guest"
           - name: RABBITMQ_QUEUE
-            value: "user_queue"
+            value: "cms_queue"

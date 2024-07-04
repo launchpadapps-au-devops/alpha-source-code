@@ -45,4 +45,4 @@ spec:
             - name: RABBITMQ_PASSWORD
               value: "guest"
             - name: RABBITMQ_QUEUE
-              value: "alpha-message"
+              value: "health_queue"
