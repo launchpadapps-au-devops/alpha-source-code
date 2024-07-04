@@ -3,6 +3,7 @@ import { notificationService } from "./notification.service";
 import { sessionService } from './session.service';
 import { policyService } from "./policy.service";
 import { healthProfileQuestionariesService  } from "./HealthProfileQuestionaries.service"
+import { categoryService } from "./category.service";
 
 // Export all services
 export { 
@@ -10,5 +11,6 @@ export {
   notificationService,
   sessionService,
   policyService,
-  healthProfileQuestionariesService
+  healthProfileQuestionariesService,
+  categoryService
 };

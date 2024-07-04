@@ -58,20 +58,26 @@ class UserService implements IUserService {
     page?: number
   }> {
 
-    const queryBuilder = UserService.userRepository.createQueryBuilder('users');
-    PaginationUtil.applyFilters(queryBuilder, filters);
-
-    const totalRecords = await queryBuilder.getCount();
-
-    PaginationUtil.sort(queryBuilder, sortOptions);
-    PaginationUtil.paginate(queryBuilder, pagination);
+    const { searchText, ...restFilters } = filters;
+    const [data, totalRecords] = await UserService.userRepository.findAndCount({
+      relations: UserService.relations,
+      where: {
+        ...(searchText ? { email: Any([searchText, searchText.toLowerCase()]) } : {}),
+        ...restFilters
+      },
+      order: {
+        [sortOptions.sortField]: sortOptions.sortOrder
+      },
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit
+    });
 
     return {
-      data: await queryBuilder.getMany(),
+      data,
       totalRecords,
       limit: pagination.limit,
       page: pagination.page
-    }
+    };
   }
 
   async updateUser(id: string, data: Partial<User>): Promise<User> {

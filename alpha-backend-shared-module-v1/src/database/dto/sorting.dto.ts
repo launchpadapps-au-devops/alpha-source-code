@@ -1,4 +1,6 @@
-export class SortingDto {
+export declare class SortingDto {
   sortField?: string;
-  sortOrder?: 'ASC' | 'DESC';
+  sortOrder?: SortOrderType;
 }
+
+export type SortOrderType = 'ASC' | 'DESC';

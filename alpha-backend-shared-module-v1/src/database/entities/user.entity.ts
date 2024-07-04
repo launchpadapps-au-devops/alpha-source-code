@@ -172,6 +172,9 @@ export class User {
   @Column({ type: 'int', nullable: true })
   dataConsentVersion: number;
 
+  @Column({ type: 'boolean', nullable: true })
+  isOnboardingHealthQuestionariesCompleted: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

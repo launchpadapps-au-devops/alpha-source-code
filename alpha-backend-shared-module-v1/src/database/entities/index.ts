@@ -5,6 +5,8 @@ import { Session } from "./session.entity";
 import { Policy } from "./policy.entity";
 import { HealthProfileQuestionaries } from "./HealthProfileQuestionaries.entity";
 
+import { Category } from "./category.entity";
+
 
 // Export all entities
 export { 
@@ -16,5 +18,7 @@ export {
   Session,
   Policy,
 
-  HealthProfileQuestionaries
+  HealthProfileQuestionaries,
+
+  Category
 };
