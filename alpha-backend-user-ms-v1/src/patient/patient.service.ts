@@ -33,7 +33,10 @@ export class PatientService {
             platform: patient.platform,
             userType: patient.userType,
             isPasswordSet: patient.isPasswordSet,
-            isPasswordLinkSent: !!patient.password
+            isPasswordLinkSent: !!patient.password,
+            termsVersion: patient.termsVersion, 
+            dataConsentVersion: patient.dataConsentVersion,
+            isOnboardingHealthQuestionariesCompleted: patient.isOnboardingHealthQuestionariesCompleted,
         }
     }
 
