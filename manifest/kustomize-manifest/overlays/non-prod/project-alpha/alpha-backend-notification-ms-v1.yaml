@@ -49,6 +49,6 @@ spec:
           - name: SENDGRID_API_KEY
             value: "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"
           - name: SENDGRID_FROM_NAME
-            value: "admin@astercircular.co"
-          - name: SENDGRID_FROM_EMAIL
             value: "Aster Admin"
+          - name: SENDGRID_FROM_EMAIL
+            value: "admin@astercircular.co"
