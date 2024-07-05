@@ -33,7 +33,7 @@ spec:
           - name: CMS_SERVICE_BASE_URL
             value: "http://alpha-backend-cms-ms-v1-service:3003"
           - name: CMS_SERVICE_API_PREFIX
-            value: "/api/cms-ms/v1"
+            value: "/api/content-ms/v1"
           - name: DB_HOST
             value: "alpha-postgressql.postgres.database.azure.com"
           - name: DB_PORT
