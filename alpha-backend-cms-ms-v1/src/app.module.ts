@@ -8,6 +8,7 @@ import { MessagingService } from './common/messaging.service';
 import { EnvConfigService } from './common/config/envConfig.service';
 import { PolicyModule } from './policy/policy.module';
 import { CategoryModule } from './category/category.module';
+import { ThemeModule } from './theme/theme.module';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { CategoryModule } from './category/category.module';
       isGlobal: true,
       envFilePath: '.env',
     }), 
-    PolicyModule, CategoryModule,
+    PolicyModule, CategoryModule, ThemeModule,
   ],
   controllers: [AppController],
   providers: [
