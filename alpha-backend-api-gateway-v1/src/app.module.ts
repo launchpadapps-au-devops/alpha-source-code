@@ -13,6 +13,7 @@ import { PolicyModule } from './policy/policy.module';
 import { HealthDataService } from './health-data/health-data.service';
 import { HealthDataModule } from './health-data/health-data.module';
 import { CategoryModule } from './category/category.module';
+import { ThemeModule } from './theme/theme.module';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { CategoryModule } from './category/category.module';
       envFilePath: '.env',
     }), 
     PatientModule, 
-    NotificationModule, AuthModule, PolicyModule, HealthDataModule, CategoryModule,
+    NotificationModule, AuthModule, PolicyModule, HealthDataModule, CategoryModule, ThemeModule,
   ],
   controllers: [AppController],
   providers: [
