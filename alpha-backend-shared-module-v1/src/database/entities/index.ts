@@ -6,7 +6,7 @@ import { Policy } from "./policy.entity";
 import { HealthProfileQuestionaries } from "./HealthProfileQuestionaries.entity";
 
 import { Category } from "./category.entity";
-
+import { Theme } from "./theme.entity";
 
 // Export all entities
 export { 
@@ -20,5 +20,6 @@ export {
 
   HealthProfileQuestionaries,
 
-  Category
+  Category,
+  Theme
 };

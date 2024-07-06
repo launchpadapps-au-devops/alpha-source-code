@@ -3,11 +3,14 @@ import { Lesson } from './lesson.entity';
 import { User } from './user.entity';
 import { Theme } from './theme.entity';
 
-@Entity('categories')
-export class Category {
+@Entity('habits')
+export class Habit {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  themeId: number;
+  
   @Column()
   name: string;
 
@@ -40,9 +43,7 @@ export class Category {
   @JoinColumn({ name: 'updatedBy' })
   updatedBy: User;
 
-  @OneToMany(() => Theme, theme => theme.category)
-  themes: Theme[];
-
-  @OneToMany(() => Lesson, lesson => lesson.category)
-  lessons: Lesson[];
+  @ManyToOne(() => Theme, { nullable: true })
+  @JoinColumn({ name: 'themeId' })
+  theme: Theme;  
 }

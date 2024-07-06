@@ -166,13 +166,13 @@ export class User {
   @ManyToOne(() => Permission, (permission) => permission.users)
   permission: Permission;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'int', nullable: true, default: null})
   termsVersion: number;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'int', nullable: true, default: null })
   dataConsentVersion: number;
 
-  @Column({ type: 'boolean', nullable: true })
+  @Column({ type: 'boolean', nullable: true, default: false })
   isOnboardingHealthQuestionariesCompleted: boolean;
 
   @CreateDateColumn()
