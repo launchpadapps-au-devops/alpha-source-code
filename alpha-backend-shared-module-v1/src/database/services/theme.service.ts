@@ -45,6 +45,7 @@ class ThemeService implements IThemeService {
         internalNotes: true,
         name: true,
         description: true,
+        propertyTags: [],
         createdAt: true,
         updatedAt: true,
         category: {
@@ -57,7 +58,7 @@ class ThemeService implements IThemeService {
         },
         lessons: {
           id: true,
-          lessonName: true,
+          name: true,
         }
       }
     });
@@ -89,6 +90,7 @@ class ThemeService implements IThemeService {
         internalNotes: true,
         name: true,
         description: true,
+        propertyTags: [],
         createdAt: true,
         updatedAt: true,
         category: {
@@ -101,7 +103,7 @@ class ThemeService implements IThemeService {
         },
         lessons: {
           id: true,
-          lessonName: true,
+          name: true,
         }
       },
       order: {

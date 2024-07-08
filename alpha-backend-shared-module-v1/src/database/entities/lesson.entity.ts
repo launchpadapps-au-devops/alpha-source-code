@@ -2,57 +2,43 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDat
 import { User } from './user.entity';
 import { Theme } from './theme.entity';
 import { Category } from './category.entity';
-// import { Screen } from './screen.entity';
-// import { Quiz } from './quiz.entity';
 
 @Entity()
 export class Lesson {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ unique: true })
-    lessonCode: string;
+    @Column({ type: 'float', nullable: true })
+    lessonCode: number;
 
-    @Column()
+    @Column({ nullable: true })
     themeId: number;
 
     @ManyToOne(() => Theme, theme => theme.lessons)
     @JoinColumn({ name: 'themeId' })
     theme: Theme;
 
-    @Column()
+    @Column({ nullable: true })
     categoryId: number;
 
     @ManyToOne(() => Category, category => category.lessons, { nullable: true })
     @JoinColumn({ name: 'categoryId' })
     category: Category;
 
-    @Column()
-    lessonDuration: string;
+    @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVED'], default: 'ACTIVE' })
+    status: string;
 
-    @Column()
-    pointsAllocation: number;
+    @Column({ type: 'boolean', default: false })
+    isPublished: boolean;
 
-    @Column('simple-array', { nullable: true })
-    lessonTags: string[];
+    @Column({ type: 'float', nullable: true })
+    duration: number;
 
-    @Column('simple-array', { nullable: true })
-    gender: string[];
+    @Column({ type: 'float', nullable: true })
+    points: number;
 
-    @Column('simple-array', { nullable: true })
-    culturalBackground: string[];
-
-    @Column('simple-array', { nullable: true })
-    livingSituation: string[];
-
-    @Column('simple-array', { nullable: true })
-    foodIntolerances: string[];
-
-    @Column('simple-array', { nullable: true })
-    lifestyle: string[];
-
-    @Column('simple-array', { nullable: true })
-    physicalLimitation: string[];
+    @Column('jsonb', { nullable: true })
+    lessonTags: object;
 
     @Column({ nullable: true })
     internalNotes: string;
@@ -61,10 +47,16 @@ export class Lesson {
     coverImage: string;
 
     @Column()
-    lessonName: string;
+    name: string;
 
-    @Column()
-    lessonDescription: string;
+    @Column({ nullable: true })
+    description: string;
+
+    @Column({ type: 'jsonb', nullable: true })
+    screenData: object;
+
+    @Column({ type: 'jsonb', nullable: true })
+    quizData: object;
 
     @CreateDateColumn()
     createdAt: Date;
@@ -79,10 +71,4 @@ export class Lesson {
     @ManyToOne(() => User, { nullable: true })
     @JoinColumn({ name: 'updatedBy' })
     updatedBy: User;
-
-    //   @OneToMany(() => Screen, screen => screen.lesson)
-    //   screens: Screen[];
-
-    //   @ManyToOne(() => Quiz, quiz => quiz.lesson, { nullable: true })
-    //   quiz: Quiz;
 }

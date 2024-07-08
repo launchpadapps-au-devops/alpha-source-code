@@ -5,6 +5,7 @@ import { policyService } from "./policy.service";
 import { healthProfileQuestionariesService  } from "./HealthProfileQuestionaries.service"
 import { categoryService } from "./category.service";
 import { themeService } from "./theme.service";
+import { lessonService } from "./lesson.service";
 
 // Export all services
 export { 
@@ -14,5 +15,6 @@ export {
   policyService,
   healthProfileQuestionariesService,
   categoryService,
-  themeService
+  themeService,
+  lessonService
 };
