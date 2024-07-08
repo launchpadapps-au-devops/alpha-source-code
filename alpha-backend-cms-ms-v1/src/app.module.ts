@@ -9,6 +9,7 @@ import { EnvConfigService } from './common/config/envConfig.service';
 import { PolicyModule } from './policy/policy.module';
 import { CategoryModule } from './category/category.module';
 import { ThemeModule } from './theme/theme.module';
+import { LessonModule } from './lesson/lesson.module';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { ThemeModule } from './theme/theme.module';
       isGlobal: true,
       envFilePath: '.env',
     }), 
-    PolicyModule, CategoryModule, ThemeModule,
+    PolicyModule, CategoryModule, ThemeModule, LessonModule,
   ],
   controllers: [AppController],
   providers: [
