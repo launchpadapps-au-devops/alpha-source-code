@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Theme, themeService, GenericFilterDto, PaginationDto, SortingDto, SortOrderType } from '@launchpadapps-au/alpha-shared';
 
 @Injectable()
@@ -31,7 +31,12 @@ export class ThemeService {
     }
     
     async findThemeById(id: number): Promise<Theme> {
-        return themeService.findThemeById(id);
+        const theme = await themeService.findThemeById(id);
+        if(!theme) {
+            throw new NotFoundException(`Theme with id ${id} not found`);
+        }
+
+        return theme;
     }
     
     async findAllThemes(

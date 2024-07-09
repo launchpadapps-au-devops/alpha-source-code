@@ -3,7 +3,7 @@ import { Theme } from '@launchpadapps-au/alpha-shared';
 import { SortOrderType } from '@launchpadapps-au/alpha-shared';
 import { ThemeService } from './theme.service';
 
-@Controller('theme')
+@Controller('/theme')
 export class ThemeController {
     constructor(
         private readonly themeService: ThemeService

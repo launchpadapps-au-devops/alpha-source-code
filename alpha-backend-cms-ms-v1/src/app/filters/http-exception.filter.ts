@@ -15,14 +15,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       exceptionData = exception.getResponse() as string | object;
-      if (Array.isArray(exceptionData.message)) {
+      if (Array.isArray(exceptionData?.message || exceptionData?.error?.message || exceptionData)) {
         errorMessage = exceptionData.message.join(', ');
       } else {
         errorMessage = exceptionData.message || exceptionData.error.message || exceptionData.error || exceptionData.message || 'Internal service error';
       }
       status = exception.getStatus();
     } else if (exception instanceof Error && exception.name === 'QueryFailedError') {
-      errorMessage = 'Database error';
+      errorMessage = exception.message ?? 'Database error';
       status = HttpStatus.BAD_REQUEST;
 
       // Check if it's a unique constraint violation

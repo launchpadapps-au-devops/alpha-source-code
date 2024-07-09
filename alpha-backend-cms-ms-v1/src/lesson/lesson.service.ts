@@ -33,6 +33,9 @@ export class LessonService {
         return lessonService.findLessonById(id);
     }
 
+    async findLessonByIds(ids: number[]): Promise<Lesson[]> {
+        return lessonService.findLessonByIds(ids);
+    }
     async findAllLessons(
         pagination: PaginationDto = { page: 1, limit: 10 },
         sorting: SortingDto = { sortField: 'updatedAt', sortOrder: 'DESC' as SortOrderType },

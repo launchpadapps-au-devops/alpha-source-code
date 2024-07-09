@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Headers, Param, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post, Put, Query, Request } from '@nestjs/common';
 import { SortOrderType } from '@launchpadapps-au/alpha-shared';
 import { LessonService } from './lesson.service';
 import { Lesson } from '@launchpadapps-au/alpha-shared';
 
-@Controller('lesson')
+@Controller('/lesson')
 export class LessonController {
     constructor(
         private readonly lessonService: LessonService
@@ -34,6 +34,18 @@ export class LessonController {
             data: {
                 ids: lessons.map(c => c.id).join(','),
             },
+        }
+    }
+
+
+    @Get('/bulk')
+    async findLessonByIds(
+        @Query('lessonIds') lessonIds: string
+    ) {
+        const lessons = await this.lessonService.findLessonByIds(lessonIds.split(',').map(Number));
+        return {
+            message: `${lessons.length} lessons fetched successfully`,
+            data: lessons,
         }
     }
 
