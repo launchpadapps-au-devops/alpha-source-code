@@ -13,12 +13,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
         let status;
         if (exception instanceof HttpException) {
           exceptionData = exception.getResponse() as string | object;
-          if (Array.isArray(exceptionData.message)) {
+          if (Array.isArray(exceptionData?.message)) {
             errorMessage = exceptionData.message.join(', ');
           } else {
-            errorMessage = exceptionData.message || exceptionData.error?.message || exceptionData.error || exceptionData.message || 'Internal service error';
+            errorMessage = exceptionData?.message || exceptionData?.error?.message || exceptionData?.error || exceptionData?.message || 'Internal service error';
           }
-          status = exceptionData.statusCode;
+          status = exceptionData?.statusCode || 500;
         } // TypeORM error handling
         else if (exception instanceof Error && exception.name === 'QueryFailedError') {
           errorMessage = exception.message;

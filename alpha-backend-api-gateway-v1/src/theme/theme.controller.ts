@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Headers, Param, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Get, Headers, NotFoundException, Param, Post, Put, Request } from '@nestjs/common';
 import { Theme } from '@launchpadapps-au/alpha-shared';
 import { ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { CreateThemeDto, UpdateThemeDto, ThemeResponseDto } from './theme.dto';
 import { ThemeService } from './theme.service';
+import { LessonService } from 'src/lesson/lesson.service';
 
 @ApiTags('Theme')
 @ApiExtraModels(CreateThemeDto, UpdateThemeDto)
@@ -10,6 +11,7 @@ import { ThemeService } from './theme.service';
 @Controller('theme')
 export class ThemeController {
     constructor(
+        private readonly lessonService: LessonService,
         private readonly themeService: ThemeService
     ) { }
 
@@ -18,8 +20,7 @@ export class ThemeController {
             type: 'object',
             properties: {
                 themeData: { type: 'object', $ref: getSchemaPath(CreateThemeDto) },
-                lessonData: { type: 'array', example: [] },
-                habitData: { type: 'array', example: []},
+                lessonData: { type: 'array', example: [1, 2 ,3] },
             }
         }
     })
@@ -46,11 +47,25 @@ export class ThemeController {
         @Request() req,
         @Body() payload: {
             themeData: CreateThemeDto,
-            lessonData: any [],
-            habitData: any [],
+            lessonData: number [],
         }
     ) {
-        return this.themeService.createTheme(payload.themeData, req.user);
+        const { data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData);
+        if(lessons.length !== payload.lessonData.length) {
+            throw new NotFoundException('Some lessons not found');
+        }
+
+        if(lessons.some((l) => l.themeId)) {
+            throw new NotFoundException('Some lessons already have theme assigned');
+        }
+
+        const theme = await this.themeService.createTheme(payload.themeData, req.user);
+        
+        await this.lessonService.bulkUpdateLesson(
+            lessons?.map(lesson => ({ ...lesson, themeId: theme.data.id })),
+        )
+
+        return theme;
     }
 
     @ApiParam({
@@ -65,7 +80,6 @@ export class ThemeController {
             properties: {
                 themeData: { type: 'object', $ref: getSchemaPath(UpdateThemeDto) },
                 lessonData: { type: 'array', example: [] },
-                habitData: { type: 'array', example: [] },
             }
         }
     })
@@ -93,10 +107,32 @@ export class ThemeController {
         @Param('id') id: number,
         @Body() payload: {
             themeData: Partial<Theme>,
-            lessonData: any[], // implement later
-            habitData: any[], // implement later
+            lessonData: number [],
         }
     ) {
+        const existingTheme = await this.themeService.findThemeById(id);
+
+        const { data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData);
+        if(lessons.length !== payload.lessonData.length) {
+            throw new NotFoundException('Some lessons not found');
+        }
+
+        if(lessons.some((l) => l.themeId && l.themeId !== id)) {
+            throw new NotFoundException('Some lessons already have theme assigned');
+        }
+
+        await this.lessonService.bulkUpdateLesson(
+            lessons.map(lesson => ({ ...lesson, themeId: id })),
+        )
+
+        const lessonIds = lessons.map(l => l.id);
+        const removeLessonIds = existingTheme.data.lessons.filter(l => !lessonIds.includes(l.id)).map((l) => l.id);
+        const { data: lessonsToRemove = [] } = await this.lessonService.findLessonByIds(removeLessonIds);
+
+        await this.lessonService.bulkUpdateLesson(
+            lessonsToRemove.map(lesson => ({ ...lesson, themeId: null })),
+        )
+
         return this.themeService.updateTheme(id, payload.themeData, req.user);
     }
 
@@ -128,6 +164,12 @@ export class ThemeController {
         return this.themeService.findThemeById(id);
     }
 
+    @ApiQuery({
+        name: 'categoryId',
+        type: 'number',
+        required: false,
+        example: 1,
+    })
     @ApiQuery({
         name: 'page',
         type: 'number',

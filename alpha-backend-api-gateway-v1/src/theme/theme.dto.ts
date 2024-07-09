@@ -3,7 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEmail, IsEnum, IsDateString, IsNumber, IsBoolean, IsOptional } from 'class-validator';
 import { User } from '@launchpadapps-au/alpha-shared';
 import { Lesson } from '@launchpadapps-au/alpha-shared/dist/database/entities/lesson.entity';
-import { Habit } from '@launchpadapps-au/alpha-shared/dist/database/entities/habit.entity';
 
 export class CreateThemeDto {
     @ApiProperty({ example: 1 })
@@ -28,7 +27,7 @@ export class CreateThemeDto {
     @IsString()
     name: string;
 
-    @ApiProperty({ example: 'https://sample.com/sample.jpg', required: false})
+    @ApiProperty({ example: 'https://sample.com/sample.jpg', required: false })
     @IsOptional()
     @IsString()
     image?: string;
@@ -41,6 +40,18 @@ export class CreateThemeDto {
     @ApiProperty({ example: [{ 'key': 'value' }], required: false })
     @IsOptional()
     propertyTags?: object;
+    @ApiProperty({
+        example: [{
+            order: 1,
+            name: 'value',
+            timeAllocation: 1,
+            pointAllocation: 1,
+            instructions: 'value',
+            meta: [{ key: 'value' }]
+        }]
+    })
+    @IsOptional()
+    habits: object;
 }
 
 export class UpdateThemeDto extends CreateThemeDto {
@@ -60,13 +71,16 @@ export class ThemeResponseDto extends CreateThemeDto {
     @IsNumber()
     id: number;
 
-    @ApiProperty({ example: { lessons: [Lesson] } })
+    @ApiProperty({
+        example: {
+            lessons: [{
+                id: 1,
+                name: 'value'
+            }]
+        }
+    })
     @Type(() => Lesson)
     lessons: Lesson[];
-
-    @ApiProperty({ example: { habits: [Habit]} })
-    @Type(() => Habit)
-    habits: Habit[];
 
     @ApiProperty({ example: '2021-01-01T00:00:00.000Z' })
     @IsDateString()

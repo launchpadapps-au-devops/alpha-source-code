@@ -69,6 +69,19 @@ export class LessonService {
         );
     }
 
+    async findLessonByIds(ids: number[])
+    {
+        return this.baseHttpService.invoke(
+            `${this.cmsApiUrl}${this.cmsApiPrefix}/lesson/bulk`,
+            'GET',
+            {},
+            {
+                lessonIds: ids.join(',')
+            },
+            {}
+        );
+    }
+
     async findAllLessons(
         pagination: PaginationDto = { page: 1, limit: 10 },
         sorting: SortingDto = { sortField: 'createdAt', sortOrder: 'DESC' }, 

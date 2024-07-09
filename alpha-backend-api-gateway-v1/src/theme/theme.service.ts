@@ -19,7 +19,7 @@ export class ThemeService {
     }
 
     async createTheme(data: Partial<Theme>, reqUser = { userId: null }) {
-        return this.baseHttpService.invoke(
+        return await this.baseHttpService.invoke(
             `${this.cmsApiUrl}${this.cmsApiPrefix}/theme`,
             'POST',
             {
