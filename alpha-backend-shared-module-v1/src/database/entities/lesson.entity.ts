@@ -3,12 +3,12 @@ import { User } from './user.entity';
 import { Theme } from './theme.entity';
 import { Category } from './category.entity';
 
-@Entity()
+@Entity('lessons')
 export class Lesson {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'float', nullable: true })
+    @Column({ type: 'float', nullable: true, unique: true })
     lessonCode: number;
 
     @Column({ nullable: true })

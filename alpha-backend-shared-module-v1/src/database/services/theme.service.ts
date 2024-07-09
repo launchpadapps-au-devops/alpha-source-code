@@ -2,8 +2,9 @@ import { Repository, ILike, FindManyOptions } from "typeorm";
 import { DatabaseModule } from "../index";
 import { IThemeService } from "../interfaces/ITheme.interface";
 import { Theme } from "../entities/theme.entity";
-import { NotFoundException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { GenericFilterDto, PaginationDto, SortOrderType, SortingDto } from "../dto";
+import { lessonService } from "./lesson.service";
 
 class ThemeService implements IThemeService {
   static get themeRepository(): Repository<Theme> {
@@ -26,6 +27,13 @@ class ThemeService implements IThemeService {
       throw new NotFoundException(`Theme with id ${id} not found`);
     }
 
+    if(Object(data).hasOwnProperty('isPublished') && data.isPublished) {
+      const lesson = await lessonService.findLessonByIds(theme.lessons.map(l => l.id));
+      if(lesson.some(l => !l.isPublished)) {
+        throw new BadRequestException('Some lessons are not published');
+      }
+    }
+    
     Object.assign(theme, data);
     await ThemeService.themeRepository.save(theme);
     return theme;
@@ -38,7 +46,7 @@ class ThemeService implements IThemeService {
   async findThemeById(id: number): Promise<Theme> {
     return ThemeService.themeRepository.findOne({
       where: { id },
-      relations: ['category', 'habits', 'lessons'],
+      relations: ['category', 'lessons'],
       select: {
         id: true,
         themeCode: true,
@@ -52,10 +60,7 @@ class ThemeService implements IThemeService {
           id: true,
           name: true,
         },
-        habits: {
-          id: true,
-          name: true,
-        },
+        habits: [],
         lessons: {
           id: true,
           name: true,
@@ -83,7 +88,7 @@ class ThemeService implements IThemeService {
 
     const findOptions: FindManyOptions<Theme> = {
       where,
-      relations: ['category', 'habits', 'lessons'],
+      relations: ['category', 'lessons'],
       select: {
         id: true,
         themeCode: true,
@@ -97,10 +102,7 @@ class ThemeService implements IThemeService {
           id: true,
           name: true,
         },
-        habits: {
-          id: true,
-          name: true,
-        },
+        habits: [],
         lessons: {
           id: true,
           name: true,

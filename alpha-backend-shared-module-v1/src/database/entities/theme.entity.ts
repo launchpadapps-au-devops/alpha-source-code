@@ -2,14 +2,13 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, Up
 import { Lesson } from './lesson.entity';
 import { User } from './user.entity';
 import { Category } from './category.entity';
-import { Habit } from './habit.entity';
 
 @Entity('themes')
 export class Theme {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'int', nullable: true, unique: true})
     themeCode: number;
 
     @Column({ type: 'int', nullable: true })
@@ -43,8 +42,8 @@ export class Theme {
     @OneToMany(() => Lesson, lesson => lesson.theme)
     lessons: Lesson[];
 
-    @OneToMany(() => Habit, habit => habit.theme)
-    habits: Habit[];
+    @Column({ type: 'jsonb', nullable: true })
+    habits: object;
 
     @CreateDateColumn()
     createdAt: Date;

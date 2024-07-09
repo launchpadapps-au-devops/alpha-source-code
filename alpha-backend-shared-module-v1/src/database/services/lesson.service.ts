@@ -22,7 +22,7 @@ class LessonService implements ILessonService {
       where: { id }
     }); 
 
-    if(lesson.themeId !== data.themeId) {
+    if(lesson.themeId && lesson.themeId !== data.themeId) {
       throw new BadRequestException('Lesson is already associated with a theme');
     }
 
@@ -42,17 +42,65 @@ class LessonService implements ILessonService {
 
     for(const l of data) {
       const lesson = lessons.find(lesson => lesson.id === l.id);
-      if(lesson.themeId !== l.themeId) {
+      if(lesson.themeId && (lesson.themeId !== l.themeId)) {
         throw new BadRequestException('Lesson is already associated with a theme');
       }
     }
-    
+
     return LessonService.lessonRepository.save(data);
   }
 
   async findLessonById(id: number): Promise<Lesson> {
     return LessonService.lessonRepository.findOne({
       where: { id },
+      relations: ['theme', 'category', 'createdBy'],
+      select: {
+        id: true,
+        lessonCode: true,
+        themeId: true,
+        categoryId: true,
+        duration: true,
+        points: true,
+        lessonTags: [],
+        theme: {
+          id: true,
+          name: true,
+          category: {
+            id: true,
+            name: true,
+          },
+        },
+        category: {
+          id: true,
+          name: true,
+        },
+        internalNotes: true,
+        coverImage: true,
+        name: true,
+        description: true,
+        screenData: [],
+        quizData: [],
+        createdAt: true,
+        updatedAt: true,
+        createdBy: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+        },
+        updatedBy: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+        },
+      }
+    });
+  }
+
+  async findLessonByIds(ids: number[]): Promise<Lesson[]> {
+    return LessonService.lessonRepository.find({
+      where: { id: In(ids) },
       relations: ['theme', 'category', 'createdBy'],
       select: {
         id: true,
