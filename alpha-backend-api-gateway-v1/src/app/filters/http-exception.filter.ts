@@ -25,7 +25,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
           status = HttpStatus.BAD_REQUEST;
         }
         else if (!exception.response) {
-          errorMessage = 'Internal service error';
+          errorMessage = exception.message || 'Internal service error';
           status = 500;
         } else if (exception.response?.data) {
           exceptionData = exception.response.data as IErrorResponse;
