@@ -1,4 +1,5 @@
 import { userService } from "./user.service";
+import { permissionService } from "./permission.service";
 import { notificationService } from "./notification.service";
 import { sessionService } from './session.service';
 import { policyService } from "./policy.service";
@@ -11,6 +12,7 @@ import { dailyTipsService } from "./dailyTips.service";
 // Export all services
 export { 
   userService, 
+  permissionService,
   notificationService,
   sessionService,
   policyService,

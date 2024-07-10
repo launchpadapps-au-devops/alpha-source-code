@@ -14,6 +14,6 @@ export class UserDto {
     dob?: Date;
     status?: string;
     role: Role;
-    permission: Permission;
+    permissions: Permission [];
 }
 

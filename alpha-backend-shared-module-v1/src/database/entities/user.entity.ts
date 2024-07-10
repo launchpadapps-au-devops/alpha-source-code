@@ -6,17 +6,19 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   BeforeUpdate,
-  OneToMany,
-  ManyToOne,
-  AfterLoad,
+  ManyToMany,
+  JoinTable,
   JoinColumn,
+  ManyToOne,
+  OneToMany,
+  AfterLoad,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Exclude, instanceToPlain } from 'class-transformer';
+import { IsBoolean } from 'class-validator';
 import { Session } from './session.entity';
 import { Role } from './role.entity';
 import { Permission } from './permission.entity';
-import { Exclude, Type, instanceToPlain } from 'class-transformer';
-import { IsBoolean } from 'class-validator';
 import { HealthProfileQuestionaries } from './HealthProfileQuestionaries.entity';
 
 @Entity('users')
@@ -81,7 +83,7 @@ export class User {
     }
     if (
       this.forgotPasswordOtp &&
-      (this.forgotPasswordOtp !== this.previousForgotPasswordOtp)
+      this.forgotPasswordOtp !== this.previousForgotPasswordOtp
     ) {
       this.hashForgotPasswordOtp();
     }
@@ -100,12 +102,17 @@ export class User {
   hashForgotPasswordOtp() {
     if (this.forgotPasswordOtp) {
       this.forgotPasswordOtp = bcrypt.hashSync(this.forgotPasswordOtp, 10);
-      this.forgotPasswordOtpExpiresAt = new Date(new Date().getTime() + 5 * 60000); // Expires in 5 minute
+      this.forgotPasswordOtpExpiresAt = new Date(
+        new Date().getTime() + 5 * 60000,
+      ); // Expires in 5 minute
     }
   }
 
   validateForgotPasswordOtp(inputOtp: string): boolean {
-    if (!this.forgotPasswordOtpExpiresAt || this.forgotPasswordOtpExpiresAt < new Date()) {
+    if (
+      !this.forgotPasswordOtpExpiresAt ||
+      this.forgotPasswordOtpExpiresAt < new Date()
+    ) {
       return false;
     }
     return bcrypt.compareSync(inputOtp, this.forgotPasswordOtp);
@@ -117,11 +124,14 @@ export class User {
     this.previousForgotPasswordOtp = this.forgotPasswordOtp;
   }
 
-  @Column({ type: 'enum', enum: ['Male', 'Female', 'Non Binary'], nullable: true })
+  @Column({
+    type: 'enum',
+    enum: ['Male', 'Female', 'Non Binary'],
+    nullable: true,
+  })
   gender: string;
 
   @Column({ type: 'date', nullable: true })
-  @Type(() => Date)
   dob: Date;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -145,28 +155,58 @@ export class User {
   @Column({ type: 'boolean', default: false })
   patientDetailsEditConsent: boolean;
 
-  @Column({ type: 'enum', enum: ['alpha-admin-web', 'alpha-patient-mobile', null], default: 'alpha-patient-mobile' })
+  @Column({
+    type: 'enum',
+    enum: ['alpha-admin-web', 'alpha-patient-mobile', null],
+    default: 'alpha-patient-mobile',
+  })
   platform: string;
 
-  @Column({ type: 'enum', enum: ['patient', 'admin'], nullable: true })
+  @Column({
+    type: 'enum',
+    enum: ['patient', 'staff', 'admin'],
+    nullable: true,
+  })
   userType: string;
 
-  @Column({ type: 'enum', enum: ['active', 'inactive', 'deleted'], default: 'active' })
+  @Column({
+    type: 'enum',
+    enum: ['active', 'inactive', 'deleted'],
+    default: 'active',
+  })
   status: string;
 
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[];
 
-  @OneToMany(() => HealthProfileQuestionaries, (healthProfile) => healthProfile.user)
+  @OneToMany(
+    () => HealthProfileQuestionaries,
+    (healthProfile) => healthProfile.user,
+  )
   healthProfileQuestionaries: HealthProfileQuestionaries[];
 
+  @Column({ type: 'int', nullable: true })
+  roleId: number;
+
   @ManyToOne(() => Role, (role) => role.users)
+  @JoinColumn({ name: 'roleId' })
   role: Role;
 
-  @ManyToOne(() => Permission, (permission) => permission.users)
-  permission: Permission;
+  @ManyToMany(() => Permission, (permission) => permission.users)
+  @JoinTable({
+    name: 'userPermissions',
+    joinColumn: {
+      name: 'userId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'permissionId',
+      referencedColumnName: 'id',
+    },
+  })
+  permissions: Permission[];
 
-  @Column({ type: 'int', nullable: true, default: null})
+  @Column({ type: 'int', nullable: true, default: null })
   termsVersion: number;
 
   @Column({ type: 'int', nullable: true, default: null })

@@ -1,29 +1,34 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { PERMISSION_NAMES } from "../enum/auth/permission";
-import { Role } from "./role.entity";
-import { User } from "./user.entity";
-
-@Entity('permissions')
-export class Permission {
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    ManyToMany,
+    JoinColumn,
+    ManyToOne,
+  } from 'typeorm';
+  import { User } from './user.entity';
+  
+  @Entity('permissions')
+  export class Permission {
     @PrimaryGeneratedColumn()
     id: number;
-
+  
     @Column({
-        type: 'enum',
-        enum: PERMISSION_NAMES,
-        unique: true
+      type: 'varchar',
+      unique: true,
     })
-    name: PermissionName;
-
-    @OneToMany(() => User, user => user.permission)
+    name: string;
+  
+    @ManyToMany(() => User, (user) => user.permissions)
     users: User[];
-
+  
     @CreateDateColumn()
     createdAt: Date;
   
     @UpdateDateColumn()
     updatedAt: Date;
-
   
     @ManyToOne(() => User, { nullable: true })
     @JoinColumn({ name: 'createdBy' })
@@ -32,5 +37,5 @@ export class Permission {
     @ManyToOne(() => User, { nullable: true })
     @JoinColumn({ name: 'updatedBy' })
     updatedBy: User;
+  }
   
-}

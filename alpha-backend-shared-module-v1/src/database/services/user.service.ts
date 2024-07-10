@@ -1,11 +1,11 @@
-import { Any, ILike, Repository } from "typeorm";
+import { Any, FindManyOptions, FindOneOptions, ILike, Repository } from "typeorm";
 import { DatabaseModule } from "../index";
 import { IUserService } from "../interfaces/IUserService.interface";
 import { User } from "../entities/user.entity";
-import { PaginationUtil } from "../utils/pagination.util";
 import { PaginationDto } from "../dto/pagination.dto";
 import { SortingDto } from "../dto/sorting.dto";
 import { GenericFilterDto } from "../dto/filter.dto";
+import { permissionService } from "./permission.service";
 
 class UserService implements IUserService {
   static get userRepository(): Repository<User> {
@@ -13,7 +13,7 @@ class UserService implements IUserService {
   }
 
   static get relations() {
-    return ['role', 'permission']
+    return ['role', 'permissions', 'createdBy', 'updatedBy']
   }
 
   async createUser(data: Partial<User>): Promise<User> {
@@ -45,6 +45,14 @@ class UserService implements IUserService {
       relations: UserService.relations,
       where: { [key]: value }
     });
+  }
+
+  async findOne(options: FindOneOptions): Promise<User> {
+    return UserService.userRepository.findOne(options);
+  }
+
+  async find(options: FindManyOptions): Promise<User []> {
+    return UserService.userRepository.find(options);
   }
 
   async findAllUsers(
@@ -106,6 +114,29 @@ class UserService implements IUserService {
     user.isPasswordSet = true;
     await UserService.userRepository.save(user);
     return this.findUserById(userId);
+  }
+
+  async addPermissionsToUser(userId: string, permissionIds: number[]): Promise<User> {
+    const user = await this.findUserById(userId);
+
+    const permissions = await permissionService.findPermissionByIds(permissionIds);
+
+    user.permissions = [...user.permissions, ...permissions];
+
+    return UserService.userRepository.save(user);
+  }
+
+  async removePermissionsFromUser(userId: string, permissionIds: number[]): Promise<User> {
+    const user = await UserService.userRepository.findOne({
+      where: { id: userId },
+      relations: ['permissions'],
+    });
+
+    user.permissions = user.permissions.filter(
+      (permission) => !permissionIds.includes(permission.id),
+    );
+
+    return UserService.userRepository.save(user);
   }
 }
 

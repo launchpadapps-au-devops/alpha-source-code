@@ -1,5 +1,5 @@
 import { User } from "./user.entity";
-
+import { Permission } from "./permission.entity";
 import { Notification, NotificationType } from "./notification.entity";
 import { Session } from "./session.entity";
 import { Policy } from "./policy.entity";
@@ -13,6 +13,7 @@ import { DailyTips } from "./dailyTips.entity";
 // Export all entities
 export { 
   User,
+  Permission,
 
   Notification, 
   NotificationType,
