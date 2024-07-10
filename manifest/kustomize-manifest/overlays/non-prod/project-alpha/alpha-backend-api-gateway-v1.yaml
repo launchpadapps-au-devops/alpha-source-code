@@ -23,7 +23,7 @@ spec:
           - name: JWT_EXPIRES_IN
             value: "1d"
           - name: HEALTH_SERVICE_BASE_URL
-            value: "http://alpha-backend-user-ms-v1-service:3001"
+            value: "http://alpha-backend-health-ms-v1-service:3004"
           - name: HEALTH_SERVICE_API_PREFIX
             value: "/api/health-ms/v1"
           - name: USER_SERVICE_BASE_URL
