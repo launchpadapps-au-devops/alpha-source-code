@@ -14,8 +14,8 @@ export class HealthDataController {
         private readonly messageService: MessagingService
     ) { }
 
-    @ApiBearerAuth()
-    @ApiBody({ type: CreateHealthProfileQuestionariesDto })
+    // @ApiBearerAuth()
+    // @ApiBody({ type: CreateHealthProfileQuestionariesDto })
     @ApiResponse({
         status: 201,
         description: 'A successful response',
@@ -34,7 +34,7 @@ export class HealthDataController {
             required: ['statusCode', 'data'],
         },
     })
-    @UseGuards(JwtAuthGuard)
+   // @UseGuards(JwtAuthGuard)
     @Post('/questionaries')
     async createPatientUserProfile(
         @Request() req,
