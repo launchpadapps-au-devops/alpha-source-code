@@ -25,7 +25,7 @@ spec:
           - name: HEALTH_SERVICE_BASE_URL
             value: "http://alpha-backend-user-ms-v1-service:3001"
           - name: HEALTH_SERVICE_API_PREFIX
-            value: "/api/v1/health"
+            value: "/api/health-ms/v1"
           - name: USER_SERVICE_BASE_URL
             value: "http://alpha-backend-user-ms-v1-service:3001"
           - name: USER_SERVICE_API_PREFIX
