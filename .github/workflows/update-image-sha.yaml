@@ -9,6 +9,9 @@ env:
   LIST_OF_IMAGES: 'alpha-backend-notification-ms-v1, alpha-backend-user-ms-v1, alpha-backend-api-gateway-v1, alpha-backend-cms-ms-v1, alpha-backend-health-ms-v1'
 
 on:
+  push:
+    branches:
+      - main  # or the branch you want to trigger this workflow
   pull_request:
     branches: [ "main" ]
     paths:
