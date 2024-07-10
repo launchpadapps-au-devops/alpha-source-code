@@ -8,6 +8,7 @@ import { MessagingService } from './common/messaging.service';
 import { EnvConfigService } from './common/config/envConfig.service';
 import { PatientModule } from './patient/patient.module';
 import { AuthModule } from './auth/auth.module';
+import { StaffModule } from './staff/staff.module';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { AuthModule } from './auth/auth.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-    }), PatientModule, AuthModule,
+    }), PatientModule, AuthModule, StaffModule
   ],
   controllers: [AppController],
   providers: [

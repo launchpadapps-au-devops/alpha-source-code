@@ -33,7 +33,6 @@ export class AuthService {
             userType: user.userType,
             platform: user.platform,
             role: user.role,
-            permission: user.permission,
             sub: user.id,
         }, { expiresIn: '1h' });
 
@@ -42,7 +41,6 @@ export class AuthService {
             userType: user.userType,
             platform: user.platform,
             role: user.role,
-            permission: user.permission,
             sub: user.id,
         }, { expiresIn: '7d' });
 
