@@ -52,7 +52,7 @@ jobs:
             az acr login --name ${{ env.AZURE_CONTAINER_REGISTRY }}
 
       - name: Update Manifest
-        if: github.event_name == 'workflow_dispatch'
+        #if: github.event_name == 'workflow_dispatch'
         working-directory: ${{ env.WORKING_DIR }}
         run: |
 
@@ -88,7 +88,7 @@ jobs:
           rm -rf images.txt
 
       - name: Update Kustomize Manifest
-        if: github.event_name == 'workflow_dispatch'
+        #if: github.event_name == 'workflow_dispatch'
         working-directory: ${{ env.WORKING_DIR }}
         run: |
           # Install Kustomize
