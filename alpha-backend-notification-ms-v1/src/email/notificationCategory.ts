@@ -6,5 +6,8 @@ export const NotificationCategory = {
 export const NotificationSubcategory = {
     // Account Invitation
     PATIENT_INVITATION: 1,
+    STAFF_INVITATION: 3,
+
+    // Account Auth
     FORGOT_PASSWORD_OTP: 2,
 }

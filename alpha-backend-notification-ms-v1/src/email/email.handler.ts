@@ -47,7 +47,11 @@ export class EmailHandler {
                 switch (notificationData.subcategoryId) {
                     case NotificationSubcategory.PATIENT_INVITATION:
                         emailObject.subject = 'You are invited on Alpha';
-                        emailObject.template = emailTemplate[NotificationCategory.ACCOUNT_INVITATION]
+                        emailObject.template = emailTemplate[NotificationSubcategory.PATIENT_INVITATION]
+                        break;
+                    case NotificationSubcategory.STAFF_INVITATION:
+                        emailObject.subject = 'You are invited on Alpha';
+                        emailObject.template = emailTemplate[NotificationSubcategory.STAFF_INVITATION]
                         break;
                     default:
                         Logger.error('Invalid email category');
@@ -57,7 +61,7 @@ export class EmailHandler {
                 switch (notificationData.subcategoryId) {
                     case NotificationSubcategory.FORGOT_PASSWORD_OTP:
                         emailObject.subject = 'Reset your password';
-                        emailObject.template = emailTemplate[NotificationCategory.ACCOUNT_AUTH]
+                        emailObject.template = emailTemplate[NotificationSubcategory.FORGOT_PASSWORD_OTP]
                         break;
                     default:
                         Logger.error('Invalid email category');
