@@ -10,6 +10,7 @@ import { PolicyModule } from './policy/policy.module';
 import { CategoryModule } from './category/category.module';
 import { ThemeModule } from './theme/theme.module';
 import { LessonModule } from './lesson/lesson.module';
+import { DailyTipModule } from './dailyTip/dailyTip.module';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { LessonModule } from './lesson/lesson.module';
       isGlobal: true,
       envFilePath: '.env',
     }), 
-    PolicyModule, CategoryModule, ThemeModule, LessonModule,
+    PolicyModule, CategoryModule, ThemeModule, LessonModule, DailyTipModule
   ],
   controllers: [AppController],
   providers: [
