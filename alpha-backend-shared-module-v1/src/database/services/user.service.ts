@@ -1,4 +1,4 @@
-import { Any, Repository } from "typeorm";
+import { Any, ILike, Repository } from "typeorm";
 import { DatabaseModule } from "../index";
 import { IUserService } from "../interfaces/IUserService.interface";
 import { User } from "../entities/user.entity";
@@ -62,7 +62,7 @@ class UserService implements IUserService {
     const [data, totalRecords] = await UserService.userRepository.findAndCount({
       relations: UserService.relations,
       where: {
-        ...(searchText ? { email: Any([searchText, searchText.toLowerCase()]) } : {}),
+        ...(searchText ? { email: ILike(`%${searchText}%`) } : {}),
         ...restFilters
       },
       order: {

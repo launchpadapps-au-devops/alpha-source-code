@@ -6,6 +6,7 @@ import { healthProfileQuestionariesService  } from "./HealthProfileQuestionaries
 import { categoryService } from "./category.service";
 import { themeService } from "./theme.service";
 import { lessonService } from "./lesson.service";
+import { dailyTipsService } from "./dailyTips.service";
 
 // Export all services
 export { 
@@ -16,5 +17,6 @@ export {
   healthProfileQuestionariesService,
   categoryService,
   themeService,
-  lessonService
+  lessonService,
+  dailyTipsService
 };

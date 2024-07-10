@@ -8,6 +8,7 @@ import { HealthProfileQuestionaries } from "./HealthProfileQuestionaries.entity"
 import { Category } from "./category.entity";
 import { Theme } from "./theme.entity";
 import { Lesson } from "./lesson.entity";
+import { DailyTips } from "./dailyTips.entity";
 
 // Export all entities
 export { 
@@ -23,5 +24,6 @@ export {
 
   Category,
   Theme,
-  Lesson
+  Lesson,
+  DailyTips
 };
