@@ -17,6 +17,7 @@ import { ThemeModule } from './theme/theme.module';
 import { LessonModule } from './lesson/lesson.module';
 import { DailyTipsModule } from './dailyTips/dailyTips.module';
 import { StaffModule } from './staff/staff.module';
+import { PlanModule } from './plan/plan.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { StaffModule } from './staff/staff.module';
     ThemeModule, 
     LessonModule, 
     DailyTipsModule,
-    StaffModule
+    StaffModule,
+    PlanModule
   ],
   controllers: [AppController],
   providers: [
