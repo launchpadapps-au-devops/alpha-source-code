@@ -1,4 +1,4 @@
-import { Repository, ILike, FindManyOptions } from "typeorm";
+import { Repository, ILike, FindManyOptions, In } from "typeorm";
 import { DatabaseModule } from "../index";
 import { IThemeService } from "../interfaces/ITheme.interface";
 import { Theme } from "../entities/theme.entity";
@@ -66,6 +66,12 @@ class ThemeService implements IThemeService {
           name: true,
         }
       }
+    });
+  }
+
+  async findThemeByIds(themeIds: number[]): Promise<Theme[]> {
+    return ThemeService.themeRepository.find({
+      where: { id: In(themeIds) },
     });
   }
 

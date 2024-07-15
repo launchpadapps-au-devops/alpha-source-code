@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, ManyToMany } from 'typeorm';
 import { Lesson } from './lesson.entity';
 import { User } from './user.entity';
 import { Category } from './category.entity';
+import { Plan } from '../entities';
 
 @Entity('themes')
 export class Theme {
@@ -58,4 +59,7 @@ export class Theme {
     @ManyToOne(() => User, { nullable: true })
     @JoinColumn({ name: 'updatedBy' })
     updatedBy: User;
+
+    @ManyToMany(() => Plan, plan => plan.themes)
+    plans: Plan[];
 }
