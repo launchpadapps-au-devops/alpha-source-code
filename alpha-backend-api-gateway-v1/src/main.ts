@@ -15,6 +15,13 @@ import { log } from 'console';
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true,
+  })
 
   const configService = app.get(EnvConfigService);
 
