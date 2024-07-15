@@ -11,6 +11,7 @@ import { CategoryModule } from './category/category.module';
 import { ThemeModule } from './theme/theme.module';
 import { LessonModule } from './lesson/lesson.module';
 import { DailyTipModule } from './dailyTip/dailyTip.module';
+import { PlanModule } from './plan/plan.module';
 
 @Module({
   imports: [
@@ -19,7 +20,12 @@ import { DailyTipModule } from './dailyTip/dailyTip.module';
       isGlobal: true,
       envFilePath: '.env',
     }), 
-    PolicyModule, CategoryModule, ThemeModule, LessonModule, DailyTipModule
+    PolicyModule, 
+    CategoryModule, 
+    ThemeModule, 
+    LessonModule, 
+    DailyTipModule, 
+    PlanModule,
   ],
   controllers: [AppController],
   providers: [
