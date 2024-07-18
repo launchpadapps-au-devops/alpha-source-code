@@ -11,6 +11,10 @@ import { Lesson } from "./lesson.entity";
 import { Plan } from "./plan.entity";
 import { DailyTips } from "./dailyTips.entity";
 
+import { UserPlan } from "./userPlan.entity";
+import { UserTheme } from "./userTheme.entity";
+import { UserLesson } from "./userLesson.entity";
+
 // Export all entities
 export { 
   User,
@@ -28,5 +32,9 @@ export {
   Theme,
   Plan,
   Lesson,
-  DailyTips
+  DailyTips,
+
+  UserPlan,
+  UserTheme,
+  UserLesson
 };

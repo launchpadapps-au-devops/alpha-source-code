@@ -9,6 +9,9 @@ import { themeService } from "./theme.service";
 import { planService } from "./plan.service";
 import { lessonService } from "./lesson.service";
 import { dailyTipsService } from "./dailyTips.service";
+import { userPlanService } from "./userPlan.service";
+import { userThemeService } from "./userTheme.service";
+import { userLessonService } from "./userLesson.service";
 
 // Export all services
 export { 
@@ -22,5 +25,8 @@ export {
   themeService,
   planService,
   lessonService,
-  dailyTipsService
+  dailyTipsService,
+  userPlanService,
+  userThemeService,
+  userLessonService
 };

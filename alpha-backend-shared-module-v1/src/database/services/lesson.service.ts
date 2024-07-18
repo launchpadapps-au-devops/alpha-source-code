@@ -146,6 +146,17 @@ class LessonService implements ILessonService {
     });
   }
 
+  async findLessonsByThemeIds(themeIds: number[]): Promise<Lesson[]> {
+    return LessonService.lessonRepository.find({
+      where: { themeId: In(themeIds), status: 'ACTIVE' },
+      select: {
+        id: true,
+        lessonCode: true,
+        themeId: true,
+        lessonTags: [],
+      }
+    });
+  }
   async findAllLessons(
     pagination: PaginationDto = { page: 1, limit: 10 },
     sorting: SortingDto = { sortField: 'createdAt', sortOrder: 'DESC' as SortOrderType },

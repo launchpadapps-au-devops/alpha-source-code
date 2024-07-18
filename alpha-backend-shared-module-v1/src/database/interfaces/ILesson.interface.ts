@@ -7,6 +7,7 @@ export interface ILessonService {
   bulkUpdateLesson(data: Partial<Lesson>[]): Promise<Lesson[]>;
   findLessonById(id: number): Promise<Lesson>;
   findLessonByIds(ids: number[]): Promise<Lesson[]>;
+  findLessonsByThemeIds(themeIds: number[]): Promise<Partial<Lesson[]>>;
   findAllLessons(pagination: PaginationDto, sortingOptions: SortingDto, filters: GenericFilterDto): Promise<{
     data: Lesson[],
     totalRecords: number,

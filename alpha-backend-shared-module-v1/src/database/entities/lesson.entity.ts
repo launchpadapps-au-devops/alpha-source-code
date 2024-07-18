@@ -38,7 +38,7 @@ export class Lesson {
     points: number;
 
     @Column('jsonb', { nullable: true })
-    lessonTags: object;
+    lessonTags: object [];
 
     @Column({ nullable: true })
     internalNotes: string;

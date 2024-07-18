@@ -20,6 +20,7 @@ import { Session } from './session.entity';
 import { Role } from './role.entity';
 import { Permission } from './permission.entity';
 import { HealthProfileQuestionaries } from './HealthProfileQuestionaries.entity';
+import { UserPlan } from './userPlan.entity';
 
 @Entity('users')
 export class User {
@@ -214,6 +215,9 @@ export class User {
 
   @Column({ type: 'boolean', nullable: true, default: false })
   isOnboardingHealthQuestionariesCompleted: boolean;
+
+  @OneToMany(() => UserPlan, UserPlan => UserPlan.user)
+  lifestylePlans: UserPlan[];
 
   @CreateDateColumn()
   createdAt: Date;

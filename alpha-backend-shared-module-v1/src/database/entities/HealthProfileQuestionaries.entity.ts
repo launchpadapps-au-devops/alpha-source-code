@@ -29,6 +29,9 @@ export class HealthProfileQuestionaries {
   @Column({ type: 'varchar', length: 255, nullable: true })
   answerVersion: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  answerTags: string;
+
   @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVE'], default: 'ACTIVE' })
   status: string;
 
