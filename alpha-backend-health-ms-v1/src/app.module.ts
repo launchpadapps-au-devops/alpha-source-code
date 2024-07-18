@@ -7,6 +7,7 @@ import { BaseHttpService } from './common/base-http.service';
 import { MessagingService } from './common/messaging.service';
 import { EnvConfigService } from './common/config/envConfig.service';
 import { HealthDataModule } from './health-data/health-data.module';
+import { UserLifeStylePlanModule } from './user-lifestyle-plan/user-lifestyle-plan.module';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { HealthDataModule } from './health-data/health-data.module';
       isGlobal: true,
       envFilePath: '.env',
     }), 
-    HealthDataModule,
+    HealthDataModule, UserLifeStylePlanModule,
   ],
   controllers: [AppController],
   providers: [
