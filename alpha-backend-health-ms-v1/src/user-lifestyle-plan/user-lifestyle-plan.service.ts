@@ -37,28 +37,22 @@ export class UserLifeStylePlanService {
             userThemes.push({
                 userId: userPlan.userId,
                 userLifestylePlanId: userPlan.id,
-                themeId
+                themeId,
+                createdBy: reqUser.userId,
+                updatedBy: reqUser.userId
             });
         }
 
         await userThemeService.createUserThemes(userThemes);
     }
 
-    async personalizeUserLifeStylePlan(userId: string) {
+    async personalizeUserLifeStylePlan(userId: string, reqUser = { userId: null }) {
         const userHealthData = await healthProfileQuestionariesService.findAllHealthQuestionAnswer(userId);
         if (!userHealthData.length) {
             throw new BadRequestException('Health Data not found');
         }
 
-        const { data } = await userThemeService.findAllUserThemes({
-            limit: null,
-            page: 0
-        }, {
-            sortField: 'createdAt',
-            sortOrder: 'DESC'
-        }, {
-            userId
-        });
+        const data = await userThemeService.findUserThemesByUserId(userId);
 
         const tags = userHealthData
             .map(data => data.answerTags)
@@ -77,7 +71,9 @@ export class UserLifeStylePlanService {
                 userId,
                 lessonId: lesson.id,
                 userPlanId: data.find(d => d.themeId === lesson.themeId).userLifestylePlanId,
-                userThemeId: data.find(d => d.themeId === lesson.themeId).id
+                userThemeId: data.find(d => d.themeId === lesson.themeId).id,
+                createdBy: reqUser.userId,
+                updatedBy: reqUser.userId
             }));
 
         await userLessonService.createUserLessons(filteredLessons);
