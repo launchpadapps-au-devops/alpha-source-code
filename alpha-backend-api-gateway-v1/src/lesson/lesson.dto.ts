@@ -39,7 +39,7 @@ export class CreateLessonDto {
 
     @ApiProperty({ example: [{ 'Prop': [ 'v1', 'v2'] }], required: false })
     @IsOptional()
-    lessonTags?: object;
+    lessonTags?: object [];
 
     @ApiProperty({ example: 'Internal Notes', required: false })
     @IsOptional()
