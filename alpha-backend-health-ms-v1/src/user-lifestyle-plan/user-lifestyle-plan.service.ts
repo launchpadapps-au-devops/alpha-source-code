@@ -52,11 +52,16 @@ export class UserLifeStylePlanService {
             throw new BadRequestException('Health Data not found');
         }
 
-        const data = await userThemeService.findUserThemesByUserId(userId);
+        let data = [];
+        try {
+            data = await userThemeService.findUserThemesByUserId(userId);
+        } catch (error) {
+            throw new BadRequestException('User Themes not found');
+        }
 
         const tags = userHealthData
-            .map(data => data.answerTags)
-            .reduce((acc, curr) => acc.concat(curr.split(',')), []);
+            .map(data => data.answerTags || [])
+            .reduce((acc, curr) => [...acc, ...curr], []);
 
         const lessons = await lessonService.findLessonsByThemeIds(data.map(d => d.themeId));
         const filteredLessons = lessons
@@ -65,7 +70,8 @@ export class UserLifeStylePlanService {
                     return acc.concat(Object.values(curr));
                 }, []);
 
-                return lessonTags.some(tag => tags.includes(tag));
+                // TODO: remove true || when tags are available
+                return true || lessonTags.some(tag => tags.includes(tag));
             })
             .map(lesson => ({
                 userId,
@@ -82,12 +88,12 @@ export class UserLifeStylePlanService {
     async getUserDailyLesson(userId: string) : Promise<UserLesson[]>
     {
         const userThemes = await userThemeService.findUserThemesByUserId(userId);
-        const categories = userThemes.map(theme => theme.theme.category);
+        const categories = userThemes.map(theme => theme.theme.categoryId);
         const uniqueCategories = [...new Set(categories)];
 
         const dailyLessons: UserLesson [] = [];
         for (const category of uniqueCategories) {
-            const userTheme = userThemes.find(theme => theme.theme.category === category && !theme.isCompleted);
+            const userTheme = userThemes.find(theme => theme.theme.categoryId === category && !theme.isCompleted);
         
             const userLessons = await userLessonService.findUserLessonsByUserThemeId(userTheme.id);
             const userLesson = userLessons.find(lesson => !lesson.isCompleted);
