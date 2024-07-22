@@ -54,3 +54,5 @@ spec:
             value: "guest"
           - name: RABBITMQ_QUEUE
             value: "apigateway_queue"
+          - name: SUPER_ADMIN_TOKEN
+            value: "@su93r@dm1n"  
