@@ -25,6 +25,10 @@ export class EnvironmentVariables {
     @Type(() => Boolean)
     APP_DEBUG: boolean;
 
+    @IsString()
+    @IsOptional()
+    SUPER_ADMIN_TOKEN: string = '@su93r@dm1n';
+
     // JWT 
     @IsString()
     JWT_SECRET: string;

@@ -35,6 +35,10 @@ export class CreateStaffDto {
     @Type(() => Number)
     @IsOptional()
     roleId: number;
+
+    @IsString()
+    @IsOptional()
+    userType: string = 'staff';
 }
 
 export class StaffResponseDto extends CreateStaffDto {

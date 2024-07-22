@@ -1,8 +1,6 @@
 import { Controller, Post, Body, Get, Headers, UseGuards, Request, Req, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { RolesGuard } from './roles.guard';
-import { Roles } from './roles.decorator';
 import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiHeader, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MessagingService } from 'src/common/messaging.service';
 import { PasswordDto } from 'src/common/dto/password.dto';
@@ -96,7 +94,6 @@ export class AuthController {
   }
 
 
-  // logout
   @ApiBearerAuth()
   @ApiResponse({
     schema: {
@@ -291,7 +288,6 @@ export class AuthController {
     }
   }
 
-
   @ApiBody({
     schema: {
       type: 'object',
@@ -420,23 +416,5 @@ export class AuthController {
       data: req.user,
       meta: {}
     }
-  }
-
-  @ApiExcludeEndpoint()
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  @Get('admin-only')
-  adminOnlyRoute(@Request() req) {
-    return { message: 'This is an admin-only route', user: req.user };
-  }
-
-  @ApiExcludeEndpoint()
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('patient')
-  @Get('patient-only')
-  patientOnlyRoute(@Request() req) {
-    return { message: 'This is a patient-only route', user: req.user };
   }
 }

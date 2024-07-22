@@ -63,7 +63,7 @@ export class GetHealthProfileQuestionariesDto {
   @ApiProperty({ example: 'v1' })
   answerVersion: string;
 
-  @ApiProperty({ example: 'active' })
+  @ApiProperty({ example: 'ACTIVE' })
   status: string;
 
   @ApiProperty({ example: 'What is your health goal?' })

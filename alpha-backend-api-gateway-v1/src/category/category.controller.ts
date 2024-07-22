@@ -1,8 +1,13 @@
-import { Body, Controller, Get, Headers, Param, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { Category } from '@launchpadapps-au/alpha-shared';
-import { ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { Category, USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
+import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { CategoryResponseDto, CreateCategoryDto, UpdateCategoryDto, bulkUpdateCategoryDto } from './category.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Platforms } from 'src/auth/platform.decorator';
+import { UserTypes } from 'src/auth/userTypes.decorator';
+import { UserTypesGuard } from 'src/auth/userTypes';
+import { PlatformGuard } from 'src/auth/platform.guard';
 
 @ApiTags('Category')
 @ApiExtraModels(CategoryResponseDto)
@@ -12,6 +17,10 @@ export class CategoryController {
         private readonly categoryService: CategoryService
     ) { }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({ type: CreateCategoryDto })
     @ApiResponse({
         status: 200,
@@ -39,6 +48,10 @@ export class CategoryController {
         return this.categoryService.createCategory(payload, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({ type: bulkUpdateCategoryDto })
     @ApiResponse({
         status: 200,
@@ -66,6 +79,10 @@ export class CategoryController {
         return this.categoryService.bulkUpdateCategory(payload, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'id',
         description: 'Category ID',
@@ -100,7 +117,10 @@ export class CategoryController {
         return this.categoryService.updateCategory(id, payload, req.user);
     }
 
-
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'id',
         description: 'Category ID',
@@ -129,6 +149,10 @@ export class CategoryController {
         return this.categoryService.findCategoryById(id);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiQuery({
         name: 'page',
         type: 'number',

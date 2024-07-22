@@ -1,8 +1,15 @@
-import { Request, Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { Request, Body, Controller, Get, Param, Post, Put, Query, UseGuards, Headers, UnauthorizedException } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiHeader, ApiHeaders, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { StaffService } from './staff.service';
 import { CreateStaffDto, StaffResponseDto } from './staff.dto';
 import { MessagingService } from '../common/messaging.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserTypesGuard } from 'src/auth/userTypes';
+import { PlatformGuard } from 'src/auth/platform.guard';
+import { UserTypes } from 'src/auth/userTypes.decorator';
+import { USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
+import { Platforms } from 'src/auth/platform.decorator';
+import { EnvConfigService } from 'src/common/config/envConfig.service';
 
 function generatePassword(length = 12) {
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -39,10 +46,16 @@ function generatePassword(length = 12) {
 export class StaffController {
     constructor(
         private readonly staffService: StaffService,
-        private readonly messageService: MessagingService
+        private readonly messageService: MessagingService,
+        private readonly envConfigService: EnvConfigService
     ) { }
 
-    @ApiBody({ 
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
+    @ApiBody({
         schema: {
             type: 'object',
             properties: {
@@ -76,9 +89,13 @@ export class StaffController {
             permissions: number[]
         }
     ): Promise<object> {
-       return this.staffService.createStaffUserProfile(payload, req.user);
+        return this.staffService.createStaffUserProfile(payload, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiQuery({ name: 'page', required: false, type: Number })
     @ApiQuery({ name: 'limit', required: false, type: Number })
     @ApiQuery({ name: 'searchText', required: false, type: String })
@@ -122,6 +139,79 @@ export class StaffController {
         );
     }
 
+    @ApiTags('Super Admin')
+    @ApiHeader({
+        description: 'A High Security Token to create a staff Admin',
+        name: 'x-request-super-admin-token',
+        required: true,
+    })
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                userData: { $ref: getSchemaPath(CreateStaffDto) },
+                permissions: { type: 'array', items: { type: 'number' } }
+            }
+        }
+    })
+    @ApiResponse({
+        status: 200,
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'Staff John Doe has been added successfully' },
+                data: {
+                    type: 'object',
+                    properties: {
+                        email: { type: 'string', example: 'abc@example.com' },
+                        password: { type: 'string', example: '123@password' }
+                    },
+                }
+            },
+            required: ['statusCode', 'data'],
+        },
+    })
+    @Post('/admin')
+    async createStaffAdmin(
+        @Request() req,
+        @Headers('x-request-super-admin-token') superAdminToken: string,
+        @Body() payload: {
+            userData: CreateStaffDto,
+        }
+    ): Promise<object> {
+        if (superAdminToken !== this.envConfigService.app.superAdminToken) {
+            throw new UnauthorizedException('Not Autorized');
+        }
+
+        const staff = await this.staffService.createStaffUserProfile(
+            { userData: {
+                ...payload.userData,
+                userType: 'admin'
+            }, permissions: [] },
+            req.user
+        );
+
+        const password = generatePassword();
+        await this.staffService.updateStaffUserProfile(staff.data.id, {
+            userData: { password },
+            permissions: []
+        }, req.user);
+
+        return {
+            message: 'Staff Admin has been added successfully',
+            data: {
+                email: payload.userData.email,
+                password
+            }
+        }
+
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'staffId',
         type: 'string',
@@ -149,13 +239,18 @@ export class StaffController {
         return this.staffService.getStaffProfile(staffId, req.user);
     }
 
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'staffId',
         type: 'string',
         description: 'Staff ID',
         required: true,
     })
-    @ApiBody({ 
+    @ApiBody({
         schema: {
             type: 'object',
             properties: {
@@ -197,7 +292,11 @@ export class StaffController {
         );
     }
 
-    // send invitation to staff
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'staffId',
         type: 'string',
@@ -228,10 +327,10 @@ export class StaffController {
     ): Promise<object> {
         const tempPassword = generatePassword();
         const staff =
-        await this.staffService.updateStaffUserProfile(staffId, { 
-            userData: { password: tempPassword },
-            permissions: []
-        }, req.user);
+            await this.staffService.updateStaffUserProfile(staffId, {
+                userData: { password: tempPassword },
+                permissions: []
+            }, req.user);
 
         const { data } = await this.staffService.getStaffProfile(staffId, req.user);
         await this.messageService.publishToNotification(

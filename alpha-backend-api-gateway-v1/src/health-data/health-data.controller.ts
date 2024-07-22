@@ -4,6 +4,11 @@ import { HealthDataService } from './health-data.service';
 import { CreateHealthProfileQuestionariesDto, GetHealthProfileQuestionariesDto } from './health-data.dto';
 import { MessagingService } from '../common/messaging.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserTypesGuard } from 'src/auth/userTypes';
+import { PlatformGuard } from 'src/auth/platform.guard';
+import { UserTypes } from 'src/auth/userTypes.decorator';
+import { Platforms } from 'src/auth/platform.decorator';
+import { USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
 
 @ApiTags('Health Questionaries')
 @ApiExtraModels(GetHealthProfileQuestionariesDto)
@@ -14,8 +19,10 @@ export class HealthDataController {
         private readonly messageService: MessagingService
     ) { }
 
-    // @ApiBearerAuth()
-    // @ApiBody({ type: CreateHealthProfileQuestionariesDto })
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
     @ApiResponse({
         status: 201,
         description: 'A successful response',
@@ -34,7 +41,6 @@ export class HealthDataController {
             required: ['statusCode', 'data'],
         },
     })
-   // @UseGuards(JwtAuthGuard)
     @Post('/questionaries')
     async createPatientUserProfile(
         @Request() req,
@@ -43,6 +49,10 @@ export class HealthDataController {
         return await this.healthDataService.addHealthProfileQuestionaries(payload, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
     @ApiResponse({
         status: 200,
         schema: {

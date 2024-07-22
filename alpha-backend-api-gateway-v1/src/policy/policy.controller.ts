@@ -1,7 +1,12 @@
-import { Body, Controller, Get, Headers, Param, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { PolicyService } from './policy.service';
-import { POLICY_TYPES, Policy } from '@launchpadapps-au/alpha-shared';
-import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { POLICY_TYPES, Policy, USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserTypesGuard } from 'src/auth/userTypes';
+import { PlatformGuard } from 'src/auth/platform.guard';
+import { UserTypes } from 'src/auth/userTypes.decorator';
+import { Platforms } from 'src/auth/platform.decorator';
 
 
 @ApiTags('Policy')
@@ -11,6 +16,11 @@ export class PolicyController {
         private readonly policyService: PolicyService
     ) { }
 
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({
         description: 'The payload for adding terms and conditions',
         schema: {
@@ -58,6 +68,10 @@ export class PolicyController {
         return this.policyService.addPolicy(payload, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
     @ApiParam({
         name: 'type',
         description: 'The type of policy to fetch',

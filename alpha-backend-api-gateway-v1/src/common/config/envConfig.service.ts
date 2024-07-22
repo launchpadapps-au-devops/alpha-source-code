@@ -23,7 +23,8 @@ export class EnvConfigService {
             port: this.get('PORT') as number,
             name: this.get('APP_NAME') as string,
             apiPrefix: this.get('APP_API_PREFIX') as string,
-            debug: this.get('APP_DEBUG') as boolean
+            debug: this.get('APP_DEBUG') as boolean,
+            superAdminToken: this.get('SUPER_ADMIN_TOKEN') as string
         }
     }
 

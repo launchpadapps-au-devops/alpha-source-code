@@ -1,8 +1,12 @@
 import { Body, Controller, Get, Headers, Param, Post, Query, Req, Request, UseGuards } from '@nestjs/common';
 import { DailyTipsService } from './dailyTips.service';
-import { DailyTips, POLICY_TYPES, Policy } from '@launchpadapps-au/alpha-shared';
-import { ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { DailyTips, POLICY_TYPES, Policy, USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserTypes } from 'src/auth/userTypes.decorator';
+import { PlatformGuard } from 'src/auth/platform.guard';
+import { UserTypesGuard } from 'src/auth/userTypes';
+import { Platforms } from 'src/auth/platform.decorator';
 
 @ApiTags('Daily Tips')
 @Controller('daily-tip')
@@ -11,6 +15,10 @@ export class DailyTipController {
         private readonly dailyTipsService: DailyTipsService,
     ) { }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({
         description: 'The payload for adding daily tips',
         schema: {
@@ -48,7 +56,6 @@ export class DailyTipController {
             required: ['statusCode', 'data'],
         },
     })
-    //@UseGuards(JwtAuthGuard)
     @Post()
     async addDailyTip(
         @Request() req,
@@ -66,7 +73,10 @@ export class DailyTipController {
         );
     }
 
-
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'day',
         description: 'The day to fetch the daily tip',
@@ -106,6 +116,10 @@ export class DailyTipController {
         return this.dailyTipsService.findDailyTipsByDay(day);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiQuery({
         name: 'status',
         description: 'The status to update the daily tip to',

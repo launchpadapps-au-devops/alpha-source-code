@@ -1,9 +1,14 @@
-import { Body, Controller, Get, Headers, NotFoundException, Param, Post, Put, Request } from '@nestjs/common';
-import { Theme } from '@launchpadapps-au/alpha-shared';
-import { ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { Body, Controller, Get, Headers, NotFoundException, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Theme, USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
+import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { CreateThemeDto, UpdateThemeDto, ThemeResponseDto } from './theme.dto';
 import { ThemeService } from './theme.service';
 import { LessonService } from 'src/lesson/lesson.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserTypesGuard } from 'src/auth/userTypes';
+import { PlatformGuard } from 'src/auth/platform.guard';
+import { UserTypes } from 'src/auth/userTypes.decorator';
+import { Platforms } from 'src/auth/platform.decorator';
 
 @ApiTags('Theme')
 @ApiExtraModels(CreateThemeDto, UpdateThemeDto)
@@ -15,6 +20,10 @@ export class ThemeController {
         private readonly themeService: ThemeService
     ) { }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({
         schema: {
             type: 'object',
@@ -68,6 +77,10 @@ export class ThemeController {
         return theme;
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'id',
         description: 'Theme ID',
@@ -136,6 +149,10 @@ export class ThemeController {
         return this.themeService.updateTheme(id, payload.themeData, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'id',
         description: 'Theme ID',
@@ -164,6 +181,10 @@ export class ThemeController {
         return this.themeService.findThemeById(id);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiQuery({
         name: 'categoryId',
         type: 'number',

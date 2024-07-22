@@ -4,8 +4,11 @@ import { PatientService } from './patient.service';
 import { CreatePatientDetailsDto, PatientResponseDto } from './patient.dto';
 import { MessagingService } from '../common/messaging.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { POLICY_TYPES, PolicyType } from '@launchpadapps-au/alpha-shared';
+import { POLICY_TYPES, PolicyType, USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
+import { UserTypes } from 'src/auth/userTypes.decorator';
+import { Platforms } from 'src/auth/platform.decorator';
+import { UserTypesGuard } from 'src/auth/userTypes';
+import { PlatformGuard } from 'src/auth/platform.guard';
 
 @ApiTags('Patient')
 @ApiExtraModels(PatientResponseDto)
@@ -17,6 +20,10 @@ export class PatientController {
         private readonly messageService: MessagingService
     ) { }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({ type: CreatePatientDetailsDto })
     @ApiResponse({
         status: 200,
@@ -44,6 +51,10 @@ export class PatientController {
         return await this.patientService.createPatientUserProfile(payload, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiQuery({ name: 'page', required: false, type: Number })
     @ApiQuery({ name: 'limit', required: false, type: Number })
     @ApiQuery({ name: 'searchKey', required: false, type: String })
@@ -87,6 +98,10 @@ export class PatientController {
         );
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
     @ApiResponse({
         status: 200,
         schema: {
@@ -100,8 +115,6 @@ export class PatientController {
             required: ['statusCode', 'data'],
         },
     })
-    @UseGuards(JwtAuthGuard)
-    @Roles('patient')
     @Get('/my-profile/')
     async getPatientOwnProfile(
         @Request() req,
@@ -109,6 +122,10 @@ export class PatientController {
         return await this.patientService.getPatientUserProfile(req.user.userId, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'id',
         type: 'string',
@@ -136,6 +153,11 @@ export class PatientController {
         return await this.patientService.getPatientUserProfile(id, req.user);
     }
 
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
     @ApiParam({
         name: 'id',
         type: 'string',
@@ -170,7 +192,10 @@ export class PatientController {
         return await this.patientService.updatePatientUserProfile(id, payload, req.user);
     }
 
-    // send invitation to patient
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'id',
         type: 'string',
@@ -226,6 +251,9 @@ export class PatientController {
     }
 
     @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
     @ApiParam({
         name: 'policyType',
         type: 'string',
@@ -252,8 +280,6 @@ export class PatientController {
             required: ['statusCode', 'data'],
         },
     })
-    @UseGuards(JwtAuthGuard)
-    @Roles('patient')
     @Put('/accept/:policyType/:version')
     async acceptTerms(
         @Request() req,

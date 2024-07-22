@@ -4,6 +4,11 @@ import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiResponse, ApiTags, getSchema
 import { UserLifeStylePlanService } from './user-lifestyle-plan.service';
 import { MessagingService } from '../common/messaging.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserTypesGuard } from 'src/auth/userTypes';
+import { PlatformGuard } from 'src/auth/platform.guard';
+import { UserTypes } from 'src/auth/userTypes.decorator';
+import { USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
+import { Platforms } from 'src/auth/platform.decorator';
 
 
 @ApiTags('User Lifestyle Plan')
@@ -13,6 +18,10 @@ export class UserLifeStylePlanController {
         private readonly userLifeStylePlanService: UserLifeStylePlanService
     ) { }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({ 
         schema: {
             type: 'object',
@@ -54,6 +63,10 @@ export class UserLifeStylePlanController {
         };
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
     @ApiResponse({
         status: 200,
         schema: {
@@ -70,12 +83,9 @@ export class UserLifeStylePlanController {
     @Post('/personalize')
     async personalizeUserLifeStylePlan(
         @Request() req,
-        @Body() payload: {
-            userId: string,
-        }
     ) {
         await this.userLifeStylePlanService.personalizeUserLifeStylePlan({
-            ...payload
+            userId: req.user.userId
         }, {
             userId: req.user.userId
         });
@@ -85,6 +95,10 @@ export class UserLifeStylePlanController {
         };
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
     @ApiResponse({
         status: 200,
         schema: {

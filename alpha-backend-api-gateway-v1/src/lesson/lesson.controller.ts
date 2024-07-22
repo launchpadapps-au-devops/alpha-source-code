@@ -1,8 +1,14 @@
 
-import { Body, Controller, Get, Headers, Param, Post, Put, Request } from '@nestjs/common';
-import { ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { Body, Controller, Get, Headers, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { CreateLessonDto, UpdateLessonDto, LessonResponseDto } from './lesson.dto';
 import { LessonService } from './lesson.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserTypesGuard } from 'src/auth/userTypes';
+import { PlatformGuard } from 'src/auth/platform.guard';
+import { UserTypes } from 'src/auth/userTypes.decorator';
+import { USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
+import { Platforms } from 'src/auth/platform.decorator';
 
 @ApiTags('Lesson')
 @ApiExtraModels(CreateLessonDto, UpdateLessonDto, LessonResponseDto)
@@ -12,6 +18,10 @@ export class LessonController {
         private readonly lessonService: LessonService
     ) { }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({type: CreateLessonDto })
     @ApiResponse({
         status: 200,
@@ -39,6 +49,10 @@ export class LessonController {
         return this.lessonService.createLesson(payload, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({ 
         description: 'Array of lessons to be updated',
         type: [UpdateLessonDto]
@@ -64,6 +78,10 @@ export class LessonController {
         return this.lessonService.bulkUpdateLesson(payload, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'id',
         description: 'Lesson ID',
@@ -98,6 +116,10 @@ export class LessonController {
         return this.lessonService.updateLesson(id, payload, req.user);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'id',
         description: 'Lesson ID',
@@ -126,6 +148,10 @@ export class LessonController {
         return this.lessonService.findLessonById(id);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiQuery({
         name: 'page',
         type: 'number',

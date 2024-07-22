@@ -1,9 +1,14 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Headers, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Headers, Req, UseGuards } from '@nestjs/common';
 import { PlanService } from './plan.service';
-import { Plan, SortOrderType } from '@launchpadapps-au/alpha-shared';
+import { Plan, SortOrderType, USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
 import { CreatePlanDto, UpdatePlanDto, PlanResponseDto } from './plan.dto';
-import { ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { totalmem } from 'os';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserTypesGuard } from 'src/auth/userTypes';
+import { PlatformGuard } from 'src/auth/platform.guard';
+import { UserTypes } from 'src/auth/userTypes.decorator';
+import { Platforms } from 'src/auth/platform.decorator';
 
 @ApiTags('Plan')
 @ApiExtraModels(CreatePlanDto, UpdatePlanDto, PlanResponseDto)
@@ -14,6 +19,10 @@ export class PlanController {
     ) { }
 
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({
         schema: {
             type: 'object',
@@ -51,6 +60,11 @@ export class PlanController {
         return this.planService.createPlan(data);
     }
 
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({
         schema: {
             type: 'object',
@@ -98,6 +112,11 @@ export class PlanController {
         };
     }
 
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiQuery({ name: 'page', required: false, type: 'number' })
     @ApiQuery({ name: 'limit', required: false, type: 'number' })
     @ApiQuery({ name: 'sortField', required: false, type: 'string' })
@@ -160,6 +179,10 @@ export class PlanController {
         };
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({ name: 'planId', type: 'number' })
     @ApiResponse({
         status: 200,
