@@ -26,9 +26,12 @@ export class UserLesson {
   @Column()
   userThemeId: string;
 
-  @ManyToOne(() => UserTheme, userTheme => userTheme.userLessonProgresses, { nullable: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => UserTheme, userTheme => userTheme.userLessons, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userThemeId' })
   userTheme: UserTheme;
+
+  @Column()
+  lessonId: number;
 
   @ManyToOne(() => Lesson, { nullable: false })
   @JoinColumn({ name: 'lessonId' })
@@ -37,7 +40,7 @@ export class UserLesson {
   @Column({ type: 'boolean', default: false })
   isCompleted: boolean;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'float', nullable: true, default: 0 })
   pointsEarned: number;
 
   @Column({ type: 'integer', default: 0 })

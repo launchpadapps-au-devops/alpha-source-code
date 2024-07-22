@@ -60,6 +60,6 @@ import { UserLesson } from './userLesson.entity';
     updatedBy: User;
   
     @OneToMany(() => UserLesson, UserLesson => UserLesson.userTheme)
-    userLessonProgresses: UserLesson[];
+    userLessons: UserLesson[];
   }
   
