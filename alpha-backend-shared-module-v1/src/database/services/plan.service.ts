@@ -13,7 +13,7 @@ class PlanService  implements IPlanService {
   }
 
   static get relations() {
-    return ['themes', 'createdBy', 'updatedBy']
+    return ['themes', 'themes.lessons', 'createdBy', 'updatedBy']
   }
 
   async createPlan(data: Partial<Plan>): Promise<Plan> {
@@ -26,7 +26,7 @@ class PlanService  implements IPlanService {
 
   async findPlanById(id: number): Promise<Plan> {
     return PlanService.planRepository.findOne({
-      relations: PlanService.relations,
+      relations:  PlanService.relations,
       where: { id }
     });
   }

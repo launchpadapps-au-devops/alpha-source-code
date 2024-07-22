@@ -56,8 +56,8 @@ export class HealthProfileQuestionaries {
   @Column({ type: 'jsonb', nullable: true})
   answerOptions: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true})
-  answer: string;
+  @Column({ type: 'jsonb', nullable: true})
+  answer: object;
 
   @Column({ type: 'varchar', length: 255, nullable: true})
   answerCategory: string;
