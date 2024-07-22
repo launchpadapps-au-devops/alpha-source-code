@@ -43,21 +43,12 @@ export class PlanController {
     })
     @Post()
     async createPlan(
-        @Headers('x-request-userId') reqUserId: string,
         @Body() data: {
             planData: Partial<Plan>
             themes: number[]
         }
     ) {
-        const plan = await this.planService.createPlan(data);
-
-        return {
-            message: 'Plan created successfully',
-            data: {
-                id: plan.id
-            },
-            meta: {}
-        };
+        return this.planService.createPlan(data);
     }
 
     @ApiBody({

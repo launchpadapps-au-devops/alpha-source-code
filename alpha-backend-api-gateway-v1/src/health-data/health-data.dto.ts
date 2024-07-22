@@ -37,8 +37,11 @@ export class CreateHealthProfileQuestionariesDto {
   @ApiProperty({ example: '["option1", "option2"]' })
   answerOptions: string;
 
-  @ApiProperty({ example: 'option1' })
-  answer: string;
+  @ApiProperty({ example: {} })
+  answer: object;
+
+  @ApiProperty({ example: 'general, health' })
+  answerTags: string;
 
   @ApiProperty({ example: 'general' })
   answerCategory: string;
@@ -84,8 +87,11 @@ export class GetHealthProfileQuestionariesDto {
   @ApiProperty({ example: '["option1", "option2"]' })
   answerOptions: string;
 
-  @ApiProperty({ example: 'option1' })
-  answer: string;
+  @ApiProperty({ example: {} })
+  answer: object;
+
+  @ApiProperty({ example: 'general, health' })
+  answerTags: string;
 
   @ApiProperty({ example: 'general' })
   answerCategory: string;

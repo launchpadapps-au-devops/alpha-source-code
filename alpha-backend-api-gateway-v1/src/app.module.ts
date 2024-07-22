@@ -18,6 +18,7 @@ import { LessonModule } from './lesson/lesson.module';
 import { DailyTipsModule } from './dailyTips/dailyTips.module';
 import { StaffModule } from './staff/staff.module';
 import { PlanModule } from './plan/plan.module';
+import { UserLifestylePlanModule } from './user-lifestyle-plan/user-lifestyle-plan.module';
 
 @Module({
   imports: [
@@ -36,7 +37,8 @@ import { PlanModule } from './plan/plan.module';
     LessonModule, 
     DailyTipsModule,
     StaffModule,
-    PlanModule
+    PlanModule,
+    UserLifestylePlanModule
   ],
   controllers: [AppController],
   providers: [
