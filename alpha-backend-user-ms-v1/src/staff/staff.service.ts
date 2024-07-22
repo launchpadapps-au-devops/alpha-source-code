@@ -28,7 +28,7 @@ export class StaffService {
     async createStaffUserProfile(payload: CreateStaffDto, reqUser = { userId: null }) {
         const staff = await userService.createUser({
             ...payload,
-            userType: 'staff',
+            userType: payload.userType || 'staff',
             platform: 'alpha-admin-web',
             createdBy: reqUser.userId
         });
