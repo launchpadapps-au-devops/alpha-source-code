@@ -45,7 +45,7 @@ class UserThemeService implements IUserThemeService {
   async findUserThemeById(id: string): Promise<UserTheme> {
     return UserThemeService.UserThemeRepository.findOne({
       where: { id },
-      relations: ['userLifestylePlan', 'theme', 'userLessonProgresses'],
+      relations: ['userLifestylePlan', 'theme', 'userLessons'],
     });
   }
 
@@ -88,7 +88,7 @@ class UserThemeService implements IUserThemeService {
 
     const findOptions: FindManyOptions<UserTheme> = {
       where,
-      relations: ['userLifestylePlan', 'theme', 'userLessonProgresses'],
+      relations: ['userLifestylePlan', 'theme', 'userLessons'],
       order: {
         [sorting.sortField]: sorting.sortOrder,
       },
