@@ -148,7 +148,7 @@ spec:
           value: apigateway_queue
         - name: SUPER_ADMIN_TOKEN
           value: '@su93r@dm1n'
-        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:1dbcbb73a27d11f5a4daaf0f32b7101f2c4a132537cbd400e6c9f9a0ffade349
+        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@
         imagePullPolicy: IfNotPresent
         name: alpha-backend-api-gateway-v1-container
         ports:
@@ -236,7 +236,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: cms_queue
-        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:e8ff421c8fec94ffffb663b5f709c7f216575d6d7e9426eeadc7aa5663482c4f
+        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:10828945a44d607b15571fafac83648b43f7d92eaff6a90f0d9540b647152255
         name: alpha-backend-cms-ms-v1-container
         ports:
         - containerPort: 3003
@@ -323,7 +323,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:13d31f7261f95d76a76f276911e6ee7a8896f9ad7f3824c93dab5f656248edc9
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:3db7be6657dc7a0b5f5ed95aff81e4285bd0fd3e89fdf2858d25ee70ba4a6842
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
@@ -417,7 +417,7 @@ spec:
           value: Aster Admin
         - name: SENDGRID_FROM_EMAIL
           value: admin@astercircular.co
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:b18671306c825b2abd0db89a3c2815daee30e56a8f2270e19d12b7a87846ac60
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:cf3bb0f370271ba02ef38c74d22b87ab6fbfbe95235737e32a342c4ea94b62e0
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -505,7 +505,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: user_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:70d7a7677fefe60d06555565b61bfe3325fcf94e23f15820ba4b6012ae830dde
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:bde9679d62e5029a9cbdd208fce5cf0a8f61f00d2b4c8a55ec8719bbbeb1a506
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
