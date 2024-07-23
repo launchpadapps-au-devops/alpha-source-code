@@ -45,9 +45,87 @@ export class UserLifeStylePlanService {
         );
     }
 
+    async getUserPlanProgress(reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/progress`,
+            'GET',
+            {},
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
     async getUserDailyLesson(reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/daily-lessons`,
+            'GET',
+            {},
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+    async completeUserLesson(userLessonId: string, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/daily-lessons/complete/${userLessonId}`,
+            'PUT',
+            {},
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+    async feedbackUserLesson(
+        userLessonId: string, 
+        data: { feedback: string, isPositiveFeedback: boolean },
+        reqUser = { userId: null }
+    ) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/daily-lessons/feedback/${userLessonId}`,
+            'PUT',
+            {
+                ...data,
+            },
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+    async getUserLessonFeedback(userLessonId: string, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/daily-lessons/feedback/${userLessonId}`,
+            'GET',
+            {},
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+    async bookmarkUserLesson(userLessonId: string, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/daily-lessons/bookmark/${userLessonId}`,
+            'PUT',
+            {},
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+    async getUserBookmarkedLessons(reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/daily-lessons/bookmark`,
             'GET',
             {},
             {},
