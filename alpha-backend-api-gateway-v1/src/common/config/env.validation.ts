@@ -69,6 +69,19 @@ export class EnvironmentVariables {
     @IsString()
     RABBITMQ_QUEUE: string;
 
+    // File Upload 
+    @IsString()
+    @IsOptional()
+    AZURE_STORAGE_ACCOUNT_NAME: string;
+
+    @IsString()
+    @IsOptional()
+    AZURE_STORAGE_ACCOUNT_KEY: string;
+
+    @IsString()
+    @IsOptional()
+    AZURE_STORAGE_CONTAINER_NAME: string;
+
     // External Microservices
     // Health Service
     @IsString()
@@ -87,4 +100,7 @@ export class EnvironmentVariables {
     CMS_SERVICE_BASE_URL: string;
     @IsString()
     CMS_SERVICE_API_PREFIX: string;
+
+
+
 }

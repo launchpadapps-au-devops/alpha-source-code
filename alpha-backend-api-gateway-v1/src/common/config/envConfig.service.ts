@@ -55,6 +55,14 @@ export class EnvConfigService {
         }
     }
 
+    get bucket() {
+        return {
+            azureStorageAccount: this.get('AZURE_STORAGE_ACCOUNT_NAME') as string,
+            azureStorageAccessKey: this.get('AZURE_STORAGE_ACCOUNT_KEY') as string,
+            azureStorageContainer: this.get('AZURE_STORAGE_CONTAINER_NAME') as string
+        }
+    }
+    
     get microservices() {
         return {
             health: {
