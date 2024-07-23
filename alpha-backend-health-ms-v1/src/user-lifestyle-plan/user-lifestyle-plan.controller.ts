@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Query, Headers, Req } from '@nestjs/common';
 import { UserLifeStylePlanService } from './user-lifestyle-plan.service'
 import { HealthProfileQuestionaries, UserPlan } from '@launchpadapps-au/alpha-shared';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('user-lifetstyle-plan')
 export class UserLifestylePlanController {
@@ -36,6 +37,18 @@ export class UserLifestylePlanController {
         };
     }
 
+    @Get('/progress') 
+    async getUserPlanProgress(
+        @Headers('x-request-userId') reqUserId: string
+    ) {
+        const data = await this.userLifeStylePlanService.getUserPlanProgress(reqUserId);
+
+        return {
+            message: 'User progress fetched successfully',
+            data: data
+        };
+    }
+    
     @Get('/daily-lessons')
     async getUserLifestylePlan(
         @Headers('x-request-userId') reqUserId: string,
@@ -49,4 +62,92 @@ export class UserLifestylePlanController {
         };
     }
 
+    @Put('/daily-lessons/complete/:userLessonId')
+    async completeUserLesson(
+        @Headers('x-request-userId') reqUserId: string,
+        @Param('userLessonId') userLessonId: string
+    ) {
+        await this.userLifeStylePlanService.completeUserDailyLesson(userLessonId, { userId: reqUserId });
+
+        return {
+            message: 'User lesson completed successfully',
+            data: {
+                userLessonId
+            }
+        };
+    }
+
+    @Put('/daily-lessons/feedback/:userLessonId')
+    async feedbackUserLesson(
+        @Headers('x-request-userId') reqUserId: string,
+        @Param('userLessonId') userLessonId: string,
+        @Body() payload: {
+            feedback: string,
+            isPositiveFeedback: boolean,
+        }
+    ) {
+        await this.userLifeStylePlanService.addUserLessonFeedback(userLessonId, payload.feedback, payload.isPositiveFeedback, { userId: reqUserId });
+
+        return {
+            message: 'User lesson feedback submitted successfully',
+            data: {
+                userLessonId
+            }
+        };
+    }
+
+    @Get('/daily-lessons/feedback/:userLessonId')
+    async getUserLessonFeedback(
+        @Headers('x-request-userId') reqUserId: string,
+        @Param('userLessonId') userLessonId: string
+    ) {
+        const data = await this.userLifeStylePlanService.getUserLessonFeedback(userLessonId);
+
+        return {
+            message: 'User lesson feedback fetched successfully',
+            data: data
+        };
+    }
+
+    @Put('/daily-lessons/bookmark/:userLessonId')
+    async bookmarkUserLesson(
+        @Headers('x-request-userId') reqUserId: string,
+        @Param('userLessonId') userLessonId: string
+    ) {
+        await this.userLifeStylePlanService.toggleBookmarkUserLesson(userLessonId, { userId: reqUserId });
+
+        return {
+            message: 'User lesson bookmarked successfully',
+            data: {
+                userLessonId
+            }
+        };
+    }
+
+    @Get('/daily-lessons/bookmarked')
+    async getBookmarkedUserLesson(
+        @Headers('x-request-userId') reqUserId: string,
+        @Query('page') page: number = 1,
+        @Query('limit') limit: number = 10
+    ) {
+        const data = await this.userLifeStylePlanService.getUserBookmarkedLessons(
+            reqUserId,
+            {
+                page,
+                limit
+            },
+            {},
+        );
+
+        return {
+            message: 'User bookmarked lessons fetched successfully',
+            data: data.data,
+            meta: {
+                page: data.page,
+                limit: data.limit,
+                totalRecords: data.totalRecords,
+                totalPages: Math.ceil(data.totalRecords / data.limit)
+            }
+        };
+    }
 }
