@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, Query, Headers, Req } from '@nestjs/common';
 import { UserLifeStylePlanService } from './user-lifestyle-plan.service'
-import { HealthProfileQuestionaries, UserPlan } from '@launchpadapps-au/alpha-shared';
+import { HealthProfileQuestionaries, SortOrderType, UserPlan } from '@launchpadapps-au/alpha-shared';
 import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('user-lifetstyle-plan')
@@ -67,13 +67,11 @@ export class UserLifestylePlanController {
         @Headers('x-request-userId') reqUserId: string,
         @Param('userLessonId') userLessonId: string
     ) {
-        await this.userLifeStylePlanService.completeUserDailyLesson(userLessonId, { userId: reqUserId });
+        const data = await this.userLifeStylePlanService.completeUserDailyLesson(userLessonId, { userId: reqUserId });
 
         return {
             message: 'User lesson completed successfully',
-            data: {
-                userLessonId
-            }
+            data
         };
     }
 
@@ -128,7 +126,10 @@ export class UserLifestylePlanController {
     async getBookmarkedUserLesson(
         @Headers('x-request-userId') reqUserId: string,
         @Query('page') page: number = 1,
-        @Query('limit') limit: number = 10
+        @Query('limit') limit: number = 10,
+        @Query('sortField') sortField: string,
+        @Query('sortOrder') sortOrder: SortOrderType,
+        @Query('searchText') searchText: string
     ) {
         const data = await this.userLifeStylePlanService.getUserBookmarkedLessons(
             reqUserId,
@@ -136,7 +137,13 @@ export class UserLifestylePlanController {
                 page,
                 limit
             },
-            {},
+            {
+                searchText
+            },
+            {
+                sortField,
+                sortOrder
+            },
         );
 
         return {
