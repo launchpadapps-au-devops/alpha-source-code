@@ -44,6 +44,13 @@ class UserPlanService implements IUserPlanService {
     });
   }
 
+  async findUserPlansByUserId(userId: string): Promise<UserPlan> {
+    return UserPlanService.UserPlanRepository.findOne({
+      where: { userId, status: 'ACTIVE' },
+      relations: ['user', 'plan', 'userThemes'],
+    });
+  }
+
   async findAllUserPlans(
     pagination: PaginationDto = { page: 1, limit: 10 },
     sorting: SortingDto = { sortField: 'createdAt', sortOrder: 'DESC' as SortOrderType },

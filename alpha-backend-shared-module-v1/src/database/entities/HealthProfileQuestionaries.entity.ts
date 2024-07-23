@@ -23,7 +23,7 @@ export class HealthProfileQuestionaries {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column({ type: 'integer', nullable: true, default: 1 })
+  @Column({ type: 'varchar', nullable: true })
   questionVersion: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })

@@ -15,6 +15,9 @@ import { User } from '.';
 export class UserLesson {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+  
+  @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVE', 'DRAFT'], default: 'ACTIVE' })
+  status: string;
 
   @Column()
   userId: string;
@@ -40,11 +43,35 @@ export class UserLesson {
   @Column({ type: 'boolean', default: false })
   isCompleted: boolean;
 
+  @Column({ type: 'date', nullable: true })
+  completedAt: Date;
+
   @Column({ type: 'float', nullable: true, default: 0 })
   pointsEarned: number;
 
   @Column({ type: 'integer', default: 0 })
   quizRetryCount: number;
+
+  @Column({ type: 'jsonb', nullable: true })
+  quizRetryMeta: object;
+
+  @Column({ type: 'text', nullable: true })
+  feedback: string;
+
+  @Column({ type: 'boolean', default: false })
+  isFeedbackGiven: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  isPositiveFeedback: boolean;
+
+  @Column({ type: 'date', nullable: true })
+  feedbackDate: Date;
+
+  @Column({ type: 'boolean', default: false })
+  isBookmarked: boolean;
+ 
+  @Column({ type: 'date', nullable: true })
+  bookmarkUpdatedAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;

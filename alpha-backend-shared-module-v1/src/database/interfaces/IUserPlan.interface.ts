@@ -6,6 +6,7 @@ export interface IUserPlanService {
   updateUserPlan(id: string, data: Partial<UserPlan>): Promise<UserPlan>;
   findUserPlanById(id: string): Promise<UserPlan>;
   findUserPlanByIds(ids: string[]): Promise<UserPlan[]>;
+  findUserPlansByUserId(userId: string): Promise<UserPlan>;
   findAllUserPlans(pagination: PaginationDto, sorting: SortingDto, filters: GenericFilterDto): Promise<{
     data: UserPlan[],
     totalRecords: number,

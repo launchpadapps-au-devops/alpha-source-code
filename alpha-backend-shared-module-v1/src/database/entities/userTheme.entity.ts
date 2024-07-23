@@ -18,6 +18,9 @@ import { UserLesson } from './userLesson.entity';
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
+    @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVE', 'DRAFT'], default: 'ACTIVE' })
+    status: string;
+    
     @Column()
     userId: string;
 
@@ -41,6 +44,9 @@ import { UserLesson } from './userLesson.entity';
   
     @Column({ type: 'boolean', default: false })
     isCompleted: boolean;
+
+    @Column({ type: 'date', nullable: true })
+    completedAt: Date;
 
     @Column({ type: 'integer', default: 0 })
     progress: number;

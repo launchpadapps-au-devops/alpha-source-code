@@ -58,7 +58,14 @@ class UserThemeService implements IUserThemeService {
   async findUserThemesByUserId(userId: string): Promise<UserTheme[]> {
     return UserThemeService.UserThemeRepository.find({
       relations: ['theme', 'theme.lessons', 'userLessons', 'userLessons.lesson'],
-      where: { userId },
+      where: { userId, status: 'ACTIVE' },
+    });
+  }
+
+  async findUserThemesByUserLifestylePlanId(userLifestylePlanId: string): Promise<UserTheme[]> {
+    return UserThemeService.UserThemeRepository.find({
+      relations: ['theme', 'theme.lessons', 'userLessons', 'userLessons.lesson'],
+      where: { userLifestylePlanId, status: 'ACTIVE' },
     });
   }
 

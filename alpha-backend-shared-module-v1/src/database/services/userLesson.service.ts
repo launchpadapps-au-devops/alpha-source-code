@@ -57,15 +57,15 @@ class UserLessonService implements IUserLessonService {
 
   async findUserLessonsByUserId(userId: string): Promise<UserLesson[]> {
     return UserLessonService.UserLessonRepository.find({
-      where: { userId },
+      where: { userId, status: 'ACTIVE' },
       relations: ['userTheme', 'lesson'],
     });
   }
 
   async findUserLessonsByUserThemeId(userThemeId: string): Promise<UserLesson[]> {
     return UserLessonService.UserLessonRepository.find({
-      where: { userThemeId },
-      relations: ['userTheme', 'lesson'],
+      where: { userThemeId, status: 'ACTIVE' },
+      relations: ['userTheme', 'userTheme.theme', 'lesson'],
     });
   }
 

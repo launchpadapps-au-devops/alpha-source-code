@@ -28,6 +28,9 @@ export class UserPlan {
     @Column({ type: 'boolean', default: false })
     isCompleted: boolean;
 
+    @Column({ type: 'date', nullable: true })
+    completedAt: Date;
+
     @Column({ type: 'integer', default: 0 })
     progress: number;
 
