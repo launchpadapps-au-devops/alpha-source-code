@@ -1,13 +1,13 @@
 
-import { Request, Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { Request, Body, Controller, Get, Post, UseGuards, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { UserLifeStylePlanService } from './user-lifestyle-plan.service';
 import { MessagingService } from '../common/messaging.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserTypesGuard } from 'src/auth/userTypes';
 import { PlatformGuard } from 'src/auth/platform.guard';
 import { UserTypes } from 'src/auth/userTypes.decorator';
-import { USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
+import { SortOrderType, USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
 import { Platforms } from 'src/auth/platform.decorator';
 import { GetUserDailyLessonResponseDTO } from './user-lifestyle-plan.dto';
 
@@ -95,6 +95,41 @@ export class UserLifeStylePlanController {
             message: 'User lifestyle plan personalized successfully'
         };
     }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiResponse({
+       schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'User lifestyle plan fetched successfully' },
+                data: { 
+                    type: 'object',
+                    properties: {
+                        totalThemes: { type: 'number', example: 5 },
+                        themesCompleted: { type: 'number', example: 3 },
+                        themeProgress: { type: 'number', example: 60 },
+                        totalLessons: { type: 'number', example: 10 },
+                        lessonsCompleted: { type: 'number', example: 7 },
+                        totalPoints: { type: 'number', example: 100 },
+                        planProgress: { type: 'number', example: 70 },
+                    }
+                },
+                meta: { type: 'object', example: {} },
+            },
+            required: ['statusCode', 'message'],
+        },
+    })
+    @Get('/progress')
+    async getUserLifeStylePlanProgress(
+        @Request() req,
+    ) {
+        return this.userLifeStylePlanService.getUserPlanProgress(req.user.userId);
+    }
+
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.PATIENT)
@@ -168,16 +203,9 @@ export class UserLifeStylePlanController {
     async completeUserLesson(
         @Request() req,
     ) {
-        await this.userLifeStylePlanService.completeUserLesson(req.params.userLessonId, {
+        return this.userLifeStylePlanService.completeUserLesson(req.params.userLessonId, {
             userId: req.user.userId
         });
-
-        return {
-            message: 'User lesson completed successfully',
-            data: {
-                userLessonId: req.params.userLessonId
-            }
-        };
     }
 
     @ApiBearerAuth()
@@ -303,14 +331,39 @@ export class UserLifeStylePlanController {
     @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiQuery({ name: 'page', type: 'number', required: false })
+    @ApiQuery({ name: 'limit', type: 'number', required: false })
+    @ApiQuery({ name: 'sortField', type: 'string', required: false })
+    @ApiQuery({ name: 'sortOrder', type: 'string', required: false })
+    @ApiQuery({ name: 'searchText', type: 'string', required: false })
     @ApiResponse({
         type: GetUserDailyLessonResponseDTO,
     })
     @Get('/daily-lessons/bookmarked')
     async getBookmarkedUserLesson(
         @Request() req,
+        @Query('page') page: number = 1,
+        @Query('limit') limit: number = 10,
+        @Query('searchText') searchText: string = '',
+        @Query('sortField') sortField: string = 'createdAt',
+        @Query('sortOrder') sortOrder: string = 'DESC' as SortOrderType,
     ) {
-        return this.userLifeStylePlanService.bookmarkUserLesson(req.user.userId);
+        return this.userLifeStylePlanService.getUserBookmarkedLessons(
+            {
+                page,
+                limit
+            },
+            {
+                sortField,
+                sortOrder: sortOrder as SortOrderType
+            },
+            {
+                searchText
+            },
+            {
+                userId: req.user.userId
+            }
+        );
     }
 }
 

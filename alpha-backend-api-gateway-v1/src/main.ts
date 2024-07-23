@@ -52,12 +52,7 @@ import { log } from 'console';
     .setTitle('🙋‍♂️⚙️ Alpha Backend API Gateway')
     .setDescription(
   `🚀 **Welcome to the Alpha Project API Documentation!**
-      This API is the backbone of the Alpha project, designed to provide a secure and efficient user experience. Here’s what you can do with our API:
-  - **User Registration 📝**: Easily create new user accounts, kickstarting the onboarding process with simplicity.
-  - **Authentication and Security 🔒**: Leverage robust security measures for user login, including token generation and verification, to protect user data.
-  - **Profile Management 🔄**: Users can effortlessly view and update their profile information, maintaining control over their personal data.
-  - **Role-Based Access Control (RBAC) 🔑**: Access policies are defined and enforced to ensure users only interact with data and functionalities that are relevant to their roles.
-      
+      This API is the backbone of the Alpha project, designed to provide a secure and efficient user experience.
   Dive into our detailed documentation for insights on integrating with our endpoints!`
     )
     .setVersion('1.0')

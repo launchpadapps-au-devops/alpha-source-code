@@ -1,4 +1,4 @@
-import { HealthProfileQuestionaries, UserPlan } from '@launchpadapps-au/alpha-shared';
+import { GenericFilterDto, HealthProfileQuestionaries, PaginationDto, SortingDto, UserPlan } from '@launchpadapps-au/alpha-shared';
 import { Injectable } from '@nestjs/common';
 import { BaseHttpService } from 'src/common/base-http.service';
 import { EnvConfigService } from 'src/common/config/envConfig.service';
@@ -123,12 +123,21 @@ export class UserLifeStylePlanService {
         );
     }
 
-    async getUserBookmarkedLessons(reqUser = { userId: null }) {
+    async getUserBookmarkedLessons(
+        pagination: PaginationDto = { page: 1, limit: 10 },
+        sortOptions: SortingDto = { sortField: 'createdAt', sortOrder: 'DESC' },
+        filter: GenericFilterDto = {},
+        reqUser = { userId: null }
+    ) {
         return this.baseHttpService.invoke(
             `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/daily-lessons/bookmark`,
             'GET',
             {},
-            {},
+            {
+                ...pagination,
+                ...sortOptions,
+                ...filter,
+            },
             {
                 'x-request-userId': reqUser.userId
             }
