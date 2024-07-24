@@ -14,14 +14,14 @@ export class StaffService {
             firstName: staff.firstName,
             lastName: staff.lastName,
             phone: staff.phone,
-            role: {
-                id: staff.role.id,
-                name: staff.role.name,
-            },
-            permissions: staff.permissions.map(permission => ({
-                id: permission.id,
-                name: permission.name,
-            })),
+            role: staff.role
+                ? { id: staff.role.id, name: staff.role.name }
+                : null,
+            permissions: staff.permissions?.length
+                ? staff.permissions.map(permission => ({
+                    id: permission.id,
+                    name: permission.name,
+                })) : [],
         });
     }
 
@@ -50,14 +50,14 @@ export class StaffService {
         return this.#formatStaffProfile(staff);
     }
 
-    async getStaffProfiles( 
+    async getStaffProfiles(
         page: PaginationDto = { page: 1, limit: 10 },
         sorting: SortingDto = { sortField: 'updatedAt', sortOrder: 'DESC' },
-        filters: GenericFilterDto   
+        filters: GenericFilterDto
     ) {
         const response = await userService.findAllUsers(
-            page, 
-            sorting, 
+            page,
+            sorting,
             {
                 ...filters,
                 userType: 'staff'
