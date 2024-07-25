@@ -18,7 +18,7 @@ export class CreatePlanDto {
     @IsString()
     image?: string;
 
-    @ApiProperty({ example: 'Theme Description', required: false })
+    @ApiProperty({ example: 'Plan Description', required: false })
     @IsOptional()
     @IsString()
     description?: string;

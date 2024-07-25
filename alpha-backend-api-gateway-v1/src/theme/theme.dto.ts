@@ -9,7 +9,7 @@ export class CreateThemeDto {
     @IsNumber()
     themeCode: number;
 
-    @ApiProperty({ example: 'categoryId' })
+    @ApiProperty({ example: 1 })
     @IsString()
     categoryId: number;
 
@@ -42,6 +42,7 @@ export class CreateThemeDto {
     propertyTags?: object;
     @ApiProperty({
         example: [{
+            id: 1,
             order: 1,
             name: 'value',
             timeAllocation: 1,
@@ -51,7 +52,7 @@ export class CreateThemeDto {
         }]
     })
     @IsOptional()
-    habits: object;
+    habits: object [];
 }
 
 export class UpdateThemeDto extends CreateThemeDto {

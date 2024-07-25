@@ -3,16 +3,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEmail, IsEnum, IsDateString, IsNumber, IsBoolean, IsOptional } from 'class-validator';
 
 export class CreateLessonDto {
-    @ApiProperty({ example: 'Lesson Code' })
+    @ApiProperty({ example: 1 })
     @IsNumber()
     lessonCode?: number;
 
-    @ApiProperty({ example: 'Category ID', required: false})
+    @ApiProperty({ example: 1, required: false})
     @IsNumber()
     @IsOptional()
     categoryId?: number;
 
-    @ApiProperty({ example: 'Theme ID', required: false})
+    @ApiProperty({ example: 1, required: false})
     @IsNumber()
     @IsOptional()
     themeId?: number;
@@ -27,12 +27,12 @@ export class CreateLessonDto {
     @IsOptional()
     isPublished?: boolean = false;
 
-    @ApiProperty({ example: 'Lesson Duration', required: false})
+    @ApiProperty({ example: 10, required: false})
     @IsNumber()
     @IsOptional()
     duration?: number;
 
-    @ApiProperty({ example: 'Lesson Points', required: false})
+    @ApiProperty({ example: 20, required: false})
     @IsNumber()
     @IsOptional()
     points?: number;
