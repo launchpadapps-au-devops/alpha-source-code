@@ -20,6 +20,7 @@ import { StaffModule } from './staff/staff.module';
 import { PlanModule } from './plan/plan.module';
 import { UserLifestylePlanModule } from './user-lifestyle-plan/user-lifestyle-plan.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
+import { UserDailyHabitsModule } from './user-daily-habits/user-daily-habits.module';
 
 @Module({
   imports: [
@@ -40,7 +41,8 @@ import { FileUploadModule } from './file-upload/file-upload.module';
     StaffModule,
     PlanModule,
     UserLifestylePlanModule,
-    FileUploadModule
+    FileUploadModule,
+    UserDailyHabitsModule
   ],
   controllers: [AppController],
   providers: [

@@ -78,9 +78,9 @@ export class ThemeController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
-    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
-    @Platforms(USER_PLATFORMS.ADMIN_WEB)
+    @UseGuards(JwtAuthGuard)
+    // @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    // @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'id',
         description: 'Theme ID',
@@ -125,26 +125,29 @@ export class ThemeController {
     ) {
         const existingTheme = await this.themeService.findThemeById(id);
 
-        const { data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData);
-        if(lessons.length !== payload.lessonData.length) {
-            throw new NotFoundException('Some lessons not found');
+        let lessons = [];
+        if(payload.lessonData) {
+            ({ data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData));
+            if(lessons.length !== payload.lessonData.length) {
+                throw new NotFoundException('Some lessons not found');
+            }
+
+            if(lessons.some((l) => l.themeId && l.themeId !== id)) {
+                throw new NotFoundException('Some lessons already have theme assigned');
+            }
+    
+            await this.lessonService.bulkUpdateLesson(
+                lessons.map(lesson => ({ ...lesson, themeId: id })),
+            )
+    
+            const lessonIds = lessons.map(l => l.id);
+            const removeLessonIds = existingTheme.data.lessons.filter(l => !lessonIds.includes(l.id)).map((l) => l.id);
+            const { data: lessonsToRemove = [] } = await this.lessonService.findLessonByIds(removeLessonIds);
+    
+            await this.lessonService.bulkUpdateLesson(
+                lessonsToRemove.map(lesson => ({ ...lesson, themeId: null })),
+            )
         }
-
-        if(lessons.some((l) => l.themeId && l.themeId !== id)) {
-            throw new NotFoundException('Some lessons already have theme assigned');
-        }
-
-        await this.lessonService.bulkUpdateLesson(
-            lessons.map(lesson => ({ ...lesson, themeId: id })),
-        )
-
-        const lessonIds = lessons.map(l => l.id);
-        const removeLessonIds = existingTheme.data.lessons.filter(l => !lessonIds.includes(l.id)).map((l) => l.id);
-        const { data: lessonsToRemove = [] } = await this.lessonService.findLessonByIds(removeLessonIds);
-
-        await this.lessonService.bulkUpdateLesson(
-            lessonsToRemove.map(lesson => ({ ...lesson, themeId: null })),
-        )
 
         return this.themeService.updateTheme(id, payload.themeData, req.user);
     }
