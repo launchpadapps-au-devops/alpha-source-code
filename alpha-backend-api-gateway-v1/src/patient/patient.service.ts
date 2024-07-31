@@ -87,4 +87,16 @@ export class PatientService {
             }
         );
     }
+
+    async revokeTermsAcceptance(patientId: string, policyType: PolicyType, version: string, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.userApiUrl}${this.userApiPrefix}/patient/${patientId}/revoke/${policyType}/${version}/acceptance`,
+            'PUT',
+            {},
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
 }

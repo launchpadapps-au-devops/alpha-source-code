@@ -288,6 +288,45 @@ export class PatientController {
     ): Promise<object> {
         return this.patientService.acceptTerms(req.user.userId, policyType, termsVersion, req.user);
     }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiParam({
+        name: 'policyType',
+        type: 'string',
+        description: 'Policy Type',
+        enum: POLICY_TYPES,
+        required: true,
+    })
+    @ApiParam({
+        name: 'version',
+        type: 'string',
+        description: 'Policy Version',
+        required: true,
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'A successful response',
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'Terms and Condition accepted sucessfully' },
+                data: null
+            },
+            required: ['statusCode', 'data'],
+        },
+    })
+    @Put('/revoke/:policyType/:version/acceptance')
+    async revokeTermsAcceptance(
+        @Request() req,
+        @Param('policyType') policyType: PolicyType,
+        @Param('version') termsVersion: string
+    ): Promise<object> {
+        return this.patientService.revokeTermsAcceptance(req.user.userId, policyType, termsVersion, req.user);
+    }
 }
 
 function generatePassword(length = 12) {
