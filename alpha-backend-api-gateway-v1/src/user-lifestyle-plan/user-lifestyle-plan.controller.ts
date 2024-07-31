@@ -1,4 +1,3 @@
-
 import { Request, Body, Controller, Get, Post, UseGuards, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { UserLifeStylePlanService } from './user-lifestyle-plan.service';
@@ -141,13 +140,7 @@ export class UserLifeStylePlanController {
     @Get('/daily-lessons')
     async getUserDailyLesson(@Request() req): Promise<GetUserDailyLessonResponseDTO> {
         const userId = req.user.userId;
-        const lessons = await this.userLifeStylePlanService.getUserDailyLesson({ userId });
-        return {
-            statusCode: 200,
-            message: 'User daily lesson fetched successfully',
-            data: lessons,
-            meta: {}
-        };
+        return this.userLifeStylePlanService.getUserDailyLesson({ userId });
     }
 
     @ApiBearerAuth()
