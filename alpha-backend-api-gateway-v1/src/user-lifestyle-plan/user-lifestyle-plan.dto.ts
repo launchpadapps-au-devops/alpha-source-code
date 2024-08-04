@@ -1,14 +1,88 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-
-class ThemeDTO {
-    @ApiProperty({ example: 9 })
+class CategoryDTO {
+    @ApiProperty({ example: 2 })
     id: number;
 
-    @ApiProperty({ example: 3 })
-    themeCode: number;
+    @ApiProperty({ example: 'Category New Name' })
+    name: string;
+
+    @ApiProperty({ example: null, nullable: true })
+    image: string | null;
+
+    @ApiProperty({ example: 'ACTIVE' })
+    status: string;
+
+    @ApiProperty({ example: true })
+    isPublished: boolean;
+
+    @ApiProperty({ example: 'Category Description' })
+    description: string;
+
+    @ApiProperty({ example: { key: 'value' } })
+    metadata: Record<string, unknown>;
+
+    @ApiProperty({ example: '2024-07-04T00:29:32.337Z' })
+    createdAt: string;
+
+    @ApiProperty({ example: '2024-07-04T00:29:32.337Z' })
+    updatedAt: string;
+}
+
+
+class UserCategoryDTO {
+    @ApiProperty({ example: 'f3956f1c-a2a0-4aa7-8b12-62561cb3d778' })
+    id: string;
+
+    @ApiProperty({ example: 'dfd13928-b101-416e-ae4d-fc8d403ffb00' })
+    userId: string;
 
     @ApiProperty({ example: 2 })
+    categoryId: number;
+
+    @ApiProperty({ example: 'b625ecf9-5e96-4f7a-8393-a15ec625f2c0' })
+    userLifestylePlanId: string;
+
+    @ApiProperty({ example: 'ACTIVE' })
+    status: string;
+
+    @ApiProperty({ example: false })
+    isCompleted: boolean;
+
+    @ApiProperty({ example: null, type: 'string', nullable: true })
+    completedAt: string | null;
+
+    @ApiProperty({ example: 0 })
+    progress: number;
+
+    @ApiProperty({ example: 0 })
+    totalReward: number;
+
+    @ApiProperty({ example: 0 })
+    totalPoint: number;
+
+    @ApiProperty({ example: 0 })
+    totalBadge: number;
+
+    @ApiProperty({ example: '2024-08-04T00:37:18.795Z' })
+    createdAt: string;
+
+    @ApiProperty({ example: '2024-08-04T00:37:18.795Z' })
+    updatedAt: string;
+
+    @ApiProperty({ type: () => CategoryDTO })
+    category: CategoryDTO;
+}
+
+
+class ThemeDTO {
+    @ApiProperty({ example: 7 })
+    id: number;
+
+    @ApiProperty({ example: 2 })
+    themeCode: number;
+
+    @ApiProperty({ example: 3 })
     categoryId: number;
 
     @ApiProperty({
@@ -25,7 +99,7 @@ class ThemeDTO {
     @ApiProperty({ example: 'Internal Notes' })
     internalNotes: string;
 
-    @ApiProperty({ example: 'Theme Name 3' })
+    @ApiProperty({ example: 'Theme Name 2' })
     name: string;
 
     @ApiProperty({ example: 'https://sample.com/sample.jpg' })
@@ -54,8 +128,8 @@ class ThemeDTO {
                         }
                     }
                 },
-                name: { type: 'string', example: 'value' },
-                order: { type: 'number', example: 1 },
+                name: { type: 'string', example: 'value 2' },
+                order: { type: 'number', example: 2 },
                 instructions: { type: 'string', example: 'value' },
                 timeAllocation: { type: 'number', example: 1 },
                 pointAllocation: { type: 'number', example: 1 }
@@ -71,15 +145,15 @@ class ThemeDTO {
         pointAllocation: number
     }>;
 
-    @ApiProperty({ example: '2024-07-09T01:42:38.898Z' })
+    @ApiProperty({ example: '2024-07-09T01:35:36.941Z' })
     createdAt: string;
 
-    @ApiProperty({ example: '2024-07-09T01:42:38.898Z' })
+    @ApiProperty({ example: '2024-07-29T22:44:14.097Z' })
     updatedAt: string;
 }
 
 class UserThemeDTO {
-    @ApiProperty({ example: '0c1c29ab-2943-42ff-90fe-034010ac7c7c' })
+    @ApiProperty({ example: '69994f9d-a1f6-47bf-b076-f584b6643ccc' })
     id: string;
 
     @ApiProperty({ example: 'ACTIVE' })
@@ -88,10 +162,13 @@ class UserThemeDTO {
     @ApiProperty({ example: 'dfd13928-b101-416e-ae4d-fc8d403ffb00' })
     userId: string;
 
-    @ApiProperty({ example: '0735ff70-f02f-4985-80ad-7c9f5cff68eb' })
+    @ApiProperty({ example: 'b625ecf9-5e96-4f7a-8393-a15ec625f2c0' })
     userLifestylePlanId: string;
 
-    @ApiProperty({ example: 9 })
+    @ApiProperty({ example: '22d32945-7971-4d9c-9883-9bb4a0816706' })
+    userCategoryId: string;
+
+    @ApiProperty({ example: 7 })
     themeId: number;
 
     @ApiProperty({ example: false })
@@ -103,10 +180,19 @@ class UserThemeDTO {
     @ApiProperty({ example: 0 })
     progress: number;
 
-    @ApiProperty({ example: '2024-07-19T19:37:40.224Z' })
+    @ApiProperty({ example: 0 })
+    totalReward: number;
+
+    @ApiProperty({ example: 0 })
+    totalPoint: number;
+
+    @ApiProperty({ example: 0 })
+    totalBadge: number;
+
+    @ApiProperty({ example: '2024-08-04T00:37:18.800Z' })
     createdAt: string;
 
-    @ApiProperty({ example: '2024-07-19T19:37:40.224Z' })
+    @ApiProperty({ example: '2024-08-04T00:37:18.800Z' })
     updatedAt: string;
 
     @ApiProperty({ type: () => ThemeDTO })
@@ -114,13 +200,13 @@ class UserThemeDTO {
 }
 
 class LessonDetailsDTO {
-    @ApiProperty({ example: 5 })
+    @ApiProperty({ example: 3 })
     id: number;
 
-    @ApiProperty({ example: 1.2 })
+    @ApiProperty({ example: 1.1 })
     lessonCode: number;
 
-    @ApiProperty({ example: 9 })
+    @ApiProperty({ example: 7 })
     themeId: number;
 
     @ApiProperty({ example: 3 })
@@ -225,15 +311,15 @@ class LessonDetailsDTO {
         userInstructions: string
     }>;
 
-    @ApiProperty({ example: '2024-07-09T01:37:19.910Z' })
+    @ApiProperty({ example: '2024-07-09T01:37:01.059Z' })
     createdAt: string;
 
-    @ApiProperty({ example: '2024-07-09T02:45:34.691Z' })
+    @ApiProperty({ example: '2024-07-09T01:37:01.059Z' })
     updatedAt: string;
 }
 
 class LessonDTO {
-    @ApiProperty({ example: 'a1312181-b6b6-47e1-ad2e-d43e203c6d3b' })
+    @ApiProperty({ example: '334846db-89c8-412d-baf8-d853bc7ba9e8' })
     id: string;
 
     @ApiProperty({ example: 'ACTIVE' })
@@ -242,10 +328,16 @@ class LessonDTO {
     @ApiProperty({ example: 'dfd13928-b101-416e-ae4d-fc8d403ffb00' })
     userId: string;
 
-    @ApiProperty({ example: '0c1c29ab-2943-42ff-90fe-034010ac7c7c' })
+    @ApiProperty({ example: 'b625ecf9-5e96-4f7a-8393-a15ec625f2c0' })
+    userLifeStylePlanId: string;
+
+    @ApiProperty({ example: '22d32945-7971-4d9c-9883-9bb4a0816706' })
+    userCategoryId: string;
+
+    @ApiProperty({ example: '69994f9d-a1f6-47bf-b076-f584b6643ccc' })
     userThemeId: string;
 
-    @ApiProperty({ example: 5 })
+    @ApiProperty({ example: 3 })
     lessonId: number;
 
     @ApiProperty({ example: false })
@@ -254,8 +346,8 @@ class LessonDTO {
     @ApiProperty({ example: null, type: 'string', nullable: true })
     completedAt: string | null;
 
-    @ApiProperty({ example: null, type: 'number', nullable: true })
-    pointsEarned: number | null;
+    @ApiProperty({ example: 0 })
+    pointsEarned: number;
 
     @ApiProperty({ example: 0 })
     quizRetryCount: number;
@@ -281,10 +373,10 @@ class LessonDTO {
     @ApiProperty({ example: null, type: 'string', nullable: true })
     bookmarkUpdatedAt: string | null;
 
-    @ApiProperty({ example: '2024-07-22T04:48:35.553Z' })
+    @ApiProperty({ example: '2024-08-04T00:38:34.465Z' })
     updatedAt: string;
 
-    @ApiProperty({ example: '2024-07-22T04:48:35.553Z' })
+    @ApiProperty({ example: '2024-08-04T00:38:34.465Z' })
     createdAt: string;
 
     @ApiProperty({ type: () => UserThemeDTO })
@@ -292,27 +384,17 @@ class LessonDTO {
 
     @ApiProperty({ type: () => LessonDetailsDTO })
     lesson: LessonDetailsDTO;
+
+    @ApiProperty({ type: () => UserCategoryDTO })
+    userCategory: UserCategoryDTO; // Include UserCategoryDTO here
 }
+
 
 export class GetUserDailyLessonResponseDTO {
     @ApiProperty({ type: [LessonDTO] })
     data: LessonDTO[];
 
-    @ApiProperty({ example: 'User daily lesson fetched successfully' })
-    message: string;
-
-    @ApiProperty({ example: {} })
-    meta: object;
-
-    @ApiProperty({ example: 200 })
-    statusCode: number;
-}
-
-export class GetUserDailyLessonResponseWrapperDTO {
-    @ApiProperty({ type: GetUserDailyLessonResponseDTO })
-    data: GetUserDailyLessonResponseDTO;
-
-    @ApiProperty({ example: 'User daily lesson fetched successfully' })
+    @ApiProperty({ example: 'User lifestyle plan fetched successfully' })
     message: string;
 
     @ApiProperty({ example: {} })

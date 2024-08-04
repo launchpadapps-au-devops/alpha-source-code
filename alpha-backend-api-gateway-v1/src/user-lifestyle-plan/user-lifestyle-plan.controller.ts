@@ -165,6 +165,7 @@ export class UserLifeStylePlanController {
                                 isCompleted: { type: 'boolean', example: true },
                                 completedAt: { type: 'string', example: '2020-10-20T00:00:00.000Z' },
                                 progress: { type: 'number', example: 100 },
+                                totalPoints: { type: 'number', example: 10 },
                             }
                         },
                         userTheme: {
@@ -174,6 +175,17 @@ export class UserLifeStylePlanController {
                                 isCompleted: { type: 'boolean', example: true },
                                 completedAt: { type: 'string', example: '2020-10-20T00:00:00.000Z' },
                                 progress: { type: 'number', example: 100 },
+                                totalPoint: { type: 'number', example: 10 },
+                            }
+                        },
+                        userCategory: {
+                            type: 'object',
+                            properties: {
+                                id: { type: 'string', example: '5f8f4f4f4f4f4f4f4f4f4f4f' },
+                                isCompleted: { type: 'boolean', example: true },
+                                completedAt: { type: 'string', example: '2020-10-20T00:00:00.000Z' },
+                                progress: { type: 'number', example: 100 },
+                                totalPoint: { type: 'number', example: 10 },
                             }
                         },
                         userPlan: {
@@ -183,6 +195,7 @@ export class UserLifeStylePlanController {
                                 isCompleted: { type: 'boolean', example: true },
                                 completedAt: { type: 'string', example: '2020-10-20T00:00:00.000Z' },
                                 progress: { type: 'number', example: 100 },
+                                totalPoint: { type: 'number', example: 10 },
                             }
                         }
                     }
