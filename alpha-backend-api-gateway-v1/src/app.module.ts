@@ -21,6 +21,7 @@ import { PlanModule } from './plan/plan.module';
 import { UserLifestylePlanModule } from './user-lifestyle-plan/user-lifestyle-plan.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { UserDailyHabitsModule } from './user-daily-habits/user-daily-habits.module';
+import { UserMealModule } from './user-meal/user-meal.module';
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import { UserDailyHabitsModule } from './user-daily-habits/user-daily-habits.mod
     PlanModule,
     UserLifestylePlanModule,
     FileUploadModule,
-    UserDailyHabitsModule
+    UserDailyHabitsModule,
+    UserMealModule
   ],
   controllers: [AppController],
   providers: [
