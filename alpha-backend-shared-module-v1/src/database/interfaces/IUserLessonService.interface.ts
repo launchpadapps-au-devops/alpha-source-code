@@ -8,6 +8,7 @@ export interface IUserLessonService {
   findUserLessonById(id: string): Promise<UserLesson>;
   findUserLessonByIds(ids: string[]): Promise<UserLesson[]>;
   createUserLessons(data: Partial<UserLesson>[]): Promise<UserLesson[]>;
+  findUserLessonsByUserThemeIds(userThemeIds: string[]): Promise<UserLesson[]>;
   findAllUserLessons(): Promise<{
     data: UserLesson[],
     totalRecords: number

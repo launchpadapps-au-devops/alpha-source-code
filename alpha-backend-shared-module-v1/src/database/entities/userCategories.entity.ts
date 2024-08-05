@@ -1,12 +1,11 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne } from 'typeorm';
 import { User } from './user.entity';
 import { UserTheme } from './userTheme.entity';
-import { Plan } from './plan.entity';
-import { UserCategory } from './userCategories.entity';
-import { UserLesson } from './userLesson.entity';
+import { Category } from './category.entity';
+import { UserLesson, UserPlan } from '.';
 
-@Entity('userPlans')
-export class UserPlan {
+@Entity('userCategories')
+export class UserCategory {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
@@ -18,13 +17,20 @@ export class UserPlan {
     user: User;
 
     @Column()
-    planId: number;
+    categoryId: number;
 
-    @ManyToOne(() => Plan, { nullable: false })
-    @JoinColumn({ name: 'planId' })
-    plan: Plan;
+    @ManyToOne(() => Category, { nullable: false })
+    @JoinColumn({ name: 'categoryId' })
+    category: Category;
 
-    @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVE', 'DRAFT'], default: 'ACTIVE' })
+    @Column()
+    userLifestylePlanId: string;
+
+    @ManyToOne(() => UserPlan, { nullable: true, onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'userLifestylePlanId' })
+    userLifestylePlan: UserPlan;
+
+    @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVE', 'DRAFT', 'IN_PROGRESS'], default: 'ACTIVE' })
     status: string;
 
     @Column({ type: 'boolean', default: false })
@@ -59,12 +65,9 @@ export class UserPlan {
     @JoinColumn({ name: 'updatedBy' })
     updatedBy: User;
 
-    @OneToMany(() => UserCategory, userCategory => userCategory.userLifestylePlan)
-    userCategories: UserCategory[];
-
-    @OneToMany(() => UserTheme, userTheme => userTheme.userLifestylePlan)
+    @OneToMany(() => UserTheme, userTheme => userTheme.userCategory)
     userThemes: UserTheme[];
-
-    @OneToMany(() => UserLesson, UserLesson => UserLesson.userLifeStylePlan)
+  
+    @OneToMany(() => UserLesson, UserLesson => UserLesson.userCategory)
     userLessons: UserLesson[];
 }

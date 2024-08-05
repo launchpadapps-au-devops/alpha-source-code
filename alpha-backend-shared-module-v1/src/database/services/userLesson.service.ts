@@ -55,17 +55,31 @@ class UserLessonService implements IUserLessonService {
     });
   }
 
-  async findUserLessonsByUserId(userId: string): Promise<UserLesson[]> {
+  async findUserLessonsByUserThemeIds(userThemeIds: string[]): Promise<UserLesson[]> {
     return UserLessonService.UserLessonRepository.find({
-      where: { userId, status: 'ACTIVE' },
+      where: { userThemeId: In(userThemeIds), status: 'ACTIVE' },
+      relations: ['userTheme', 'userTheme.theme', 'lesson'],
+    });
+  }
+
+  async findUserLessonsByUserCategoryIds(userCategoryIds: string[]): Promise<UserLesson[]> {
+    return UserLessonService.UserLessonRepository.find({
+      where: { userCategoryId: In(userCategoryIds), status: 'ACTIVE' },
+      relations: ['userTheme', 'userTheme.theme', 'lesson.theme'],
+    });
+  }
+
+  async findUserLessonsByLifeStylePlanId(userLifeStylePlanId: string): Promise<UserLesson[]> {
+    return UserLessonService.UserLessonRepository.find({
+      where: { userLifeStylePlanId, status: 'ACTIVE' },
       relations: ['userTheme', 'lesson'],
     });
   }
 
-  async findUserLessonsByUserThemeId(userThemeId: string): Promise<UserLesson[]> {
+  async findUserLessonsByUserId(userId: string): Promise<UserLesson[]> {
     return UserLessonService.UserLessonRepository.find({
-      where: { userThemeId, status: 'ACTIVE' },
-      relations: ['userTheme', 'userTheme.theme', 'lesson'],
+      where: { userId, status: 'ACTIVE' },
+      relations: ['userTheme', 'lesson'],
     });
   }
 

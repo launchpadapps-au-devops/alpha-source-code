@@ -8,6 +8,8 @@ export interface IUserThemeService {
   updateUserTheme(id: string, data: Partial<UserTheme>): Promise<UserTheme>;
   findUserThemeById(id: string): Promise<UserTheme>;
   findUserThemeByIds(ids: string[]): Promise<UserTheme[]>;
+  findUserThemesByUserId(userId: string): Promise<UserTheme[]>;
+  findUserThemesByUserCategoryIds(userCategoryIds: string[]): Promise<UserTheme[]>;
   findUserThemesByUserLifestylePlanId(userLifestylePlanId: string): Promise<UserTheme[]>;
   findAllUserThemes(): Promise<{
     data: UserTheme[],

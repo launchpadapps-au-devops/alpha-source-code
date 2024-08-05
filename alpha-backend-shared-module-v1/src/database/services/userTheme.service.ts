@@ -55,10 +55,25 @@ class UserThemeService implements IUserThemeService {
     });
   }
 
+  async findUserThemeByThemeId(themeId: number): Promise<UserTheme[]> {
+    return UserThemeService.UserThemeRepository.find({
+      where: { themeId },
+      relations: ['theme', 'userLifestylePlan', 'userLessons'],
+    });
+  }
+
   async findUserThemesByUserId(userId: string): Promise<UserTheme[]> {
     return UserThemeService.UserThemeRepository.find({
       relations: ['theme', 'theme.lessons', 'userLessons', 'userLessons.lesson'],
       where: { userId, status: 'ACTIVE' },
+      order: { theme: { themeCode: 'ASC' } },
+    });
+  }
+
+  async findUserThemesByUserCategoryIds(userCategoryIds: string[]): Promise<UserTheme[]> {
+    return UserThemeService.UserThemeRepository.find({
+      relations: ['theme', 'theme.lessons', 'userLessons', 'userLessons.lesson'],
+      where: { userCategoryId: In(userCategoryIds), status: 'ACTIVE' },
     });
   }
 

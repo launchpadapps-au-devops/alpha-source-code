@@ -44,7 +44,7 @@ export class Theme {
     lessons: Lesson[];
 
     @Column({ type: 'jsonb', nullable: true })
-    habits: object;
+    habits: object [];
 
     @CreateDateColumn()
     createdAt: Date;

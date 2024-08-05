@@ -1,49 +1,49 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Lesson } from './lesson.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 import { Theme } from './theme.entity';
+import { Category } from './category.entity';
 
 @Entity('habits')
 export class Habit {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column()
-  themeId: number;
-  
-  @Column()
-  name: string;
+    @Column({ type: 'int', nullable: true })
+    themeId: number;
 
-  @Column({ nullable: true })
-  image: string;
+    @ManyToOne(() => Theme, theme => theme.habits)
+    @JoinColumn({ name: 'themeId' })
+    theme: Theme;
 
-  @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVE'], default: 'ACTIVE' })
-  status: string;
+    @Column({ type: 'int', nullable: true })
+    order: number;
 
-  @Column({ type: 'boolean', nullable: true })
-  isPublished: boolean;
+    @Column({ nullable: true })
+    name: string;
 
-  @Column({ nullable: true })
-  description: string;
+    @Column({ type: 'float', nullable: true })
+    timeAllocation: number;
 
-  @Column({ type: 'jsonb', nullable: true })
-  metadata: string;
+    @Column({ type: 'float', nullable: true })
+    pointAllocation: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
+    @Column({ nullable: true })
+    instructions: string;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+    @Column({ type: 'jsonb', nullable: true })
+    meta: object;
 
-  @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'createdBy' })
-  createdBy: User;
+    @CreateDateColumn()
+    createdAt: Date;
 
-  @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'updatedBy' })
-  updatedBy: User;
+    @UpdateDateColumn()
+    updatedAt: Date;
 
-  @ManyToOne(() => Theme, { nullable: true })
-  @JoinColumn({ name: 'themeId' })
-  theme: Theme;  
+    @ManyToOne(() => User, { nullable: true })
+    @JoinColumn({ name: 'createdBy' })
+    createdBy: User;
+
+    @ManyToOne(() => User, { nullable: true })
+    @JoinColumn({ name: 'updatedBy' })
+    updatedBy: User;
 }

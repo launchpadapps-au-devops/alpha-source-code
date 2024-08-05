@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { UserTheme } from './userTheme.entity';
 import { Lesson } from './lesson.entity';
-import { User } from '.';
+import { User, UserCategory, UserPlan } from '.';
 
 @Entity('userLessons')
 export class UserLesson {
@@ -25,6 +25,20 @@ export class UserLesson {
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @Column()
+  userLifeStylePlanId: string;
+  
+  @ManyToOne(() => UserPlan, UserPlan => UserPlan.userLessons, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userLifeStylePlanId' })
+  userLifeStylePlan: UserPlan;
+
+  @Column()
+  userCategoryId: string;
+  
+  @ManyToOne(() => UserCategory, UserCategory => UserCategory.userThemes, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userCategoryId' })
+  userCategory: UserCategory;
 
   @Column()
   userThemeId: string;

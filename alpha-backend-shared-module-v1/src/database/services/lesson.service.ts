@@ -154,7 +154,8 @@ class LessonService implements ILessonService {
         lessonCode: true,
         themeId: true,
         lessonTags: [],
-      }
+      },
+      order: { lessonCode: 'ASC' }
     });
   }
   async findAllLessons(
