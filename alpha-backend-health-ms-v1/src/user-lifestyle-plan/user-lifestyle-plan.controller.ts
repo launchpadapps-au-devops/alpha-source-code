@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, Query, Headers, Req } from '@nestjs/common';
 import { UserLifeStylePlanService } from './user-lifestyle-plan.service'
-import { HealthProfileQuestionaries, SortOrderType, UserPlan } from '@launchpadapps-au/alpha-shared';
-import { ApiQuery } from '@nestjs/swagger';
+import { SortOrderType, UserPlan } from '@launchpadapps-au/alpha-shared';
 
 @Controller('user-lifetstyle-plan')
 export class UserLifestylePlanController {

@@ -5,13 +5,18 @@ import {
     GenericFilterDto,
     PaginationDto,
     planService,
+    habitService,
     SortingDto,
     userPlanService,
     userThemeService,
     healthProfileQuestionariesService,
     lessonService,
     userLessonService,
-    UserLesson
+    UserLesson,
+    userHabitService,
+    Category,
+    UserCategory,
+    userCategoryService
 } from '@launchpadapps-au/alpha-shared';
 
 @Injectable()
@@ -26,6 +31,21 @@ export class UserLifeStylePlanService {
         });
 
         const { themes } = await planService.findPlanById(userPlan.planId);
+        const categories = themes.map(theme => theme.categoryId).filter((value, index, self) => self.indexOf(value) === index);
+
+        const userCategories: Partial<UserCategory>[] = [];
+        for(const category of categories) {
+            userCategories.push({
+                userId: userPlan.userId,
+                categoryId: category,
+                userLifestylePlanId: userPlan.id,
+                createdBy: reqUser.userId,
+                updatedBy: reqUser.userId
+            });
+        }
+
+        const createdUserCategories = await userCategoryService.createUserCategories(userCategories);
+
         if (!themes?.length) {
             throw new BadRequestException('Themes not found');
         }
@@ -35,9 +55,10 @@ export class UserLifeStylePlanService {
 
         for (const themeId of themeIds) {
             userThemes.push({
+                themeId,
                 userId: userPlan.userId,
                 userLifestylePlanId: userPlan.id,
-                themeId,
+                userCategoryId: createdUserCategories.find(category => category.categoryId === themes.find(theme => theme.id === themeId).categoryId).id,
                 createdBy: reqUser.userId,
                 updatedBy: reqUser.userId
             });
@@ -76,7 +97,8 @@ export class UserLifeStylePlanService {
             .map(lesson => ({
                 userId,
                 lessonId: lesson.id,
-                userPlanId: data.find(d => d.themeId === lesson.themeId).userLifestylePlanId,
+                userLifeStylePlanId: data.find(d => d.themeId === lesson.themeId).userLifestylePlanId,
+                userCategoryId: data.find(d => d.themeId === lesson.themeId).userCategoryId,
                 userThemeId: data.find(d => d.themeId === lesson.themeId).id,
                 createdBy: reqUser.userId,
                 updatedBy: reqUser.userId
@@ -87,36 +109,30 @@ export class UserLifeStylePlanService {
 
     async getUserDailyLesson(userId: string): Promise<UserLesson[]> {
         try {
-            const userThemes = await userThemeService.findUserThemesByUserId(userId);
-        const categories = userThemes.map(theme => theme.theme.categoryId);
-        const uniqueCategories = [...new Set(categories)];
+            const userCategories = await userCategoryService.findUserCategoriesByUserId(userId);
+            const userThemes = await userThemeService.findUserThemesByUserCategoryIds(userCategories.map(category => category.id));
+            const userLessons = await userLessonService.findUserLessonsByUserThemeIds(userThemes.map(theme => theme.id));
 
-        const dailyLessons: UserLesson[] = [];
-        for (const category of uniqueCategories) {
-            const userTheme = userThemes.find(theme => theme.theme.categoryId === category && !theme.isCompleted);
-
-            if (!userTheme) {
-                continue;
+            const userDailyLessons = [];
+            for(const userCategory of userCategories) {
+                userDailyLessons.push({ userCategory });
+                if(userCategory.isCompleted) continue;
+                
+                const firstUnCompletedUserTheme = userThemes.find(theme => theme.userCategoryId === userCategory.id && !theme.isCompleted);
+                if (firstUnCompletedUserTheme) {
+                    const firstUnCompletedUserLessson = userLessons.find(lesson => lesson.userThemeId === firstUnCompletedUserTheme.id && !lesson.isCompleted);
+                    if (firstUnCompletedUserLessson) {
+                        userDailyLessons[userDailyLessons.length - 1] = {
+                            ...userDailyLessons[userDailyLessons.length - 1],
+                            ...firstUnCompletedUserLessson
+                        }
+                    }
+                }
             }
 
-            const userLessons = await userLessonService.findUserLessonsByUserThemeId(userTheme.id);
-
-            if(!userLessons.length) {
-                continue;
-            }
-
-            const userLesson = userLessons.find(lesson => !lesson.isCompleted);
-
-            if (!userLesson) {
-                continue;
-            }
-            
-            dailyLessons.push(userLesson);
-        }
-
-        return dailyLessons;
-        } catch (error) {
-            console.log(error);
+            return userDailyLessons;
+        } catch (error) { 
+            throw new BadRequestException('User Daily Lesson not found');
         }
     }
 
@@ -126,32 +142,53 @@ export class UserLifeStylePlanService {
                 id: null,
                 isCompleted: false,
                 completedAt: null,
-                progress: 0
+                progress: 0,
+                totalPoints: 0
             },
             userTheme: {
                 id: null,
                 isCompleted: false,
                 completedAt: null,
-                progress: 0
+                progress: 0,
+                totalPoints: 0
+            },
+            userCategory: {
+                id: null,
+                isCompleted: false,
+                completedAt: null,
+                progress: 0,
+                totalPoints: 0
             },
             userPlan: {
                 id: null,
                 isCompleted: false,
                 completedAt: null,
-                progress: 0
+                progress: 0,
+                totalPoints: 0
             }
         };
 
         const userLesson = await userLessonService.findUserLessonById(userLessonId);
-
-        if (userLesson.isCompleted) {
-            //throw new BadRequestException('Lesson already completed');
+        if(!userLesson) {
+            throw new BadRequestException('User Lesson not found');
         }
 
-        const userLessonsInTheme = await userLessonService.findUserLessonsByUserThemeId(userLesson.userThemeId);
+        if (userLesson.isCompleted) {
+            throw new BadRequestException('Lesson already completed');
+        }
 
+        const userLessonsInTheme = await userLessonService.findUserLessonsByUserThemeIds([userLesson.userThemeId]);
         const totalUserLessonsInTheme = userLessonsInTheme.length;
         const completedUserLessonsInTheme = userLessonsInTheme.filter(lesson => lesson.isCompleted).length + 1; // +1 for the current lesson
+
+        const userLessonInCategory = await userLessonService.findUserLessonsByUserCategoryIds([userLesson.userCategoryId]);
+        const totalUserLessonsInCategory = userLessonInCategory.length;
+        const completedUserLessonsInCategory = userLessonInCategory.filter(lesson => lesson.isCompleted).length + 1; // +1 for the current lesson
+
+        const userLessonInPlan = await userLessonService.findUserLessonsByLifeStylePlanId(userLesson.userLifeStylePlanId);
+        const totalUserLessonsInPlan = userLessonInPlan.length;
+        const completedUserLessonsInPlan = userLessonInPlan.filter(lesson => lesson.isCompleted).length + 1; // +1 for the current lesson
+
 
         userLesson.isCompleted = true;
         userLesson.pointsEarned = userLesson.lesson.points;
@@ -160,25 +197,36 @@ export class UserLifeStylePlanService {
 
         await userLessonService.updateUserLesson(userLesson.id, userLesson);
 
+        /** User Theme Update */
         const userTheme = await userThemeService.findUserThemeById(userLesson.userThemeId);
         userTheme.progress = Math.floor((completedUserLessonsInTheme / totalUserLessonsInTheme) * 100);
+        userTheme.totalPoint = userLessonsInTheme.reduce((acc, curr) => acc + curr.pointsEarned, 0) + userLesson.pointsEarned;
 
         if (completedUserLessonsInTheme === totalUserLessonsInTheme) {
             userTheme.isCompleted = true;
             userTheme.completedAt = new Date();
             userTheme.updatedBy = reqUser.userId;
         }
+
         await userThemeService.updateUserTheme(userTheme.id, userTheme);
 
+
+        /** User Category Update */
+        const userCategory = await userCategoryService.findUserCategoryById(userLesson.userCategoryId);
+        userCategory.progress = Math.floor((completedUserLessonsInCategory / totalUserLessonsInCategory) * 100);
+        userCategory.totalPoint = userLessonInCategory.reduce((acc, curr) => acc + curr.pointsEarned, 0) + userLesson.pointsEarned;
+
+        if (completedUserLessonsInCategory === totalUserLessonsInCategory) {
+            userCategory.isCompleted = true;
+            userCategory.completedAt = new Date();
+            userCategory.updatedBy = reqUser.userId;
+        }
+
         const userPlan = await userPlanService.findUserPlanById(userTheme.userLifestylePlanId);
-        const userThemes = await userThemeService.findUserThemeByIds(userPlan.userThemes.map(theme => theme.id));
+        userPlan.progress = Math.floor((completedUserLessonsInPlan / totalUserLessonsInPlan) * 100);
+        userPlan.totalPoint = userLessonInPlan.reduce((acc, curr) => acc + curr.pointsEarned, 0) + userLesson.pointsEarned;
 
-        const totalThemes = userThemes.length;
-        const completedThemes = userThemes.filter(theme => theme.isCompleted).length;
-
-        userPlan.progress = Math.floor((completedThemes / totalThemes) * 100);
-
-        if (completedThemes === totalThemes) {
+        if (completedUserLessonsInPlan === totalUserLessonsInPlan) {
             userPlan.isCompleted = true;
             userPlan.completedAt = new Date();
             userPlan.updatedBy = reqUser.userId;
@@ -190,21 +238,32 @@ export class UserLifeStylePlanService {
             id: userLesson.id,
             isCompleted: userLesson.isCompleted,
             completedAt: userLesson.completedAt,
-            progress: 100
+            progress: 100,
+            totalPoints: userLesson.pointsEarned
         };
 
         response.userTheme = {
             id: userTheme.id,
             isCompleted: userTheme.isCompleted,
             completedAt: userTheme.completedAt,
-            progress: userTheme.progress
+            progress: userTheme.progress,
+            totalPoints: userTheme.totalPoint
+        };
+
+        response.userCategory = {
+            id: userCategory.id,
+            isCompleted: userCategory.isCompleted,
+            completedAt: userCategory.completedAt,
+            progress: userCategory.progress,
+            totalPoints: userCategory.totalPoint
         };
 
         response.userPlan = {
             id: userPlan.id,
             isCompleted: userPlan.isCompleted,
             completedAt: userPlan.completedAt,
-            progress: userPlan.progress
+            progress: userPlan.progress,
+            totalPoints: userPlan.totalPoint
         };
 
         return response;

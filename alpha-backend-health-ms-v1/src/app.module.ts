@@ -8,6 +8,8 @@ import { MessagingService } from './common/messaging.service';
 import { EnvConfigService } from './common/config/envConfig.service';
 import { HealthDataModule } from './health-data/health-data.module';
 import { UserLifeStylePlanModule } from './user-lifestyle-plan/user-lifestyle-plan.module';
+import { UserDailyHabitsModule } from './user-daily-habits/user-daily-habits.module';
+import { UserMealModule } from './user-meal/user-meal.module';
 
 @Module({
   imports: [
@@ -16,7 +18,10 @@ import { UserLifeStylePlanModule } from './user-lifestyle-plan/user-lifestyle-pl
       isGlobal: true,
       envFilePath: '.env',
     }), 
-    HealthDataModule, UserLifeStylePlanModule,
+    HealthDataModule, 
+    UserLifeStylePlanModule, 
+    UserDailyHabitsModule,
+    UserMealModule,
   ],
   controllers: [AppController],
   providers: [
