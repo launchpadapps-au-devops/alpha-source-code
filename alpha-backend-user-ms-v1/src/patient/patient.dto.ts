@@ -14,6 +14,9 @@ export class CreatePatientDetailsDto {
     @IsString({ message: 'Last name must be a string' })
     lastName: string;
 
+    @IsString({ message: 'Nick name must be a string' })
+    nickName: string;
+
     @IsString({ message: 'Phone number must be a string' })
     @Matches(/^\+?[1-9]\d{1,14}$/, { message: 'Phone number must be a valid international phone number' })
     phone: string;

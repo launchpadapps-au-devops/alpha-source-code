@@ -94,5 +94,20 @@ export class PatientController {
             meta: {}
         };
     }
+
+    @Put('/:patientId/revoke/:policyType/:version/acceptance')
+    async revokeTermsAcceptance(
+        @Headers('x-request-userId') reqUserId: string,
+        @Param('patientId') patientId: string,
+        @Param('policyType') policyType: PolicyType,
+        @Param('version') version: string
+    ) {
+        await this.patientService.revokeTermsAcceptance(patientId, policyType, version, { userId: reqUserId });
+        return {
+            message: `Patient ${patientId} has revoked acceptance on terms of ${policyType} version ${version}`,
+            data: {},
+            meta: {}
+        };
+    }
 }
  

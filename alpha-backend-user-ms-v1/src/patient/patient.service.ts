@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { POLICY_TYPES, PolicyType, SortingDto, userService } from '@launchpadapps-au/alpha-shared';
+import { POLICY_TYPES, PolicyType, SortingDto, userPlanService, userService } from '@launchpadapps-au/alpha-shared';
 import { CreatePatientDetailsDto } from './patient.dto';
 
 @Injectable()
@@ -19,6 +19,10 @@ export class PatientService {
             id: patient.id,
             firstName: patient.firstName,
             lastName: patient.lastName,
+            nickName: patient.nickName,
+            planName: patient.planName,
+            startDate: patient.createdAt,
+            totalPoint: patient.totalPoint,
             email: patient.email,
             phone: patient.phone,
             gender: patient.gender,
@@ -67,7 +71,11 @@ export class PatientService {
 
     async getPatientUserProfile(patientId: string) {
         const patient = await userService.findUserById(patientId);
-        return this.#formatPatientData(patient);
+        const userPlan = await userPlanService.findUserPlansByUserId(patientId);
+        return this.#formatPatientData({
+            ...patient,
+            ...userPlan
+        });
     }
 
     async updatePatientUserProfile(patientId: string, payload: CreatePatientDetailsDto, reqUser = { userId: null }) {
@@ -88,6 +96,22 @@ export class PatientService {
 
         if(type === POLICY_TYPES.DATA_CONSENT) {
             updateData["dataConsentVersion"] = parseInt(version);
+        }
+
+        return userService.updateUser(patientId, updateData);
+    }
+
+    async revokeTermsAcceptance(patientId: string, type: PolicyType, version: string, reqUser = { userId: null }) {
+        const updateData = { 
+            updatedBy: reqUser.userId 
+        };
+
+        if(type === POLICY_TYPES.TERMS_AND_CONDITIONS) {
+            updateData["termsVersion"] = null;
+        }
+
+        if(type === POLICY_TYPES.DATA_CONSENT) {
+            updateData["dataConsentVersion"] = null;
         }
 
         return userService.updateUser(patientId, updateData);
