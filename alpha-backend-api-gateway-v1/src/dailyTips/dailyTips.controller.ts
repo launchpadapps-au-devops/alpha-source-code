@@ -76,7 +76,7 @@ export class DailyTipController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
-    @Platforms(USER_PLATFORMS.ADMIN_WEB)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
     @ApiParam({
         name: 'day',
         description: 'The day to fetch the daily tip',
