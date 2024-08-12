@@ -46,7 +46,7 @@ export const fetchThemesThunk = createAsyncThunk(
 
 export const fetchThemeByIdThunk = createAsyncThunk(
     'theme/getThemeById',
-    async (id: number, { rejectWithValue }) => {
+    async (id: any, { rejectWithValue }) => {
         try {
             const response = await getThemeById(id);
             return response;
