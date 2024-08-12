@@ -130,7 +130,7 @@ export class UserLifeStylePlanService {
         reqUser = { userId: null }
     ) {
         return this.baseHttpService.invoke(
-            `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/daily-lessons/bookmark`,
+            `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/daily-lessons/bookmarked`,
             'GET',
             {},
             {
