@@ -100,7 +100,4 @@ export class EnvironmentVariables {
     CMS_SERVICE_BASE_URL: string;
     @IsString()
     CMS_SERVICE_API_PREFIX: string;
-
-
-
 }
