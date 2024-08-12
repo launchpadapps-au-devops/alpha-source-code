@@ -8,6 +8,8 @@ import { Checkbox, TextField, InputAdornment } from '@mui/material';
 import { AppButton } from '../../../../../../../app-button/app-button';
 import { EditButton } from '../../../../../content-components/edit-button/edit-button';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../../../../../../../app/hooks';
+import { fetchThemesThunk } from '../../../themeSlice';
 
 export interface Lesson {
     code: number;
@@ -28,30 +30,52 @@ export interface SelectLessonSidebarProps {
 }
 
 export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({ isOpen, onClose, lessons, onUpdateLessons, onAddLessonsToTheme }) => {
-    const [localLessons, setLocalLessons] = useState<Lesson[]>([]);
+    const [Lessons, setLessons] = useState<Lesson[]>([]);
     const [isAnyLessonSelected, setIsAnyLessonSelected] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
-        setLocalLessons(lessons);
+        dispatch(fetchThemesThunk()).then((res: any) => {
+            console.log('res', res);
+            
+            // Extract lessons from the response and set them in the Lessons state
+            const extractedLessons = res.payload.data.flatMap((theme: any) =>
+                theme.lessons.map((lesson: any) => ({
+                    code: lesson.id,
+                    title: lesson.name,
+                    date: theme.createdAt,
+                    published: lesson.isPublished,
+                    category: theme.category.name,
+                    quiz: false, // Assuming no quiz data is provided
+                    select: false
+                }))
+            );
+
+            setLessons(extractedLessons);
+        });
+    }, []);
+
+    useEffect(() => {
+        setLessons(lessons);
     }, [lessons]);
 
     useEffect(() => {
-        const isAnyLessonSelected = localLessons.some(lesson => lesson.select);
+        const isAnyLessonSelected = Lessons.some((lesson: Lesson) => lesson.select);
         setIsAnyLessonSelected(isAnyLessonSelected);
-    }, [localLessons]);
+    }, [Lessons]);
 
     const handleCheckboxChange = (index: number) => {
-        const updatedLessons = [...localLessons];
+        const updatedLessons = [...Lessons];
         updatedLessons[index].select = !updatedLessons[index].select;
-        setLocalLessons(updatedLessons);
+        setLessons(updatedLessons);
         onUpdateLessons(updatedLessons);
     };
 
     const handleAddToThemeClick = () => {
         if (isAnyLessonSelected) {
-            onAddLessonsToTheme(localLessons.filter(lesson => lesson.select));
+            onAddLessonsToTheme(Lessons.filter((lesson: Lesson) => lesson.select));
             onClose();
         } else {
             console.log("No lesson selected");
@@ -66,14 +90,14 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({ isOpen
         setSearchQuery(event.target.value);
     };
 
-    const filteredLessons = localLessons.filter(lesson =>
+    const filteredLessons = Lessons.filter((lesson: Lesson) =>
         lesson.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const handleCreateNewLesson = () => {
         navigate('/content/createlesson');
-      };
-    
+    };
+
     return (
         <>
             {isOpen && <div className={styles.overlay} onClick={onClose} />}
@@ -122,7 +146,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({ isOpen
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredLessons.map((lesson, index) => (
+                        {filteredLessons.map((lesson: Lesson, index: number) => (
                             <tr key={index} onClick={() => handleRowClick(lesson)}>
                                 <td>{lesson.code}</td>
                                 <td>{lesson.title}</td>

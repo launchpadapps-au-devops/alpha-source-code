@@ -25,7 +25,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
         { id: 4, name: 'GP', description: 'General Practitioner role' },]);
 
     const [permissions, SetPermissions] = useState([{ id: 1, name: 'Super Admin' },
-        { id: 2, name: 'Create Team Member' }]);
+        { id: 2, name: 'Care Team Member' }]);
 
     const [openModal, setOpenModal] = useState(false);
 

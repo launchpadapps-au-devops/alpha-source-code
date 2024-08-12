@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Table,
     TableBody,
@@ -16,6 +16,8 @@ import { useNavigate } from 'react-router-dom';
 import styles from './themes-table.module.scss';
 import { PublishThemesModal } from '../publish-theme-modal/PublisThemeModal';
 import { LessonSidebar, Lesson } from '../lessonsidebar/lessonSidebar';
+import { useAppDispatch } from '../../../../../../app/hooks';
+import { fetchThemesThunk, updateThemeThunk } from '../themeSlice';
 
 const initialThemes = [
     {
@@ -96,23 +98,46 @@ export interface ThemesTableProps {
 
 export const ThemesTable: React.FC<ThemesTableProps> = ({ themes }) => {
     // const [themes, setThemes] = useState(initialThemes);
+    var [themes, setThemes] = useState<any>([]);
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openModal, setOpenModal] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
-    const handleToggle = (index: number) => {
-        const theme = themes[index];
-        if (!theme.published) {
-            setSelectedThemeIndex(index);
-            setOpenModal(true);
-        } else {
-            // setThemes((prevThemes) =>
-            //     prevThemes.map((theme, i) =>
-            //         i === index ? { ...theme, published: !theme.published } : theme
-            //     )
-            // );
-        }
+    useEffect(() => {
+        dispatch(fetchThemesThunk()).then((response: any) => {
+            if (response.payload) {
+                console.log('Response ', response);
+                setThemes(response.payload.data);
+            }
+        });
+    }, []);
+
+    const handleToggle = (theme: any,index: number) => {
+        // const theme = themes[index];
+        // if (!theme.published) {
+        //     setSelectedThemeIndex(index);
+        //     setOpenModal(true);
+        // } else {
+        //     // setThemes((prevThemes) =>
+        //     //     prevThemes.map((theme, i) =>
+        //     //         i === index ? { ...theme, published: !theme.published } : theme
+        //     //     )
+        //     // );
+        // }
+
+        // Create a new copy of the theme object
+        const newTheme = { ...theme, isPublished: !theme.isPublished };
+        
+        setThemes((prevThemes: any) => {
+            const newThemes = [...prevThemes];
+            newThemes[index] = newTheme;
+            return newThemes;
+        });
+
+        dispatch(updateThemeThunk({ id: theme.id, theme: newTheme }));
+
     };
 
     const handlePublish = () => {
@@ -203,8 +228,10 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes }) => {
                                     </TableCell>
                                     <TableCell onClick={(event) => event.stopPropagation()}>
                                         <Switch
+                                            key={index}
+                                            name={theme.name}
                                             checked={theme.published}
-                                            onChange={() => handleToggle(index)}
+                                            onChange={() => handleToggle(theme,index)}
                                         />
                                     </TableCell>
                                     <TableCell onClick={(event) => event.stopPropagation()}>

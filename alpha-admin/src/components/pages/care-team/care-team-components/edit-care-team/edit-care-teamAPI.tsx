@@ -12,11 +12,11 @@ interface editStaffData {
 
 const editStaffService = async (id: string | undefined, data: editStaffData): Promise<void> => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/api/v1/user/${id}`;
+    const apiURL = `${config.BASE_URL}/gateway/v1/staff/${id}`;
 
     try {
         console.log('data', data);
-        const response = await axios.patch(apiURL, data, {
+        const response = await axios.put(apiURL, data, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             }

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { InputFieldLabel } from '../../../../input-field-label/input-field-label';
 import { InputField } from '../../../../input-field/input-field';
 import { CoustomMenuItem, CustomizedSelects, MenuProps } from '../../../../mui-select-style';
-import { PERMISSION_LEVEL, ROLE } from '../../../../../constants/constant-option-values';
 import { AppButton } from '../../../../app-button/app-button';
 import AppButton_module from '../../../../app-button/app-button.module.scss';
 import { FormSucessModal } from '../../../../form-sucess-modal/form-sucess-modal';
@@ -13,14 +12,24 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../../../app/store';
 import { editStaffThunk } from './edit-care-teamSlice';
 import { getStaffRoleThunk } from '../create-care-team/create-care-teamSlice';
+
+export const ROLE = {
+    Nurse: 'Nurse',
+    MPA: 'MPA',
+    'Content Creator': 'Content Creator',
+    'Other role': 'Other role',
+    GP: 'GP',
+};
+
+export const PERMISSION_LEVEL = {
+    'Super admin': 'Super admin',
+    'Care team member': 'Care team member',
+};
+
 export interface EditCareTeamProps {
     className?: string;
 }
 
-/**
- * This component was created using Codux's Default new component template.
- * To create custom component templates, see https://help.codux.com/kb/en/article/kb16522
- */
 export const EditCareTeam = ({ className }: EditCareTeamProps) => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -28,39 +37,47 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
 
     const [openModal, setOpenModal] = useState(false);
 
-    var [formValues, setFormValues] = useState({
+    const [formValues, setFormValues] = useState({
         firstName: '',
         lastName: '',
         phone: '',
         email: '',
         roleId: '',
-        permissions: [],
+        permissions: [] as string[],
     });
-
-    const dummydata = {
-        id: 6,
-        email: 'akshatha@launchpadapps.co',
-        firstName: 'Smith',
-        lastName: 'Jane',
-        fullName: 'Smith undefined Jane',
-        roles: [
-            {
-                id: 1,
-                name: 'Practice Manager',
-            },
-        ],
-    };
 
     useEffect(() => {
         dispatch(getStaffRoleThunk(params.id)).then((response) => {
-            var data = response.payload.data;
-            console.log('data', data);
+            const data = response.payload.data;
 
-            setFormValues(data);
+            // Extract permissions names and role ID
+            const permissions = data.permissions.map((permission: any) => permission.name);
+            // console.log('Permissions:', permissions);
+            const roleId = data.role.name; 
+
+            setFormValues({
+                firstName: data.firstName,
+                lastName: data.lastName,
+                phone: data.phone,
+                email: data.email,
+                roleId: roleId,
+                permissions: permissions,
+            });
+
+            // console.log('Form Values Set:', {
+            //     firstName: data.firstName,
+            //     lastName: data.lastName,
+            //     phone: data.phone,
+            //     email: data.email,
+            //     roleId: roleId,
+            //     permissions: permissions,
+            // });
         });
-    }, [dispatch]);
-    // This updates the form state for a given field.
-    const handleChange = (field: string, value: string) => {
+    }, [dispatch, params.id]);
+
+    // console.log('Current Form Values:', formValues);
+
+    const handleChange = (field: string, value: any) => {
         setFormValues((prevValues) => ({
             ...prevValues,
             [field]: value,
@@ -68,17 +85,8 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
     };
 
     const handleformSucessModal = () => {
-        // const data = {
-        //     firstName: 'asdf',
-        //     lastName: 'aad',
-        //     fullName: 'asdsfsf',
-        //     email: 'adad@gmail.com',
-        //     password: '',
-        //     roleIds: [2],
-        //     isStaffAdmin: true,
-        // }
-        dispatch(editStaffThunk({ id: params.id, formData: formValues }));
         setOpenModal(true);
+        dispatch(editStaffThunk({ id: params.id, formData: formValues }));
         navigate('/careteam');
     };
 
@@ -99,7 +107,6 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                                 name="First name"
                                 placeholder="First name"
                                 type="text"
-                                //    className={InputField_module['input-padding-medium']}
                                 value={formValues.firstName}
                                 onChange={(e) => handleChange('firstName', e.target.value)}
                             />
@@ -111,7 +118,6 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                                 name="Last name"
                                 placeholder="Last name"
                                 type="text"
-                                //    className={InputField_module['input-padding-medium']}
                                 value={formValues.lastName}
                                 onChange={(e) => handleChange('lastName', e.target.value)}
                             />
@@ -123,7 +129,6 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                                 name="Phone number"
                                 placeholder="Phone number"
                                 type="text"
-                                //    className={InputField_module['input-padding-medium']}
                                 value={formValues.phone}
                                 onChange={(e) => handleChange('phone', e.target.value)}
                             />
@@ -135,7 +140,6 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                                 name="Email address"
                                 placeholder="Email address"
                                 type="email"
-                                //    className={InputField_module['input-padding-medium']}
                                 value={formValues.email}
                                 onChange={(e) => handleChange('email', e.target.value)}
                             />
@@ -158,7 +162,7 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                                     <em>Select role</em>
                                 </CoustomMenuItem>
                                 {Object.entries(ROLE).map(([code, label]) => (
-                                    <CoustomMenuItem key={code} value={code}>
+                                    <CoustomMenuItem key={code} value={label}>
                                         {label}
                                     </CoustomMenuItem>
                                 ))}
@@ -167,10 +171,9 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Permissions" />
                             <CustomizedSelects
+                                multiple
                                 value={formValues.permissions}
-                                onChange={(e) =>
-                                    handleChange('permissions', e.target.value as string)
-                                }
+                                onChange={(e) => handleChange('permissions', e.target.value as string[])}
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 MenuProps={MenuProps}
@@ -179,7 +182,7 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                                     <em>Select permission level</em>
                                 </CoustomMenuItem>
                                 {Object.entries(PERMISSION_LEVEL).map(([code, label]) => (
-                                    <CoustomMenuItem key={code} value={formValues.permissions}>
+                                    <CoustomMenuItem key={code} value={label}>
                                         {label}
                                     </CoustomMenuItem>
                                 ))}
@@ -191,6 +194,7 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                     <AppButton
                         buttonText="Cancel"
                         className={classNames(AppButton_module['button-no-decoration'])}
+                        onButtonClick={() => navigate('/careteam')}
                     />
                     <AppButton buttonText="Save profile" onButtonClick={handleformSucessModal} />
                 </div>
