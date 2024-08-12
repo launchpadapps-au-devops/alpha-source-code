@@ -65,12 +65,6 @@ export class EnvironmentVariables {
     @IsString()
     RABBITMQ_QUEUE: string;
 
-    // External Microservices
-    @IsString()
-    HEALTH_SERVICE_BASE_URL: string;
-
-    @IsString()
-    HEALTH_SERVICE_API_PREFIX: string;
 
     // SEND GRID
     @IsString()
