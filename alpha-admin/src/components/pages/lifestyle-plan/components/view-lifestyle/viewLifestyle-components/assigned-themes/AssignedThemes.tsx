@@ -19,7 +19,7 @@ const AssignedThemes = () => {
             </div>
             <div>
                 <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
-                <ThemesTable />
+                <ThemesTable themes={undefined} />
             </div>
         </>
     );
