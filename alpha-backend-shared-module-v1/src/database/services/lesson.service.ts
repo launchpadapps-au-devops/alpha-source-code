@@ -56,6 +56,8 @@ class LessonService implements ILessonService {
       relations: ['theme', 'category', 'createdBy'],
       select: {
         id: true,
+        status: true,
+        isPublished: true,
         lessonCode: true,
         themeId: true,
         categoryId: true,
@@ -104,6 +106,8 @@ class LessonService implements ILessonService {
       relations: ['theme', 'category', 'createdBy'],
       select: {
         id: true,
+        status: true,
+        isPublished: true,
         lessonCode: true,
         themeId: true,
         categoryId: true,
@@ -186,6 +190,8 @@ class LessonService implements ILessonService {
       select: {
         id: true,
         lessonCode: true,
+        status: true,
+        isPublished: true,
         themeId: true,
         categoryId: true,
         duration: true,

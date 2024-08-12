@@ -50,6 +50,8 @@ class ThemeService implements IThemeService {
       select: {
         id: true,
         themeCode: true,
+        status: true,
+        isPublished: true,
         internalNotes: true,
         name: true,
         description: true,
@@ -64,6 +66,7 @@ class ThemeService implements IThemeService {
         lessons: {
           id: true,
           name: true,
+          isPublished: true
         }
       }
     });
@@ -97,6 +100,8 @@ class ThemeService implements IThemeService {
       relations: ['category', 'lessons'],
       select: {
         id: true,
+        status: true,
+        isPublished: true,
         themeCode: true,
         internalNotes: true,
         name: true,
@@ -112,6 +117,7 @@ class ThemeService implements IThemeService {
         lessons: {
           id: true,
           name: true,
+          isPublished: true
         }
       },
       order: {
