@@ -1,0 +1,38 @@
+// src/components/viewCategories/viewCategories.module.scss
+
+.categories {
+    padding: 16px;
+    // background-color: #EBEBEB;
+  
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: -25px;
+      background-color: #EBEBEB;
+      padding: 16px 24px;
+  
+      .headerText {
+        font-size: 14px;
+        color: #22272B;
+        display: flex;
+        align-items: center;
+      }
+    }
+  
+    .MuiListItem-root {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 24px;
+  
+      .MuiListItemText-root {
+        flex: none;
+        width: auto;
+      }
+  
+      .MuiSwitch-root {
+        flex: none;
+      }
+    }
+  }
+  

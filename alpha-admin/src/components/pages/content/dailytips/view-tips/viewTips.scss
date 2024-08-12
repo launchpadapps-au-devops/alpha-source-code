@@ -1,0 +1,84 @@
+// import global css
+@import '../../../../../styles/global.scss';
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-transform: none;
+}
+
+.header {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+  align-items: center;
+  text-decoration: none;
+  text-transform: none !important;
+  gap: 900px;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 10px; /* Adjust gap as needed */
+}
+
+.blur-effect {
+  filter: blur(10px);
+}
+
+.table th {
+  background-color: #ebebeb;
+  color: black;
+}
+table {
+  border: none;
+  background-color: #f8f9fa;
+  border-collapse: collapse;
+  border-radius: 1000px;
+}
+
+.table td:nth-child(2) {
+  text-align: left;
+}
+
+.table-bordered {
+  border: 2px solid #ebebeb;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 2px solid #146cfd;
+}
+
+.table-responsive {
+  margin-top: 20px;
+}
+
+.table th {
+  border: none;
+  height: 40px;
+}
+
+.table td {
+  padding: 15px;
+  border: none;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #146cfd;
+  border-color: #146cfd;
+}
+
+.pagination .page-link {
+  color: #146cfd;
+}
+
+.pagination .page-link:hover {
+  color: #146cfd;
+}

@@ -1,0 +1,122 @@
+.lessonForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.section label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.section input,
+.section select {
+  padding: 12px;
+  border: 1px solid #22272B; /* Border color */
+  background: #fff;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section input:focus,
+.section select:focus {
+  border-color: #146CF6; /* Retain border color on focus */
+  outline: none; /* Remove default outline */
+}
+
+.customSelectWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.customSelect {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 2.5rem;
+}
+
+.caretIcon {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+}
+
+.inputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWithPlusIcon {
+  padding-right: 2.5rem; /* Space for the icon */
+}
+
+.plusIcon {
+  position: absolute;
+  right: 10px;
+  pointer-events: none; /* Prevent icon from blocking input interaction */
+}
+
+.tags {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tagSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.tagSection label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.tagInputs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tagInputs input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.tagInputs button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tagInputs button:hover {
+  background-color: #0056b3;
+}
+
+.lessonCodeInput {
+  border: 1px solid #22272B; /* Border color */
+  background: #fff;
+  border-radius: 4px;
+  padding: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.lessonCodeInput:focus {
+  border-color: #146CF6; /* Retain border color on focus */
+  outline: none; /* Remove default outline */
+}

@@ -1,0 +1,81 @@
+import axios from "axios";
+import { config } from '../../../../../config/config';
+// import { useSelector } from "react-redux";
+// import { LoginUser } from "../../../../login/loginSlice";
+
+interface staff {
+    success: boolean;
+    message: string;
+    data: [];
+}
+
+const getStaff = async (): Promise<staff> => {
+    const accessToken = localStorage.getItem('accessToken');
+    const token = 'token';
+    let apiURL = `${config.BASE_URL}/gateway/v1/staff`;
+    try {
+        const response = await axios.get(apiURL, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const getStaffRole = async (staffId: any): Promise<any> => {
+    const accessToken = localStorage.getItem('accessToken');
+    const token = 'token';
+    let apiURL = `${config.BASE_URL}/gateway/v1/staff/${staffId}`;
+    try {
+        const response = await axios.get(apiURL, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export { getStaff, getStaffRole };
+
+interface staffFormData {
+    userData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    roleId: number ;
+    }
+    permissions: Array<any>;
+}
+
+const addNewStaffService = async (data: staffFormData): Promise<void> => {
+    const accessToken = localStorage.getItem('accessToken');
+    //const token = 'token';
+    const apiURL = `${config.BASE_URL}/gateway/v1/staff`;
+
+    // Set default password if not provided
+
+    try {
+        const response = await axios.post(apiURL, data, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+
+            }
+        });
+        console.log('response', response.data);
+        return response.data;
+    } catch (error) {
+        throw error;
+        console.log('Error', error);
+
+    }
+};
+
+
+export default addNewStaffService;

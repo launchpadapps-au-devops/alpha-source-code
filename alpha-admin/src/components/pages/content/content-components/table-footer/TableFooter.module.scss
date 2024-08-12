@@ -1,0 +1,33 @@
+// TableFooter.scss
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-top: 1px solid #ccc;
+  
+    .page-info {
+      font-size: 1rem;
+    }
+  
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+  
+      &:disabled {
+        color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  
+    .prev-button {
+      margin-right: auto;
+    }
+  
+    .next-button {
+      margin-left: auto;
+    }
+  }
+  

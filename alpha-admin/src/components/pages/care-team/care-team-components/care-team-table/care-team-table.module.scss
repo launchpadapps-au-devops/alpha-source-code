@@ -1,0 +1,57 @@
+@import '../../../../../styles/global.scss';
+
+.key-contacts-table {
+  width: 100%;
+  // border: 1px solid $color-gains-boro-medium; //#E0E0E0
+  // border-radius: 0.8px;
+  border-collapse: collapse;
+
+  th {
+    border-bottom: solid 1px #ebebeb;
+  }
+
+  tbody {
+    tr {
+      border-bottom: solid 1px #ebebeb;
+    }
+  }
+
+  thead {
+    background-color: #ebebeb;
+  }
+
+  th {
+    font: $type-text-small; //14px/20px;
+    font-weight: 600;
+    text-align: left;
+    color: $color-medium-black; //#22272b;
+    text-transform: capitalize;
+    padding: $spacing-2 $spacing-3; // 16px 24px
+  }
+
+  td {
+    font: $type-text-small; //14px/20px;
+    text-align: left;
+    color: $color-medium-black;
+    padding: $spacing-2 $spacing-3; // 16px 24px
+
+
+    .flex-table-column {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-image {
+      width: 32px;
+      height: 32px;
+      color: #009dd9;
+      background-color: #e6f7fd;
+    }
+
+    .table-icon-button {
+      color: #333333;
+    }
+
+  }
+}

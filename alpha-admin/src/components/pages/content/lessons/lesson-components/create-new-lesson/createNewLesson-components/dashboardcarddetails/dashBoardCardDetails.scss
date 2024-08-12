@@ -1,0 +1,46 @@
+.dashboard-card-details-container {
+    margin: 16px;
+}
+
+.dashboard-card-header {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.cover-image-section, .lesson-name-section, .lesson-description-section {
+    margin-top: 16px;
+}
+
+.cover-image-label, .lesson-name-label, .lesson-description-label {
+    font-size: 12px;
+    color: #555;
+}
+
+.cover-image-input, .lesson-name-input, .lesson-description-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    padding: 12px;
+    align-items: center;
+    gap: 12px;
+    align-self: stretch;
+    border-radius: 6px;
+    border: 1px solid var(--Gray-01, #22272B);
+    background: var(--Shades-White, #FFF);
+    box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+
+    &:focus {
+        border-color: #146CFD;
+        outline: none; // Remove default outline for better appearance
+    }
+}
+
+.lesson-name-footer, .lesson-description-footer {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #999;
+    text-align: right;
+}

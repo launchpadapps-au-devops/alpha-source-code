@@ -1,0 +1,145 @@
+/* src/themes-table.module.scss */
+@import '../../../../../styles/global.scss';
+
+.key-contacts-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  a {
+    color: #146cfd; /* Change link color to blue */
+    text-decoration: none;
+  }
+
+  th,
+  td {
+    padding: $spacing-2;
+    text-align: left;
+    border-bottom: 1px solid $color-divider;
+  }
+
+  th {
+    background-color: $color-background;
+  }
+
+  .code,
+  .name,
+  .date,
+  .published {
+    vertical-align: middle;
+    height: 47px; /* Ensure consistent height */
+    align-items: center;
+    font-family: $font-family-public-sans !important;
+    font-size: 14px;
+    font-weight: 500;
+    color: $color-medium-black;
+  }
+
+  .name {
+    width: 590px;
+    height: 47px;
+    padding: $spacing-2 $spacing-3;
+  }
+
+  .date {
+    width: 238px;
+    height: 47px;
+    padding: $spacing-2;
+  }
+
+  .published {
+    width: 129px;
+    height: 47px;
+    padding: $spacing-2;
+  }
+}
+
+.flex-table-column {
+  display: flex;
+  align-items: center;
+}
+
+.profile-image {
+  margin-right: $spacing-2;
+}
+
+.table-icon-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-2 $spacing-3;
+}
+
+.pagination .MuiPagination-ul {
+  display: flex;
+}
+
+.pagination .MuiTablePagination-selectLabel,
+.pagination .MuiInputBase-root {
+  display: none;
+}
+
+.pagination .MuiTablePagination-displayedRows {
+  font-size: 14px;
+  font-family: $font-family-public-sans;
+  color: $color-medium-grey;
+  &:before {
+    content: 'Showing ';
+  }
+}
+
+@media (max-width: $media-tablet) {
+  .code,
+  .name,
+  .date,
+  .published {
+    font-size: 12px;
+    padding: $spacing-1;
+  }
+
+  .code {
+    width: 100px;
+  }
+
+  .name {
+    width: 300px;
+  }
+
+  .date,
+  .habit,
+  .published {
+    width: 100px;
+  }
+
+  th,
+  td {
+    padding: $spacing-1;
+  }
+}
+
+@media (max-width: $media-mobile) {
+  .code,
+  .name,
+  .date,
+  .habit,
+  .published {
+    display: block;
+    width: 100%;
+    padding: $spacing-1;
+  }
+
+  th,
+  td {
+    display: block;
+    width: 100%;
+    padding: $spacing-1;
+  }
+
+  .pagination {
+    padding: $spacing-1;
+  }
+}

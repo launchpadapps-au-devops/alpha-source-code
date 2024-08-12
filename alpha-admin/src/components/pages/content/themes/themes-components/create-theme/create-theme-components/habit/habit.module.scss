@@ -1,0 +1,73 @@
+.habitForm {
+    display: flex;
+    flex-direction: column;
+    height: 401px;
+    padding: 16px;
+    background: #F9FAFE;
+    border-radius: 8px;
+    gap: 32px;
+  }
+  
+  .inputGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .inputGroup label {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .inputGroup select,
+  .inputGroup input,
+  .inputGroup textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .textarea {
+    resize: none;
+  }
+  
+  .habitNameInput {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--Gray-01, #22272B);
+    border-radius: 6px;
+    box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+    background: var(--Shades-White, #FFF);
+    font-size: 16px;
+  }
+  
+  .timeAllocationSelect {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--Gray-01, #22272B);
+    border-radius: 6px;
+    box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+    background: var(--Shades-White, #FFF);
+    font-size: 16px;
+  }
+  
+  .sideBySide {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .sideBySide .inputGroup {
+    flex: 1;
+  }
+  
+  .removeHabitButton {
+    display: flex;
+    width: 180px;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--Red, #EB5757);
+    background: var(--Shades-White, #FFF);
+  }

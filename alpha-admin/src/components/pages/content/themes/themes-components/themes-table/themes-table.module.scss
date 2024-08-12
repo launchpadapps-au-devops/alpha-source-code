@@ -1,0 +1,150 @@
+/* src/themes-table.module.scss */
+@import '../../../../../../styles/global.scss';
+
+.key-contacts-table {
+  width: 100%;
+  border-collapse: collapse;
+ 
+
+  a {
+    color: #146CFD; /* Change link color to blue */
+    text-decoration: none;
+  }
+
+  th, td {
+    padding: $spacing-2;
+    text-align: left;
+    border-bottom: 1px solid $color-divider;
+  }
+
+  th {
+    background-color: $color-background;
+  }
+
+  .theme-code, .theme-name, .theme-date, .theme-habit, .theme-published, .theme-lessons {
+    vertical-align: middle;
+    height: 47px; /* Ensure consistent height */
+    align-items: center;
+    font-family: $font-family-public-sans !important;
+    font-size: 14px;
+    font-weight: 500;
+    color: $color-medium-black;
+  }
+
+  .theme-code {
+    width: 128px;
+    height: 47px;
+    padding: $spacing-2;
+  }
+
+  .theme-name {
+    width: 490px;
+    height: 47px;
+    padding: $spacing-2 $spacing-3;
+  }
+  
+  .theme-date {
+    width: 238px;
+    height: 47px;
+    padding: $spacing-2;
+  }
+
+  .theme-habit {
+    width: 129px;
+    height: 47px;
+    padding: $spacing-2;
+  }
+  
+  .theme-published {
+    width: 129px;
+    height: 47px;
+    padding: $spacing-2;
+  }
+  
+  .theme-lessons {
+    width: 129px;
+    height: 47px;
+    padding: $spacing-2;
+    }
+  }
+
+  .flex-table-column {
+    display: flex;
+    align-items: center;
+  }
+
+  .profile-image {
+    margin-right: $spacing-2;
+  }
+
+  .table-icon-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    padding: $spacing-2 $spacing-3;
+  }
+
+  .pagination .MuiPagination-ul {
+    display: flex;
+  }
+
+  .pagination .MuiTablePagination-selectLabel,
+  .pagination .MuiInputBase-root {
+    display: none;
+  }
+
+  .pagination .MuiTablePagination-displayedRows {
+    font-size: 14px;
+    font-family: $font-family-public-sans;
+    color: $color-medium-grey;
+    &:before {
+      content: 'Showing ';
+    }
+  }
+
+  @media (max-width: $media-tablet) {
+    .theme-code, .theme-name, .theme-date, .theme-habit, .theme-published, .theme-lessons {
+      font-size: 12px;
+      padding: $spacing-1;
+    }
+
+    .theme-code {
+      width: 100px;
+    }
+
+    .theme-name {
+      width: 300px;
+    }
+
+    .theme-date, .theme-habit, .theme-published, .theme-lessons {
+      width: 100px;
+    }
+
+    th, td {
+      padding: $spacing-1;
+    }
+  }
+
+  @media (max-width: $media-mobile) {
+    .theme-code, .theme-name, .theme-date, .theme-habit, .theme-published, .theme-lessons {
+      display: block;
+      width: 100%;
+      padding: $spacing-1;
+    }
+
+    th, td {
+      display: block;
+      width: 100%;
+      padding: $spacing-1;
+    }
+
+    .pagination {
+      padding: $spacing-1;
+    }
+  }
+
