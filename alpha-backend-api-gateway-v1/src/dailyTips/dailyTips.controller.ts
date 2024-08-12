@@ -213,7 +213,7 @@ export class DailyTipController {
         @Query('sortOrder') sortOrder: 'ASC' | 'DESC' = 'ASC',
 
     ) {
-        const data = await this.dailyTipsService.findAllDailyTips({
+        return await this.dailyTipsService.findAllDailyTips({
             page,
             limit
         }, {
@@ -224,10 +224,5 @@ export class DailyTipController {
             day,
             status
         });
-
-        return {
-            message: 'Daily tips fetched successfully',
-            data
-        };
     }
 }
