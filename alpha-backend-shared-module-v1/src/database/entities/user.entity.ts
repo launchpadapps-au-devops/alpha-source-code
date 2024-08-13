@@ -21,6 +21,7 @@ import { Role } from './role.entity';
 import { Permission } from './permission.entity';
 import { HealthProfileQuestionaries } from './HealthProfileQuestionaries.entity';
 import { UserPlan } from './userPlan.entity';
+import { UserHealthData } from './userHealthData.entity';
 
 @Entity('users')
 export class User {
@@ -221,6 +222,9 @@ export class User {
 
   @OneToMany(() => UserPlan, UserPlan => UserPlan.user)
   lifestylePlans: UserPlan[];
+
+  @OneToMany(() => UserHealthData, userHealthData => userHealthData.user)
+  userHealthData: UserHealthData[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -17,8 +17,9 @@ import { UserCategory } from "./userCategories.entity";
 import { UserTheme } from "./userTheme.entity";
 import { UserLesson } from "./userLesson.entity";
 import { UserHabit } from "./userHabit.entity";
-import { UserMealLog } from "./userMeal.entity";
 
+import { UserMealLog } from "./userMeal.entity";
+import { UserHealthData } from "./userHealthData.entity";
 
 // Export all entities
 export { 
@@ -45,5 +46,7 @@ export {
   Habit,
   UserLesson,
   UserHabit,
-  UserMealLog
+
+  UserMealLog,
+  UserHealthData
 };
