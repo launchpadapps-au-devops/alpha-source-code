@@ -1,7 +1,7 @@
 import { Request, Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { HealthDataService } from './health-data.service';
-import { CreateHealthProfileQuestionariesDto, GetHealthProfileQuestionariesDto } from './health-data.dto';
+import { CreateHealthProfileQuestionariesDto, GetHealthProfileQuestionariesDto, CreateSurveyAnswerDto, GetSurveyAnswerDto } from './health-data.dto';
 import { MessagingService } from '../common/messaging.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserTypesGuard } from 'src/auth/userTypes';
@@ -10,8 +10,8 @@ import { UserTypes } from 'src/auth/userTypes.decorator';
 import { Platforms } from 'src/auth/platform.decorator';
 import { USER_PLATFORMS, USER_TYPES } from '@launchpadapps-au/alpha-shared';
 
-@ApiTags('Health Questionaries')
-@ApiExtraModels(GetHealthProfileQuestionariesDto)
+@ApiTags('Health Data')
+@ApiExtraModels(GetHealthProfileQuestionariesDto, GetSurveyAnswerDto)
 @Controller('health-data')
 export class HealthDataController {
     constructor(
@@ -76,5 +76,75 @@ export class HealthDataController {
         @Request() req
     ): Promise<object> {
         return await this.healthDataService.getHealthProfileQuestionaries(req.user);
+    }
+
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiBody({ type: CreateSurveyAnswerDto })
+    @ApiResponse({
+        status: 201,
+        description: 'A successful response',
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'Survey question answer added successfully' },
+                data: {
+                    type: 'object',
+                    properties: {
+                        id: { type: 'string', example: '5f8f4f4f4f4f4f4f4f4f4f4f' },
+                    },
+                }
+            },
+            required: ['statusCode', 'data'],
+        },
+    })
+    @Post('/survey-questions')
+    async addSurveyQuestionAnswer(
+        @Request() req,
+        @Body() payload: CreateSurveyAnswerDto
+    ): Promise<object> {
+        return await this.healthDataService.addSurveyQuestionAnswer(payload, req.user);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB,USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiQuery({ name: 'surveyType', required: false })
+    @ApiQuery({ name: 'page', required: false })
+    @ApiQuery({ name: 'limit', required: false })
+    @ApiQuery({ name: 'sortField', required: false })
+    @ApiQuery({ name: 'sortOrder', required: false })
+    @ApiResponse({
+        status: 200,
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'Survey question answer fetched successfully' },
+                data: {
+                    type: 'array',
+                    items: { $ref: getSchemaPath(GetSurveyAnswerDto) }
+                },
+                meta: { type: 'object' },
+            },
+            required: ['statusCode', 'data'],
+        },
+    })
+    @Get('/survey-questions')
+    async getActiveSurveyQuestionAnswer(
+        @Request() req
+    ): Promise<object> {
+        const { limit, page, sortField, sortOrder, surveyType } = req.query;
+        return await this.healthDataService.getActiveSurveyQuestionAnswer(
+            { limit, page },
+            { sortField, sortOrder },
+            { surveyType },
+            req.user
+        );
     }
 }

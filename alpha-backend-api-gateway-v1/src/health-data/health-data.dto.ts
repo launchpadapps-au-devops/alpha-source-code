@@ -1,3 +1,4 @@
+import { SURVEY_TYPE, SurveyTypes } from '@launchpadapps-au/alpha-shared';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateHealthProfileQuestionariesDto {
@@ -110,4 +111,14 @@ export class GetHealthProfileQuestionariesDto {
 
   @ApiProperty({ example: 'user-id-123' })
   updatedBy: string;
+}
+
+export class CreateSurveyAnswerDto extends CreateHealthProfileQuestionariesDto {
+  @ApiProperty({ enum: SurveyTypes, example: SURVEY_TYPE.BREAST_CANCER })
+  surveyType: string;
+}
+
+export class GetSurveyAnswerDto extends GetHealthProfileQuestionariesDto {
+  @ApiProperty({ enum: SurveyTypes, example: SURVEY_TYPE.BREAST_CANCER })
+  surveyType: string;
 }
