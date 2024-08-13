@@ -82,6 +82,9 @@ jobs:
               if [ "$image_name" == "alpha-backend-health-ms-v1" ]; then
                 ./change-image.sh base/project-alpha/alpha-backend-health-ms-v1.yaml $image_with_sha
               fi
+              if [ "$image_name" == "alpha-admin" ]; then
+                ./change-image.sh base/project-alpha/alpha-admin.yaml $image_with_sha
+              fi
 
             fi
           done < images.txt
