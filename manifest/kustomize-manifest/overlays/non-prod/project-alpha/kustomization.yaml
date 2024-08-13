@@ -13,4 +13,3 @@ patches:
   - path: alpha-backend-cms-ms-v1.yaml
   - path: alpha-backend-health-ms-v1.yaml
   - path: alpha-rabbitmq.yaml
-  - path: alpha-admin.yaml
