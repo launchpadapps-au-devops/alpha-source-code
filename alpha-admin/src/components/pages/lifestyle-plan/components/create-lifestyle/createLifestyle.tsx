@@ -55,7 +55,7 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
                             onButtonClick={() => navigate('/content/categories')}
                         />
                         <AppButton
-                            buttonText="Publish"
+                            buttonText="Preview"
                             onButtonClick={() => navigate('/careteam/createcontent')}
                         />
                     </div>
@@ -86,6 +86,12 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
                                 />
                             )} */}
                         {/* </div>  */}
+                        <div className={styles.rightButtonContainer}>
+                        <EditButton
+                            buttonText="Continue"
+                            onButtonClick={() => navigate('/lifestyle-plan/addthemes')}
+                        />
+                        </div>
                     </div>
                 </div>
             </div>

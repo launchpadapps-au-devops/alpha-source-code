@@ -102,19 +102,27 @@ const CategoryList: React.FC = () => {
                     {newCategory && (
                         <tr>
                             <td>
+                            <div className={styles.categoryCell}>
                                 <input
                                     type="text"
                                     className={styles.editInput}
                                     value={newCategoryName}
                                     onChange={(e) => setNewCategoryName(e.target.value)}
                                 />
+                              
+                                    {/* <AppButton
+                                                        buttonText="Save & add more"
+                                                        onButtonClick={() =>
+                                                            handleSaveAndAddMoreClick(category)
+                                                        }
+                                                    /> */}
+                                    <AppButton
+                                        buttonText="Add"
+                                        onButtonClick={() => handleNewCategory()}
+                                    />
+                                </div>
                             </td>
-                            <td>
-                                <AppButton
-                                    buttonText="Add"
-                                    onButtonClick={() => handleNewCategory()}
-                                />
-                            </td>
+
                         </tr>
                     )}
                     {categories &&

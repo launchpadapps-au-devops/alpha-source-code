@@ -33,6 +33,8 @@ import { ViewTips } from './components/pages/content/dailytips/view-tips/viewTip
 import { LifeStyle } from './components/pages/lifestyle-plan/view-lifestyle/viewLifeStyle';
 import { ViewLifeStyle } from './components/pages/lifestyle-plan/components/view-lifestyle/viewLifestyle';
 import { CreateLifestyle } from './components/pages/lifestyle-plan/components/create-lifestyle/createLifestyle';
+import { AddThemes } from './components/pages/lifestyle-plan/components/add-themes/addThemes';
+import { Lesson } from './components/pages/content/themes/themes-components/lessonsidebar/lessonSidebar';
 // import { EditLesson } from './components/pages/content/lessons/lesson-components/edit-lesson/editLesson';
 
 // const router = createBrowserRouter([
@@ -158,6 +160,14 @@ const router = createBrowserRouter([
             {
                 path: '/lifestyle-plan',
                 element: <LifeStyle />,
+            },
+            {
+                path: '/lifestyle-plan/addthemes',
+                element: <AddThemes themes={undefined} onUpdateThemes={function (updatedLessons: Lesson[]): void {
+                    throw new Error('Function not implemented.');
+                } } onAddThemesToPlan={function (selected: Lesson[]): void {
+                    throw new Error('Function not implemented.');
+                } } />,
             },
             {
                 path: '/lifestyle-plan/view/:id',

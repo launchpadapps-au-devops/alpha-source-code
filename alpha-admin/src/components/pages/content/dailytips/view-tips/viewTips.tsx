@@ -60,8 +60,9 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
     }, [buttonRef.current]);
 
     const renderTableRows = () => {
+        const activeTips = tips.filter((tip: any) => tip.status === "ACTIVE");
         const startIndex = (currentPage - 1) * itemsPerPage;
-        const selectedTips = tips.slice(startIndex, startIndex + itemsPerPage);
+        const selectedTips = activeTips.slice(startIndex, startIndex + itemsPerPage);
 
         // Map over selectedTips and return the table rows
         console.log(selectedTips, 'selectedTips');

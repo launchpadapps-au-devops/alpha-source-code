@@ -162,7 +162,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
 
     const handlePreview = () => {
         if (isEditMode) {
-            dispatch(updateLessonThunk({ id: params.id, lesson: data })).then((response: any) => {
+            dispatch(updateLessonThunk({ id: params.id, data: data })).then((response: any) => {
                 console.log('Response', response);
                 navigate('/content/viewlesson/' + response.payload.data.id);
             });

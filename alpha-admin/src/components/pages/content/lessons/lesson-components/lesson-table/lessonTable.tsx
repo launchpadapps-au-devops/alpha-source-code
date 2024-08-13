@@ -7,7 +7,6 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Switch,
     Pagination,
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -18,107 +17,76 @@ import { PublishLessonModal } from '../publish-lesson-modal/publishLessonModal';
 import { UnpublishLessonModal } from '../unpublish-lesson-modal/unpublishLessonModal';
 import { useAppDispatch, useAppSelector } from '../../../../../../app/hooks';
 import { fetchLessonsThunk, updateLessonThunk } from '../lessonsSlice';
+import CategoryItem from '../../../categories/category-component/categoryItem/categoryItem';
 
-const initialLessons = [
-    {
-        code: 1,
-        name: 'Title...',
-        dateCreated: '26/06/2024',
-        habit: true,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 2,
-        name: 'Protein',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 3,
-        name: 'Sleep 101',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: true,
-        lessons: 'View lessons',
-    },
-    {
-        code: 4,
-        name: 'Goal setting',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 5,
-        name: 'Mindfulness',
-        dateCreated: '26/06/2024',
-        habit: true,
-        published: true,
-        lessons: 'View lessons',
-    },
-    {
-        code: 6,
-        name: 'Movement 101',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 7,
-        name: 'Staying active',
-        dateCreated: '26/06/2024',
-        habit: true,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 8,
-        name: 'Steps',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: true,
-        lessons: 'View lessons',
-    },
-];
+// Define the Lesson type at the top of the file
+type Lesson = {
+    id: number;
+    lessonCode: string;
+    name: string;
+    createdAt: string;
+    quizData: any[];
+    isPublished: boolean;
+};
 
 export const LessonTable: React.FC<{ className?: string }> = ({ className }) => {
-    const [themes, setThemes] = useState(initialLessons);
+    const [lessons, setLessons] = useState<Lesson[]>([]);
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openPublishModal, setOpenPublishModal] = useState(false);
     const [openUnpublishModal, setOpenUnpublishModal] = useState(false);
-    const [lessons, setLessons] = useState([]);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const handleToggle = (lesson: any) => {
-        // dispatch(updateLessonThunk({ id: lesson.id, lesson: { published: !lesson.published } }));
+    const handleToggle = (lesson: Lesson, index: number) => {
+        setSelectedThemeIndex(index);
+
+        if (!lesson.isPublished) {
+            setOpenPublishModal(true);
+        } else {
+            setOpenUnpublishModal(true);
+        }
     };
 
     const handlePublish = () => {
         if (selectedThemeIndex !== null) {
-            setThemes((prevThemes) =>
-                prevThemes.map((theme, i) =>
-                    i === selectedThemeIndex ? { ...theme, published: true } : theme
-                )
+            const lessonToUpdate = lessons[selectedThemeIndex];
+            const updatedLesson = { ...lessonToUpdate, isPublished: true };
+
+            dispatch(updateLessonThunk({ id: lessonToUpdate.id, data: updatedLesson })).then(
+                (response: any) => {
+                    if (response.payload) {
+                        dispatch(fetchLessonsThunk()).then((res: any) => {
+                            if (res.payload) {
+                                setLessons(res.payload.data);
+                            }
+                        });
+                    }
+                }
             );
+
+            setOpenPublishModal(false);
         }
-        setOpenPublishModal(false);
     };
 
     const handleUnpublish = () => {
         if (selectedThemeIndex !== null) {
-            setThemes((prevThemes) =>
-                prevThemes.map((theme, i) =>
-                    i === selectedThemeIndex ? { ...theme, published: false } : theme
-                )
+            const lessonToUpdate = lessons[selectedThemeIndex];
+            const updatedLesson = { ...lessonToUpdate, isPublished: false };
+
+            dispatch(updateLessonThunk({ id: lessonToUpdate.id, data: updatedLesson })).then(
+                (response: any) => {
+                    if (response.payload) {
+                        dispatch(fetchLessonsThunk()).then((res: any) => {
+                            if (res.payload) {
+                                setLessons(res.payload.data);
+                            }
+                        });
+                    }
+                }
             );
+
+            setOpenUnpublishModal(false);
         }
-        setOpenUnpublishModal(false);
     };
 
     const handleCloseModal = () => {
@@ -127,8 +95,8 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
     };
 
     const handleRowClick = (index: number) => {
-        navigate(`/content/viewlesson/${themes[index].code}`, {
-            state: { isPublished: themes[index].published },
+        navigate(`/content/viewlesson/${lessons[index].lessonCode}`, {
+            state: { isPublished: lessons[index].isPublished },
         });
     };
 
@@ -137,7 +105,7 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
             console.log('res', res.payload.data);
             setLessons(res.payload.data);
         });
-    }, []);
+    }, [dispatch]);
 
     return (
         <>
@@ -159,7 +127,7 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {lessons.map((lesson: any, index: any) => (
+                        {lessons.map((lesson: Lesson, index: number) => (
                             <TableRow
                                 key={index}
                                 onClick={() => handleRowClick(index)}
@@ -178,9 +146,11 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
                                     {lesson.quizData.length > 0 ? <CheckCircleOutlineIcon /> : ''}
                                 </TableCell>
                                 <TableCell onClick={(event) => event.stopPropagation()}>
-                                    <Switch
-                                        checked={lesson.published}
-                                        onChange={() => handleToggle(lesson)}
+                                    <CategoryItem
+                                        key={index}
+                                        published={lesson.isPublished}
+                                        onToggle={() => handleToggle(lesson, index)}
+                                        name={''}
                                     />
                                 </TableCell>
                             </TableRow>
