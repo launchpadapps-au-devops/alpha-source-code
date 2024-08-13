@@ -12,6 +12,8 @@ import { AppButton } from '../../../../app-button/app-button';
 import { Menu, MenuItem, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { EditButton } from '../../content-components/edit-button/edit-button';
+import { useAppDispatch, useAppSelector } from '../../../../../app/hooks';
+import { fetchTipsThunk } from './viewTipsSlice';
 export interface ViewTipsProps {
     className?: string;
 }
@@ -20,61 +22,11 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [menuWidth, setMenuWidth] = useState<number>(-2);
     const navigate = useNavigate();
-    let [tips, setTips] = useState([
-        {
-            id: 1,
-            day: 1,
-            tip: 'Choose one learning card each day to inspire you. If you feel like it, you can pick more for extra learning!',
-        },
-        {
-            id: 2,
-            day: 2,
-            tip: 'Reflect on Progress: At the end of the day, review what you’ve accomplished and plan for tomorrow.',
-        },
-        {
-            id: 3,
-            day: 3,
-            tip: 'Take Breaks: Short breaks help maintain productivity and prevent burnout.',
-        },
-        {
-            id: 4,
-            day: 4,
-            tip: 'Set Small, Achievable Goals: Break your tasks into smaller steps and celebrate each accomplishment.',
-        },
-        {
-            id: 5,
-            day: 5,
-            tip: 'Connect with Positive People: Surround yourself with supportive and encouraging individuals.',
-        },
-        {
-            id: 6,
-            day: 6,
-            tip: 'Visualize Success: Spend a few minutes picturing your goals and the success you want to achieve.',
-        },
-        {
-            id: 7,
-            day: 7,
-            tip: 'Start Your Day with Gratitude: Take a moment each morning to appreciate what you have. It sets a positive tone for the day.',
-        },
-        {
-            id: 8,
-            day: 8,
-            tip: 'Practice Self-Care: Ensure you’re eating well, staying hydrated, and getting enough sleep.',
-        },
-        {
-            id: 9,
-            day: 9,
-            tip: 'Stay Active: Exercise boosts endorphins and helps maintain energy levels throughout the day.',
-        },
-        {
-            id: 10,
-            day: 10,
-            tip: 'Stay Organized: Keep a to-do list or planner to track your tasks and stay focused.',
-        },
-    ]);
+    let tips = useAppSelector((state) => state.tips.tips.tips);
     const [currentPage, setCurrentPage] = useState(1);
     const [editing, setEditing] = useState(false);
     const [editSelected, setEditSelected] = useState(-1);
+    const dispatch = useAppDispatch();
     const itemsPerPage = 7;
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -91,10 +43,14 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
         setAnchorEl(event.currentTarget);
     };
 
+    useEffect(() => {
+        console.log(tips, 'tips');
+        dispatch(fetchTipsThunk());
+    }, []);
+
     const handleTipChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
         console.log(event.target.value, 'event.target.value');
         tips[index].tip = event.target.value;
-        setTips([...tips]);
     };
 
     useEffect(() => {
@@ -109,7 +65,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
 
         // Map over selectedTips and return the table rows
         console.log(selectedTips, 'selectedTips');
-        const rows = selectedTips.map((tip, index) =>
+        const rows = selectedTips.map((tip: any, index: any) =>
             editing ? (
                 editSelected >= 0 && editSelected === index ? (
                     <tr key={tip.id}>
@@ -120,7 +76,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                             <input
                                 type="text"
                                 className="form-control"
-                                value={tip.tip}
+                                value={tip.content}
                                 onChange={(e) => handleTipChange(e, index)}
                             />
                         </td>
@@ -133,7 +89,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                 ) : (
                     <tr key={tip.id}>
                         <td>{tip.day}</td>
-                        <td>{tip.tip}</td>
+                        <td>{tip.content}</td>
                         <td>
                             <button
                                 className="btn btn-outline-primary"
@@ -148,7 +104,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
             ) : (
                 <tr key={tip.id}>
                     <td>{tip.day}</td>
-                    <td>{tip.tip}</td>
+                    <td>{tip.content}</td>
                     <td>...</td>
                 </tr>
             )
@@ -161,26 +117,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
     };
 
     // create a function to create a new daily tip add new daily tip to the list
-    const createNewDailyTip = () => {
-        const newTip = {
-            id: tips.length + 1,
-            day: tips.length + 1,
-            tip: '',
-        };
-        setTips([newTip, ...tips]); // Add the new tip to the top of the list
-        setEditSelected(0); // Set editSelected to the new tip at index 0
-        setEditing(true);
-        handleClose();
-        setTimeout(() => {
-            console.log(newTip, 'createNewDailyTip', tips, [newTip, ...tips]);
-            console.log(tips, 'editSelected');
-        }, 1000);
-    };
-
-    const handleCancel = (value: boolean) => {
-        setEditing(value);
-        setEditSelected(-1);
-    };
+    const createNewDailyTip = () => {};
 
     const handleMenuItemClick = (path: string) => {
         navigate(path);
@@ -239,35 +176,17 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                         <header className="header">
                             <h5>Daily tips</h5>
                             <div className="buttonContainer">
-                                {editing ? (
-                                    <>
-                                        <EditButton
-                                            showLeftIcon
-                                            buttonText="Cancel"
-                                            onButtonClick={() => handleCancel(!editing)}
-                                        />
-                                        <EditButton
-                                            showLeftIcon
-                                            buttonText="Save"
-                                            onButtonClick={() => setEditing(!editing)}
-                                        />
-                                    </>
-                                ) : (
-                                    <>
-                                        <EditButton
-                                            showLeftIcon
-                                            buttonText="Edit categories"
-                                            onButtonClick={() => setEditing(!editing)}
-                                        />
-                                        <AppButton
-                                            ref={buttonRef}
-                                            showLeftIcon
-                                            buttonText="Create content"
-                                            onButtonClick={handleButtonClick}
-                                        />
-                                    </>
-                                )}
-
+                                <EditButton
+                                    showLeftIcon
+                                    buttonText="Edit categories"
+                                    onButtonClick={() => setEditing(!editing)}
+                                />
+                                <AppButton
+                                    ref={buttonRef}
+                                    showLeftIcon
+                                    buttonText="Create content"
+                                    onButtonClick={handleButtonClick}
+                                />
                                 <Menu
                                     id="simple-menu"
                                     anchorEl={anchorEl}
