@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Table,
     TableBody,
@@ -16,7 +16,8 @@ import { useNavigate } from 'react-router-dom';
 import styles from './lessonTable.module.scss';
 import { PublishLessonModal } from '../publish-lesson-modal/publishLessonModal';
 import { UnpublishLessonModal } from '../unpublish-lesson-modal/unpublishLessonModal';
-import { useAppSelector } from '../../../../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../../app/hooks';
+import { fetchLessonsThunk, updateLessonThunk } from '../lessonsSlice';
 
 const initialLessons = [
     {
@@ -90,17 +91,12 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openPublishModal, setOpenPublishModal] = useState(false);
     const [openUnpublishModal, setOpenUnpublishModal] = useState(false);
-    const [lessons, setLessons] = useAppSelector((state) => state.lessons.lessons.lessons);
+    const [lessons, setLessons] = useState([]);
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const handleToggle = (index: number) => {
-        const theme = themes[index];
-        setSelectedThemeIndex(index);
-        if (!theme.published) {
-            setOpenPublishModal(true);
-        } else {
-            setOpenUnpublishModal(true);
-        }
+    const handleToggle = (lesson: any) => {
+        // dispatch(updateLessonThunk({ id: lesson.id, lesson: { published: !lesson.published } }));
     };
 
     const handlePublish = () => {
@@ -136,6 +132,13 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
         });
     };
 
+    useEffect(() => {
+        dispatch(fetchLessonsThunk()).then((res: any) => {
+            console.log('res', res.payload.data);
+            setLessons(res.payload.data);
+        });
+    }, []);
+
     return (
         <>
             <TableContainer component={Paper}>
@@ -156,22 +159,28 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {themes.map((theme, index) => (
+                        {lessons.map((lesson: any, index: any) => (
                             <TableRow
                                 key={index}
                                 onClick={() => handleRowClick(index)}
                                 style={{ cursor: 'pointer' }}
                             >
-                                <TableCell className={styles['theme-code']}>{theme.code}</TableCell>
-                                <TableCell className={styles['theme-name']}>{theme.name}</TableCell>
-                                <TableCell>{theme.dateCreated}</TableCell>
+                                <TableCell className={styles['theme-code']}>
+                                    {lesson.lessonCode}
+                                </TableCell>
+                                <TableCell className={styles['theme-name']}>
+                                    {lesson.name}
+                                </TableCell>
                                 <TableCell>
-                                    {theme.habit ? <CheckCircleOutlineIcon /> : ''}
+                                    {new Date(lesson.createdAt).toLocaleDateString()}
+                                </TableCell>
+                                <TableCell>
+                                    {lesson.quizData.length > 0 ? <CheckCircleOutlineIcon /> : ''}
                                 </TableCell>
                                 <TableCell onClick={(event) => event.stopPropagation()}>
                                     <Switch
-                                        checked={theme.published}
-                                        onChange={() => handleToggle(index)}
+                                        checked={lesson.published}
+                                        onChange={() => handleToggle(lesson)}
                                     />
                                 </TableCell>
                             </TableRow>

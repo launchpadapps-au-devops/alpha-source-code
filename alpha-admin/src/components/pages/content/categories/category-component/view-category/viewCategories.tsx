@@ -28,19 +28,27 @@ export const ViewCategories: React.FC = () => {
     }, []);
 
     const handleToggle = (category: any, index: number) => {
-        // Create a new copy of the category object
-        const newCategory = { ...category, isPublished: !category.isPublished };
+        // Create a deep copy of the category object to avoid mutation issues
+        const newCategory = {
+            ...category,
+            isPublished: !category.isPublished, // Toggle the isPublished flag
+        };
 
-        // Update the categories state with the new category object
-        setCategories((prevCategories: any) => {
-            const newCategories = [...prevCategories];
-            newCategories[index] = newCategory;
-            return newCategories;
-        });
-
-        // Dispatch the thunk to update the category
-        dispatch(updateCategoryThunk({ id: category.id, data: newCategory }));
+        // Dispatch the thunk to update the category in the backend
+        dispatch(updateCategoryThunk({ id: category.id, data: newCategory })).then(
+            (response: any) => {
+                if (response.payload) {
+                    dispatch(fetchCategoriesThunk()).then((response: any) => {
+                        if (response.payload) {
+                            console.log('Response ', response);
+                            setCategories(response.payload.data);
+                        }
+                    });
+                }
+            }
+        );
     };
+    console.log('categories', categories);
 
     const handleCloseModal = () => {
         setOpenModal(false);

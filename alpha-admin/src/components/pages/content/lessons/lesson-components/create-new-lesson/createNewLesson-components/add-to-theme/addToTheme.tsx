@@ -45,7 +45,6 @@ export const SelectTheme: React.FC<SelectThemeSidebarProps> = ({
     const navigate = useNavigate();
     const [selectedTab, setSelectedTab] = useState(0);
     const [selectedTheme, setSelectedThemeData] = useState<any>({});
-    console.log('datarrr', theme);
 
     const tabs = ['All themes', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
     const handleTabChange = (newValue: number) => {

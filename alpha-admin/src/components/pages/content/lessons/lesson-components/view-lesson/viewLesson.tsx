@@ -103,7 +103,7 @@ export const ViewLessons = ({
                             <>
                                 <EditButton
                                     buttonText="Cancel"
-                                    onButtonClick={() => navigate('/content/editlesson')}
+                                    onButtonClick={() => navigate(`/content/editlesson/`)}
                                 />
                                 <AppButton
                                     buttonText="Add to selections"
@@ -115,7 +115,7 @@ export const ViewLessons = ({
                                 <EditButton
                                     showLeftIcon
                                     buttonText="Edit"
-                                    onButtonClick={() => navigate('/content/editlesson')}
+                                    onButtonClick={() => navigate(`/content/editlesson/${id}`)}
                                 />
                                 <EditButton
                                     buttonText="Unpublish & save as draft"
@@ -131,7 +131,7 @@ export const ViewLessons = ({
                                 <EditButton
                                     showLeftIcon
                                     buttonText="Edit"
-                                    onButtonClick={() => navigate('/content/editlesson')}
+                                    onButtonClick={() => navigate(`/content/editlesson/${id}`)}
                                 />
                                 <EditButton
                                     buttonText="Save updates"

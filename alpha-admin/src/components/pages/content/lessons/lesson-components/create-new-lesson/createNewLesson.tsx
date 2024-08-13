@@ -16,18 +16,18 @@ import {
 } from '@mui/material';
 import styles from './createNewLesson.module.scss';
 import { AppButton } from '../../../../../app-button/app-button';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../../../content-components/sidebar/Sidebar';
 import { EditButton } from '../../../content-components/edit-button/edit-button';
 import { LessonInformation } from './createNewLesson-components/lessonInformation/lessonInformation';
 import { InternalNotes } from './createNewLesson-components/InternalNotes/internalNotes';
 import { DashboardCardDetails } from './createNewLesson-components/dashboardcarddetails/dashBoardCardDetails';
 import { LessonContent } from './createNewLesson-components/lessonContent/lessonContent';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchThemesThunk } from '../../../themes/themes-components/themeSlice';
 import { fetchCategoriesThunk } from '../../../categories/category-component/categorySlice';
-import { addLessonThunk } from '../lessonsSlice';
+import { addLessonThunk, fetchLessonByIdThunk } from '../lessonsSlice';
 
 export interface ContentProps {
     className?: string;
@@ -40,6 +40,11 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     const [selectedTheme, setSelectedTheme] = React.useState([]);
     const [categories, setCategories] = React.useState([]);
     const dispatch = useAppDispatch();
+    const location = useLocation();
+    const [isEditMode, setIsEditMode] = React.useState(false);
+    const params = useParams();
+    // Extract search query from URL
+
     let [data, setData] = React.useState({
         lessonCode: Number,
         categoryId: Number,
@@ -142,6 +147,20 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
             });
     }, []);
 
+    useEffect(() => {
+        console.log('params', location.pathname);
+        if (location.pathname.includes('editlesson')) {
+            // Fetch lesson details
+            dispatch(fetchLessonByIdThunk(params.id)).then((response: any) => {
+                setData(response.payload.data);
+
+                setTimeout(() => {
+                    console.log('Datajjjjj', data);
+                }, 1000);
+            });
+        }
+    }, []);
+
     const handlePreview = () => {
         console.log('Preview');
         dispatch(addLessonThunk(data)).then((response: any) => {
@@ -155,7 +174,11 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
             <Sidebar />
             <div className={styles.content}>
                 <header className={styles.header}>
-                    <Typography variant="h5">Create a new lesson</Typography>
+                    {isEditMode ? (
+                        <Typography variant="h5">Edit lesson</Typography>
+                    ) : (
+                        <Typography variant="h5">Create a new lesson</Typography>
+                    )}
                     <div className={styles.buttonContainer}>
                         <EditButton
                             buttonText="Cancel"

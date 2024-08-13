@@ -228,18 +228,22 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                                                     <td>{tip.day}</td>
                                                     <td>{tip.content}</td>
                                                     <td>
-                                                        <button
-                                                            className="btn btn-outline-primary"
-                                                            onClick={() =>
-                                                                setEditSelected(tip.day - 1)
-                                                            }
-                                                            style={{
-                                                                position: 'absolute',
-                                                                right: '5%',
-                                                            }}
-                                                        >
-                                                            Edit
-                                                        </button>
+                                                        {editing ? (
+                                                            <button
+                                                                className="btn btn-outline-primary"
+                                                                onClick={() =>
+                                                                    setEditSelected(tip.day - 1)
+                                                                }
+                                                                style={{
+                                                                    position: 'absolute',
+                                                                    right: '5%',
+                                                                }}
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                        ) : (
+                                                            <span>...</span>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             )

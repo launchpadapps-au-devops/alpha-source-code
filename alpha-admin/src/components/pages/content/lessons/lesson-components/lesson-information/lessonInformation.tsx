@@ -10,6 +10,16 @@ export interface LessonProps {
 }
 
 const LessonInformation: React.FC<LessonProps> = ({ lessonData, setLessonData }) => {
+    const { id } = useParams();
+    const dispatch = useAppDispatch();
+    const [lesson, setLesson] = useState([]);
+
+    useEffect(() => {
+        dispatch(fetchLessonByIdThunk(id)).then((res: any) => {
+            setLesson(res.payload.data);
+        });
+        console.log('lesson', lesson);
+    }, []);
     return (
         <div className="lesson-information">
             <div className="lesson-header">

@@ -41,7 +41,6 @@ export const Categories = ({ className }: ContentProps) => {
         }
     }, [buttonRef.current]);
 
-
     return (
         <div className={classNames(styles.container, className)}>
             <Sidebar />
@@ -49,8 +48,17 @@ export const Categories = ({ className }: ContentProps) => {
                 <header className={styles.header}>
                     <Typography variant="h5">Categories</Typography>
                     <div className={styles.buttonContainer}>
-                        <EditButton showLeftIcon buttonText="Edit categories" onButtonClick={() => navigate('/content/editcategories')} />
-                        <AppButton ref={buttonRef} showLeftIcon buttonText="Create content" onButtonClick={handleButtonClick} />
+                        <EditButton
+                            showLeftIcon
+                            buttonText="Edit categories"
+                            onButtonClick={() => navigate('/content/editcategories')}
+                        />
+                        <AppButton
+                            ref={buttonRef}
+                            showLeftIcon
+                            buttonText="Create content"
+                            onButtonClick={handleButtonClick}
+                        />
                         <Menu
                             id="simple-menu"
                             anchorEl={anchorEl}
@@ -65,7 +73,9 @@ export const Categories = ({ className }: ContentProps) => {
                                 },
                             }}
                         >
-                            <MenuItem onClick={() => handleMenuItemClick('/content/createcategories')}>
+                            <MenuItem
+                                onClick={() => handleMenuItemClick('/content/createcategories')}
+                            >
                                 <DashboardIcon style={{ marginRight: 8 }} />
                                 Category
                             </MenuItem>
@@ -77,14 +87,16 @@ export const Categories = ({ className }: ContentProps) => {
                                 <LightbulbIcon style={{ marginRight: 8 }} />
                                 Lesson
                             </MenuItem>
-                            <MenuItem onClick={() => handleMenuItemClick('/content/createdailytip')}>
+                            <MenuItem
+                                onClick={() => handleMenuItemClick('/content/createdailytip')}
+                            >
                                 <CalendarMonthIcon style={{ marginRight: 8 }} />
                                 Daily tip
                             </MenuItem>
                         </Menu>
                     </div>
                 </header>
-                <ViewCategories/>
+                <ViewCategories />
             </div>
         </div>
     );

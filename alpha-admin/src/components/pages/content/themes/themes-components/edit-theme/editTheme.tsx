@@ -11,10 +11,12 @@ import {
     SelectLessonSidebar,
 } from '../create-theme/create-theme-components/select-lessons/selectLessons';
 import { LessonManagement } from '../../themes-components/create-theme/create-theme-components/lessonManagement/lessonManagement';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Vector } from '../../../../../icon/glyps/vector';
 import { DeleteButton } from '../../../content-components/delete-button/delete-button';
 import Habit from '../create-theme/create-theme-components/habit/habit';
+import { useAppDispatch } from '../../../../../../app/hooks';
+import { fetchLessonsThunk } from '../../../lessons/lesson-components/lessonsSlice';
 
 export interface EditThemeProps {
     className?: string;
@@ -83,6 +85,7 @@ export const EditTheme = ({ className }: EditThemeProps) => {
     const [lessons, setLessons] = useState<Lesson[]>(initialLessons);
     const [selectedLessons, setSelectedLessons] = useState<Lesson[]>([]);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [newLessons, setNewLessons] = useState([]);
     const [category, setCategory] = useState<string>('');
     const [showHabit, setShowHabit] = useState(false);
 
@@ -114,7 +117,15 @@ export const EditTheme = ({ className }: EditThemeProps) => {
     const handleRemoveHabitClick = () => {
         setShowHabit(false);
     };
+    const dispatch = useAppDispatch();
     const hideLessons = location.state?.hideLessons;
+
+    useEffect(() => {
+        dispatch(fetchLessonsThunk()).then((res: any) => {
+            setNewLessons(res.payload.data);
+            console.log(res.payload.data, 'lessons');
+        });
+    }, []);
 
     return (
         <div className={classNames(styles.container, className)}>

@@ -152,7 +152,7 @@ const router = createBrowserRouter([
                 element: <CreateNewLesson />,
             },
             {
-                path: '/content/editlesson',
+                path: '/content/editlesson/:id',
                 element: <CreateNewLesson />,
             },
             {

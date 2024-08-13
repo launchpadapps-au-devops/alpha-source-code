@@ -11,13 +11,14 @@ import {
     SelectLessonSidebar,
 } from './create-theme-components/select-lessons/selectLessons';
 import { LessonManagement } from '../../themes-components/create-theme/create-theme-components/lessonManagement/lessonManagement';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Vector } from '../../../../../icon/glyps/vector';
 import { DeleteButton } from '../../../content-components/delete-button/delete-button';
 import Habit from './create-theme-components/habit/habit';
 import { useDispatch } from 'react-redux';
 import { addThemeThunk } from '../themeSlice';
 import { useAppDispatch } from '../../../../../../app/hooks';
+import { fetchLessonsThunk } from '../../../lessons/lesson-components/lessonsSlice';
 
 export interface CreateThemeProps {
     className?: string;
@@ -84,6 +85,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [lessons, setLessons] = useState<Lesson[]>(initialLessons);
+    const [newLessons, setNewLessons] = useState([]);
     const [selectedLessons, setSelectedLessons] = useState<Lesson[]>([]);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [category, setCategory] = useState<string>('');
@@ -123,7 +125,18 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     });
 
     const submitData = () => {
-        dispatch(addThemeThunk(data));
+        dispatch(addThemeThunk(data))
+            .then((res: any) => {
+                if (res.payload.status === 200) {
+                    navigate('/content/themes');
+                } else {
+                    alert('Error' + res.error.mess.status);
+                }
+            })
+            .catch((err: any) => {
+                console.log(err);
+                alert('Error' + err);
+            });
     };
 
     const handleUpdateLessons = (updatedLessons: Lesson[]) => {
@@ -155,6 +168,13 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
         setShowHabit(false);
     };
     const hideLessons = location.state?.hideLessons;
+
+    useEffect(() => {
+        dispatch(fetchLessonsThunk()).then((res: any) => {
+            setNewLessons(res.payload.data);
+            console.log(res.payload.data, 'lessons');
+        });
+    }, []);
 
     return (
         <div className={classNames(styles.container, className)}>
@@ -191,6 +211,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                                 selectedLessons={selectedLessons}
                                 onRemoveLesson={handleRemoveLessonFromTheme}
                                 onAddLessons={handleOpenSidebar}
+                                newLessons={newLessons}
                             />
                         )}
                         <div className={styles.section}>

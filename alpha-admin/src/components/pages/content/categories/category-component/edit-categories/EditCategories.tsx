@@ -27,7 +27,7 @@ export const EditCategories = ({ className }: EditContentProps) => {
             password: '',
             roleIds: [2],
             isStaffAdmin: true,
-        }
+        };
         // dispatch(editStaffThunk({,data}));
         // navigate('/careteam');
 
@@ -37,7 +37,6 @@ export const EditCategories = ({ className }: EditContentProps) => {
         setOpenModal(false);
     };
 
-
     return (
         <div className={classNames(styles.container, className)}>
             <Sidebar />
@@ -46,10 +45,16 @@ export const EditCategories = ({ className }: EditContentProps) => {
                     <Typography variant="h5">Edit categories</Typography>
                     <div className={styles.leftButtonContainer}>
                         <DeleteButton showLeftIcon onButtonClick={handleDeleteModal} />
-                        <EditButton buttonText="Cancel" onButtonClick={() => navigate('/content/categories')} />
+                        <EditButton
+                            buttonText="Cancel"
+                            onButtonClick={() => navigate('/content/lessons')}
+                        />
                     </div>
                     <div className={styles.rightButtonContainer}>
-                    <AppButton buttonText="Save updates" onButtonClick={() => navigate('/careteam/createcontent')} />
+                        <AppButton
+                            buttonText="Save updates"
+                            onButtonClick={() => navigate('/content/lessons')}
+                        />
                     </div>
                 </header>
                 <CategoryList />
