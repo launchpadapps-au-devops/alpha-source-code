@@ -20,6 +20,7 @@ import { UserHabit } from "./userHabit.entity";
 
 import { UserMealLog } from "./userMeal.entity";
 import { UserHealthData } from "./userHealthData.entity";
+import { SurveyQuestions } from "./surveyQuestions.entity";
 
 // Export all entities
 export { 
@@ -48,5 +49,6 @@ export {
   UserHabit,
 
   UserMealLog,
-  UserHealthData
+  UserHealthData,
+  SurveyQuestions
 };

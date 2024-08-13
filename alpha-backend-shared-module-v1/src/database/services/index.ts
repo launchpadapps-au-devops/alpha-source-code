@@ -17,6 +17,7 @@ import { userLessonService } from "./userLesson.service";
 import { userHabitService } from "./userHabit.service";
 import { userMealLogService } from "./userMealLog.service";
 import { userHealthDataService } from "./userHealthData.service";
+import { surveyQuestionsService } from "./surveyQuestions.service";
 
 // Export all services
 export { 
@@ -38,5 +39,6 @@ export {
   userLessonService,
   userHabitService,
   userMealLogService,
-  userHealthDataService
+  userHealthDataService,
+  surveyQuestionsService
 };
