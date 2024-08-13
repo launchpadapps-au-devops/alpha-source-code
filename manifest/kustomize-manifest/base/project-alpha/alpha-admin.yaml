@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpha-admin-deployment
+  labels:
+    app: alpha-admin-deployment
+spec:
+  selector:
+    matchLabels:
+      app: alpha-admin-deployment
+  template:
+    metadata:
+      labels:
+        app: alpha-admin-deployment
+    spec:
+      initContainers:
+        - name: wait-for-api-gateway
+          resources:
+            limits:
+              cpu: 250m
+              ephemeral-storage: .5Gi
+              memory: 0.5Gi
+            requests:
+              cpu: 250m
+              ephemeral-storage: .5Gi
+              memory: 0.5Gi
+          image: busybox:1.28
+          command: ['sh', '-c', 'until nc -z alpha-backend-api-gateway-v1-service 3000; do echo waiting for backend ; sleep 2; done;']
+      containers:
+        - name: alpha-admin-container
+          image: alphadev.azurecr.io/alpha-admin@sha256:ef9a827a8ee360a41ba33cfd4cd73abc5a24a4bec8081fc6ffb01faf87f13cd2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4137
+          resources:
+            limits:
+              cpu: 250m
+              ephemeral-storage: 0.5Gi
+              memory: 0.5Gi
+            requests:
+              cpu: 250m
+              ephemeral-storage: 0.5Gi
+              memory: 0.5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpha-admin-service
+spec:
+  selector:
+    app: alpha-admin-deployment
+  ports:
+    - protocol: TCP
+      port: 4137
+      targetPort: 4137
+  type: LoadBalancer
