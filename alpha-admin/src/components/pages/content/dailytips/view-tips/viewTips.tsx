@@ -7,14 +7,11 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { Card } from 'react-bootstrap';
+import { Card, Container } from 'react-bootstrap';
 import { AppButton } from '../../../../app-button/app-button';
-import { Menu, MenuItem } from '@mui/material';
+import { Menu, MenuItem, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { EditButton } from '../../content-components/edit-button/edit-button';
-import { useAppDispatch, useAppSelector } from '../../../../../app/hooks';
-import { fetchTipsThunk } from './viewTipsSlice';
-
 export interface ViewTipsProps {
     className?: string;
 }
@@ -22,33 +19,82 @@ export interface ViewTipsProps {
 export const ViewTips = ({ className }: ViewTipsProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [menuWidth, setMenuWidth] = useState<number>(-2);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
+    let [tips, setTips] = useState([
+        {
+            id: 1,
+            day: 1,
+            tip: 'Choose one learning card each day to inspire you. If you feel like it, you can pick more for extra learning!',
+        },
+        {
+            id: 2,
+            day: 2,
+            tip: 'Reflect on Progress: At the end of the day, review what you’ve accomplished and plan for tomorrow.',
+        },
+        {
+            id: 3,
+            day: 3,
+            tip: 'Take Breaks: Short breaks help maintain productivity and prevent burnout.',
+        },
+        {
+            id: 4,
+            day: 4,
+            tip: 'Set Small, Achievable Goals: Break your tasks into smaller steps and celebrate each accomplishment.',
+        },
+        {
+            id: 5,
+            day: 5,
+            tip: 'Connect with Positive People: Surround yourself with supportive and encouraging individuals.',
+        },
+        {
+            id: 6,
+            day: 6,
+            tip: 'Visualize Success: Spend a few minutes picturing your goals and the success you want to achieve.',
+        },
+        {
+            id: 7,
+            day: 7,
+            tip: 'Start Your Day with Gratitude: Take a moment each morning to appreciate what you have. It sets a positive tone for the day.',
+        },
+        {
+            id: 8,
+            day: 8,
+            tip: 'Practice Self-Care: Ensure you’re eating well, staying hydrated, and getting enough sleep.',
+        },
+        {
+            id: 9,
+            day: 9,
+            tip: 'Stay Active: Exercise boosts endorphins and helps maintain energy levels throughout the day.',
+        },
+        {
+            id: 10,
+            day: 10,
+            tip: 'Stay Organized: Keep a to-do list or planner to track your tasks and stay focused.',
+        },
+    ]);
+    const [currentPage, setCurrentPage] = useState(1);
     const [editing, setEditing] = useState(false);
     const [editSelected, setEditSelected] = useState(-1);
-    const dispatch = useAppDispatch();
-    const navigate = useNavigate();
-    let tips = useAppSelector((state) => state.tips.tips.tips.data) || []; // Ensure tips is an array
+    const itemsPerPage = 7;
     const buttonRef = useRef<HTMLButtonElement>(null);
 
-    useEffect(() => {
-        const fetchTips = async () => {
-            try {
-                await dispatch(fetchTipsThunk());
-            } catch (err) {
-                setError('Failed to load tips. Please try again later.');
-            } finally {
-                setLoading(false);
-            }
-        };
+    const handleClick = (event: any, page: any) => {
+        event.preventDefault();
+        setCurrentPage(page);
+    };
 
-        fetchTips();
-    }, [dispatch]);
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
 
     const handleTipChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const newTips = [...tips];
-        newTips[index].tip = event.target.value;
-        tips = newTips;
+        console.log(event.target.value, 'event.target.value');
+        tips[index].tip = event.target.value;
+        setTips([...tips]);
     };
 
     useEffect(() => {
@@ -57,12 +103,83 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
         }
     }, [buttonRef.current]);
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+    const renderTableRows = () => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const selectedTips = tips.slice(startIndex, startIndex + itemsPerPage);
+
+        // Map over selectedTips and return the table rows
+        console.log(selectedTips, 'selectedTips');
+        const rows = selectedTips.map((tip, index) =>
+            editing ? (
+                editSelected >= 0 && editSelected === index ? (
+                    <tr key={tip.id}>
+                        <td>
+                            <input type="text" className="w-25" value={tip.day} />
+                        </td>
+                        <td>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={tip.tip}
+                                onChange={(e) => handleTipChange(e, index)}
+                            />
+                        </td>
+                        <td>
+                            <button className="btn btn-primary mx-2">Save & add more</button>
+                            <button className="btn btn-outline-primary mx-2">Save</button>
+                            <button className="btn btn-outline-danger mx-2">Delete</button>
+                        </td>
+                    </tr>
+                ) : (
+                    <tr key={tip.id}>
+                        <td>{tip.day}</td>
+                        <td>{tip.tip}</td>
+                        <td>
+                            <button
+                                className="btn btn-outline-primary"
+                                onClick={() => setEditSelected(tip.day - 1)}
+                                style={{ position: 'absolute', right: '5%' }}
+                            >
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                )
+            ) : (
+                <tr key={tip.id}>
+                    <td>{tip.day}</td>
+                    <td>{tip.tip}</td>
+                    <td>...</td>
+                </tr>
+            )
+        );
+
+        // Append pagination row if needed
+        rows.push(renderPagination());
+        console.log(rows, 'rows');
+        return rows;
     };
 
-    const handleClose = () => {
-        setAnchorEl(null);
+    // create a function to create a new daily tip add new daily tip to the list
+    const createNewDailyTip = () => {
+        const newTip = {
+            id: tips.length + 1,
+            day: tips.length + 1,
+            tip: '',
+        };
+        setTips([newTip, ...tips]); // Add the new tip to the top of the list
+        setEditSelected(0); // Set editSelected to the new tip at index 0
+        setEditing(true);
+        handleClose();
+        setTimeout(() => {
+            console.log(newTip, 'createNewDailyTip', tips, [newTip, ...tips]);
+            console.log(tips, 'editSelected');
+        }, 1000);
+    };
+
+    const handleCancel = (value: boolean) => {
+        setEditing(value);
+        setEditSelected(-1);
     };
 
     const handleMenuItemClick = (path: string) => {
@@ -70,8 +187,45 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
         handleClose();
     };
 
-    const createNewDailyTip = () => {
-        // Implement function to create a new daily tip
+    const renderPagination = () => {
+        const pageCount = Math.ceil(tips.length / itemsPerPage);
+        const pages = [];
+
+        for (let i = 1; i <= pageCount; i++) {
+            pages.push(
+                <li key={i} className={`page-item ${currentPage === i ? 'active' : ''}`}>
+                    <a className="page-link" href="#" onClick={(event) => handleClick(event, i)}>
+                        {i}
+                    </a>
+                </li>
+            );
+        }
+
+        return (
+            <tr>
+                <td className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                    <a
+                        className="page-link"
+                        href="#"
+                        onClick={(event) => handleClick(event, currentPage - 1)}
+                    >
+                        Previous
+                    </a>
+                </td>
+                <td className="page-item">
+                    <ul className="pagination  justify-content-center">{pages}</ul>
+                </td>
+                <td className={`page-item ${currentPage === pageCount ? 'disabled' : ''}`}>
+                    <a
+                        className="page-link "
+                        href="#"
+                        onClick={(event) => handleClick(event, currentPage + 1)}
+                    >
+                        Next
+                    </a>
+                </td>
+            </tr>
+        );
     };
 
     return (
@@ -85,17 +239,35 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                         <header className="header">
                             <h5>Daily tips</h5>
                             <div className="buttonContainer">
-                                <EditButton
-                                    showLeftIcon
-                                    buttonText="Edit categories"
-                                    onButtonClick={() => setEditing(!editing)}
-                                />
-                                <AppButton
-                                    ref={buttonRef}
-                                    showLeftIcon
-                                    buttonText="Create content"
-                                    onButtonClick={handleClick}
-                                />
+                                {editing ? (
+                                    <>
+                                        <EditButton
+                                            showLeftIcon
+                                            buttonText="Cancel"
+                                            onButtonClick={() => handleCancel(!editing)}
+                                        />
+                                        <EditButton
+                                            showLeftIcon
+                                            buttonText="Save"
+                                            onButtonClick={() => setEditing(!editing)}
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <EditButton
+                                            showLeftIcon
+                                            buttonText="Edit categories"
+                                            onButtonClick={() => setEditing(!editing)}
+                                        />
+                                        <AppButton
+                                            ref={buttonRef}
+                                            showLeftIcon
+                                            buttonText="Create content"
+                                            onButtonClick={handleButtonClick}
+                                        />
+                                    </>
+                                )}
+
                                 <Menu
                                     id="simple-menu"
                                     anchorEl={anchorEl}
@@ -138,17 +310,14 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                             </div>
                         </header>
                     </div>
-                    {loading ? (
-                        <div className="loading text-center">
-                            <p>Loading...</p>
-                        </div>
-                    ) : error ? (
-                        <div className="error text-center">
-                            <p>{error}</p>
-                        </div>
-                    ) : tips.length === 0 ? (
-                        <div className="no-tips text-center">
-                            <Card className="d-flex w-100 h-100 justify-content-center align-items-center">
+                    {tips.length === 0 ? (
+                        <div className="no-tips text-center" style={{ height: '90%' }}>
+                            {/* <Container className="h-100"> */}
+                            {/* height 100% */}
+                            <Card
+                                className="d-flex w-100 h-100 justify-content-center align-items-center"
+                                // style={{ height: '900px' }}
+                            >
                                 <Card.Body>
                                     <div className="icon" style={{ marginTop: '100%' }}>
                                         <i
@@ -172,85 +341,30 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                                     </button>
                                 </Card.Body>
                             </Card>
+                            {/* </Container> */}
                         </div>
                     ) : (
-                        <div className="table-responsive">
-                            <table className="table">
-                                <thead>
-                                    <tr
-                                        style={{
-                                            background: '#EBEBEB',
-                                            borderBottom: 'none',
-                                        }}
-                                    >
-                                        <th>Day</th>
-                                        <th>Daily tips</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody style={{ background: '#FFFFFF' }}>
-                                    {tips &&
-                                        tips.length > 0 &&
-                                        tips.map((tip: any, index: number) =>
-                                            editing && editSelected === index ? (
-                                                <tr key={tip.id}>
-                                                    <td>
-                                                        <input
-                                                            type="text"
-                                                            className="w-25"
-                                                            value={tip.day}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="text"
-                                                            className="form-control"
-                                                            value={tip.content}
-                                                            onChange={(e) =>
-                                                                handleTipChange(e, index)
-                                                            }
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <button className="btn btn-primary mx-2">
-                                                            Save & add more
-                                                        </button>
-                                                        <button className="btn btn-outline-primary mx-2">
-                                                            Save
-                                                        </button>
-                                                        <button className="btn btn-outline-danger mx-2">
-                                                            Delete
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ) : (
-                                                <tr key={tip.id}>
-                                                    <td>{tip.day}</td>
-                                                    <td>{tip.content}</td>
-                                                    <td>
-                                                        {editing ? (
-                                                            <button
-                                                                className="btn btn-outline-primary"
-                                                                onClick={() =>
-                                                                    setEditSelected(tip.day - 1)
-                                                                }
-                                                                style={{
-                                                                    position: 'absolute',
-                                                                    right: '5%',
-                                                                }}
-                                                            >
-                                                                Edit
-                                                            </button>
-                                                        ) : (
-                                                            <span>...</span>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            )
-                                        )}
-                                </tbody>
-                            </table>
-                        </div>
+                        <>
+                            <div className="table-responsive">
+                                <table className="table">
+                                    <thead>
+                                        <tr
+                                            style={{
+                                                background: '#EBEBEB',
+                                                borderBottom: 'none',
+                                            }}
+                                        >
+                                            <th>Day</th>
+                                            <th>Daily tips</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style={{ background: '#FFFFFF' }}>
+                                        {renderTableRows()}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

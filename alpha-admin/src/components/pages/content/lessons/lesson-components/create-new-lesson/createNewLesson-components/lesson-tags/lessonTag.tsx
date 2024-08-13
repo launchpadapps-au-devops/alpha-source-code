@@ -6,9 +6,10 @@ import Dropdown from './dropdown/dropDown';
 export interface LessonTagsProps {
     data: any;
     setData: any;
+    isEditMode?: boolean;
 }
 
-export const LessonTags = ({ data, setData }: LessonTagsProps) => {
+export const LessonTags = ({ data, setData, isEditMode }: LessonTagsProps) => {
     const tags = [
         'Motivation',
         'Gender',
@@ -42,7 +43,13 @@ export const LessonTags = ({ data, setData }: LessonTagsProps) => {
                         <div className="lesson-tag-header">
                             <span>{tag}</span>
                         </div>
-                        <Dropdown label={tag} options={options} setData={setData} />
+                        <Dropdown
+                            label={tag}
+                            options={options}
+                            setData={setData}
+                            isEditMode={isEditMode}
+                            data={data}
+                        />
                     </div>
                 ))}
             </div>

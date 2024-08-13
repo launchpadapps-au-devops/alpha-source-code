@@ -83,7 +83,7 @@ export const ViewLessons = ({
                     console.error('Error fetching lesson:', error);
                 });
         }
-    }, [dispatch, id]);
+    }, []);
 
     return (
         <div className={classNames(styles.container, className)}>

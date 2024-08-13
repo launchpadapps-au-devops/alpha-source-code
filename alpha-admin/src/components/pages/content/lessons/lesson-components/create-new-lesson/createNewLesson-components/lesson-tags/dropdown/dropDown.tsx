@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import './dropDown.scss';
@@ -7,9 +7,11 @@ interface DropdownProps {
     label: string;
     options: string[];
     setData: any;
+    isEditMode?: boolean;
+    data?: any;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, options, setData }) => {
+const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode, data }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
@@ -17,8 +19,19 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, setData }) => {
         setIsOpen(!isOpen);
     };
 
+    useEffect(() => {
+        if (isEditMode) {
+            const lessonTags = data.lessonTags.find((tagObj: { [key: string]: string[] }) =>
+                Object.keys(tagObj)[0].includes(label.toLowerCase())
+            );
+
+            if (lessonTags) {
+                setSelectedOptions(lessonTags[label.toLowerCase().replace(/ /g, '_')]);
+            }
+        }
+    }, []);
+
     const handleOptionChange = (option: string) => {
-        console.log('option', option);
         setSelectedOptions((prev) =>
             prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]
         );

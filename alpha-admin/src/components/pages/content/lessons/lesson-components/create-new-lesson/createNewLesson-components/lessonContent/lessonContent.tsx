@@ -15,6 +15,7 @@ export interface LessonContentProps {
     setQuizData: (quizData: any[]) => void;
     data: any;
     setData: any;
+    isEditable?: boolean;
 }
 
 export const LessonContent = ({
@@ -24,6 +25,7 @@ export const LessonContent = ({
     setQuizData,
     data,
     setData,
+    isEditable,
 }: LessonContentProps) => {
     const [screens, setScreens] = useState([{ subtitle: '', content: '' }]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -102,6 +104,9 @@ export const LessonContent = ({
             });
         }
     };
+    useEffect(() => {
+        setScreenData(screens);
+    }, [screens]);
 
     return (
         <div className="lesson-content">

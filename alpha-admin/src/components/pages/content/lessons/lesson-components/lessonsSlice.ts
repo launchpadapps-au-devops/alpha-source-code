@@ -85,10 +85,7 @@ export const addLessonsBulkThunk = createAsyncThunk(
 
 export const updateLessonThunk = createAsyncThunk(
     'lesson/updateLesson',
-    async (
-        { id, lesson }: { id: number; lesson: { title: string; content: string } },
-        { dispatch, rejectWithValue }
-    ) => {
+    async ({ id, lesson }: { id: any; lesson: any }, { dispatch, rejectWithValue }) => {
         try {
             const response = await updateLesson(id, lesson);
             dispatch(fetchLessonsThunk());

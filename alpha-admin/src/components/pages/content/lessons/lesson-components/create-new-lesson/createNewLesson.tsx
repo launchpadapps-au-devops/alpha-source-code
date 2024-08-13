@@ -27,7 +27,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchThemesThunk } from '../../../themes/themes-components/themeSlice';
 import { fetchCategoriesThunk } from '../../../categories/category-component/categorySlice';
-import { addLessonThunk, fetchLessonByIdThunk } from '../lessonsSlice';
+import { addLessonThunk, fetchLessonByIdThunk, updateLessonThunk } from '../lessonsSlice';
 
 export interface ContentProps {
     className?: string;
@@ -46,9 +46,9 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     // Extract search query from URL
 
     let [data, setData] = React.useState({
-        lessonCode: Number,
-        categoryId: Number,
-        themeId: Number,
+        lessonCode: 0,
+        categoryId: 0,
+        themeId: 0,
         status: 'ACTIVE',
         isPublished: false,
         duration: 10,
@@ -150,23 +150,29 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     useEffect(() => {
         console.log('params', location.pathname);
         if (location.pathname.includes('editlesson')) {
+            setIsEditMode(true);
             // Fetch lesson details
             dispatch(fetchLessonByIdThunk(params.id)).then((response: any) => {
-                setData(response.payload.data);
-
-                setTimeout(() => {
-                    console.log('Datajjjjj', data);
-                }, 1000);
+                if (response.payload.data) {
+                    setData(response.payload.data);
+                }
             });
         }
     }, []);
 
     const handlePreview = () => {
-        console.log('Preview');
-        dispatch(addLessonThunk(data)).then((response: any) => {
-            console.log('Response', response);
-            navigate('/content/viewlesson/' + response.payload.data.id);
-        });
+        if (isEditMode) {
+            dispatch(updateLessonThunk({ id: params.id, lesson: data })).then((response: any) => {
+                console.log('Response', response);
+                navigate('/content/viewlesson/' + response.payload.data.id);
+            });
+        }
+        {
+            dispatch(addLessonThunk(data)).then((response: any) => {
+                console.log('Response', response);
+                navigate('/content/viewlesson/' + response.payload.data.id);
+            });
+        }
     };
 
     return (
@@ -195,6 +201,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                     <LessonInformation
                         data={data}
                         setData={setData}
+                        isEditMode={isEditMode}
                         theme={theme}
                         setTheme={setTheme}
                         selectedTheme={selectedTheme}
@@ -216,6 +223,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                         <LessonContent
                             screenData={screenData}
                             setScreenData={setScreenData}
+                            // isEditMode={isEditMode}
                             quizData={quizData}
                             setQuizData={setQuizData}
                             data={data}

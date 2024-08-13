@@ -37,7 +37,10 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                     onChange={(e) => {
                         setData({
                             ...data,
-                            themeData: { ...data.themeData, themeCode: e.target.value },
+                            themeData: {
+                                ...data.themeData,
+                                themeCode: parseInt(e.target.value, 10),
+                            },
                         });
                     }}
                 />
@@ -51,7 +54,10 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                         setCategory(e.target.value);
                         setData({
                             ...data,
-                            themeData: { ...data.themeData, categoryId: e.target.value },
+                            themeData: {
+                                ...data.themeData,
+                                categoryId: parseInt(e.target.value, 10),
+                            },
                         });
                     }}
                 >

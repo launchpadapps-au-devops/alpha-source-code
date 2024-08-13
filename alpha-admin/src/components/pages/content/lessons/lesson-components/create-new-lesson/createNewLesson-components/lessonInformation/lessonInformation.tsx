@@ -19,6 +19,7 @@ export interface LessonInformationProps {
     setTheme: any;
     selectedTheme: any;
     setSelectedTheme: any;
+    isEditMode?: boolean;
 }
 
 export const LessonInformation = ({
@@ -28,6 +29,7 @@ export const LessonInformation = ({
     setTheme,
     selectedTheme,
     setSelectedTheme,
+    isEditMode,
 }: LessonInformationProps) => {
     const [isOpen, setIsOpen] = useState<DropdownState>({
         category: false,
@@ -53,6 +55,12 @@ export const LessonInformation = ({
         setIsSidebarOpen(false);
     };
 
+    useEffect(() => {
+        console.log('isEditMode', isEditMode);
+        if (isEditMode) {
+            setSelectedTheme(data.theme);
+        }
+    }, []);
     return (
         <div className={styles.lessonForm}>
             <h3>Lesson information</h3>
@@ -63,7 +71,7 @@ export const LessonInformation = ({
                     placeholder="Add lesson code"
                     className={styles.lessonCodeInput}
                     value={data.lessonCode}
-                    onChange={(e) => setData({ ...data, lessonCode: e.target.value })}
+                    onChange={(e) => setData({ ...data, lessonCode: parseInt(e.target.value, 10) })}
                 />
             </div>
 
@@ -89,10 +97,11 @@ export const LessonInformation = ({
                 >
                     <select
                         className={styles.customSelect}
+                        value={data.categoryId}
                         onChange={(e) =>
                             setData({
                                 ...data,
-                                categoryId: e.target.value,
+                                categoryId: parseInt(e.target.value, 10),
                             })
                         }
                     >
@@ -120,10 +129,11 @@ export const LessonInformation = ({
                 >
                     <select
                         className={styles.customSelect}
+                        value={data.duration}
                         onChange={(e) =>
                             setData({
                                 ...data,
-                                duration: e.target.value,
+                                duration: parseInt(e.target.value),
                             })
                         }
                     >
@@ -150,10 +160,11 @@ export const LessonInformation = ({
                 >
                     <select
                         className={styles.customSelect}
+                        value={data.points}
                         onChange={(e) =>
                             setData({
                                 ...data,
-                                points: e.target.value,
+                                points: parseInt(e.target.value),
                             })
                         }
                     >
@@ -172,7 +183,7 @@ export const LessonInformation = ({
                     />
                 </div>
             </div>
-            <LessonTags data={data} setData={setData} />
+            <LessonTags data={data} setData={setData} isEditMode={isEditMode} />
             <SelectTheme
                 isOpen={isSidebarOpen}
                 onClose={handleCloseSidebar}
