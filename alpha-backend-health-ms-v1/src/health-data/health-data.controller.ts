@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, Query, Headers, Req } from '@nestjs/common';
 import { HealthDataService } from './health-data.service';
-import { HealthProfileQuestionaries, SurveyQuestions } from '@launchpadapps-au/alpha-shared';
+import { HealthProfileQuestionaries, SortOrderType, SurveyQuestions, UserHealthData } from '@launchpadapps-au/alpha-shared';
 
 @Controller('health-data')
 export class HealthDataController {
@@ -84,5 +84,53 @@ export class HealthDataController {
         };
     }
 
+    @Post('/health-data/bulk')
+    async createHealthBulkData(
+        @Headers('x-request-userId') reqUserId: string,
+        @Body() payload: Partial<UserHealthData>[]
+    ) {
+        const data = await this.healthDataService.bulkUpdateUserHealthData(
+            payload.map(d => ({ ...d, userId: reqUserId })),
+            {
+                userId: reqUserId
+            }
+        );
+
+        return {
+            message: 'Health data added successfully',
+            data: data
+        };
+    }
+
+    @Get('/health-data')
+    async getUserHealthData(
+        @Headers('x-request-userId') reqUserId: string,
+        @Query() query: any
+    ) {
+        const {
+            limit = 10,
+            page = 1,
+            sortField = 'createdAt',
+            sortOrder = 'ASC' as SortOrderType,
+            ...filter
+        } = query;
+        
+        const data = await this.healthDataService.getAllUserHealthData(
+            {
+                page: parseInt(page),
+                limit: parseInt(limit)
+            },
+            {
+                sortField,
+                sortOrder
+            },
+            filter
+        );
+
+        return {
+            message: 'Health data fetched successfully',
+            data: data
+        };
+    }
 }
  
