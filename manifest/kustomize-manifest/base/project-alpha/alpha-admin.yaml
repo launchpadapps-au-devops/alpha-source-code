@@ -34,13 +34,13 @@ spec:
             - containerPort: 4137
           resources:
             limits:
-              cpu: 250m
-              ephemeral-storage: 0.5Gi
-              memory: 0.5Gi
+              cpu: 500m
+              ephemeral-storage: 1Gi
+              memory: 1Gi
             requests:
-              cpu: 250m
-              ephemeral-storage: 0.5Gi
-              memory: 0.5Gi
+              cpu: 500m
+              ephemeral-storage: 1Gi
+              memory: 1Gi
 ---
 apiVersion: v1
 kind: Service
@@ -51,6 +51,6 @@ spec:
     app: alpha-admin-deployment
   ports:
     - protocol: TCP
-      port: 4137
-      targetPort: 4137
+      port: 4173
+      targetPort: 4173
   type: LoadBalancer
