@@ -56,10 +56,6 @@ export class EnvConfigService {
 
     get microservices() {
         return {
-            health: {
-                host: this.get('HEALTH_SERVICE_BASE_URL') as string,
-                port: this.get('HEALTH_SERVICE_API_PREFIX') as string
-            }
         }
     }
 
