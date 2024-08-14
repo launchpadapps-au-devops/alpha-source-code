@@ -52,6 +52,47 @@ export class HabitDto {
   updatedAt: Date;
 }
 
+export class UserHabitProgressDto {
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174003' })
+  id: string;
+
+  @ApiProperty({ example: 'ACTIVE' })
+  status: string;
+
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  userId: string;
+
+  @ApiProperty({ example: 1 })
+  day: number;
+
+  @ApiProperty({ example: 1 })
+  week: number;
+
+  @ApiProperty({ example: '2024-07-29T12:34:56Z', nullable: true })
+  date: Date;
+
+  @ApiProperty({ example: false })
+  isCompleted: boolean;
+
+  @ApiProperty({ example: '2024-07-29T12:34:56Z', nullable: true })
+  completedAt: Date;
+
+  @ApiProperty({ example: '2024-07-29T12:34:56Z', nullable: true })
+  startedAt: Date;
+
+  @ApiProperty({ example: '2024-07-29T12:34:56Z', nullable: true })
+  targetDate: Date;
+
+  @ApiProperty({ example: 10 })
+  pointsEarned: number;
+
+  @ApiProperty({ example: '2024-07-29T12:34:56Z' })
+  updatedAt: Date;
+
+  @ApiProperty({ example: '2024-07-29T12:34:56Z' })
+  createdAt: Date;
+}
+
 export class UserHabitResponseDto {
   @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
   id: string;
@@ -67,6 +108,9 @@ export class UserHabitResponseDto {
 
   @ApiProperty({ type: HabitDto })
   habit: HabitDto;
+
+  @ApiProperty({ type: UserHabitProgressDto, isArray: true })
+  userHabitProgress: UserHabitProgressDto[];
 
   @ApiProperty({ example: false })
   isCompleted: boolean;

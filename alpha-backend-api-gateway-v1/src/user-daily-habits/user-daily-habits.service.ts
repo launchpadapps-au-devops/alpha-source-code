@@ -52,12 +52,27 @@ export class UserDailyHabitsService {
         );
     }
 
-    async completeUserDailyHabit(userHabitId: string, reqUser = { userId: null }) {
+    async startUserDailyHabit(userHabitId: string, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/user-daily-habits/start`,
+            'PUT',
+            {
+                userHabitId
+            },
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+
+    async completeUserDailyHabitProgress(userHabitProgressId: string, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.healthApiUrl}${this.healthApiPrefix}/user-daily-habits/complete`,
             'PUT',
             {
-                userHabitId
+                userHabitProgressId
             },
             {},
             {

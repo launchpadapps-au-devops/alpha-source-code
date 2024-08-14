@@ -26,7 +26,7 @@ export class UserDailyHabitsController {
             properties: {
                 statusCode: { type: 'number', example: 200 },
                 message: { type: 'string', example: 'User daily habits fetched successfully' },
-                data: {  
+                data: {
                     type: 'array',
                     items: { $ref: getSchemaPath(UserHabitResponseDto) }
                 },
@@ -44,7 +44,7 @@ export class UserDailyHabitsController {
     @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
-    @ApiBody({ 
+    @ApiBody({
         schema: {
             type: 'object',
             properties: {
@@ -68,8 +68,8 @@ export class UserDailyHabitsController {
     })
     @Post('select')
     async selectUserDailyHabits(
-        @Request() req, 
-        @Body() habitIds: string []
+        @Request() req,
+        @Body() habitIds: string[]
     ): Promise<object> {
         return this.userDailyHabitsService.selectUserDailyHabits(req.user.userId, habitIds, req.user);
     }
@@ -86,7 +86,7 @@ export class UserDailyHabitsController {
             properties: {
                 statusCode: { type: 'number', example: 200 },
                 message: { type: 'string', example: 'User daily habits fetched successfully' },
-                data: {  
+                data: {
                     type: 'array',
                     items: { $ref: getSchemaPath(UserHabitResponseDto) }
                 },
@@ -100,7 +100,7 @@ export class UserDailyHabitsController {
         return await this.userDailyHabitsService.getUserDailyHabit(req.user.userId);
     }
 
-    // complete selected habit
+    // start selected habit
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.PATIENT)
@@ -120,18 +120,76 @@ export class UserDailyHabitsController {
             type: 'object',
             properties: {
                 statusCode: { type: 'number', example: 200 },
-                message: { type: 'string', example: 'User daily habit completed successfully' },
+                message: { type: 'string', example: 'User daily habit started successfully' },
                 data: { type: 'object', example: {} },
                 meta: { type: 'object', example: {} },
             },
             required: ['statusCode', 'data'],
         },
     })
-    @Put('complete')
-    async completeUserDailyHabit(
+    @Put('start')
+    async startUserDailyHabit(
         @Request() req,
         @Body('userHabitId') userHabitId: string
     ): Promise<object> {
-        return this.userDailyHabitsService.completeUserDailyHabit(userHabitId, req.user);
+        return this.userDailyHabitsService.startUserDailyHabit(userHabitId, req.user);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                userHabitId: { type: 'string', example: 'string' }
+            },
+            required: ['userHabitId'],
+        }
+    })
+    @ApiResponse({
+        status: 200,
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'User daily habit progress completed successfully' },
+                data: {
+                    type: 'object',
+                    properties: {
+                        userHabitProgress: {
+                            type: 'object',
+                            properties: {
+                                id: { type: 'string', example: 'progressId123' },
+                                isCompleted: { type: 'boolean', example: true }
+                            },
+                            required: ['id', 'isCompleted']
+                        },
+                        userHabit: {
+                            type: 'object',
+                            properties: {
+                                id: { type: 'string', example: 'habitId456' },
+                                isCompleted: { type: 'boolean', example: true },
+                                totalPracticedDays: { type: 'number', example: 10 },
+                                remainingDays: { type: 'number', example: 20 },
+                                totalDays: { type: 'number', example: 30 }
+                            },
+                            required: ['id', 'isCompleted', 'totalPracticedDays', 'remainingDays', 'totalDays']
+                        }
+                    },
+                    required: ['userHabitProgress', 'userHabit']
+                },
+                meta: { type: 'object', example: {} }
+            },
+            required: ['statusCode', 'data']
+        },
+    })
+    @Put('complete/progress')
+    async completeUserDailyHabit(
+        @Request() req,
+        @Body('userHabitProgressId') userHabitProgressId: string
+    ): Promise<object> {
+        return this.userDailyHabitsService.completeUserDailyHabitProgress(userHabitProgressId, req.user);
     }
 }
