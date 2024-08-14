@@ -1,4 +1,4 @@
-import { GenericFilterDto, HealthProfileQuestionaries, SurveyQuestions, PaginationDto, SortingDto } from '@launchpadapps-au/alpha-shared';
+import { GenericFilterDto, HealthProfileQuestionaries, SurveyQuestions, PaginationDto, SortingDto, UserHealthData } from '@launchpadapps-au/alpha-shared';
 import { Injectable } from '@nestjs/common';
 import { BaseHttpService } from 'src/common/base-http.service';
 import { EnvConfigService } from 'src/common/config/envConfig.service';
@@ -71,6 +71,41 @@ export class HealthDataService {
                 pagination,
                 sorting,
                 filter
+            },
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+    async addBulkHealthData(data: Partial<UserHealthData[]>, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/health-data/bulk`,
+            'POST',
+            {
+                ...data,
+            },
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+    async getUserHealthData(
+        pagination: PaginationDto,
+        sorting: SortingDto,
+        filter: GenericFilterDto,
+        reqUser = { userId: null }
+    ) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/health-data`,
+            'GET',
+            {},
+            {
+                ...pagination,
+                ...sorting,
+                ...filter
             },
             {
                 'x-request-userId': reqUser.userId
