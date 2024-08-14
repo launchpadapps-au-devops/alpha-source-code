@@ -1,6 +1,6 @@
 import { Repository, ILike, FindManyOptions, In } from "typeorm";
 import { DatabaseModule } from "../index";
-import { Habit } from "../entities";
+import { Habit, UserHabitProgress } from "../entities";
 import { NotFoundException } from "@nestjs/common";
 import { GenericFilterDto, PaginationDto, SortOrderType, SortingDto } from "../dto";
 import { IHabitService } from "../interfaces/IHabitService.interface";
@@ -98,6 +98,6 @@ class HabitService implements IHabitService {
       page: pagination.page,
     };
   }
-}
+ }
 
 export const habitService = new HabitService();

@@ -17,6 +17,7 @@ import { UserCategory } from "./userCategories.entity";
 import { UserTheme } from "./userTheme.entity";
 import { UserLesson } from "./userLesson.entity";
 import { UserHabit } from "./userHabit.entity";
+import { UserHabitProgress } from "./userHabitProgress.entity";
 
 import { UserMealLog } from "./userMeal.entity";
 import { UserHealthData } from "./userHealthData.entity";
@@ -47,6 +48,7 @@ export {
   Habit,
   UserLesson,
   UserHabit,
+  UserHabitProgress,
 
   UserMealLog,
   UserHealthData,

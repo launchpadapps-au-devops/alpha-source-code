@@ -6,16 +6,15 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from 'typeorm';
-import { UserTheme, Habit, User, UserHabitProgress } from '.';
+import { UserTheme, Habit, User, UserHabit } from '.';
 
-@Entity('userHabits')
-export class UserHabit {
+@Entity('userHabitProgress')
+export class UserHabitProgress {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   
-  @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVE', 'DRAFT', 'IN_PROGRESS', 'CURRENT_SELECTED'], default: 'ACTIVE' })
+  @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVE', 'DRAFT', 'IN_PROGRESS'], default: 'ACTIVE' })
   status: string;
 
   @Column()
@@ -26,18 +25,20 @@ export class UserHabit {
   user: User;
 
   @Column()
-  userThemeId: string;
+  userHabitId: string;
 
-  @ManyToOne(() => UserTheme, userTheme => userTheme.userLessons, { nullable: false, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userThemeId' })
-  userTheme: UserTheme;
+  @ManyToOne(() => UserHabit, userHabit => userHabit.userHabitProgress, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userHabitId' })
+  userHabit: UserHabit;
 
-  @Column()
-  habitId: number;
+  @Column({ type: 'int', default: 1 })
+  day: number;
 
-  @ManyToOne(() => Habit, { nullable: false })
-  @JoinColumn({ name: 'habitId' })
-  habit: Habit;
+  @Column({ type: 'date', nullable: true })
+  date: Date;
+
+  @Column({ type: 'int', default: 1 })
+  week: number;
 
   @Column({ type: 'boolean', default: false })
   isCompleted: boolean;
@@ -67,7 +68,4 @@ export class UserHabit {
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'updatedBy' })
   updatedBy: User;
-
-  @OneToMany(() => UserHabitProgress, userHabitProgress => userHabitProgress.userHabit)
-  userHabitProgress: UserHabitProgress[];
 }

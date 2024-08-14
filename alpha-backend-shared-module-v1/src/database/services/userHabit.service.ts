@@ -3,10 +3,15 @@ import { DatabaseModule } from "../index";
 import { UserHabit } from "../entities/userHabit.entity";
 import { NotFoundException } from "@nestjs/common";
 import { GenericFilterDto, PaginationDto, SortOrderType, SortingDto } from "../dto";
+import { UserHabitProgress } from "../entities";
 
 class UserHabitService {
   static get UserHabitRepository(): Repository<UserHabit> {
     return DatabaseModule.getRepository(UserHabit);
+  }
+
+  static get UserHabitProgressRepository(): Repository<UserHabitProgress> {
+    return DatabaseModule.getRepository(UserHabitProgress);
   }
 
   async createUserHabit(data: Partial<UserHabit>): Promise<UserHabit> {
@@ -84,6 +89,7 @@ class UserHabitService {
         status: true,
         userId: true,
         userThemeId: true,
+        userHabitProgress: true,
         habit: {
           id: true,
           themeId: true,
@@ -156,6 +162,43 @@ class UserHabitService {
       limit: pagination.limit,
       page: pagination.page,
     };
+  }
+
+  async createUserHabitProgressBulk(data: Partial<UserHabitProgress>[]): Promise<UserHabitProgress[]> {
+    const userHabitProgress = data.map(d => {
+      const userHabitProgress = new UserHabitProgress();
+      Object.assign(userHabitProgress, d);
+      return userHabitProgress;
+    });
+
+    await UserHabitService.UserHabitProgressRepository.save(userHabitProgress);
+    return userHabitProgress;
+  }
+
+  async updateUserHabitProgress(id: string, data: Partial<UserHabitProgress>): Promise<UserHabitProgress> {
+    const userHabitProgress = await UserHabitService.UserHabitProgressRepository.findOne({
+      where: { id },
+    });
+
+    if (!userHabitProgress) {
+      throw new NotFoundException(`UserHabitProgress with id ${id} not found`);
+    }
+
+    Object.assign(userHabitProgress, data);
+    await UserHabitService.UserHabitProgressRepository.save(userHabitProgress);
+    return userHabitProgress;
+  }
+
+  async findUserHabitProgressById(id: string): Promise<UserHabitProgress> {
+    return UserHabitService.UserHabitProgressRepository.findOne({
+      where: { id },
+    });
+  }
+
+  async findUserHabitProgressByUserHabitId(userHabitId: string): Promise<UserHabitProgress[]> {
+    return UserHabitService.UserHabitProgressRepository.find({
+      where: { userHabitId, status: 'ACTIVE' },
+    });
   }
 }
 
