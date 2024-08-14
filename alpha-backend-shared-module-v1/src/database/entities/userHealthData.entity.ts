@@ -19,7 +19,7 @@ export class UserHealthData {
     source: string;
 
     @Column({ type: 'enum', enum: DataTypes })
-    sourceType: string;
+    dataType: string;
 
     @Column({ type: 'float', nullable: true })
     value: number;

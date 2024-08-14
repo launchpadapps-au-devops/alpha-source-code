@@ -6,7 +6,7 @@ import { GenericFilterDto, PaginationDto, SortOrderType, SortingDto } from "../d
 import { IUserHealthDataService } from "../interfaces/IUserHealthData.interface";
 
 
-class UserHealthDataService implements IUserHealthDataService {
+class UserHealthDataService {
   static get userHealthDataRepository(): Repository<UserHealthData> {
     return DatabaseModule.getRepository(UserHealthData);
   }
@@ -16,6 +16,10 @@ class UserHealthDataService implements IUserHealthDataService {
     Object.assign(userHealthData, data);
     await UserHealthDataService.userHealthDataRepository.save(userHealthData);
     return userHealthData;
+  }
+
+  async bulkAddUserHealthData(data: Partial<UserHealthData>[]): Promise<UserHealthData[]> {
+    return UserHealthDataService.userHealthDataRepository.save(data);
   }
 
   async updateUserHealthData(id: string, data: Partial<UserHealthData>): Promise<UserHealthData> {
