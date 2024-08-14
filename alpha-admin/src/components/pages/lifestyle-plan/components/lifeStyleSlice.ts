@@ -72,10 +72,7 @@ export const addPlanThunk = createAsyncThunk(
 
 export const updatePlanThunk = createAsyncThunk(
     'plan/updatePlan',
-    async (
-        { id, plan }: { id: number; plan: { name: string; description: string } },
-        { dispatch, rejectWithValue }
-    ) => {
+    async ({ id, plan }: { id: number; plan: any }, { dispatch, rejectWithValue }) => {
         try {
             const response = await updatePlan(id, plan);
             dispatch(fetchPlansThunk());

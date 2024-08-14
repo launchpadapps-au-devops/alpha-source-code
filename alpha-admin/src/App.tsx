@@ -161,20 +161,24 @@ const router = createBrowserRouter([
                 path: '/lifestyle-plan',
                 element: <LifeStyle />,
             },
-            {
-                path: '/lifestyle-plan/addthemes',
-                element: <AddThemes themes={undefined} onUpdateThemes={function (updatedLessons: Lesson[]): void {
-                    throw new Error('Function not implemented.');
-                } } onAddThemesToPlan={function (selected: Lesson[]): void {
-                    throw new Error('Function not implemented.');
-                } } />,
-            },
+            // {
+            //     path: '/lifestyle-plan/addthemes',
+            //     element: <AddThemes themes={undefined} onUpdateThemes={function (updatedLessons: Lesson[]): void {
+            //         throw new Error('Function not implemented.');
+            //     } } onAddThemesToPlan={function (selected: Lesson[]): void {
+            //         throw new Error('Function not implemented.');
+            //     } } />,
+            // },
             {
                 path: '/lifestyle-plan/view/:id',
                 element: <ViewLifeStyle />,
             },
             {
                 path: '/lifestyle-plan/new',
+                element: <CreateLifestyle />,
+            },
+            {
+                path: '/lifestyle-plan/edit/:id',
                 element: <CreateLifestyle />,
             },
         ],

@@ -18,6 +18,7 @@ export interface LessonSidebarProps {
 }
 
 export const LessonSidebar: React.FC<LessonSidebarProps> = ({ isOpen, onClose, lessons }) => {
+    console.log('lessons', lessons);
     return (
         <>
             {isOpen && <div className={styles.overlay} onClick={onClose} />}
@@ -40,14 +41,16 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({ isOpen, onClose, l
                         </tr>
                     </thead>
                     <tbody>
-                        {lessons.map((lesson, index) => (
-                            <tr key={index}>
-                                <td>{lesson.code}</td>
-                                <td>{lesson.title}</td>
-                                <td>{lesson.quiz ? <CheckCircleOutlineIcon /> : ''}</td>
-                                <td>{lesson.published ? <CheckCircleOutlineIcon /> : ''}</td>
-                            </tr>
-                        ))}
+                        {lessons &&
+                            lessons.length > 0 &&
+                            lessons.map((lesson: any, index: any) => (
+                                <tr key={index}>
+                                    <td>{lesson.id}</td>
+                                    <td>{lesson.name}</td>
+                                    <td>{lesson.quiz ? <CheckCircleOutlineIcon /> : ''}</td>
+                                    <td>{lesson.isPublished ? <CheckCircleOutlineIcon /> : ''}</td>
+                                </tr>
+                            ))}
                     </tbody>
                 </table>
                 <div className={styles.pagination}>

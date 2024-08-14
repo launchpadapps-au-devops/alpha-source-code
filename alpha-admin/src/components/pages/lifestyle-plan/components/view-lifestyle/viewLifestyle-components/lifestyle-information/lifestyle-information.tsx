@@ -2,18 +2,12 @@ import React from 'react';
 import styles from './lifestyle-information.module.scss';
 
 type LifestyleInformationProps = {
-    planName: string;
-    planDuration: string;
-    planDescription: string;
-    internalNotes: string;
+    plan: any;
+    setPlan: any;
 };
 
-const LifestyleInformation: React.FC<LifestyleInformationProps> = ({
-    planName,
-    planDuration,
-    planDescription,
-    internalNotes,
-}) => {
+const LifestyleInformation: React.FC<LifestyleInformationProps> = ({ plan, setPlan }) => {
+    console.log('plan', plan);
     return (
         <div className={styles.LifestyleInformation}>
             <div className={styles.themeHeader}>
@@ -24,26 +18,26 @@ const LifestyleInformation: React.FC<LifestyleInformationProps> = ({
                     <div className={styles.levelItem}>
                         <div className={styles.themeValue}>
                             <label>Plan name</label>
-                            {planName}
+                            {plan.name}
                         </div>
                     </div>
                     <div className={styles.categoryItem}>
                         <div className={styles.themeValue}>
                             <label>Duration</label>
-                            {planDuration}
+                            90 days
                         </div>
                     </div>
                 </div>
                 <div className={`${styles.themeItem} ${styles.fullWidth}`}>
                     <div className={styles.themeValue}>
                         <label>Plan description</label>
-                        {planDescription}
+                        {plan.description}
                     </div>
                 </div>
                 <div className={`${styles.themeItem} ${styles.fullWidth}`}>
                     <div className={styles.themeValue}>
                         <label>Internal notes</label>
-                        {internalNotes}
+                        {plan.internalNotes}
                     </div>
                 </div>
             </div>

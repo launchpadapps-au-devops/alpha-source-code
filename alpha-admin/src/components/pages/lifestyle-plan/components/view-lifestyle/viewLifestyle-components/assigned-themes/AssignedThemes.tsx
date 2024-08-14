@@ -4,8 +4,13 @@ import styles from './AssignedThemes.module.scss';
 import { Typography } from '@mui/material';
 import { ThemesTable } from '../../../../../content/themes/themes-components/themes-table/themes-table';
 
-const AssignedThemes = () => {
+export interface AssignedThemesProps {
+    className?: string;
+    plan: any;
+}
+const AssignedThemes = ({ className, plan }: AssignedThemesProps) => {
     const tabs = ['All themes', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
+    console.log('plan', plan);
     const [selectedTab, setSelectedTab] = useState(0);
     const handleTabChange = (newValue: number) => {
         setSelectedTab(newValue);
@@ -19,7 +24,7 @@ const AssignedThemes = () => {
             </div>
             <div>
                 <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
-                <ThemesTable themes={undefined} />
+                <ThemesTable themes={plan.themes} setThemes={undefined} />
             </div>
         </>
     );

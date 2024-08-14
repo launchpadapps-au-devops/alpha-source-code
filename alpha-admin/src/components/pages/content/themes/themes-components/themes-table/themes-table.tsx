@@ -19,73 +19,6 @@ import { LessonSidebar, Lesson } from '../lessonsidebar/lessonSidebar';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchThemesThunk, updateThemeThunk } from '../themeSlice';
 
-const initialThemes = [
-    {
-        code: 1,
-        name: 'Title...',
-        dateCreated: '26/06/2024',
-        habit: true,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 2,
-        name: 'Protein',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 3,
-        name: 'Sleep 101',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: true,
-        lessons: 'View lessons',
-    },
-    {
-        code: 4,
-        name: 'Goal setting',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 5,
-        name: 'Mindfulness',
-        dateCreated: '26/06/2024',
-        habit: true,
-        published: true,
-        lessons: 'View lessons',
-    },
-    {
-        code: 6,
-        name: 'Movement 101',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 7,
-        name: 'Staying active',
-        dateCreated: '26/06/2024',
-        habit: true,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 8,
-        name: 'Steps',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: true,
-        lessons: 'View lessons',
-    },
-];
-
 const initialLessons: Lesson[] = [
     { code: 1, title: 'Lesson 1', quiz: true, published: true },
     { code: 2, title: 'Lesson 2', quiz: false, published: false },
@@ -94,27 +27,19 @@ const initialLessons: Lesson[] = [
 
 export interface ThemesTableProps {
     themes: any;
+    setThemes: any;
 }
 
-export const ThemesTable: React.FC<ThemesTableProps> = ({ themes }) => {
+export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) => {
     // const [themes, setThemes] = useState(initialThemes);
-    var [themes, setThemes] = useState<any>([]);
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openModal, setOpenModal] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [selectedLessons, setSelectedLessons] = useState<any>([]);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        dispatch(fetchThemesThunk()).then((response: any) => {
-            if (response.payload) {
-                console.log('Response ', response);
-                setThemes(response.payload.data);
-            }
-        });
-    }, []);
-
-    const handleToggle = (theme: any,index: number) => {
+    const handleToggle = (theme: any, index: number) => {
         // const theme = themes[index];
         // if (!theme.published) {
         //     setSelectedThemeIndex(index);
@@ -129,7 +54,7 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes }) => {
 
         // Create a new copy of the theme object
         const newTheme = { ...theme, isPublished: !theme.isPublished };
-        
+
         setThemes((prevThemes: any) => {
             const newThemes = [...prevThemes];
             newThemes[index] = newTheme;
@@ -137,7 +62,6 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes }) => {
         });
 
         dispatch(updateThemeThunk({ id: theme.id, theme: newTheme }));
-
     };
 
     const handlePublish = () => {
@@ -155,8 +79,10 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes }) => {
         setOpenModal(false);
     };
 
-    const handleViewLessons = (event: React.MouseEvent) => {
+    const handleViewLessons = (event: React.MouseEvent, lessons: any) => {
         event.stopPropagation();
+        setSelectedLessons(lessons);
+
         setIsSidebarOpen(true);
     };
 
@@ -231,11 +157,16 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes }) => {
                                             key={index}
                                             name={theme.name}
                                             checked={theme.published}
-                                            onChange={() => handleToggle(theme,index)}
+                                            onChange={() => handleToggle(theme, index)}
                                         />
                                     </TableCell>
                                     <TableCell onClick={(event) => event.stopPropagation()}>
-                                        <a href="#" onClick={handleViewLessons}>
+                                        <a
+                                            href="#"
+                                            onClick={(event) =>
+                                                handleViewLessons(event, theme.lessons)
+                                            }
+                                        >
                                             View lessons
                                         </a>
                                     </TableCell>
@@ -289,11 +220,13 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes }) => {
                         handlePublish={handlePublish}
                     />
                 ))}
-            <LessonSidebar
-                isOpen={isSidebarOpen}
-                onClose={handleCloseSidebar}
-                lessons={initialLessons}
-            />
+            {isSidebarOpen && (
+                <LessonSidebar
+                    isOpen={isSidebarOpen}
+                    onClose={handleCloseSidebar}
+                    lessons={selectedLessons}
+                />
+            )}
         </>
     );
 };

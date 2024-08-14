@@ -14,6 +14,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import styles from './lifestyleTable.module.scss';
+import { useAppDispatch } from '../../../../../app/hooks';
+import { fetchPlansThunk, updatePlanThunk } from '../lifeStyleSlice';
 
 const initialLifeStyles = [
     { code: 1, name: 'Heart health', dateCreated: '26/06/2024', published: false },
@@ -21,21 +23,52 @@ const initialLifeStyles = [
     { code: 3, name: 'Pregnancy', dateCreated: '26/06/2024', published: true },
 ];
 
-export const LifestyleTable: React.FC<{ className?: string }> = ({ className }) => {
+export interface lifeStyleProps {
+    plans: any;
+    setPlans: any;
+}
+
+export const LifestyleTable: React.FC<lifeStyleProps> = ({ plans, setPlans }) => {
     const [LifeStyles, setLifeStyles] = useState(initialLifeStyles);
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openPublishModal, setOpenPublishModal] = useState(false);
     const [openUnpublishModal, setOpenUnpublishModal] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
-    const handleToggle = (index: number) => {
-        const theme = LifeStyles[index];
-        setSelectedThemeIndex(index);
-        if (!theme.published) {
-            setOpenPublishModal(true);
-        } else {
-            setOpenUnpublishModal(true);
-        }
+    const handleToggle = (theme: any) => {
+        // const theme = LifeStyles[index];
+        // setSelectedThemeIndex(index);
+        // if (!theme.published) {
+        //     setOpenPublishModal(true);
+        // } else {
+        //     setOpenUnpublishModal(true);
+        // }
+        const newTheme = {
+            planData: {
+                planCode: theme.code,
+                name: theme.name,
+                image: theme.image,
+                description: theme.description,
+                internalNotes: theme.internalNotes,
+                status: theme.status,
+                isPublished: !theme.isPublished,
+                id: theme.id,
+            },
+            themes: theme.themes,
+        };
+        dispatch(updatePlanThunk({ id: theme.id, plan: newTheme })).then((data: any) => {
+            // if (data.payload) {
+            //     setPlans(data.payload.data);
+            // }
+
+            dispatch(fetchPlansThunk()).then((data: any) => {
+                console.log('data', data);
+                if (data.payload) {
+                    setPlans(data.payload.data);
+                }
+            });
+        });
     };
 
     const handlePublish = () => {
@@ -65,16 +98,16 @@ export const LifestyleTable: React.FC<{ className?: string }> = ({ className }) 
         setOpenUnpublishModal(false);
     };
 
-    const handleRowClick = (index: number) => {
-        navigate(`/lifestyle-plan/view/${LifeStyles[index].code}`, {
-            state: { isPublished: LifeStyles[index].published },
+    const handleRowClick = (id: any) => {
+        navigate(`/lifestyle-plan/view/${id}`, {
+            // state: { isPublished: LifeStyles[index].published },
         });
     };
 
     return (
         <>
             <TableContainer component={Paper}>
-                <Table className={classNames(styles['key-contacts-table'], className)}>
+                <Table className={classNames(styles['key-contacts-table'])}>
                     <TableHead>
                         <TableRow
                             style={{
@@ -89,22 +122,24 @@ export const LifestyleTable: React.FC<{ className?: string }> = ({ className }) 
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {LifeStyles.map((theme, index) => (
-                            <TableRow
-                                key={index}
-                                onClick={() => handleRowClick(index)}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <TableCell className={styles['code']}>{theme.name}</TableCell>
-                                <TableCell>{theme.dateCreated}</TableCell>
-                                <TableCell onClick={(event) => event.stopPropagation()}>
-                                    <Switch
-                                        checked={theme.published}
-                                        onChange={() => handleToggle(index)}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {plans &&
+                            plans.length > 0 &&
+                            plans.map((theme: any, index: any) => (
+                                <TableRow
+                                    key={index}
+                                    onClick={() => handleRowClick(theme.id)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <TableCell className={styles['code']}>{theme.name}</TableCell>
+                                    <TableCell>{theme.createdAt}</TableCell>
+                                    <TableCell onClick={(event) => event.stopPropagation()}>
+                                        <Switch
+                                            checked={theme.isPublished}
+                                            onChange={() => handleToggle(theme)}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                     </TableBody>
                 </Table>
             </TableContainer>

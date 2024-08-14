@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../content-components/sidebar/Sidebar';
 import { useEffect, useRef, useState } from 'react';
 import TabBar from '../content-components/tab-bar/TabBar';
-import { ThemesTable } from '../themes/themes-components/themes-table/themes-table';
 import { LessonTable } from './lesson-components/lesson-table/lessonTable';
 
 export interface LessonsProps {

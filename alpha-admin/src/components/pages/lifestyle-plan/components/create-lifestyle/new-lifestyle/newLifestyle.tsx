@@ -4,16 +4,28 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { Vector } from '../../../../../icon/glyps/vector';
+import { useAppDispatch } from '../../../../../../app/hooks';
+import { addPlanThunk } from '../../lifeStyleSlice';
 
 export interface NewLifestyleProps {
     className?: string;
+    internalNotes: string;
+    setInternalNotes: any;
+    planName: string;
+    setPlanName: any;
+    planDescription: string;
+    setPlanDescription: any;
 }
 
-export const NewLifestyle = ({ className }: NewLifestyleProps) => {
-    const [internalNotes, setInternalNotes] = useState('');
-    const [themeName, setThemeName] = useState('');
-    const [themeDescription, setThemeDescription] = useState('');
-
+export const NewLifestyle = ({
+    className,
+    internalNotes,
+    setInternalNotes,
+    planName,
+    setPlanName,
+    planDescription,
+    setPlanDescription,
+}: NewLifestyleProps) => {
     return (
         <div className={styles.container}>
             <h3>
@@ -28,8 +40,8 @@ export const NewLifestyle = ({ className }: NewLifestyleProps) => {
                         id="themeName"
                         className={styles.input}
                         type="text"
-                        value={themeName}
-                        onChange={(e) => setThemeName(e.target.value)}
+                        value={planName}
+                        onChange={(e) => setPlanName(e.target.value)}
                         placeholder="Enter the plan name"
                     />
                 </div>
@@ -40,8 +52,8 @@ export const NewLifestyle = ({ className }: NewLifestyleProps) => {
                     <textarea
                         id="themeDescription"
                         className={styles.textarea}
-                        value={themeDescription}
-                        onChange={(e) => setThemeDescription(e.target.value)}
+                        value={planDescription}
+                        onChange={(e) => setPlanDescription(e.target.value)}
                         placeholder="Enter the Plan description "
                     />
                 </div>

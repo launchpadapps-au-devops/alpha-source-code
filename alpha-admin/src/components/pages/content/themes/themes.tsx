@@ -108,7 +108,7 @@ export const Themes = ({ className }: ContentProps) => {
                     </div>
                 </header>
                 <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
-                <ThemesTable themes={theme} />
+                <ThemesTable themes={theme} setThemes={setTheme} />
             </div>
         </div>
     );

@@ -17,79 +17,19 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import styles from './addThemes.module.scss';
 // import { PublishThemesModal } from '../publish-theme-modal/PublisThemeModal';
-import { LessonSidebar, Lesson } from '../../../content/themes/themes-components/lessonsidebar/lessonSidebar';
+import {
+    LessonSidebar,
+    Lesson,
+} from '../../../content/themes/themes-components/lessonsidebar/lessonSidebar';
 import { useAppDispatch } from '../../../../../app/hooks';
-import { fetchThemesThunk, updateThemeThunk } from '../../../content/themes/themes-components/themeSlice';
+import {
+    fetchThemesThunk,
+    updateThemeThunk,
+} from '../../../content/themes/themes-components/themeSlice';
 import TabBar from '../../../content/content-components/tab-bar/TabBar';
 import { AppButton } from '../../../../app-button/app-button';
 import { CheckBox } from '@mui/icons-material';
 import { Check } from '../../../../icon/glyps/check';
-const initialThemes = [
-    {
-        code: 1,
-        name: 'Title...',
-        dateCreated: '26/06/2024',
-        habit: true,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 2,
-        name: 'Protein',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 3,
-        name: 'Sleep 101',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: true,
-        lessons: 'View lessons',
-    },
-    {
-        code: 4,
-        name: 'Goal setting',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 5,
-        name: 'Mindfulness',
-        dateCreated: '26/06/2024',
-        habit: true,
-        published: true,
-        lessons: 'View lessons',
-    },
-    {
-        code: 6,
-        name: 'Movement 101',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 7,
-        name: 'Staying active',
-        dateCreated: '26/06/2024',
-        habit: true,
-        published: false,
-        lessons: 'View lessons',
-    },
-    {
-        code: 8,
-        name: 'Steps',
-        dateCreated: '26/06/2024',
-        habit: false,
-        published: true,
-        lessons: 'View lessons',
-    },
-];
 
 const initialLessons: Lesson[] = [
     { code: 1, title: 'Lesson 1', quiz: true, published: true },
@@ -99,12 +39,13 @@ const initialLessons: Lesson[] = [
 
 export interface ThemesTableProps {
     themes: any;
-    
+
     onUpdateThemes: (updatedLessons: Lesson[]) => void;
-    onAddThemesToPlan: (selected: Lesson[]) => void;
+    setThemeView: any;
+    // onAddThemesToPlan: (selected: Lesson[]) => void;
 }
 
-export const AddThemes: React.FC<ThemesTableProps> = ({themes,onUpdateThemes}) => {
+export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, setThemeView }) => {
     // const [themes, setThemes] = useState(initialThemes);
     var [themes, setThemes] = useState<any>([]);
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
@@ -113,6 +54,7 @@ export const AddThemes: React.FC<ThemesTableProps> = ({themes,onUpdateThemes}) =
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [selectedTab, setSelectedTab] = useState(0);
+    const [selectedLessons, setSelectedLessons] = useState<any>([]);
     const tabs = ['All themes', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
 
     useEffect(() => {
@@ -128,8 +70,7 @@ export const AddThemes: React.FC<ThemesTableProps> = ({themes,onUpdateThemes}) =
         setSelectedTab(newValue);
     };
 
-
-    const handleToggle = (theme: any,index: number) => {
+    const handleToggle = (theme: any, index: number) => {
         // const theme = themes[index];
         // if (!theme.published) {
         //     setSelectedThemeIndex(index);
@@ -144,7 +85,7 @@ export const AddThemes: React.FC<ThemesTableProps> = ({themes,onUpdateThemes}) =
 
         // Create a new copy of the theme object
         const newTheme = { ...theme, isPublished: !theme.isPublished };
-        
+
         setThemes((prevThemes: any) => {
             const newThemes = [...prevThemes];
             newThemes[index] = newTheme;
@@ -152,7 +93,6 @@ export const AddThemes: React.FC<ThemesTableProps> = ({themes,onUpdateThemes}) =
         });
 
         dispatch(updateThemeThunk({ id: theme.id, theme: newTheme }));
-
     };
 
     const handlePublish = () => {
@@ -166,20 +106,22 @@ export const AddThemes: React.FC<ThemesTableProps> = ({themes,onUpdateThemes}) =
         setOpenModal(false);
     };
 
-    const handleCheckboxChange = (index: number) => {
+    const handleCheckboxChange = (theme: any, index: number) => {
         const updatedThemes = [...themes];
         updatedThemes[index].select = !updatedThemes[index].select;
         setThemes(updatedThemes);
-        onUpdateThemes(updatedThemes);
+        onUpdateThemes(theme);
+        localStorage.setItem('selectedThemes', JSON.stringify(updatedThemes));
     };
 
     const handleCloseModal = () => {
         setOpenModal(false);
     };
 
-    const handleViewLessons = (event: React.MouseEvent) => {
+    const handleViewLessons = (event: React.MouseEvent, lessons: any) => {
         event.stopPropagation();
         setIsSidebarOpen(true);
+        setSelectedLessons(lessons);
     };
 
     const handleCloseSidebar = () => {
@@ -212,17 +154,17 @@ export const AddThemes: React.FC<ThemesTableProps> = ({themes,onUpdateThemes}) =
     return (
         <>
             <TableContainer component={Paper}>
-            <header className={styles['header']}>
-            <Typography variant="h5">Add Themes</Typography>
-            <div className={styles.buttonContainer}>
+                <header className={styles['header']}>
+                    <Typography variant="h5">Add Themes</Typography>
+                    <div className={styles.buttonContainer}>
                         <AppButton
                             showLeftIcon
                             buttonText="Add themes to plan"
-                            // onButtonClick={handleButtonClick}
+                            onButtonClick={() => setThemeView(false)}
                         />
-            </div>
-            </header>
-            <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
+                    </div>
+                </header>
+                <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
                 <Table className={classNames(styles['key-contacts-table'])}>
                     <TableHead>
                         <TableRow
@@ -243,6 +185,7 @@ export const AddThemes: React.FC<ThemesTableProps> = ({themes,onUpdateThemes}) =
                         </TableRow>
                     </TableHead>
                     <TableBody>
+                        {console.log('Themes', themes)}
                         {themes &&
                             themes.length > 0 &&
                             themes.map((theme: any, index: any) => (
@@ -267,19 +210,24 @@ export const AddThemes: React.FC<ThemesTableProps> = ({themes,onUpdateThemes}) =
                                             key={index}
                                             name={theme.name}
                                             checked={theme.published}
-                                            onChange={() => handleToggle(theme,index)}
+                                            onChange={() => handleToggle(theme, index)}
                                         />
                                     </TableCell>
                                     <TableCell onClick={(event) => event.stopPropagation()}>
-                                        <a href="#" onClick={handleViewLessons}>
+                                        <a
+                                            href="#"
+                                            onClick={(event) =>
+                                                handleViewLessons(event, theme.lessons)
+                                            }
+                                        >
                                             View lessons
                                         </a>
                                     </TableCell>
                                     <TableCell onClick={(event) => event.stopPropagation()}>
-                                    <Checkbox
-                                        checked={themes.select}
-                                        onChange={() => handleCheckboxChange(index)}
-                                    />
+                                        <Checkbox
+                                            checked={themes.select}
+                                            onChange={() => handleCheckboxChange(theme, index)}
+                                        />
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -331,11 +279,14 @@ export const AddThemes: React.FC<ThemesTableProps> = ({themes,onUpdateThemes}) =
                         handlePublish={handlePublish}
                     />
                 ))} */}
-            <LessonSidebar
-                isOpen={isSidebarOpen}
-                onClose={handleCloseSidebar}
-                lessons={initialLessons}
-            />
+            {console.log('lessonss', themes)}
+            {isSidebarOpen && (
+                <LessonSidebar
+                    isOpen={isSidebarOpen}
+                    onClose={handleCloseSidebar}
+                    lessons={selectedLessons}
+                />
+            )}
         </>
     );
 };
