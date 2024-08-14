@@ -42,15 +42,28 @@ export class UserDailyHabitsController {
         }
     }
 
-    @Put('complete')
-    async completeUserDailyHabit(
+    @Put('start')
+    async startUserDailyHabit(
         @Headers('x-request-userId') reqUserId: string,
         userHabitId: string,
     ) {
-        await this.userDailyHabitsService.completeUserDailyHabit(userHabitId, { userId: reqUserId });
+        await this.userDailyHabitsService.startUserDailyHabit(userHabitId, { userId: reqUserId });
+        return {
+            message: 'User Habit Started Successfully',
+            data: {},
+            meta: {},
+        }
+    }
+
+    @Put('complete')
+    async completeUserDailyHabit(
+        @Headers('x-request-userId') reqUserId: string,
+        userHabitProgressId: string,
+    ) {
+        const data = await this.userDailyHabitsService.markUserDailyHabitProgressAsComplete(userHabitProgressId, { userId: reqUserId });
         return {
             message: 'User Habit Completed Successfully',
-            data: {},
+            data: data,
             meta: {},
         }
     }

@@ -2,7 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import {
     userHabitService,
     userThemeService,
-    habitService
+    habitService,
+    UserHabitProgress
 } from '@launchpadapps-au/alpha-shared';
 
 @Injectable()
@@ -11,7 +12,7 @@ export class UserDailyHabitsService {
 
     async addUserDailyHabit(userId: string) {
         const existingHabits = (await userHabitService.findUserHabitsByUserId(userId))
-            .filter(habit => !habit.isCompleted && (habit.status === 'ACTIVE' || habit.status === 'IN_PROGRESS'));
+            .filter(habit => !habit.isCompleted && (habit.status === 'ACTIVE' || habit.status === 'IN_PROGRESS' || habit.status === 'CURRENT_SELECTED'));
 
         const userThemes = await userThemeService.findUserThemesByUserId(userId);
 
@@ -70,7 +71,7 @@ export class UserDailyHabitsService {
 
     async selectUserDailyHabits(userId: string, habitIds: string[], reqUser = { userId: null }) {
         const userHabits = await userHabitService.findUserHabitsByUserId(userId);
-        const inProgressHabits = userHabits.filter(habit => habit.status === 'IN_PROGRESS');
+        const inProgressHabits = userHabits.filter(habit => habit.status === 'CURRENT_SELECTED');
 
         if (inProgressHabits.length > 4) {
             throw new BadRequestException('Already 4 habits in progress');
@@ -104,6 +105,73 @@ export class UserDailyHabitsService {
         }
 
         await userHabitService.updateUserHabits(selctedUserHabit);
+    }
+
+    async startUserDailyHabit(userHabitId: string, reqUser = { userId: null }) {
+        const userHabit = await userHabitService.findUserHabitById(userHabitId);
+
+        const weekTimeAllocation = userHabit.habit.timeAllocation;
+
+        const userHabitProgresses = [] as UserHabitProgress[];
+        for(let i = 1; i <= weekTimeAllocation; i++) {
+          for(let j = 1; j <= 7; j++) {
+
+            const userHabitProgress = {} as UserHabitProgress;
+            userHabitProgress.userHabitId = userHabitId;
+            userHabitProgress.day = j;
+            userHabitProgress.week = i;
+            userHabitProgress.status = 'ACTIVE';
+            userHabitProgress.date = new Date();
+            userHabitProgress.startedAt = new Date();
+            userHabitProgress.targetDate = new Date();
+            userHabitProgress.pointsEarned = 0;
+
+            userHabitProgresses.push(userHabitProgress);
+          }
+        };
+
+        userHabit.status = 'IN_PROGRESS';
+        userHabit.updatedBy = reqUser.userId;
+
+        await userHabitService.updateUserHabit(userHabitId, userHabit);
+    }
+
+    async markUserDailyHabitProgressAsComplete(userHabitProgressId: string, reqUser = { userId: null }) {
+        const userHabitProgress = await userHabitService.findUserHabitProgressById(userHabitProgressId);
+
+        if (userHabitProgress.isCompleted) {
+            throw new BadRequestException('Habit already completed');
+        }
+
+        userHabitProgress.isCompleted = true;
+        userHabitProgress.completedAt = new Date();
+        userHabitProgress.updatedBy = reqUser.userId;
+
+        await userHabitService.updateUserHabitProgress(userHabitProgressId, userHabitProgress);
+
+        const userHabitProgresses = await userHabitService.findUserHabitProgressByUserHabitId(userHabitProgress.userHabitId);
+        
+        const isAllProgressCompleted = userHabitProgresses.every(progress => progress.isCompleted);
+        if (isAllProgressCompleted) {
+            await this.completeUserDailyHabit(userHabitProgress.userHabitId, reqUser);
+        }
+
+        const updatedUserHabit = await userHabitService.findUserHabitById(userHabitProgress.userHabitId);
+
+        return {
+            userHabitProgress: {
+                id: userHabitProgress.id,
+                isCompleted: userHabitProgress.isCompleted,
+            },
+            userHabit: {
+                id: updatedUserHabit.id,
+                isCompleted: updatedUserHabit.isCompleted,
+                totalPracticedDays: userHabitProgresses.filter(progress => progress.isCompleted).length,
+                remainingDays: userHabitProgresses.filter(progress => !progress.isCompleted).length,
+                totalDays: userHabitProgresses.length,
+            }
+        }
+
     }
 
     async completeUserDailyHabit(userHabitId: string, reqUser = { userId: null }) {
