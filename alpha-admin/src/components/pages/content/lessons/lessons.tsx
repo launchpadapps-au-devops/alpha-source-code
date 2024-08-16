@@ -50,9 +50,9 @@ export const Lessons = ({ className }: LessonsProps) => {
     }, [buttonRef.current]);
 
     return (
-        <div className={classNames(styles.container, className, { 'blur-effect': isSidebarOpen })}>
+        <div className={classNames(styles.container, className)}>
             <Sidebar />
-            <div className="w-100" style={{ margin: '4%' }}>
+            <div className={styles.content}>
                 <header className={styles['header']}>
                     <Typography variant="h5">Lessons</Typography>
                     <div className={styles.buttonContainer}>

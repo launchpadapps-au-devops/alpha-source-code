@@ -4,7 +4,6 @@ import { MainLayout } from './components/layout/mainLayout/main';
 import { Dashboard } from './components/pages/dashboard/dashboard';
 import { Onboarding } from './components/pages/onboarding/onboarding';
 import { Login } from './components/pages/login/login';
-import { NavigationLink } from './components/top-navigation/navigation-component/navigation-link/navigation-link';
 import { CareTeam } from './components/pages/care-team/care-team';
 import { ForgotPassword } from './components/pages/forgot-password/forgot-password';
 import { CheckYourEmail } from './components/pages/forgot-password/forgot-password-components/check-your-email/check-your-email';
@@ -18,7 +17,6 @@ import { TermsAndCondition } from './components/pages/terms-and-condition/terms-
 import { SettingDashboard } from './components/setting-dashboard/setting-dashboard';
 import { PrivacyPolicy } from './components/pages/privacy-policy/privacy-policy';
 import { EditCareTeam } from './components/pages/care-team/care-team-components/edit-care-team/edit-care-team';
-import { Content } from './components/pages/content/content';
 import { Themes } from './components/pages/content/themes/themes';
 import { Categories } from './components/pages/content/categories/categories';
 import { EditCategories } from './components/pages/content/categories/category-component/edit-categories/EditCategories';
@@ -33,9 +31,7 @@ import { ViewTips } from './components/pages/content/dailytips/view-tips/viewTip
 import { LifeStyle } from './components/pages/lifestyle-plan/view-lifestyle/viewLifeStyle';
 import { ViewLifeStyle } from './components/pages/lifestyle-plan/components/view-lifestyle/viewLifestyle';
 import { CreateLifestyle } from './components/pages/lifestyle-plan/components/create-lifestyle/createLifestyle';
-import { AddThemes } from './components/pages/lifestyle-plan/components/add-themes/addThemes';
-import { Lesson } from './components/pages/content/themes/themes-components/lessonsidebar/lessonSidebar';
-// import { EditLesson } from './components/pages/content/lessons/lesson-components/edit-lesson/editLesson';
+
 
 // const router = createBrowserRouter([
 //     { path: '/', element: <Home /> },
@@ -161,14 +157,6 @@ const router = createBrowserRouter([
                 path: '/lifestyle-plan',
                 element: <LifeStyle />,
             },
-            // {
-            //     path: '/lifestyle-plan/addthemes',
-            //     element: <AddThemes themes={undefined} onUpdateThemes={function (updatedLessons: Lesson[]): void {
-            //         throw new Error('Function not implemented.');
-            //     } } onAddThemesToPlan={function (selected: Lesson[]): void {
-            //         throw new Error('Function not implemented.');
-            //     } } />,
-            // },
             {
                 path: '/lifestyle-plan/view/:id',
                 element: <ViewLifeStyle />,

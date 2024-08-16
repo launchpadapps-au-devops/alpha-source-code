@@ -15,12 +15,14 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
-  padding-bottom: 2%;
+  justify-content: space-around;
+  padding: 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
   align-items: center;
   text-decoration: none;
   text-transform: none !important;
-  gap: 900px;
+  gap: 700px;
 }
 
 .buttonContainer {
@@ -28,6 +30,6 @@
   gap: 10px; /* Adjust gap as needed */
 }
 
-.blur-effect {
-  filter: blur(10px);
-}
+// .blur-effect {
+//   filter: blur(10px);
+// }

@@ -188,7 +188,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                     <div className={styles.buttonContainer}>
                         <EditButton
                             buttonText="Cancel"
-                            onButtonClick={() => navigate('/careteam/createcontent')}
+                            onButtonClick={() => navigate('/content/lessons')}
                         />
                         {/* <EditButton
                             buttonText="Save as draft"

@@ -10,7 +10,7 @@ interface ThemeDetailsProps {
 }
 
 const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, setData }) => {
-    const [themeCode, setThemeCode] = useState<string>('1');
+    // const [themeCode, setThemeCode] = useState<string>('1');
     const [category, setCategory] = useState<string>('');
 
     const categories = useAppSelector((state) => state.categories.categories.categories);

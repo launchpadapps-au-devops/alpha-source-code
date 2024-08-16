@@ -11,7 +11,7 @@ import Habit from '../../../content/themes/themes-components/create-theme/create
 import classNames from 'classnames';
 import { NewLifestyle } from './new-lifestyle/newLifestyle';
 import { useAppDispatch } from '../../../../../app/hooks';
-import { addPlanThunk, fetchPlanByIdThunk } from '../lifeStyleSlice';
+import { addPlanThunk, fetchPlanByIdThunk, updatePlanThunk } from '../lifeStyleSlice';
 import { fetchThemesThunk } from '../../../content/themes/themes-components/themeSlice';
 import { AddThemes } from '../add-themes/addThemes';
 
@@ -85,22 +85,42 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
     }, []);
 
     const handleSubmit = () => {
-        const data = {
-            planData: {
-                // 4 digit random number
-                planCode: Math.random().toString().slice(2, 6),
-                name: planName,
-                image: 'https://sample.com/sample.jpg',
-                description: planDescription,
-                internalNotes: internalNotes,
-                status: 'ACTIVE',
-                isPublished: false,
-            },
-            themes: selectedThemes,
-        };
-        dispatch(addPlanThunk(data)).then(() => {
-            navigate('/lifestyle-plan');
-        });
+        if (location.pathname.includes('/lifestyle-plan/edit')) {
+            const data = {
+                planData: {
+                    // 4 digit random number
+                    planCode: Math.random().toString().slice(2, 6),
+                    name: planName,
+                    image: 'https://sample.com/sample.jpg',
+                    description: planDescription,
+                    internalNotes: internalNotes,
+                    status: 'ACTIVE',
+                    isPublished: false,
+                },
+                themes: selectedThemes,
+            };
+            dispatch(updatePlanThunk({ id: id, plan: data })).then(() => {
+                navigate('/lifestyle-plan');
+            });
+            return;
+        } else {
+            const data = {
+                planData: {
+                    // 4 digit random number
+                    planCode: Math.random().toString().slice(2, 6),
+                    name: planName,
+                    image: 'https://sample.com/sample.jpg',
+                    description: planDescription,
+                    internalNotes: internalNotes,
+                    status: 'ACTIVE',
+                    isPublished: false,
+                },
+                themes: selectedThemes,
+            };
+            dispatch(addPlanThunk(data)).then(() => {
+                navigate('/lifestyle-plan');
+            });
+        }
     };
 
     return (

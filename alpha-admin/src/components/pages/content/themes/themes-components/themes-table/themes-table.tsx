@@ -156,7 +156,7 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) =
                                         <Switch
                                             key={index}
                                             name={theme.name}
-                                            checked={theme.published}
+                                            checked={theme.isPublished}
                                             onChange={() => handleToggle(theme, index)}
                                         />
                                     </TableCell>

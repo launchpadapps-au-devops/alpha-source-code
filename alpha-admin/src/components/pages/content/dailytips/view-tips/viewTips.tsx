@@ -26,6 +26,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [editing, setEditing] = useState(false);
     const [editSelected, setEditSelected] = useState(-1);
+    const [editedContent, setEditedContent] = useState<string>('');
     const dispatch = useAppDispatch();
     const itemsPerPage = 7;
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -46,39 +47,45 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
     useEffect(() => {
         console.log(tips, 'tips');
         dispatch(fetchTipsThunk());
-    }, []);
+    }, [dispatch]);
 
-    const handleTipChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        console.log(event.target.value, 'event.target.value');
-        tips[index].tip = event.target.value;
+    const handleTipChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEditedContent(event.target.value);
     };
 
-    useEffect(() => {
-        if (buttonRef.current) {
-            setMenuWidth(buttonRef.current.offsetWidth);
-        }
-    }, [buttonRef.current]);
+    const startEditingTip = (index: number, content: string) => {
+        setEditSelected(index);
+        setEditedContent(content);
+    };
+
+    const handleMenuItemClick = (path: string) => {
+        navigate(path);
+        handleClose();
+    };
+
+    const createNewDailyTip = () => {
+        // Logic to create a new daily tip
+        console.log('Create New Daily Tip');
+    };
 
     const renderTableRows = () => {
         const activeTips = tips.filter((tip: any) => tip.status === "ACTIVE");
         const startIndex = (currentPage - 1) * itemsPerPage;
         const selectedTips = activeTips.slice(startIndex, startIndex + itemsPerPage);
 
-        // Map over selectedTips and return the table rows
-        console.log(selectedTips, 'selectedTips');
         const rows = selectedTips.map((tip: any, index: any) =>
             editing ? (
                 editSelected >= 0 && editSelected === index ? (
                     <tr key={tip.id}>
                         <td>
-                            <input type="text" className="w-25" value={tip.day} />
+                            <input type="text" className="w-25" value={tip.day} readOnly />
                         </td>
                         <td>
                             <input
                                 type="text"
                                 className="form-control"
-                                value={tip.content}
-                                onChange={(e) => handleTipChange(e, index)}
+                                value={editedContent}
+                                onChange={(e) => handleTipChange(e)}
                             />
                         </td>
                         <td>
@@ -94,7 +101,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                         <td>
                             <button
                                 className="btn btn-outline-primary"
-                                onClick={() => setEditSelected(tip.day - 1)}
+                                onClick={() => startEditingTip(index, tip.content)}
                                 style={{ position: 'absolute', right: '5%' }}
                             >
                                 Edit
@@ -111,18 +118,8 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
             )
         );
 
-        // Append pagination row if needed
         rows.push(renderPagination());
-        console.log(rows, 'rows');
         return rows;
-    };
-
-    // create a function to create a new daily tip add new daily tip to the list
-    const createNewDailyTip = () => {};
-
-    const handleMenuItemClick = (path: string) => {
-        navigate(path);
-        handleClose();
     };
 
     const renderPagination = () => {
@@ -151,7 +148,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                     </a>
                 </td>
                 <td className="page-item">
-                    <ul className="pagination  justify-content-center">{pages}</ul>
+                    <ul className="pagination justify-content-center">{pages}</ul>
                 </td>
                 <td className={`page-item ${currentPage === pageCount ? 'disabled' : ''}`}>
                     <a
@@ -232,11 +229,8 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                     </div>
                     {tips.length === 0 ? (
                         <div className="no-tips text-center" style={{ height: '90%' }}>
-                            {/* <Container className="h-100"> */}
-                            {/* height 100% */}
                             <Card
                                 className="d-flex w-100 h-100 justify-content-center align-items-center"
-                                // style={{ height: '900px' }}
                             >
                                 <Card.Body>
                                     <div className="icon" style={{ marginTop: '100%' }}>
@@ -261,7 +255,6 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                                     </button>
                                 </Card.Body>
                             </Card>
-                            {/* </Container> */}
                         </div>
                     ) : (
                         <>
@@ -291,3 +284,4 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
         </div>
     );
 };
+
