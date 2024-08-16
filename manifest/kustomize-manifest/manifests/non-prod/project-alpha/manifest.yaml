@@ -113,7 +113,7 @@ spec:
         app: alpha-admin-deployment
     spec:
       containers:
-      - image: alphadev.azurecr.io/alpha-admin@sha256:666a8b4a0c8de2f5b782817ae7a12495d4191095748621c83f9979e0227dd168
+      - image: alphadev.azurecr.io/alpha-admin@sha256:e69fbefa7edf18c83ac5db5c4dc65bc1cd0a66484bf6a2588022300138af4b60
         imagePullPolicy: IfNotPresent
         name: alpha-admin-container
         ports:
@@ -484,7 +484,7 @@ spec:
           value: Aster Admin
         - name: SENDGRID_FROM_EMAIL
           value: admin@astercircular.co
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:a84f084044d096c0d51b00cb096d5fd071c5859beacd58b563696f7069711938
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:e14131a5927112713b05b3557c9086640ad0e68f830e7a36224327afde4664fc
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
