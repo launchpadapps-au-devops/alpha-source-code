@@ -28,7 +28,15 @@
   display: flex;
   gap: 10px; /* Adjust gap as needed */
   align-items: center;
-  margin-right: 50px; /* Adjust margin as needed to control spacing */
+  margin-left: 50px; /* Adjust margin as needed to control spacing */
+  background-color: #fff;
+}
+
+.ButtonContainer{
+  display: flex;
+  gap: 10px; /* Adjust gap as needed */
+  align-items: center;
+  margin-left: 1200px; /* Adjust margin as needed to control spacing */
   background-color: #fff;
 }
 

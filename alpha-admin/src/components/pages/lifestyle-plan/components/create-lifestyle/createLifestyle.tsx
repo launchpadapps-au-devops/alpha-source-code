@@ -180,7 +180,7 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
                                 />
                             )} */}
                                 {/* </div>  */}
-                                <div className={styles.rightButtonContainer}>
+                                <div className={styles.ButtonContainer}>
                                     <EditButton
                                         buttonText="Continue"
                                         onButtonClick={() => setThemeView(true)}

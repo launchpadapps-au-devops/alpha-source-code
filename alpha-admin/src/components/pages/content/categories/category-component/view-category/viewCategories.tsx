@@ -80,6 +80,7 @@ export const ViewCategories: React.FC = () => {
                             />
                         ))}
             </List>
+           
             {openModal && (
                 <PublishCategoryModal
                     open={openModal}

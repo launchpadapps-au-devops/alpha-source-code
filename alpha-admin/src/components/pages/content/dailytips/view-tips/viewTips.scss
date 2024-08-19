@@ -1,84 +1,62 @@
-// import global css
-@import '../../../../../styles/global.scss';
-
 .container {
   display: flex;
   height: 100vh;
+  background-color: #f5f5f5;
 }
 
 .content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  text-transform: none;
 }
 
 .header {
   display: flex;
-  justify-content: space-around;
-  padding: 20px;
+  justify-content: space-between;
   align-items: center;
-  text-decoration: none;
-  text-transform: none !important;
-  gap: 900px;
+  margin-bottom: 1rem;
+
+  h5 {
+      font-size: 1.5rem;
+      margin: 0;
+  }
+
+  .rightButtonContainer {
+    display: flex;
+    gap: 10px; /* Adjust gap as needed */
+    align-items: center;
+    margin-left: 410px; /* Adjust margin as needed to control spacing */
+  }
 }
 
-.buttonContainer {
-  display: flex;
-  gap: 10px; /* Adjust gap as needed */
-}
+.no-tips {
+  text-align: center;
+  height: 90%;
+  
+  .icon {
+      margin-top: 100px;
+      font-size: 3rem;
+      color: #6f42c1;
+  }
 
-.blur-effect {
-  filter: blur(10px);
-}
+  h4 {
+      margin-top: 15px;
+      margin-bottom: 10px;
+  }
 
-.table th {
-  background-color: #ebebeb;
-  color: black;
-}
-table {
-  border: none;
-  background-color: #f8f9fa;
-  border-collapse: collapse;
-  border-radius: 1000px;
-}
+  p {
+      margin: 0 0 10px;
+  }
 
-.table td:nth-child(2) {
-  text-align: left;
-}
+  .btn-outline-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
 
-.table-bordered {
-  border: 2px solid #ebebeb;
-}
-
-.table-bordered th,
-.table-bordered td {
-  border: 2px solid #146cfd;
-}
-
-.table-responsive {
-  margin-top: 20px;
-}
-
-.table th {
-  border: none;
-  height: 40px;
-}
-
-.table td {
-  padding: 15px;
-  border: none;
-}
-
-.pagination .page-item.active .page-link {
-  background-color: #146cfd;
-  border-color: #146cfd;
-}
-
-.pagination .page-link {
-  color: #146cfd;
-}
-
-.pagination .page-link:hover {
-  color: #146cfd;
+      span {
+          font-size: 1.5rem;
+          margin-right: 5px;
+      }
+  }
 }

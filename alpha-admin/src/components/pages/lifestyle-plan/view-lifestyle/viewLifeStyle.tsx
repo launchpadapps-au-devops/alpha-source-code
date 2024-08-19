@@ -32,13 +32,13 @@ export const LifeStyle = ({ className }: ReportsProps) => {
     }, []);
     return (
         <div>
-            <Row className="my-3 mx-3">
+            <Row className="my-2 mx-3">
                 <Col>
                     <Button variant="primary">Back</Button>
                 </Col>
             </Row>
 
-            <div className="m-5">
+            <div className="mx-5">
                 <Row>
                     <Col className="text-right">
                         <div className={styles['container-header']}>
@@ -52,7 +52,7 @@ export const LifeStyle = ({ className }: ReportsProps) => {
                     </Col>
                 </Row>
             </div>
-            <div className="m-5">
+            <div className="mx-5">
                 <Row>
                     <LifestyleTable plans={plans} setPlans={setPlans} />
                 </Row>

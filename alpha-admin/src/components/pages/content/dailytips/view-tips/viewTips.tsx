@@ -1,19 +1,19 @@
 import classNames from 'classnames';
 import Sidebar from '../../content-components/sidebar/Sidebar';
 import { useEffect, useRef, useState } from 'react';
-import { Icon } from '../../../../icon/icon';
-import './viewTips.scss';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { Card, Container } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { AppButton } from '../../../../app-button/app-button';
-import { Menu, MenuItem, Typography } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { EditButton } from '../../content-components/edit-button/edit-button';
 import { useAppDispatch, useAppSelector } from '../../../../../app/hooks';
 import { fetchTipsThunk } from './viewTipsSlice';
+import './viewTips.scss';
+
 export interface ViewTipsProps {
     className?: string;
 }
@@ -64,7 +64,6 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
     };
 
     const createNewDailyTip = () => {
-        // Logic to create a new daily tip
         console.log('Create New Daily Tip');
     };
 
@@ -72,7 +71,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
         const activeTips = tips.filter((tip: any) => tip.status === "ACTIVE");
         const startIndex = (currentPage - 1) * itemsPerPage;
         const selectedTips = activeTips.slice(startIndex, startIndex + itemsPerPage);
-
+        
         const rows = selectedTips.map((tip: any, index: any) =>
             editing ? (
                 editSelected >= 0 && editSelected === index ? (
@@ -164,16 +163,15 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
     };
 
     return (
-        <div>
-            <div className="row w-100">
+        <>
+            <div className="row w-100 ">
                 <div className="col-2">
                     <Sidebar />
                 </div>
-                <div className="col-10 mt-5">
-                    <div className="d-flex justify-content-between align-items-center mb-4">
+                <div className="col-10 mt-5 content">
                         <header className="header">
                             <h5>Daily tips</h5>
-                            <div className="buttonContainer">
+                            <div className="rightButtonContainer">
                                 <EditButton
                                     showLeftIcon
                                     buttonText="Edit categories"
@@ -226,7 +224,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                                 </Menu>
                             </div>
                         </header>
-                    </div>
+                    
                     {tips.length === 0 ? (
                         <div className="no-tips text-center" style={{ height: '90%' }}>
                             <Card
@@ -281,7 +279,6 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                     )}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
-

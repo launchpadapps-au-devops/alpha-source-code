@@ -39,7 +39,7 @@ export const ViewLifeStyle = ({ className }: ContentProps) => {
 
     return (
         <div className={classNames(styles.container, className, { 'blur-effect': isSidebarOpen })}>
-            <Sidebar />
+            {/* <Sidebar /> */}
             <div className={styles.content}>
                 <header className={styles.header}>
                     <div className={styles.leftButtonContainer}>
