@@ -1,0 +1,131 @@
+.container {
+    display: flex;
+    height: 100vh;
+    background-color: #f9fafe;
+  }
+  
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px; /* Adjust padding as needed */
+    background-color: #f9fafe;
+    // border-bottom: 1px solid #ddd;
+    align-items: center;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    gap: 10px; /* Adjust gap as needed */
+  }
+  
+  .tableheader {
+    display: flex;
+    width: 100%; /* Apply the specified width */
+    height: 60px; /* Apply the specified height */
+    padding: 16px var(--Border-Radius-2xl, 24px); /* Apply the specified padding */
+    align-items: center;
+    flex-shrink: 0;
+    background: var(--Gray-04, #ebebeb); /* Apply the specified background color */
+    gap: 30px; /* Adjust gap as needed */
+  
+    .headerText {
+      font-size: 14px;
+      color: #22272b;
+      font-family: 'Public Sans'; /* Apply specified font family */
+      font-style: normal; /* Apply specified font style */
+      font-weight: 500; /* Apply specified font weight */
+      line-height: 20px; /* Apply specified line height */
+    }
+  }
+  
+  .listItem {
+    display: flex;
+    // justify-content: space-between;
+    align-items: flex-start;
+    align-self: stretch;
+    border-bottom: 1px solid var(--Neutral-200, #e5e5e5);
+    background: var(--Shades-White, #fff);
+    padding: 16px 24px; /* Adjust padding as needed */
+    gap: 20px; /* Adjust gap between day and content */
+  
+    .day {
+      width: 5%; /* Adjust width as needed */
+      font-weight: bold;
+      color: #22272b; /* Style for the day text */
+    }
+  
+    .content {
+      width: 80%; /* Adjust width as needed */
+      color: var(--Gray-01, #22272b); /* Apply specified color */
+      font-family: 'Public Sans'; /* Apply specified font family */
+      font-size: 16px; /* Apply specified font size */
+      font-style: normal; /* Apply specified font style */
+      font-weight: 500; /* Apply specified font weight */
+      line-height: 22px; /* Apply specified line height */
+    }
+    .dayInput {
+      width: 3%; /* Adjust width as needed */
+      font-weight: bold;
+      color: #22272b; /* Style for the day text */
+      border-radius: 6px;
+      border: 1px solid var(--primary-500-main, #00acee);
+  
+      background: var(--Shades-White, #fff);
+      /* Focus ring/2px - Primary 50 */
+      box-shadow: 0px 0px 0px 2px #e6f7fd;
+      padding: 4px;
+    }
+  
+    .contentInput {
+      width: 62%; /* Adjust width as needed */
+      color: var(--Gray-01, #22272b); /* Apply specified color */
+      font-family: 'Public Sans'; /* Apply specified font family */
+      font-size: 16px; /* Apply specified font size */
+      font-style: normal; /* Apply specified font style */
+      font-weight: 500; /* Apply specified font weight */
+      line-height: 22px; /* Apply specified line height */
+      border-radius: 6px;
+      border: 1px solid var(--primary-500-main, #00acee);
+  
+      background: var(--Shades-White, #fff);
+      /* Focus ring/2px - Primary 50 */
+      box-shadow: 0px 0px 0px 2px #e6f7fd;
+      padding: 4px;
+    }
+  
+  }
+  
+  .button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 16px; /* Adjust padding according to the image */
+      gap: 8px; /* Adjust gap between icons and text */
+      border-radius: 8px;
+      font-family: 'Public Sans', sans-serif;
+      font-size: 14px;
+      line-height: 20px;
+      cursor: pointer;
+    }
+
+    .leftButtonContainer {
+        display: flex;
+        gap: 10px; /* Adjust gap as needed */
+        align-items: center;
+        margin-left: -500px; /* Adjust margin as needed to control spacing */
+    }
+    .rightButtonContainer {
+        display: flex;
+        gap: 10px; /* Adjust gap as needed */
+        align-items: center;
+        margin-right: 50px; /* Adjust margin as needed to control spacing */
+    }
+    
+    
+    

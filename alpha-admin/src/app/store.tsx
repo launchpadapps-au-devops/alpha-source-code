@@ -9,7 +9,7 @@ import removeStaffReducer from '../components/pages/care-team/care-team-componen
 import editStaffReducer from '../components/pages/care-team/care-team-components/edit-care-team/edit-care-teamSlice';
 import categoriesReducer from '../components/pages/content/categories/category-component/categorySlice';
 import lessonsReducer from '../components/pages/content/lessons/lesson-components/lessonsSlice';
-import tipsReducer from '../components/pages/content/dailytips/view-tips/viewTipsSlice';
+import tipsReducer from '../components/pages/content/dailytips/viewTipsSlice';
 import fileUploadReducer from '../components/fileUpload/fileUploadSlice';
 
 const rootReducer = combineReducers({

@@ -31,6 +31,8 @@ import { ViewTips } from './components/pages/content/dailytips/view-tips/viewTip
 import { LifeStyle } from './components/pages/lifestyle-plan/view-lifestyle/viewLifeStyle';
 import { ViewLifeStyle } from './components/pages/lifestyle-plan/components/view-lifestyle/viewLifestyle';
 import { CreateLifestyle } from './components/pages/lifestyle-plan/components/create-lifestyle/createLifestyle';
+import { DailyTips } from './components/pages/content/dailytips/dailyTips';
+import { CreateDailyTips } from './components/pages/content/dailytips/createdailytips/createDailyTip';
 
 
 // const router = createBrowserRouter([
@@ -131,7 +133,11 @@ const router = createBrowserRouter([
             },
             {
                 path: '/content/dailytips',
-                element: <ViewTips />,
+                element: <DailyTips />,
+            },
+            {
+                path: '/content/createdailytips',
+                element: <CreateDailyTips />,
             },
             {
                 path: '/content/createtheme',

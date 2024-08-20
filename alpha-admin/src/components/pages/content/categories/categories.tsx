@@ -88,7 +88,7 @@ export const Categories = ({ className }: ContentProps) => {
                                 Lesson
                             </MenuItem>
                             <MenuItem
-                                onClick={() => handleMenuItemClick('/content/createdailytip')}
+                                onClick={() => handleMenuItemClick('/content/createdailytips')}
                             >
                                 <CalendarMonthIcon style={{ marginRight: 8 }} />
                                 Daily tip

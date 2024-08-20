@@ -100,7 +100,7 @@ export const Themes = ({ className }: ContentProps) => {
                                 <LightbulbIcon style={{ marginRight: 8 }} />
                                 Lesson
                             </MenuItem>
-                            <MenuItem onClick={() => handleMenuItemClick('/content/dailytips')}>
+                            <MenuItem onClick={() => handleMenuItemClick('/content/createdailytips')}>
                                 <CalendarMonthIcon style={{ marginRight: 8 }} />
                                 Daily tip
                             </MenuItem>

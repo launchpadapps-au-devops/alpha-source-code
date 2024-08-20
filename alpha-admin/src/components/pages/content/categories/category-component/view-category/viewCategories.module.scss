@@ -11,16 +11,21 @@
     .header {
       display: flex;
       justify-content: space-between;
+      width: 100%; /* Apply the specified width */
+      height: 60px; /* Apply the specified height */
+      padding: 16px var(--Border-Radius-2xl, 24px); /* Apply the specified padding */
       align-items: center;
-      margin-bottom: -25px;
-      background-color: #EBEBEB;
-      padding: 16px 24px;
-  
+      flex-shrink: 0;
+      background: var(--Gray-04, #ebebeb); /* Apply the specified background color */
+      // gap: 30px; /* Adjust gap as needed */
+    
       .headerText {
         font-size: 14px;
-        color: #22272B;
-        display: flex;
-        align-items: center;
+        color: #22272b;
+        font-family: 'Public Sans'; /* Apply specified font family */
+        font-style: normal; /* Apply specified font style */
+        font-weight: 500; /* Apply specified font weight */
+        line-height: 20px; /* Apply specified line height */
       }
     }
   

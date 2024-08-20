@@ -11,7 +11,7 @@ import { Menu, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { EditButton } from '../../content-components/edit-button/edit-button';
 import { useAppDispatch, useAppSelector } from '../../../../../app/hooks';
-import { fetchTipsThunk } from './viewTipsSlice';
+import { fetchTipsThunk } from '../viewTipsSlice';
 import './viewTips.scss';
 
 export interface ViewTipsProps {
@@ -77,7 +77,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                 editSelected >= 0 && editSelected === index ? (
                     <tr key={tip.id}>
                         <td>
-                            <input type="text" className="w-25" value={tip.day} readOnly />
+                            <input type="text" className="w-25" value={tip.id}   onChange={(e) => setEditedContent(e.target.value)} />
                         </td>
                         <td>
                             <input
@@ -174,7 +174,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                             <div className="rightButtonContainer">
                                 <EditButton
                                     showLeftIcon
-                                    buttonText="Edit categories"
+                                    buttonText="Edit Daily tips"
                                     onButtonClick={() => setEditing(!editing)}
                                 />
                                 <AppButton
