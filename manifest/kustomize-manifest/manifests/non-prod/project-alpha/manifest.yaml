@@ -113,7 +113,7 @@ spec:
         app: alpha-admin-deployment
     spec:
       containers:
-      - image: alphadev.azurecr.io/alpha-admin@sha256:256b7cbfe2c0f729766ab5b73fed79727a53934a76321726da09ed4977697d3c
+      - image: alphadev.azurecr.io/alpha-admin@sha256:9cc2181cb3cf24250ecde1e866a55e31c9b6edf366ddb8a9bb24479a1ad5f79e
         imagePullPolicy: IfNotPresent
         name: alpha-admin-container
         ports:
@@ -125,8 +125,8 @@ spec:
             memory: 0.5Gi
           requests:
             cpu: 250m
-            ephemeral-storage: 0.5Gi
-            memory: 0.5Gi
+            ephemeral-storage: 0.2Gi
+            memory: 0.2Gi
       initContainers:
       - command:
         - sh
@@ -215,7 +215,7 @@ spec:
           value: http://alpha-backend-notification-ms-v1-service:3002
         - name: NOTFICATION_SERVICE_API_PREFIX
           value: /api/notification-ms/v1
-        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:eb46dbb782a790e7770c1d89ad259e5a0564e5f0e6b15106672c7d20bd13258e
+        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:323a9639364013b2f46260eaae2a9e0867d49ffb6237d9743a1cf2e49147f9ec
         imagePullPolicy: IfNotPresent
         name: alpha-backend-api-gateway-v1-container
         ports:
@@ -227,8 +227,8 @@ spec:
             memory: 0.5Gi
           requests:
             cpu: 250m
-            ephemeral-storage: 0.5Gi
-            memory: 0.5Gi
+            ephemeral-storage: 0.2Gi
+            memory: 0.2Gi
       initContainers:
       - command:
         - sh
@@ -303,7 +303,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: cms_queue
-        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:ddc8f72277706676ab7bb44673d4af9cc201c2af91b4142720888e42a7c9dac6
+        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:25908c7521fbed579f445b4b5a089869a26da3114c53fb3e95d241f0685df948
         name: alpha-backend-cms-ms-v1-container
         ports:
         - containerPort: 3003
@@ -314,8 +314,8 @@ spec:
             memory: 0.5Gi
           requests:
             cpu: 250m
-            ephemeral-storage: 0.5Gi
-            memory: 0.5Gi
+            ephemeral-storage: 0.2Gi
+            memory: 0.2Gi
       initContainers:
       - command:
         - sh
@@ -402,8 +402,8 @@ spec:
             memory: 0.5Gi
           requests:
             cpu: 150m
-            ephemeral-storage: .5Gi
-            memory: 0.5Gi
+            ephemeral-storage: .2Gi
+            memory: 0.2Gi
       initContainers:
       - command:
         - sh
@@ -484,7 +484,7 @@ spec:
           value: Aster Admin
         - name: SENDGRID_FROM_EMAIL
           value: admin@astercircular.co
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:f2e951c5d77d531b93200edb8a6e2d04ebdc091be04eb0a19f05a4822a8b94a6
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:cb66ef783cbd153776fb03e8a33ff357b949feece7209169a941d50d93835f4f
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -496,8 +496,8 @@ spec:
             memory: 0.5Gi
           requests:
             cpu: 250m
-            ephemeral-storage: 0.5Gi
-            memory: 0.5Gi
+            ephemeral-storage: 0.2Gi
+            memory: 0.2Gi
       initContainers:
       - command:
         - sh
@@ -572,7 +572,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: user_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:ff2587c3b0c7d868e36dde14b51beaa20bd3a95cc609910b315fd94971bf7a1d
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:95298743878ac8581f24b24bd4b31a6e28c9d908a758a039eb449b9d7022d611
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
@@ -584,8 +584,8 @@ spec:
             memory: 0.5Gi
           requests:
             cpu: 250m
-            ephemeral-storage: 0.5Gi
-            memory: 0.5Gi
+            ephemeral-storage: 0.2Gi
+            memory: 0.2Gi
       initContainers:
       - command:
         - sh
