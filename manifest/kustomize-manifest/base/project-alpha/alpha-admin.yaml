@@ -39,8 +39,8 @@ spec:
               memory: 0.5Gi
             requests:
               cpu: 250m
-              ephemeral-storage: 0.5Gi
-              memory: 0.5Gi
+              ephemeral-storage: 0.2Gi
+              memory: 0.2Gi
 ---
 apiVersion: v1
 kind: Service
