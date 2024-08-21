@@ -139,6 +139,32 @@ export class StaffController {
         );
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
+    @ApiResponse({
+        status: 200,
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'Your user data fetched successfully' },
+                data: { $ref: getSchemaPath(StaffResponseDto) },
+                meta: { type: 'object' },
+            },
+            required: ['statusCode', 'data'],
+        },
+    })
+    @Get('/my-profile')
+    async getStaffOwnProfile(
+        @Request() req,
+    ): Promise<object> {
+        const staffId = req.user.userId;
+        return this.staffService.getStaffProfile(staffId, req.user);
+    }
+
+
     @ApiTags('Super Admin')
     @ApiHeader({
         description: 'A High Security Token to create a staff Admin',

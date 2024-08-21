@@ -19,6 +19,9 @@ class BaseUserMealLogDTO {
     @ApiProperty({ example: 'servings', description: 'Unit of measurement for the quantity' })
     unit: string;
 
+    @ApiProperty({ example: 200, description: 'Calories in the meal' })
+    calories: number;
+
     @ApiProperty({ example: { calories: 200, protein: 10 }, description: 'Nutrition data in JSON format' })
     nutritionData: object;
 

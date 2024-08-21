@@ -73,7 +73,7 @@ export class StaffResponseDto extends CreateStaffDto {
     @IsOptional()
     platform: string = 'alpha-admin-web';
 
-    @ApiProperty({ example: 'staff' })
+    @ApiProperty({ example: 'staff', enum: ['staff', 'admin'] })
     @IsString({ message: 'User type must be a string' })
     @IsEnum(['patient', 'staff', 'admin'], { message: 'User type must be one of patient, doctor, or admin' })
     @IsOptional()

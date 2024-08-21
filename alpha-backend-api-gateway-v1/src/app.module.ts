@@ -10,8 +10,8 @@ import { PatientModule } from './patient/patient.module';
 import { NotificationModule } from './notification/notification.module';
 import { AuthModule } from './auth/auth.module';
 import { PolicyModule } from './policy/policy.module';
-import { HealthDataService } from './health-data/health-data.service';
 import { HealthDataModule } from './health-data/health-data.module';
+import { DataAnalyticsModule } from './data-analytics/data-analytics.module';
 import { CategoryModule } from './category/category.module';
 import { ThemeModule } from './theme/theme.module';
 import { LessonModule } from './lesson/lesson.module';
@@ -25,19 +25,20 @@ import { UserMealModule } from './user-meal/user-meal.module';
 
 @Module({
   imports: [
-    HttpModule, 
+    HttpModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-    }), 
-    PatientModule, 
-    NotificationModule, 
-    AuthModule, 
-    PolicyModule, 
-    HealthDataModule, 
-    CategoryModule, 
-    ThemeModule, 
-    LessonModule, 
+    }),
+    PatientModule,
+    NotificationModule,
+    AuthModule,
+    PolicyModule,
+    HealthDataModule,
+    DataAnalyticsModule,
+    CategoryModule,
+    ThemeModule,
+    LessonModule,
     DailyTipsModule,
     StaffModule,
     PlanModule,
@@ -52,7 +53,6 @@ import { UserMealModule } from './user-meal/user-meal.module';
     BaseHttpService, 
     MessagingService,
     EnvConfigService,
-    HealthDataService
   ],
 })
 export class AppModule {}
