@@ -71,7 +71,7 @@ export class LessonController {
     ) {
         const lesson = await this.lessonService.findLessonById(lessonId);
         return {
-            message: `Lesson ${lesson.name} fetched successfully`,
+            message: `Lesson ${lesson?.name} fetched successfully`,
             data: lesson,
         }
     }
