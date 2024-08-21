@@ -66,7 +66,7 @@ export class UserDailyHabitsService {
 
     async getUserDailyHabit(userId: string) {
         const userHabits = await userHabitService.findUserHabitsByUserId(userId, { status: 'IN_PROGRESS' });
-        return userHabits.find(habit => !habit.isCompleted && habit.status === 'IN_PROGRESS');
+        return userHabits.filter(habit => !habit.isCompleted && habit.status === 'IN_PROGRESS');
     }
 
     async selectUserDailyHabits(userId: string, habitIds: string[], reqUser = { userId: null }) {
