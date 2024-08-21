@@ -220,14 +220,13 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
                                                 <DeleteButton
                                                     buttonText="Delete"
                                                     className={styles.button}
-                                                    onButtonClick={() => handleDeleteClick(tip.id)} // Use tip.id instead of tip.day for deletion
+                                                    onButtonClick={() => handleDeleteClick(tip.id)}
                                                 />
                                             </>
                                         ) : (
                                             <>
                                                 <div className={styles.day}>{tip.day}</div>
                                                 <div className={styles.content}>{tip.content}</div>
-                                                
                                                     <EditButton
                                                         buttonText="Edit"
                                                         className={styles.editButton}
