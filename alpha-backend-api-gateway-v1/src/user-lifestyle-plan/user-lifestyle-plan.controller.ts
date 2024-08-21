@@ -350,7 +350,7 @@ export class UserLifeStylePlanController {
         @Request() req,
         @Query('page') page: number = 1,
         @Query('limit') limit: number = 10,
-        @Query('searchText') searchText: string = '',
+        @Query('searchText') searchText: string = undefined,
         @Query('sortField') sortField: string = 'createdAt',
         @Query('sortOrder') sortOrder: string = 'DESC' as SortOrderType,
     ) {
