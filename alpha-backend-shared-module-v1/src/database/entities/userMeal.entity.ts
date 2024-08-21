@@ -31,6 +31,9 @@ export class UserMealLog {
     @Column({ type: 'float', nullable: true })
     quantity: number;
 
+    @Column({ type: 'float', nullable: true })
+    calories: number;
+
     @Column({ type: 'varchar', nullable: true })
     unit: string;
 

@@ -69,24 +69,36 @@ class UserHealthDataService {
     page: number;
   }> {
     const { searchText, ...restFilters } = filters;
-
+  
     const where: any = {
       ...(searchText ? { userId: ILike(`%${searchText}%`) } : {}),
       ...restFilters,
     };
-
+  
     const findOptions: FindManyOptions<UserHealthData> = {
       where,
       order: {
         [sorting.sortField]: sorting.sortOrder,
       },
-      take: pagination.limit,
-      skip: (pagination.page - 1) * pagination.limit,
     };
+  
+    // Check if pagination.limit is explicitly provided
+    if (pagination?.limit !== undefined && pagination?.page !== undefined) {
+      findOptions.take = pagination.limit;
+      findOptions.skip = (pagination.page - 1) * pagination.limit;
+    }
 
+  
     const [data, totalRecords] = await UserHealthDataService.userHealthDataRepository.findAndCount(findOptions);
-    return { data, totalRecords, limit: pagination.limit, page: pagination.page };
+    
+    return { 
+      data, 
+      totalRecords, 
+      limit: pagination?.limit ?? totalRecords, 
+      page: pagination?.page ?? 1 
+    };
   }
+  
 }
 
 export const userHealthDataService = new UserHealthDataService();

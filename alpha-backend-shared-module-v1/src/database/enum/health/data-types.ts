@@ -4,7 +4,8 @@ export const DATA_TYPES = {
     'CALORIES': 'calories',
     'SLEEP': 'sleep',
     'HEART_RATE': 'heart_rate',
-    'MOVE_MINUTES': 'move_minutes'
+    'MOVE_MINUTES': 'move_minutes',
+    'ENERGY': 'energy',
 }
 
 export enum DataTypes {

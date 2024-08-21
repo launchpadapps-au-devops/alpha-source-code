@@ -12,6 +12,7 @@ import {
   ManyToOne,
   OneToMany,
   AfterLoad,
+  OneToOne,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Exclude, instanceToPlain } from 'class-transformer';
@@ -66,6 +67,16 @@ export class User {
   @Column({ type: 'boolean', default: false })
   isPasswordSet: boolean;
 
+  @IsBoolean()
+  @Column({ type: 'boolean', default: false })
+  isOnboardingCompleted: boolean;
+
+  @Column({ type: 'timestamp', nullable: true })
+  onboardingCompletedAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  lastLoginAt: Date;
+
   @Column({ type: 'varchar', length: 255, nullable: true })
   forgotPasswordOtp: string;
 
@@ -83,6 +94,11 @@ export class User {
 
   @BeforeUpdate()
   beforeUpdate() {
+    if (this.password && !this.isPasswordSet) {
+      this.isOnboardingCompleted = true;
+      this.onboardingCompletedAt = new Date();
+    }
+
     if (this.password !== this.previousPassword) {
       this.hashPassword();
     }

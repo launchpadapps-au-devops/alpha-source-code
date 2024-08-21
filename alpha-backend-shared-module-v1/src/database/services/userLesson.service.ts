@@ -119,6 +119,49 @@ class UserLessonService implements IUserLessonService {
       page: pagination.page,
     };
   }
+
+  async getUserLessonFeebacks(
+    userId?: string,
+    categoryId?: string,
+    themeId?: string,
+  ) {
+    const where: any = {};
+
+    if (userId) {
+      where.userId = userId;
+    }
+
+    if (categoryId) {
+      where.userCategory = { categoryId }
+    }
+
+    if (themeId) {
+      where.userTheme = { themeId };
+    }
+
+    return UserLessonService.UserLessonRepository.find({
+      where,
+      relations: ['userTheme', 'lesson'],
+      select: {
+        id: true,
+        feedback: true,
+        feedbackDate: true,
+        isPositiveFeedback: true,
+        userCategory: {
+          category: {
+            id: true,
+            name: true,
+          }
+        },
+        userTheme: {
+          theme: {
+            id: true,
+            name: true,
+          }
+        },
+      }
+    });
+  }
 }
 
 export const userLessonService = new UserLessonService();

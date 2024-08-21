@@ -1,4 +1,4 @@
-import { Any, FindManyOptions, FindOneOptions, ILike, Repository } from "typeorm";
+import { Any, Between, FindManyOptions, FindOneOptions, ILike, Repository } from "typeorm";
 import { DatabaseModule } from "../index";
 import { IUserService } from "../interfaces/IUserService.interface";
 import { User } from "../entities/user.entity";
@@ -137,6 +137,23 @@ class UserService implements IUserService {
     );
 
     return UserService.userRepository.save(user);
+  }
+
+  async getRecentEnrollements(
+    fromDate: Date = new Date(new Date().setDate(new Date().getDate() - 5)),
+    toDate: Date = new Date(),
+  ): Promise<{
+    users: Partial<User>[],
+    count: number
+  }> {
+    const [ users, count ] = await UserService.userRepository.findAndCount({ 
+      where: { 
+        userType: 'patient',
+        onboardingCompletedAt: Between(fromDate, toDate) 
+      },
+    });
+
+    return { users, count };
   }
 }
 
