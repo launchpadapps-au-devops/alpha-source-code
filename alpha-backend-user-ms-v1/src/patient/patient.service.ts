@@ -58,7 +58,7 @@ export class PatientService {
         } = await userService.findAllUsers(
             { limit: query.limit, page: query.page },
             {},
-            { [query.searchKey]: query.searchValue }
+            ...(query.searchKey && query.searchValue ? [{ key: query.searchKey, value: query.searchValue }] : [])
         );
 
         return {
