@@ -76,8 +76,8 @@ export class PatientService {
         const patient = await userService.findUserById(patientId);
         const userPlan = await userPlanService.findUserPlansByUserId(patientId);
         return this.#formatPatientData({
+            ...userPlan,
             ...patient,
-            ...userPlan
         });
     }
 
