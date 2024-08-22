@@ -93,11 +93,11 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     const dispatch = useAppDispatch();
     const [data, setData] = useState({
         themeData: {
-            themeCode: 1,
+            themeCode: Number,
             categoryId: 1,
             isPublished: false,
-            internalNotes: 'Internal Notes',
-            name: 'Theme Name',
+            internalNotes: '',
+            name: '',
             image: 'https://sample.com/sample.jpg',
             description: 'Theme Description',
             propertyTags: [

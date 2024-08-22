@@ -36,6 +36,7 @@ export interface ContentProps {
     showTags?: boolean;
     showAlternateButtons?: boolean;
 }
+export interface Category {}
 
 export const ViewLessons = ({
     className,
@@ -53,6 +54,15 @@ export const ViewLessons = ({
         internalNotes: '',
         theme: { name: '' },
         category: { name: '' },
+        lessonTags: [
+            { motivation: [] },
+            { gender: [] },
+            { cultural_background: [] },
+            { living_situation: [] },
+            { food_intolerance: [] },
+            { lifestyle: [] },
+            { physical_limitation: [] },
+        ],
     });
     const navigate = useNavigate();
     const location = useLocation();
@@ -77,6 +87,7 @@ export const ViewLessons = ({
                         internalNotes: fetchedLesson.internalNotes,
                         theme: fetchedLesson.theme,
                         category: fetchedLesson.category,
+                        lessonTags: fetchedLesson.lessonTags,
                     });
                 })
                 .catch((error: any) => {
@@ -103,7 +114,7 @@ export const ViewLessons = ({
                             <>
                                 <EditButton
                                     buttonText="Cancel"
-                                    onButtonClick={() => navigate(`/content/editlesson/`)}
+                                    onButtonClick={() => navigate(`/content/lessons/editlesson/`)}
                                 />
                                 <AppButton
                                     buttonText="Add to selections"
@@ -115,7 +126,9 @@ export const ViewLessons = ({
                                 <EditButton
                                     showLeftIcon
                                     buttonText="Edit"
-                                    onButtonClick={() => navigate(`/content/editlesson/${id}`)}
+                                    onButtonClick={() =>
+                                        navigate(`/content/lessons/editlesson/${id}`)
+                                    }
                                 />
                                 <EditButton
                                     buttonText="Unpublish & save as draft"
@@ -131,7 +144,9 @@ export const ViewLessons = ({
                                 <EditButton
                                     showLeftIcon
                                     buttonText="Edit"
-                                    onButtonClick={() => navigate(`/content/editlesson/${id}`)}
+                                    onButtonClick={() =>
+                                        navigate(`/content/lessons/editlesson/${id}`)
+                                    }
                                 />
                                 <EditButton
                                     buttonText="Save updates"
@@ -146,7 +161,8 @@ export const ViewLessons = ({
                     </div>
                 </header>
                 <LessonInformation lessonData={lessonData} setLessonData={setLessonData} />
-                {shouldShowTags && <TagsComponent categories={categories} />}
+
+                {shouldShowTags && <TagsComponent categories={lessonData.lessonTags} />}
                 {/* Conditionally render TagsComponent */}
             </div>
         </div>

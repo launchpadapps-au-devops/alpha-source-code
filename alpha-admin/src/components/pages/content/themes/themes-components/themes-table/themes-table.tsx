@@ -29,26 +29,35 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) =
     const [openModal, setOpenModal] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedLessons, setSelectedLessons] = useState<any>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        setCurrentPage(page);
+    };
 
     const handleToggle = (theme: any, index: number) => {
         const isCurrentlyPublished = theme.isPublished;
         const themeHasUnpublishedLessons = theme.lessons?.some((lesson: any) => !lesson.published);
 
         if (!isCurrentlyPublished) {
-            // When turning on the toggle, show the appropriate modal
             setSelectedThemeIndex(index);
             setOpenModal(true);
         } else {
-            // If turning off the toggle, no modal is shown, just toggle the published status
             const newTheme = { ...theme, isPublished: !theme.isPublished };
             setThemes((prevThemes: any) => {
                 const newThemes = [...prevThemes];
                 newThemes[index] = newTheme;
                 return newThemes;
             });
-            dispatch(updateThemeThunk({ id: theme.id, theme: newTheme }));
+            const newData = {
+                themeData: {
+                    isPublished: newTheme.isPublished,
+                },
+            };
+            dispatch(updateThemeThunk({ id: theme.id, theme: newData }));
         }
     };
 
@@ -65,7 +74,13 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) =
                 return newThemes;
             });
 
-            dispatch(updateThemeThunk({ id: themes[selectedThemeIndex].id, theme: updatedTheme }));
+            const newData = {
+                themeData: {
+                    isPublished: updatedTheme.isPublished,
+                },
+            };
+
+            dispatch(updateThemeThunk({ id: themes[selectedThemeIndex].id, theme: newData }));
         }
 
         setOpenModal(false);
@@ -78,7 +93,6 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) =
     const handleViewLessons = (event: React.MouseEvent, lessons: any) => {
         event.stopPropagation();
         setSelectedLessons(lessons);
-
         setIsSidebarOpen(true);
     };
 
@@ -87,26 +101,26 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) =
     };
 
     const handleRowClick = (index: number) => {
-        navigate(`/content/viewtheme/${themes[index].id}`, {
+        navigate(`/content/themes/viewtheme/${themes[index].id}`, {
             state: { isPublished: themes[index].published },
         });
     };
 
     const selectedThemeHasLessons = () => {
         const selectedTheme = selectedThemeIndex !== null ? themes[selectedThemeIndex] : null;
-        return (
-            selectedTheme && selectedTheme.lessons?.every((lesson: any) => lesson.published)
-        );
+        return selectedTheme && selectedTheme.lessons?.every((lesson: any) => lesson.published);
     };
 
     const formatDate = (data: any) => {
         const date = new Date(data);
-        return (
-            `${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${
-                date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-            }/${date.getFullYear()}`
-        );
+        return `${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${
+            date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
+        }/${date.getFullYear()}`;
     };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = themes.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
         <>
@@ -129,93 +143,90 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) =
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {themes &&
-                            themes.length > 0 &&
-                            themes.map((theme: any, index: any) => (
-                                <TableRow
-                                    key={index}
-                                    onClick={() => handleRowClick(index)}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <TableCell className={styles['theme-code']}>
-                                        {theme.themeCode}
-                                    </TableCell>
-                                    <TableCell className={styles['theme-name']}>
-                                        {theme.name}
-                                    </TableCell>
-                                    <TableCell>{formatDate(theme.createdAt)}</TableCell>
-                                    <TableCell>
-                                        {theme.habit ? <CheckCircleOutlineIcon /> : ''}
-                                    </TableCell>
-                                    <TableCell onClick={(event) => event.stopPropagation()}>
-                                        <Switch
-                                            key={index}
-                                            name={theme.name}
-                                            checked={theme.isPublished}
-                                            onChange={() => handleToggle(theme, index)}
-                                        />
-                                    </TableCell>
-                                    <TableCell onClick={(event) => event.stopPropagation()}>
-                                        <a
-                                            href="#"
-                                            onClick={(event) =>
-                                                handleViewLessons(event, theme.lessons)
-                                            }
-                                        >
-                                            View lessons
-                                        </a>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                        {currentItems.map((theme: any, index: any) => (
+                            <TableRow
+                                key={index}
+                                onClick={() => handleRowClick(index)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <TableCell className={styles['theme-code']}>
+                                    {theme.themeCode}
+                                </TableCell>
+                                <TableCell className={styles['theme-name']}>{theme.name}</TableCell>
+                                <TableCell>{formatDate(theme.createdAt)}</TableCell>
+                                <TableCell>
+                                    {theme.habit ? <CheckCircleOutlineIcon /> : ''}
+                                </TableCell>
+                                <TableCell onClick={(event) => event.stopPropagation()}>
+                                    <Switch
+                                        checked={theme.isPublished}
+                                        onChange={() => handleToggle(theme, index)}
+                                    />
+                                </TableCell>
+                                <TableCell onClick={(event) => event.stopPropagation()}>
+                                    <a
+                                        href="#"
+                                        onClick={(event) => handleViewLessons(event, theme.lessons)}
+                                    >
+                                        View lessons
+                                    </a>
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
             <div className={styles.pagination}>
-                <Pagination count={10} showFirstButton showLastButton />
+                <Pagination
+                    count={Math.ceil(themes.length / itemsPerPage)}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    showFirstButton
+                    showLastButton
+                />
             </div>
             {openModal &&
-                selectedThemeIndex !== null && (
-                    selectedThemeHasLessons() ? (
-                        <PublishThemesModal
-                            open={openModal}
-                            descriptionText={
-                                <>
-                                    <p>Are you sure you wish to publish this theme?</p>
-                                    <br />
-                                    <p>
-                                        All lessons and themes tagged with this theme will now be
-                                        visible to patients.
-                                    </p>
-                                </>
-                            }
-                            title="Publish Theme"
-                            closeModal={handleCloseModal}
-                            handlePublish={handlePublish}
-                        />
-                    ) : (
-                        <PublishThemesModal
-                            open={openModal}
-                            descriptionText={
-                                <>
-                                    <p>Some lessons are currently unpublished</p>
-                                    <br />
-                                    <p>
-                                        You will need to go into “Lessons” and publish your lessons in
-                                        order to publish this theme.
-                                    </p>
-                                    <br />
-                                    <p>
-                                        Alternatively, move your draft lessons out of this theme before
-                                        you publish.
-                                    </p>
-                                </>
-                            }
-                            title="Unpublished lesson alert"
-                            closeModal={handleCloseModal}
-                            handlePublish={handlePublish}
-                        />
-                    )
-                )}
+                selectedThemeIndex !== null &&
+                (selectedThemeHasLessons() ? (
+                    <PublishThemesModal
+                        open={openModal}
+                        descriptionText={
+                            <>
+                                <p>Are you sure you wish to publish this theme?</p>
+                                <br />
+                                <p>
+                                    All lessons and themes tagged with this theme will now be
+                                    visible to patients.
+                                </p>
+                            </>
+                        }
+                        title="Publish Theme"
+                        closeModal={handleCloseModal}
+                        handlePublish={handlePublish}
+                    />
+                ) : (
+                    <PublishThemesModal
+                        open={openModal}
+                        descriptionText={
+                            <>
+                                <p>Some lessons are currently unpublished</p>
+                                <br />
+                                <p>
+                                    You will need to go into “Lessons” and publish your lessons in
+                                    order to publish this theme.
+                                </p>
+                                <br />
+                                <p>
+                                    Alternatively, move your draft lessons out of this theme before
+                                    you publish.
+                                </p>
+                            </>
+                        }
+                        title="Unpublished lesson alert"
+                        closeModal={handleCloseModal}
+                        handlePublish={handlePublish}
+                    />
+                ))}
             {isSidebarOpen && (
                 <LessonSidebar
                     isOpen={isSidebarOpen}

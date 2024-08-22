@@ -29,7 +29,13 @@ export interface SelectLessonSidebarProps {
     onAddLessonsToTheme: (selected: Lesson[]) => void;
 }
 
-export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({ isOpen, onClose, lessons, onUpdateLessons, onAddLessonsToTheme }) => {
+export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
+    isOpen,
+    onClose,
+    lessons,
+    onUpdateLessons,
+    onAddLessonsToTheme,
+}) => {
     const [Lessons, setLessons] = useState<Lesson[]>([]);
     const [isAnyLessonSelected, setIsAnyLessonSelected] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -39,7 +45,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({ isOpen
     useEffect(() => {
         dispatch(fetchThemesThunk()).then((res: any) => {
             console.log('res', res);
-            
+
             // Extract lessons from the response and set them in the Lessons state
             const extractedLessons = res.payload.data.flatMap((theme: any) =>
                 theme.lessons.map((lesson: any) => ({
@@ -49,7 +55,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({ isOpen
                     published: lesson.isPublished,
                     category: theme.category.name,
                     quiz: false, // Assuming no quiz data is provided
-                    select: false
+                    select: false,
                 }))
             );
 
@@ -78,12 +84,14 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({ isOpen
             onAddLessonsToTheme(Lessons.filter((lesson: Lesson) => lesson.select));
             onClose();
         } else {
-            console.log("No lesson selected");
+            console.log('No lesson selected');
         }
     };
 
     const handleRowClick = (lesson: Lesson) => {
-        navigate(`/content/viewlesson/${lesson.code}`, { state: { showTags: false, showAlternateButtons: true } });
+        navigate(`/content/lessons/viewlesson/${lesson.code}`, {
+            state: { showTags: false, showAlternateButtons: true },
+        });
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +103,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({ isOpen
     );
 
     const handleCreateNewLesson = () => {
-        navigate('/content/createlesson');
+        navigate('/content/lessons/createlesson');
     };
 
     return (
@@ -110,9 +118,12 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({ isOpen
                 <div className={styles.header}>
                     <h2>Select lessons</h2>
                     <div className={styles.rightButtonContainer}>
-                        <EditButton buttonText='Create new lesson' onButtonClick={handleCreateNewLesson}/>
+                        <EditButton
+                            buttonText="Create new lesson"
+                            onButtonClick={handleCreateNewLesson}
+                        />
                         <AppButton
-                            buttonText='Add to theme'
+                            buttonText="Add to theme"
                             onButtonClick={handleAddToThemeClick}
                             className={!isAnyLessonSelected ? styles.disabledButton : ''}
                         />

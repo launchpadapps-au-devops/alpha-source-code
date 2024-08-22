@@ -40,7 +40,7 @@ export const LessonManagement: FC<LessonManagementProps> = ({
     };
 
     const handleCreateNewLesson = () => {
-        navigate('/content/createlesson');
+        navigate('/content/lessons/createlesson');
         handleClose();
     };
 

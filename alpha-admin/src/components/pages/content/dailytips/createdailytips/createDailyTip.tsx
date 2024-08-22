@@ -130,17 +130,19 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
     }, [dispatch]);
 
     const handleNewDailyTip = () => {
-        dispatch(addTipThunk({
-            content: newDailytipName,
-            day: undefined,
-            id: 0,
-            status: '',
-            tip: '',
-            version: 0,
-            createdAt: '',
-            updatedAt: '',
-            date: ''
-        }));
+        dispatch(
+            addTipThunk({
+                content: newDailytipName,
+                day: undefined,
+                id: 0,
+                status: '',
+                tip: '',
+                version: 0,
+                createdAt: '',
+                updatedAt: '',
+                date: '',
+            })
+        );
         setnewDailyTip(false);
         setNewDailytipName('');
     };
@@ -160,7 +162,6 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
                         <AppButton buttonText="Save" />
                     </div>
                 </header>
-                
 
                 <div className={styles.categories}>
                     <div className={styles.tableheader}>
@@ -168,30 +169,30 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
                         <span className={styles.headerText}>Daily tips</span>
                     </div>
                     <div className={styles.newTip}>
-                    {newDailyTip && (
-                        <tr>
-                            <td>
-                                <div className={styles.categoryCell}>
-                                    <input
-                                        type="text"
-                                        className={styles.editInput}
-                                        value={newDailytipName}
-                                        onChange={(e) => setNewDailytipName(e.target.value)}
-                                    />
+                        {newDailyTip && (
+                            <tr>
+                                <td>
+                                    <div className={styles.categoryCell}>
+                                        <input
+                                            type="text"
+                                            className={styles.editInput}
+                                            value={newDailytipName}
+                                            onChange={(e) => setNewDailytipName(e.target.value)}
+                                        />
 
-                                    {/* <AppButton
+                                        {/* <AppButton
                                         buttonText="Save & add more"
                                         onButtonClick={() => handleSaveAndAddMoreClick(tips)}
                                     /> */}
-                                    <AppButton
-                                        buttonText="Add"
-                                        onButtonClick={() => handleNewDailyTip()}
-                                    />
-                                </div>
-                            </td>
-                        </tr>
-                    )}
-                </div>
+                                        <AppButton
+                                            buttonText="Add"
+                                            onButtonClick={() => handleNewDailyTip()}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                        )}
+                    </div>
                     <List>
                         {tips &&
                             tips.length > 0 &&
@@ -227,14 +228,13 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
                                             <>
                                                 <div className={styles.day}>{tip.day}</div>
                                                 <div className={styles.content}>{tip.content}</div>
-                                                    <EditButton
-                                                        buttonText="Edit"
-                                                        className={styles.editButton}
-                                                        onButtonClick={() =>
-                                                            handleEditClick(tip.id, tip.content)
-                                                        }
-                                                    />
-                                              
+                                                <EditButton
+                                                    buttonText="Edit"
+                                                    className={styles.editButton}
+                                                    onButtonClick={() =>
+                                                        handleEditClick(tip.id, tip.content)
+                                                    }
+                                                />
                                             </>
                                         )}
                                     </div>

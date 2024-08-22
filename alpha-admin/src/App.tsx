@@ -34,7 +34,6 @@ import { CreateLifestyle } from './components/pages/lifestyle-plan/components/cr
 import { DailyTips } from './components/pages/content/dailytips/dailyTips';
 import { CreateDailyTips } from './components/pages/content/dailytips/createdailytips/createDailyTip';
 
-
 // const router = createBrowserRouter([
 //     { path: '/', element: <Home /> },
 //     {}
@@ -124,11 +123,11 @@ const router = createBrowserRouter([
                 element: <Themes />,
             },
             {
-                path: '/content/viewtheme/:id',
+                path: '/content/themes/viewtheme/:id',
                 element: <ViewThemes />,
             },
             {
-                path: '/content/editTheme',
+                path: '/content/themes/editTheme',
                 element: <EditTheme />,
             },
             {
@@ -136,11 +135,11 @@ const router = createBrowserRouter([
                 element: <DailyTips />,
             },
             {
-                path: '/content/createdailytips',
+                path: '/content/dailytips/createdailytips',
                 element: <CreateDailyTips />,
             },
             {
-                path: '/content/createtheme',
+                path: '/content/themes/createtheme',
                 element: <CreateTheme />,
             },
             {
@@ -148,15 +147,15 @@ const router = createBrowserRouter([
                 element: <Lessons />,
             },
             {
-                path: '/content/viewlesson/:id',
+                path: '/content/lessons/viewlesson/:id',
                 element: <ViewLessons />,
             },
             {
-                path: '/content/createlesson',
+                path: '/content/lessons/createlesson',
                 element: <CreateNewLesson />,
             },
             {
-                path: '/content/editlesson/:id',
+                path: '/content/lessons/editlesson/:id',
                 element: <CreateNewLesson />,
             },
             {

@@ -68,16 +68,21 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
     };
 
     const renderTableRows = () => {
-        const activeTips = tips.filter((tip: any) => tip.status === "ACTIVE");
+        const activeTips = tips.filter((tip: any) => tip.status === 'ACTIVE');
         const startIndex = (currentPage - 1) * itemsPerPage;
         const selectedTips = activeTips.slice(startIndex, startIndex + itemsPerPage);
-        
+
         const rows = selectedTips.map((tip: any, index: any) =>
             editing ? (
                 editSelected >= 0 && editSelected === index ? (
                     <tr key={tip.id}>
                         <td>
-                            <input type="text" className="w-25" value={tip.id}   onChange={(e) => setEditedContent(e.target.value)} />
+                            <input
+                                type="text"
+                                className="w-25"
+                                value={tip.id}
+                                onChange={(e) => setEditedContent(e.target.value)}
+                            />
                         </td>
                         <td>
                             <input
@@ -169,67 +174,67 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
                     <Sidebar />
                 </div>
                 <div className="col-10 mt-5 content">
-                        <header className="header">
-                            <h5>Daily tips</h5>
-                            <div className="rightButtonContainer">
-                                <EditButton
-                                    showLeftIcon
-                                    buttonText="Edit Daily tips"
-                                    onButtonClick={() => setEditing(!editing)}
-                                />
-                                <AppButton
-                                    ref={buttonRef}
-                                    showLeftIcon
-                                    buttonText="Create content"
-                                    onButtonClick={handleButtonClick}
-                                />
-                                <Menu
-                                    id="simple-menu"
-                                    anchorEl={anchorEl}
-                                    keepMounted
-                                    open={Boolean(anchorEl)}
-                                    onClose={handleClose}
-                                    slotProps={{
-                                        paper: {
-                                            style: {
-                                                width: menuWidth,
-                                            },
+                    <header className="header">
+                        <h5>Daily tips</h5>
+                        <div className="rightButtonContainer">
+                            <EditButton
+                                showLeftIcon
+                                buttonText="Edit Daily tips"
+                                onButtonClick={() => setEditing(!editing)}
+                            />
+                            <AppButton
+                                ref={buttonRef}
+                                showLeftIcon
+                                buttonText="Create content"
+                                onButtonClick={handleButtonClick}
+                            />
+                            <Menu
+                                id="simple-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                                slotProps={{
+                                    paper: {
+                                        style: {
+                                            width: menuWidth,
                                         },
-                                    }}
+                                    },
+                                }}
+                            >
+                                <MenuItem
+                                    onClick={() => handleMenuItemClick('/content/createcategories')}
                                 >
-                                    <MenuItem
-                                        onClick={() =>
-                                            handleMenuItemClick('/content/createcategories')
-                                        }
-                                    >
-                                        <DashboardIcon style={{ marginRight: 8 }} />
-                                        Category
-                                    </MenuItem>
-                                    <MenuItem
-                                        onClick={() => handleMenuItemClick('/content/createtheme')}
-                                    >
-                                        <MenuBookIcon style={{ marginRight: 8 }} />
-                                        Theme
-                                    </MenuItem>
-                                    <MenuItem
-                                        onClick={() => handleMenuItemClick('/content/createlesson')}
-                                    >
-                                        <LightbulbIcon style={{ marginRight: 8 }} />
-                                        Lesson
-                                    </MenuItem>
-                                    <MenuItem onClick={() => createNewDailyTip()}>
-                                        <CalendarMonthIcon style={{ marginRight: 8 }} />
-                                        Daily tip
-                                    </MenuItem>
-                                </Menu>
-                            </div>
-                        </header>
-                    
+                                    <DashboardIcon style={{ marginRight: 8 }} />
+                                    Category
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        handleMenuItemClick('/content/themes/createtheme')
+                                    }
+                                >
+                                    <MenuBookIcon style={{ marginRight: 8 }} />
+                                    Theme
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        handleMenuItemClick('/content/lessons/createlesson')
+                                    }
+                                >
+                                    <LightbulbIcon style={{ marginRight: 8 }} />
+                                    Lesson
+                                </MenuItem>
+                                <MenuItem onClick={() => createNewDailyTip()}>
+                                    <CalendarMonthIcon style={{ marginRight: 8 }} />
+                                    Daily tip
+                                </MenuItem>
+                            </Menu>
+                        </div>
+                    </header>
+
                     {tips.length === 0 ? (
                         <div className="no-tips text-center" style={{ height: '90%' }}>
-                            <Card
-                                className="d-flex w-100 h-100 justify-content-center align-items-center"
-                            >
+                            <Card className="d-flex w-100 h-100 justify-content-center align-items-center">
                                 <Card.Body>
                                     <div className="icon" style={{ marginTop: '100%' }}>
                                         <i

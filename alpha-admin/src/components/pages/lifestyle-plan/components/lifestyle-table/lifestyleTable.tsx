@@ -10,8 +10,6 @@ import {
     Switch,
     Pagination,
 } from '@mui/material';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import styles from './lifestyleTable.module.scss';
 import { useAppDispatch } from '../../../../../app/hooks';
@@ -33,17 +31,16 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({ plans, setPlans }) =>
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openPublishModal, setOpenPublishModal] = useState(false);
     const [openUnpublishModal, setOpenUnpublishModal] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        setCurrentPage(page);
+    };
+
     const handleToggle = (theme: any) => {
-        // const theme = LifeStyles[index];
-        // setSelectedThemeIndex(index);
-        // if (!theme.published) {
-        //     setOpenPublishModal(true);
-        // } else {
-        //     setOpenUnpublishModal(true);
-        // }
         const newTheme = {
             planData: {
                 planCode: theme.code,
@@ -58,12 +55,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({ plans, setPlans }) =>
             themes: theme.themes,
         };
         dispatch(updatePlanThunk({ id: theme.id, plan: newTheme })).then((data: any) => {
-            // if (data.payload) {
-            //     setPlans(data.payload.data);
-            // }
-
             dispatch(fetchPlansThunk()).then((data: any) => {
-                console.log('data', data);
                 if (data.payload) {
                     setPlans(data.payload.data);
                 }
@@ -99,15 +91,17 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({ plans, setPlans }) =>
     };
 
     const handleRowClick = (id: any) => {
-        navigate(`/lifestyle-plan/view/${id}`, {
-            // state: { isPublished: LifeStyles[index].published },
-        });
+        navigate(`/lifestyle-plan/view/${id}`);
     };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = plans.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
         <>
             <TableContainer component={Paper}>
-                <Table className={classNames(styles['key-contacts-table'])}>
+                <Table className={styles['key-contacts-table']}>
                     <TableHead>
                         <TableRow
                             style={{
@@ -122,29 +116,33 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({ plans, setPlans }) =>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {plans &&
-                            plans.length > 0 &&
-                            plans.map((theme: any, index: any) => (
-                                <TableRow
-                                    key={index}
-                                    onClick={() => handleRowClick(theme.id)}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <TableCell className={styles['code']}>{theme.name}</TableCell>
-                                    <TableCell>{theme.createdAt}</TableCell>
-                                    <TableCell onClick={(event) => event.stopPropagation()}>
-                                        <Switch
-                                            checked={theme.isPublished}
-                                            onChange={() => handleToggle(theme)}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                        {currentItems.map((theme: any, index: any) => (
+                            <TableRow
+                                key={index}
+                                onClick={() => handleRowClick(theme.id)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <TableCell className={styles['code']}>{theme.name}</TableCell>
+                                <TableCell>{theme.createdAt}</TableCell>
+                                <TableCell onClick={(event) => event.stopPropagation()}>
+                                    <Switch
+                                        checked={theme.isPublished}
+                                        onChange={() => handleToggle(theme)}
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
             <div className={styles.pagination}>
-                <Pagination count={10} showFirstButton showLastButton />
+                <Pagination
+                    count={Math.ceil(plans.length / itemsPerPage)}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    showFirstButton
+                    showLastButton
+                />
             </div>
             {/* {openPublishModal && selectedThemeIndex !== null && (
                 <PublishLessonModal

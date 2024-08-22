@@ -66,7 +66,7 @@ export const ViewThemes = ({ className }: ContentProps) => {
                             <EditButton
                                 showLeftIcon
                                 buttonText="Edit"
-                                onButtonClick={() => navigate('/content/editTheme')}
+                                onButtonClick={() => navigate('/content/themes/editTheme')}
                             />
                             {!isPublished && (
                                 <AppButton

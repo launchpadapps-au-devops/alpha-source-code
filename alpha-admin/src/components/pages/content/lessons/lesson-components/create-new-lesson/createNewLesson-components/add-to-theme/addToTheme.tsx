@@ -73,7 +73,7 @@ export const SelectTheme: React.FC<SelectThemeSidebarProps> = ({
     };
 
     const handleRowClick = (lesson: Lesson) => {
-        navigate(`/content/viewlesson/${lesson.code}`, {
+        navigate(`/content/lessons/viewlesson/${lesson.code}`, {
             state: { showTags: false, showAlternateButtons: true },
         });
     };
@@ -83,7 +83,7 @@ export const SelectTheme: React.FC<SelectThemeSidebarProps> = ({
     );
 
     const handleCreateNewTheme = () => {
-        navigate('/content/createtheme', { state: { hideLessons: true } });
+        navigate('/content/themes/createtheme', { state: { hideLessons: true } });
     };
 
     return (

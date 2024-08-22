@@ -82,15 +82,23 @@ export const Lessons = ({ className }: LessonsProps) => {
                                 <DashboardIcon style={{ marginRight: 8 }} />
                                 Category
                             </MenuItem>
-                            <MenuItem onClick={() => handleMenuItemClick('/content/createtheme')}>
+                            <MenuItem
+                                onClick={() => handleMenuItemClick('/content/themes/createtheme')}
+                            >
                                 <MenuBookIcon style={{ marginRight: 8 }} />
                                 Theme
                             </MenuItem>
-                            <MenuItem onClick={() => handleMenuItemClick('/content/createlesson')}>
+                            <MenuItem
+                                onClick={() => handleMenuItemClick('/content/lessons/createlesson')}
+                            >
                                 <LightbulbIcon style={{ marginRight: 8 }} />
                                 Lesson
                             </MenuItem>
-                            <MenuItem onClick={() => handleMenuItemClick('/content/createdailytips')}>
+                            <MenuItem
+                                onClick={() =>
+                                    handleMenuItemClick('/content/dailytips/createdailytips')
+                                }
+                            >
                                 <CalendarMonthIcon style={{ marginRight: 8 }} />
                                 Daily tip
                             </MenuItem>

@@ -31,11 +31,11 @@ import { AppButton } from '../../../../app-button/app-button';
 import { CheckBox } from '@mui/icons-material';
 import { Check } from '../../../../icon/glyps/check';
 
-const initialLessons: Lesson[] = [
-    { code: 1, title: 'Lesson 1', quiz: true, published: true },
-    { code: 2, title: 'Lesson 2', quiz: false, published: false },
-    { code: 3, title: 'Lesson 3', quiz: true, published: true },
-];
+// const initialLessons: Lesson[] = [
+//     { code: 1, title: 'Lesson 1', quiz: true, published: true },
+//     { code: 2, title: 'Lesson 2', quiz: false, published: false },
+//     { code: 3, title: 'Lesson 3', quiz: true, published: true },
+// ];
 
 export interface ThemesTableProps {
     themes: any;
@@ -92,7 +92,13 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
             return newThemes;
         });
 
-        dispatch(updateThemeThunk({ id: theme.id, theme: newTheme }));
+        const newData = {
+            themeData: {
+                isPublished: newTheme.isPublished,
+            },
+        };
+
+        dispatch(updateThemeThunk({ id: theme.id, theme: newData }));
     };
 
     const handlePublish = () => {
@@ -129,17 +135,17 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
     };
 
     const handleRowClick = (index: number) => {
-        navigate(`/content/viewtheme/${themes[index].id}`, {
+        navigate(`/content/themes/viewtheme/${themes[index].id}`, {
             state: { isPublished: themes[index].published },
         });
     };
 
-    const selectedThemeHasLessons = () => {
-        const selectedTheme = selectedThemeIndex !== null ? themes[selectedThemeIndex] : null;
-        return (
-            selectedTheme && initialLessons.some((lesson) => lesson.code === selectedTheme?.code)
-        );
-    };
+    // const selectedThemeHasLessons = () => {
+    //     const selectedTheme = selectedThemeIndex !== null ? themes[selectedThemeIndex] : null;
+    //     return (
+    //         selectedTheme && initialLessons.some((lesson) => lesson.code === selectedTheme?.code)
+    //     );
+    // };
     const formatDate = (data: any) => {
         var date = new Date(data);
         return (

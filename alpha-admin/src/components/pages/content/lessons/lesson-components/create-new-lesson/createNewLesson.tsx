@@ -46,7 +46,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     // Extract search query from URL
 
     let [data, setData] = React.useState({
-        lessonCode: 0,
+        lessonCode: Number,
         categoryId: 0,
         themeId: 0,
         status: 'ACTIVE',
@@ -164,13 +164,13 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
         if (isEditMode) {
             dispatch(updateLessonThunk({ id: params.id, data: data })).then((response: any) => {
                 console.log('Response', response);
-                navigate('/content/viewlesson/' + response.payload.data.id);
+                navigate('/content/lessons/viewlesson/' + response.payload.data.id);
             });
         }
         {
             dispatch(addLessonThunk(data)).then((response: any) => {
                 console.log('Response', response);
-                navigate('/content/viewlesson/' + response.payload.data.id);
+                navigate('/content/lessons/viewlesson/' + response.payload.data.id);
             });
         }
     };

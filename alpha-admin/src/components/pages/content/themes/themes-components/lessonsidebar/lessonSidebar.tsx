@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import styles from './lesson-Sidebar.module.scss';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { Pagination } from '@mui/material';
 
 export interface Lesson {
-    code: number;
-    title: string;
+    id: number;
+    name: string;
     quiz: boolean;
-    published: boolean;
+    isPublished: boolean;
 }
 
 export interface LessonSidebarProps {
@@ -18,7 +19,17 @@ export interface LessonSidebarProps {
 }
 
 export const LessonSidebar: React.FC<LessonSidebarProps> = ({ isOpen, onClose, lessons }) => {
-    console.log('lessons', lessons);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        setCurrentPage(page);
+    };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentLessons = lessons.slice(indexOfFirstItem, indexOfLastItem);
+
     return (
         <>
             {isOpen && <div className={styles.overlay} onClick={onClose} />}
@@ -41,20 +52,24 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({ isOpen, onClose, l
                         </tr>
                     </thead>
                     <tbody>
-                        {lessons &&
-                            lessons.length > 0 &&
-                            lessons.map((lesson: any, index: any) => (
-                                <tr key={index}>
-                                    <td>{lesson.id}</td>
-                                    <td>{lesson.name}</td>
-                                    <td>{lesson.quiz ? <CheckCircleOutlineIcon /> : ''}</td>
-                                    <td>{lesson.isPublished ? <CheckCircleOutlineIcon /> : ''}</td>
-                                </tr>
-                            ))}
+                        {currentLessons.map((lesson, index) => (
+                            <tr key={index}>
+                                <td>{lesson.id}</td>
+                                <td>{lesson.name}</td>
+                                <td>{lesson.quiz ? <CheckCircleOutlineIcon /> : ''}</td>
+                                <td>{lesson.isPublished ? <CheckCircleOutlineIcon /> : ''}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
                 <div className={styles.pagination}>
-                    <a href="#">Next</a>
+                    <Pagination
+                        count={Math.ceil(lessons.length / itemsPerPage)}
+                        page={currentPage}
+                        onChange={handlePageChange}
+                        showFirstButton
+                        showLastButton
+                    />
                 </div>
             </div>
         </>
