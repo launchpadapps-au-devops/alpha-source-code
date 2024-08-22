@@ -17,6 +17,9 @@ export class CreatePatientDetailsDto {
     @IsString()
     lastName: string;
 
+    @ApiProperty({ example: 'To be fit' })
+    goal: string;
+
     // profilePic
     @ApiProperty({ example: 'https://sample.com/sample.jpg' })
     @IsOptional()
