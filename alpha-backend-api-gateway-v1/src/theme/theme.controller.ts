@@ -126,7 +126,7 @@ export class ThemeController {
         const existingTheme = await this.themeService.findThemeById(id);
 
         let lessons = [];
-        if(payload.lessonData) {
+        if(payload.lessonData?.length) {
             ({ data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData));
             if(lessons.length !== payload.lessonData.length) {
                 throw new NotFoundException('Some lessons not found');
