@@ -51,6 +51,9 @@ export class User {
   nickName: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
+  goal: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
   profilePicture: string;
 
   @Column({ type: 'varchar', length: 255, unique: true, nullable: true })

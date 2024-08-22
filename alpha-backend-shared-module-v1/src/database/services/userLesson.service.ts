@@ -96,7 +96,7 @@ class UserLessonService implements IUserLessonService {
     const { searchText, ...restFilters } = filters;
 
     const where: any = {
-      ...(searchText ? { 'lesson.name': ILike(`%${searchText}%`) } : {}),
+      ...(!!searchText ? { 'lesson.name': ILike(`%${searchText}%`) } : {}),
       ...restFilters,
     };
 
