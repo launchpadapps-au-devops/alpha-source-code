@@ -1,0 +1,100 @@
+@import '../../../../../styles/global.scss';
+@import '../../../../../styles/color.scss';
+
+.create-team-wrapper {
+  width: 100%;
+  max-width: 1118px;
+  padding: $spacing-2; //16px;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3; //24px;;
+  margin: 92px auto;
+  background-color: $color-white;
+  border-radius: $spacing-1; //8px
+  -webkit-border-radius: $spacing-1;
+  -moz-border-radius: $spacing-1;
+  -ms-border-radius: $spacing-1;
+  -o-border-radius: $spacing-1;
+  h2 {
+    font: $type-heading-regular;
+    font-weight: 500;
+    padding: $spacing-1 0;
+    color: $color-medium-black; //#22272b;
+    margin-bottom: $spacing-2; //16px;
+  }
+  .form-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: $spacing-4; //32px
+    row-gap: $spacing-4; //32px
+    padding: $spacing-3; //24px:;
+    border: 1px solid $color-light-grey; //#EBEBEB;
+    border-radius: $spacing-1;
+    -webkit-border-radius: $spacing-1;
+    -moz-border-radius: $spacing-1;
+    -ms-border-radius: $spacing-1;
+    -o-border-radius: $spacing-1;
+
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-1; //8px
+
+      //   .error {
+      //     color: $color-error;
+      //     font: $type-text-micro;
+      //     font-family: $-font-family-inter;
+      //   }
+    }
+  }
+  .button-action-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    gap: 20px;
+  }
+}
+
+.date-of-birth {
+    display: flex;
+    gap: $spacing-1; // Adjust spacing as needed (e.g., 8px)
+    
+    .dob-input {
+        width: calc(33.33% - $spacing-1); // Ensure equal width with spacing in consideration
+        flex: 1; // Allow flex to adjust the width dynamically
+    }
+}
+
+.consent-wrapper {
+  display: flex;
+ // align-items: center;
+  gap: 8px; // Adjust as needed
+
+  .circle-checkbox {
+      flex-shrink: 0; // Prevent the checkbox from shrinking
+  }
+
+  .consent-label-djnin {
+      display: inline-block;
+      //white-space: nowrap; // Prevent the text from wrapping to a new line
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1; // Allow the label to take up remaining space
+      margin-left: 8px; // Space between checkbox and label, adjust if necessary
+  }
+
+  .terms-link {
+      color: #00ACEE; // Primary color
+      text-decoration: underline;
+
+      &:hover {
+          text-decoration: none;
+      }
+  }
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+

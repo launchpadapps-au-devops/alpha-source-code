@@ -33,6 +33,8 @@ import { ViewLifeStyle } from './components/pages/lifestyle-plan/components/view
 import { CreateLifestyle } from './components/pages/lifestyle-plan/components/create-lifestyle/createLifestyle';
 import { DailyTips } from './components/pages/content/dailytips/dailyTips';
 import { CreateDailyTips } from './components/pages/content/dailytips/createdailytips/createDailyTip';
+import { Patients } from './components/pages/patient/patients/patients';
+import { CreatePatient } from './components/pages/patient/patients/create-patient/create-patient';
 
 // const router = createBrowserRouter([
 //     { path: '/', element: <Home /> },
@@ -174,6 +176,15 @@ const router = createBrowserRouter([
                 path: '/lifestyle-plan/edit/:id',
                 element: <CreateLifestyle />,
             },
+            {
+                path: '/patients',
+                element: <Patients />,
+            },
+            {
+                path:'/create-patient',
+                element: <CreatePatient />
+            }
+
         ],
     },
     {

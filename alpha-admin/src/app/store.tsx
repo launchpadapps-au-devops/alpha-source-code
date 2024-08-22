@@ -11,6 +11,7 @@ import categoriesReducer from '../components/pages/content/categories/category-c
 import lessonsReducer from '../components/pages/content/lessons/lesson-components/lessonsSlice';
 import tipsReducer from '../components/pages/content/dailytips/viewTipsSlice';
 import fileUploadReducer from '../components/fileUpload/fileUploadSlice';
+import patientsSlice from '../components/pages/patient/patients/patientsSlice';
 
 const rootReducer = combineReducers({
     login: authSlice,
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
     lessons: lessonsReducer,
     tips: tipsReducer,
     fileUpload: fileUploadReducer,
+    patients: patientsSlice,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
