@@ -113,6 +113,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
             console.log('Patient Data:', JSON.stringify(patientData)); // Debugging output
             await dispatch(addNewPatient(patientData));
             toast.success('Patient profile created.');
+            navigate('/patient-profile')
             setOpenModal(true);
         } catch (error) {
             console.error('Error adding patient:', error);
@@ -193,7 +194,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                     return selected as string;
                                 }}
                             >
-                                {['Male', 'Female', 'Other'].map((option) => (
+                                {['Male', 'Female', 'Non-Binary'].map((option) => (
                                     <CoustomMenuItem key={option} value={option}>
                                         {option}
                                     </CoustomMenuItem>
