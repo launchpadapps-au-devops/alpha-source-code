@@ -84,7 +84,7 @@ export class HealthDataController {
         };
     }
 
-    @Post('/health-data/bulk')
+    @Post('/bulk')
     async createHealthBulkData(
         @Headers('x-request-userId') reqUserId: string,
         @Body() payload: Partial<UserHealthData>[]
@@ -102,7 +102,7 @@ export class HealthDataController {
         };
     }
 
-    @Get('/health-data')
+    @Get('/')
     async getUserHealthData(
         @Headers('x-request-userId') reqUserId: string,
         @Query() query: any
