@@ -16,7 +16,7 @@ export class DailyTipController {
     ) { }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
     @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiBody({
@@ -74,7 +74,7 @@ export class DailyTipController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
     @ApiParam({
@@ -117,7 +117,7 @@ export class DailyTipController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
     @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiQuery({
@@ -173,38 +173,39 @@ export class DailyTipController {
                 statusCode: { type: 'number', example: 200 },
                 message: { type: 'string', example: 'Daily tips fetched successfully' },
                 data: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            id: { type: 'number', example: '1' },
+                            day: { type: 'number', example: '1' },
+                            content: { type: 'string', example: 'This is a daily tip' },
+                            status: { type: 'string', enum: ['ACTIVE', 'ARCHIVE'], example: 'ACTIVE' },
+                            version: { type: 'number', example: '1' },
+                            createdAt: { type: 'string', format: 'date-time', example: '2021-09-01T00:00:00.000Z' },
+                            createdBy: { type: 'string', example: '1' },
+                            updatedAt: { type: 'string', format: 'date-time', example: '2021-09-01T00:00:00.000Z' },
+                            updatedBy: { type: 'string', example: '1' },
+                        },
+                        required: ['id', 'day', 'content', 'status', 'version', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'],
+                    },
+                },
+                meta: {
                     type: 'object',
                     properties: {
-                        total: { type: 'number', example: 1 },
                         page: { type: 'number', example: 1 },
                         limit: { type: 'number', example: 10 },
-                        items: {
-                            type: 'array',
-                            items: {
-                                type: 'object',
-                                properties: {
-                                    id: { type: 'number', example: '1' },
-                                    day: { type: 'number', example: '1' },
-                                    content: { type: 'string', example: 'This is a daily tip' },
-                                    status: { type: 'string', enum: ['ACTIVE', 'ARCHIVE'], example: 'ACTIVE' },
-                                    version: { type: 'number', example: '1' },
-                                    createdAt: { type: 'string', format: 'date-time', example: '2021-09-01T00:00:00.000Z' },
-                                    createdBy: { type: 'string', example: '1' },
-                                    updatedAt: { type: 'string', format: 'date-time', example: '2021-09-01T00:00:00.000Z' },
-                                    updatedBy: { type: 'string', example: '1' },
-                                },
-                                required: ['id', 'day', 'content', 'status', 'version', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'],
-                            },
-                        },
+                        totalRecords: { type: 'number', example: 1 },
+                        totalPages: { type: 'number', example: 1 },
                     },
-                }
+                },
             },
             required: ['statusCode', 'data'],
         },
     })
     @Get()
     async getAllDailyTips(
-        @Query('status') status : string,
+        @Query('status') status: string,
         @Query('searchText') searchText: string,
         @Query('day') day: number,
         @Query('page') page: number = 1,
