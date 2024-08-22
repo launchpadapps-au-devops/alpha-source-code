@@ -28,7 +28,7 @@ spec:
           command: ['sh', '-c', 'until nc -z alpha-backend-api-gateway-v1-service 3000; do echo waiting for backend ; sleep 2; done;']
       containers:
         - name: alpha-admin-container
-          image: alphadev.azurecr.io/alpha-admin@sha256:a49bbe7a57d5ab7dad10c410d04e4f108d21aa8c834232dcaa5e5b776086fbb0
+          image: alphadev.azurecr.io/alpha-admin@sha256:69fb0b9e730d071dd49137ee7a46f5970aaab588d76fbb607353b9b61d163d69
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 4137
