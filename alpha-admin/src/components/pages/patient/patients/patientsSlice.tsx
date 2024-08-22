@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, combineReducers, PayloadAction } from '@reduxjs/toolkit';
-import { getPatients, PatientsResponse, Patient, MetaData } from './patientsAPI'; 
-import { ReactNode } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import { getPatients, addPatientAPI, PatientsResponse, Patient, MetaData } from './patientsAPI';
+import { CreatePatientData } from './create-patient/create-patient';
 
 export interface PatientsState {
     loading: boolean;
@@ -17,12 +16,24 @@ const initialState: PatientsState = {
     meta: null,
 };
 
+// Thunk to fetch patients
 export const fetchPatients = createAsyncThunk('patients/getPatients', async (_, { rejectWithValue }) => {
     try {
         const response: PatientsResponse = await getPatients();
         return response;
     } catch (error) {
         console.log('Response ERROR ', error);
+        return rejectWithValue(error);
+    }
+});
+
+// Thunk to add a new patient
+export const addNewPatient = createAsyncThunk('patients/addPatient', async (patientData: CreatePatientData, { rejectWithValue }) => {
+    try {
+        const response: PatientsResponse = await addPatientAPI(patientData);
+        return response;
+    } catch (error) {
+        console.error('Add Patient ERROR ', error);
         return rejectWithValue(error);
     }
 });
@@ -47,6 +58,18 @@ export const patientsSlice = createSlice({
                 state.errorMessage = null;
             })
             .addCase(fetchPatients.rejected, (state, action) => {
+                state.loading = false;
+                state.errorMessage = action.payload as string;
+            })
+            .addCase(addNewPatient.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(addNewPatient.fulfilled, (state, action: PayloadAction<PatientsResponse>) => {
+                state.loading = false;
+                state.patients.push(action.payload.data[0]); // Assuming response includes the newly added patient
+                state.errorMessage = null;
+            })
+            .addCase(addNewPatient.rejected, (state, action) => {
                 state.loading = false;
                 state.errorMessage = action.payload as string;
             });

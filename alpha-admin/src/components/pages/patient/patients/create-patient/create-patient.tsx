@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import styles from './create-patient.module.scss';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { InputFieldLabel } from '../../../../input-field-label/input-field-label';
 import { InputField } from '../../../../input-field/input-field';
 import { CoustomMenuItem, CustomizedSelects, MenuProps } from '../../../../mui-select-style';
@@ -10,36 +10,38 @@ import { FormSucessModal } from '../../../../form-sucess-modal/form-sucess-modal
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../../../app/store';
-import { Checkbox, Radio } from '@mui/material';
+import { Checkbox } from '@mui/material';
+import { addNewPatient } from '../patientsSlice';
+import { toast } from 'react-toastify';
 
 export interface CreatePatientProps {
     className?: string;
 }
 
+export interface CreatePatientData {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+    gender: string;
+    dob: string;
+    address: string;
+    height: number;
+    weight: number;
+    bmi: number;
+    patientDetailsEditConsent: boolean;
+}
+
+
 export const CreatePatient = ({ className }: CreatePatientProps) => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-    const [roles, SetRoles] = useState([
-        { id: 1, name: 'Nurse', description: 'Nurse role' },
-        { id: 2, name: 'MPA', description: 'Medical Practitioner Assistant role' },
-        { id: 3, name: 'Content Creator', description: 'Content Creator role' },
-        { id: 4, name: 'GP', description: 'General Practitioner role' },
-    ]);
-
-    const [permissions, SetPermissions] = useState([
-        { id: 1, name: 'Super Admin' },
-        { id: 2, name: 'Care Team Member' },
-    ]);
-
-    const [openModal, setOpenModal] = useState(false);
 
     const [formValues, setFormValues] = useState({
         firstName: '',
         lastName: '',
         email: '',
         phoneNumber: '',
-        role: '',
-        permission: '',
         gender: '',
         dateOfBirth: { day: '', month: '', year: '' },
         address: '',
@@ -49,40 +51,82 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
         patientConsent: false,
     });
 
-    const handleChange = (field: string, value: string) => {
-        console.log(`Field: ${field}, Value: ${value}`);
-        setFormValues((prevValues) => ({
-            ...prevValues,
-            [field]: value,
-        }));
+    const [openModal, setOpenModal] = useState(false);
+
+    // Automatically calculate BMI when height or weight changes
+    useEffect(() => {
+        const { height, weight } = formValues;
+        if (height && weight) {
+            const heightInMeters = Number(height) / 100; // convert cm to meters
+            const bmi = (Number(weight) / (heightInMeters * heightInMeters)).toFixed(2);
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                bmi: bmi.toString(),
+            }));
+        }
+    }, [formValues.height, formValues.weight]);
+
+    const handleChange = (field: string, value: any) => {
+        if (field.startsWith('dateOfBirth.')) {
+            const dateField = field.split('.')[1];
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                dateOfBirth: {
+                    ...prevValues.dateOfBirth,
+                    [dateField]: value,
+                },
+            }));
+        } else {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                [field]: value,
+            }));
+        }
     };
 
-    const handleFormSuccessModal = () => {
-        // const roleId = formValues.role ? parseInt(formValues.role, 10) : null;
-        // const permissionId = formValues.permission ? parseInt(formValues.permission, 10) : null;
-        // console.log(`Role ID: ${roleId}, Permission ID: ${permissionId}`);
-        // if (roleId === null || permissionId === null) {
-        //     alert('Please select a valid role and permission');
-        //     return;
-        // }
-        // const data = {
-        //     userData: {
-        //         firstName: formValues.firstName,
-        //         lastName: formValues.lastName,
-        //         email: formValues.email,
-        //         phone: formValues.phoneNumber,
-        //         roleId: roleId,
-        //     },
-        //     permissions: [permissionId]
-        // };
-        // console.log('Payload data:', data);
-        // dispatch(addNewStaffThunk(data));
-        // navigate('/careteam');
+    const handleFormSuccessModal = async () => {
+        const { day, month, year } = formValues.dateOfBirth;
+    
+        if (!day || !month || !year) {
+            alert("Please enter a valid date of birth");
+            return;
+        }
+    
+        const formattedDay = day.padStart(2, '0');
+        const formattedMonth = month.padStart(2, '0');
+    
+        const dob = `${year}-${formattedMonth}-${formattedDay}`;
+    
+        const patientData: CreatePatientData = {
+            firstName: formValues.firstName,
+            lastName: formValues.lastName,
+            phone: formValues.phoneNumber,
+            email: formValues.email,
+            gender: formValues.gender,
+            dob: dob,
+            address: formValues.address,
+            height: Math.round(Number(formValues.height)),
+            weight: Math.round(Number(formValues.weight)),
+            bmi: Math.round(Number(formValues.bmi)),
+            patientDetailsEditConsent: formValues.patientConsent,
+        };
+    
+        try {
+            console.log("Patient Data:", JSON.stringify(patientData)); // Debugging output
+            await dispatch(addNewPatient(patientData));
+            toast.success("Patient profile created.");
+            setOpenModal(true);
+        } catch (error) {
+            console.error('Error adding patient:', error);
+            toast.error("Failed to create patient profile.");
+        }
     };
+    
+    
 
     const handleCloseModal = () => {
-        // setOpenModal(false);
-        // navigate('/careteam');
+        setOpenModal(false);
+        navigate('/careteam');
     };
 
     return (
@@ -90,9 +134,9 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
             <div className={classNames(styles['create-team-wrapper'], className)}>
                 <div>
                     <h2>Create new patient</h2>
-                    <br></br>
+                    <br />
                     <h4>Personal Details</h4>
-                    <br></br>
+                    <br />
                     <div className={styles['form-grid-layout']}>
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="First name" />
@@ -142,9 +186,16 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                             <InputFieldLabel labelText="Gender" />
                             <CustomizedSelects
                                 id="gender"
-                                value={formValues.gender || 'Gender'}
+                                value={formValues.gender}
+                                displayEmpty
                                 onChange={(e) => handleChange('gender', e.target.value as string)}
                                 MenuProps={MenuProps}
+                                renderValue={(selected) => {
+                                    if (!selected) {
+                                        return <em>Gender</em>;
+                                    }
+                                    return selected as string;
+                                }}
                             >
                                 {['Male', 'Female', 'Other'].map((option) => (
                                     <CoustomMenuItem key={option} value={option}>
@@ -153,6 +204,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 ))}
                             </CustomizedSelects>
                         </div>
+
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Date of birth" />
                             <div className={styles['date-of-birth']}>
@@ -162,7 +214,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                     placeholder="DD"
                                     type="text"
                                     value={formValues.dateOfBirth.day}
-                                    onChange={(e) => handleChange('dateOfBirthDay', e.target.value)}
+                                    onChange={(e) => handleChange('dateOfBirth.day', e.target.value)}
                                     className={styles['dob-input']}
                                 />
                                 <InputField
@@ -171,9 +223,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                     placeholder="MM"
                                     type="text"
                                     value={formValues.dateOfBirth.month}
-                                    onChange={(e) =>
-                                        handleChange('dateOfBirthMonth', e.target.value)
-                                    }
+                                    onChange={(e) => handleChange('dateOfBirth.month', e.target.value)}
                                     className={styles['dob-input']}
                                 />
                                 <InputField
@@ -182,9 +232,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                     placeholder="YYYY"
                                     type="text"
                                     value={formValues.dateOfBirth.year}
-                                    onChange={(e) =>
-                                        handleChange('dateOfBirthYear', e.target.value)
-                                    }
+                                    onChange={(e) => handleChange('dateOfBirth.year', e.target.value)}
                                     className={styles['dob-input']}
                                 />
                             </div>
@@ -222,7 +270,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 onChange={(e) => handleChange('weight', e.target.value)}
                             />
                         </div>
-                        <div className={styles['input-wrapper']}>
+                        <div className={classNames(styles['input-wrapper'])}>
                             <InputFieldLabel labelText="BMI (calculated automatically)" />
                             <InputField
                                 id="bmi"
@@ -231,37 +279,30 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 type="text"
                                 value={formValues.bmi}
                                 readOnly
-                                // Add logic to calculate BMI based on height and weight
                             />
-                        </div>
-                        <div className={styles['consent-wrapper']}>
-                            <Checkbox
-                                id="patient-consent"
-                                checked={formValues.patientConsent}
-                                onChange={(e) =>
-                                    handleChange('patientConsent', e.target.checked.toString())
-                                }
-                                className={styles['circle-checkbox']}
-                                color="primary"
-                            />
-
-                            <label
-                                htmlFor="patient-consent"
-                                className={styles['consent-label-djnin']}
-                            >
-                                I confirm that I have the patient’s consent to edit their details
-                                with
-                                <span className={styles['nowrap']}>
-                                    {' '}
-                                    Alpha according to the
-                                    <a href="#" className={styles['terms-link']}>
-                                        {' '}
-                                        Terms & Conditions of Alpha.
-                                    </a>
-                                </span>
-                            </label>
                         </div>
                     </div>
+                </div>
+                <div className={styles['consent-wrapper']}>
+                    <Checkbox
+                        id="patient-consent"
+                        checked={formValues.patientConsent}
+                        onChange={(e) => handleChange('patientConsent', e.target.checked)}
+                        className={styles['circle-checkbox']}
+                        color="primary"
+                    />
+
+                    <label htmlFor="patient-consent" className={styles['consent-label-djnin']}>
+                        I confirm that I have the patient’s consent to edit their details with
+                        <span className={styles['nowrap']}>
+                            {' '}
+                            Alpha according to the
+                            <a href="#" className={styles['terms-link']}>
+                                {' '}
+                                Terms & Conditions of Alpha.
+                            </a>
+                        </span>
+                    </label>
                 </div>
                 <div className={styles['button-action-wrapper']}>
                     <AppButton

@@ -46,7 +46,7 @@ export const Patients = ({ className }: PatientsProps) => {
                         <AppButton
                             className={styles['AppButton']}
                             buttonText=" + Add patient "
-                            onButtonClick={() => navigate('/careteam/addcareteam')}
+                            onButtonClick={() => navigate('/create-patient')}
                         />
                         <div>
                             <Menu

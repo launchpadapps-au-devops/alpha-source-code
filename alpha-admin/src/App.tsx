@@ -35,7 +35,8 @@ import { DailyTips } from './components/pages/content/dailytips/dailyTips';
 import { CreateDailyTips } from './components/pages/content/dailytips/createdailytips/createDailyTip';
 import { Patients } from './components/pages/patient/patients/patients';
 import { CreatePatient } from './components/pages/patient/patients/create-patient/create-patient';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // const router = createBrowserRouter([
 //     { path: '/', element: <Home /> },
 //     {}
@@ -207,6 +208,7 @@ function App() {
     return (
         <>
             <RouterProvider router={router} />
+            <ToastContainer />
         </>
     );
 }

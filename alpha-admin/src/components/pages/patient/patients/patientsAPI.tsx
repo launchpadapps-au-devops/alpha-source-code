@@ -1,5 +1,6 @@
 import axios from "axios";
 import { config } from "../../../../config/config";
+import { CreatePatientData } from "./create-patient/create-patient";
 
 export interface MetaData {
     page: number;
@@ -48,6 +49,23 @@ export const getPatients = async (): Promise<PatientsResponse> => {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
+        });
+        return response.data as PatientsResponse;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+export const addPatientAPI = async (patientData: CreatePatientData): Promise<PatientsResponse> => {
+    const accessToken = localStorage.getItem('accessToken');
+    const apiURL = `${config.BASE_URL}/gateway/v1/patient`;
+
+    try {
+        const response = await axios.post(apiURL, patientData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
         });
         return response.data as PatientsResponse;
     } catch (error) {
