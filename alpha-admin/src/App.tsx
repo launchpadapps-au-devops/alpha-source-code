@@ -33,10 +33,11 @@ import { ViewLifeStyle } from './components/pages/lifestyle-plan/components/view
 import { CreateLifestyle } from './components/pages/lifestyle-plan/components/create-lifestyle/createLifestyle';
 import { DailyTips } from './components/pages/content/dailytips/dailyTips';
 import { CreateDailyTips } from './components/pages/content/dailytips/createdailytips/createDailyTip';
-import { Patients } from './components/pages/patient/patients/patients';
-import { CreatePatient } from './components/pages/patient/patients/create-patient/create-patient';
+import { Patients } from './components/pages/patient-Management/view-patients/patients';
+import { CreatePatient } from './components/pages/patient-Management/create-patient/create-patient';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { PatientProfile } from './components/pages/patient-Management/patient-profile/patient-profile';
 // const router = createBrowserRouter([
 //     { path: '/', element: <Home /> },
 //     {}
@@ -182,10 +183,14 @@ const router = createBrowserRouter([
                 element: <Patients />,
             },
             {
-                path:'/create-patient',
-                element: <CreatePatient />
-            }
-
+                path: '/create-patient',
+                element: <CreatePatient />,
+            },
+            {
+                path: '/patient-profile',
+                element: <PatientProfile />,
+            },
+            {},
         ],
     },
     {

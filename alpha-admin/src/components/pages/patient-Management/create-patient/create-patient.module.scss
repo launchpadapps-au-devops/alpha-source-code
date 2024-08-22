@@ -1,0 +1,82 @@
+@import '../../../../styles/global.scss';
+@import '../../../../styles/color.scss';
+
+.create-team-wrapper {
+  width: 100%;
+  max-width: 1118px;
+  padding: $spacing-2; //16px;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3; //24px;
+  margin: 92px auto;
+  background-color: $color-white;
+  border-radius: $spacing-1; //8px;
+  h2 {
+    font: $type-heading-regular;
+    font-weight: 500;
+    padding: $spacing-1 0;
+    color: $color-medium-black; //#22272b;
+    margin-bottom: $spacing-2; //16px;
+  }
+
+  .form-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-4; //32px;
+    padding: $spacing-3; //24px;
+    border: 1px solid $color-light-grey; //#EBEBEB;
+    border-radius: $spacing-1; //8px;
+  }
+
+  .input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1; //8px;
+  }
+
+  .full-width {
+    grid-column: span 2;
+  }
+
+  .date-of-birth {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-1; //8px;
+  }
+
+  .button-action-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-2; // Adjust as needed (e.g., 20px)
+    padding-top: $spacing-3; // Add spacing above buttons
+  }
+
+  .consent-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px; // Adjust as needed
+    margin-top: $spacing-2;
+
+    .circle-checkbox {
+      flex-shrink: 0;
+    }
+
+    .consent-label-djnin {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    .terms-link {
+      color: #00ACEE; // Primary color
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}
