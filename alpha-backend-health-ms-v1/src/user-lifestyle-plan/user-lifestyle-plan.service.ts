@@ -34,7 +34,7 @@ export class UserLifeStylePlanService {
         const categories = themes.map(theme => theme.categoryId).filter((value, index, self) => self.indexOf(value) === index);
 
         const userCategories: Partial<UserCategory>[] = [];
-        for(const category of categories) {
+        for (const category of categories) {
             userCategories.push({
                 userId: userPlan.userId,
                 categoryId: category,
@@ -114,10 +114,28 @@ export class UserLifeStylePlanService {
             const userLessons = await userLessonService.findUserLessonsByUserThemeIds(userThemes.map(theme => theme.id));
 
             const userDailyLessons = [];
-            for(const userCategory of userCategories) {
+            for (const userCategory of userCategories) {
                 userDailyLessons.push({ userCategory });
-                if(userCategory.isCompleted) continue;
-                
+                if (userCategory.isCompleted) continue;
+
+                const lessonCompletedOnThatDay = userLessons.find((l) => {
+                    const completedDate = new Date(l.completedAt);
+                    const today = new Date();
+
+                    return completedDate.getFullYear() === today.getFullYear() &&
+                        completedDate.getMonth() === today.getMonth() &&
+                        completedDate.getDate() === today.getDate();
+                });
+
+                if (lessonCompletedOnThatDay) {
+                    userDailyLessons[userDailyLessons.length - 1] = {
+                        ...userDailyLessons[userDailyLessons.length - 1],
+                        ...lessonCompletedOnThatDay
+                    };
+
+                    continue;
+                }
+
                 const firstUnCompletedUserTheme = userThemes.find(theme => theme.userCategoryId === userCategory.id && !theme.isCompleted);
                 if (firstUnCompletedUserTheme) {
                     const firstUnCompletedUserLessson = userLessons.find(lesson => lesson.userThemeId === firstUnCompletedUserTheme.id && !lesson.isCompleted);
@@ -131,7 +149,7 @@ export class UserLifeStylePlanService {
             }
 
             return userDailyLessons;
-        } catch (error) { 
+        } catch (error) {
             throw new BadRequestException('User Daily Lesson not found');
         }
     }
@@ -169,7 +187,7 @@ export class UserLifeStylePlanService {
         };
 
         const userLesson = await userLessonService.findUserLessonById(userLessonId);
-        if(!userLesson) {
+        if (!userLesson) {
             throw new BadRequestException('User Lesson not found');
         }
 
@@ -319,6 +337,14 @@ export class UserLifeStylePlanService {
                 isBookmarked: true
             },
         );
+
+        const userCategoryIds = data.data.map((l) => l.userCategoryId);
+        const userCategories = await userCategoryService.findUserCategoryByIds(userCategoryIds);
+        
+        data.data = data.data.map((l) => ({
+            ...l,
+            userCategory: userCategories.find((c) => c.id === l.userCategoryId)
+        }));
 
         return data;
     }
