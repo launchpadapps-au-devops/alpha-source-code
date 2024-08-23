@@ -82,9 +82,7 @@ export class HealthDataService {
         return this.baseHttpService.invoke(
             `${this.healthApiUrl}${this.healthApiPrefix}/health-data/bulk`,
             'POST',
-            {
-                ...data,
-            },
+            data,
             {},
             {
                 'x-request-userId': reqUser.userId
