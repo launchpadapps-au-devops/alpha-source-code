@@ -1,4 +1,4 @@
-import { SURVEY_TYPE, SurveyTypes } from '@launchpadapps-au/alpha-shared';
+import { DataUnits, SURVEY_TYPE, SurveyTypes } from '@launchpadapps-au/alpha-shared';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, IsNumber, IsDate, IsObject } from 'class-validator';
 
@@ -148,7 +148,7 @@ export class CreateUserHealthDataDto {
     @IsNumber()
     value?: number;
 
-    @ApiPropertyOptional({ example: 'bpm', description: 'Unit of the health data value' })
+    @ApiPropertyOptional({ example: 'bpm', description: 'Unit of the health data value', enum: DataUnits })
     @IsOptional()
     @IsString()
     unit?: string;
