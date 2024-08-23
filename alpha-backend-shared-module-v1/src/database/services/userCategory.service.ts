@@ -53,6 +53,7 @@ class UserCategoryService {
   async findUserCategoryByIds(ids: string[]): Promise<UserCategory[]> {
     return UserCategoryService.UserCategoryRepository.find({
       where: { id: In(ids) },
+      relations: ['category'],
     });
   }
 

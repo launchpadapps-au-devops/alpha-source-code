@@ -1,13 +1,13 @@
 export const DATA_UNITS = {
-    'COUNT': 'count',
+    'COUNT': 'COUNT',
     'DISTANCE': 'distance',
-    'CALORIES': 'calories',
+    'CALORIES': 'KILOCALORIE',
 } as const;
 
 export enum DataUnits {
-    COUNT = 'count',
+    COUNT = 'COUNT',
     DISTANCE = 'distance',
-    CALORIES = 'calories',
+    CALORIES = 'KILOCALORIE',
 }
 
 export type DataUnit = typeof DATA_UNITS[keyof typeof DATA_UNITS];

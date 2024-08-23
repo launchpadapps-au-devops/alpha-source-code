@@ -102,7 +102,7 @@ class UserLessonService implements IUserLessonService {
 
     const findOptions: FindManyOptions<UserLesson> = {
       where,
-      relations: ['userTheme', 'lesson'],
+      relations: ['userTheme', 'lesson', 'userCategory', 'userCategory.category'],
       order: {
         [sorting.sortField]: sorting.sortOrder,
       },
