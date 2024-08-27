@@ -128,7 +128,8 @@ export class ThemeController {
         let lessons = [];
         if(payload.lessonData?.length) {
             ({ data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData));
-            if(lessons.length !== payload.lessonData.length) {
+
+            if(lessons?.length !== payload.lessonData.length) {
                 throw new NotFoundException('Some lessons not found');
             }
 
@@ -141,10 +142,10 @@ export class ThemeController {
             )
     
             const lessonIds = lessons.map(l => l.id);
-            const removeLessonIds = existingTheme.data.lessons.filter(l => !lessonIds.includes(l.id)).map((l) => l.id);
+            const removeLessonIds = existingTheme?.data?.lessons?.filter(l => !lessonIds.includes(l.id)).map((l) => l.id) || [];
             const { data: lessonsToRemove = [] } = await this.lessonService.findLessonByIds(removeLessonIds);
     
-            await this.lessonService.bulkUpdateLesson(
+            lessonsToRemove?.length && await this.lessonService.bulkUpdateLesson(
                 lessonsToRemove.map(lesson => ({ ...lesson, themeId: null })),
             )
         }
