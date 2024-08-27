@@ -100,6 +100,16 @@ export const authSlice = createSlice({
         setLoading: (state, action: PayloadAction<boolean>) => {
             state.loading = action.payload;
         },
+        setLoggedOut: (state) => {
+            state.userDetails = {
+                accessToken: '',
+                accessTokenExpiresAt: '',
+                refreshToken: '',
+                refreshTokenExpiresAt: '',
+            };
+            state.loggedIn = false;
+            state.userType = null;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -127,5 +137,5 @@ export const authSlice = createSlice({
 });
 
 // Export the actions and reducer
-export const { initializeUser, setLoading } = authSlice.actions;
+export const { initializeUser, setLoading , setLoggedOut} = authSlice.actions;
 export default authSlice.reducer;

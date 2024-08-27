@@ -6,6 +6,8 @@ import { AppButton } from '../../app-button/app-button';
 import AppButton_module from '../../app-button/app-button.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../top-navigation/navigation-component/profile-menu/logOutAPI';
+import { useDispatch, useSelector } from 'react-redux';
+import { LoginSliceState, setLoggedOut } from '../login/loginSlice';
 
 export interface LogoutProps {
     className?: string;
@@ -15,13 +17,15 @@ export interface LogoutProps {
 
 export const Logout = ({ className, open = false, closeModal }: LogoutProps) => {
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
+   
     const handleLogoutClick = async () => {
         try {
             const response = await logout();
             if (response) {
                 console.log('Logged out successfully');
                 navigate('/');
+                dispatch(setLoggedOut());
             }
         } catch (error) {
             console.error('Error logging out:', error);
