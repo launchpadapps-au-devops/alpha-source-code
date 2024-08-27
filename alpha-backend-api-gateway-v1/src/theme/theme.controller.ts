@@ -142,7 +142,7 @@ export class ThemeController {
             )
     
             const lessonIds = lessons.map(l => l.id);
-            const removeLessonIds = existingTheme?.data?.lessons?.filter(l => !lessonIds.includes(l.id)).map((l) => l.id) || [];
+            const removeLessonIds = existingTheme?.data?.lessons?.filter(l => !lessonIds.includes(l.id))?.map((l) => l.id) || [];
             const { data: lessonsToRemove = [] } = await this.lessonService.findLessonByIds(removeLessonIds);
     
             lessonsToRemove?.length && await this.lessonService.bulkUpdateLesson(
