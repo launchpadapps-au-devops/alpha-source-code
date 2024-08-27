@@ -23,7 +23,9 @@
   cursor: pointer;
 
   &:disabled {
-    opacity: 0.7;
+    background-color: #cdd3d6;
+    cursor: auto;
+    // opacity: 0.7;
   }
 
   &.button-outlined {

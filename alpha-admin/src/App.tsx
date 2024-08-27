@@ -33,11 +33,19 @@ import { ViewLifeStyle } from './components/pages/lifestyle-plan/components/view
 import { CreateLifestyle } from './components/pages/lifestyle-plan/components/create-lifestyle/createLifestyle';
 import { DailyTips } from './components/pages/content/dailytips/dailyTips';
 import { CreateDailyTips } from './components/pages/content/dailytips/createdailytips/createDailyTip';
+import { PatientDashboard } from './components/pages/patient-platform/patient-dashboard/patient-dashboard';
+import { Nutrition } from './components/pages/patient-platform/nutrition/nutrition';
+import { Activity } from './components/pages/patient-platform/activity/activity';
+import { SleepAnalysis } from './components/pages/patient-platform/sleep-analysis/sleep-analysis';
+import { Assessments } from './components/pages/patient-platform/assessments/assessments';
 import { Patients } from './components/pages/patient-Management/view-patients/patients';
 import { CreatePatient } from './components/pages/patient-Management/create-patient/create-patient';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { PatientProfile } from './components/pages/patient-Management/patient-profile/patient-profile';
+import ToastContainer from 'react-bootstrap/esm/ToastContainer';
+
+import 'react-toastify/dist/ReactToastify.css';
+import { PatientLifeStyle } from './components/pages/patient-platform/patient-lifestyle-plan/patient-lifestyle-plan';
+
 // const router = createBrowserRouter([
 //     { path: '/', element: <Home /> },
 //     {}
@@ -177,6 +185,32 @@ const router = createBrowserRouter([
             {
                 path: '/lifestyle-plan/edit/:id',
                 element: <CreateLifestyle />,
+            },
+
+            {
+                path: '/patient-dashboard',
+                element: <PatientDashboard />,
+            },
+            {
+                path: '/patient-dashboard/nutrition',
+                element: <Nutrition />,
+            },
+            {
+                path: '/patient-dashboard/activity',
+                element: <Activity />,
+            },
+            {
+                path: '/patient-dashboard/sleep-analysis',
+                element: <SleepAnalysis />,
+            },
+            {
+                path: '/patient-dashboard/assessments',
+                element: <Assessments />,
+            },
+
+            {
+                path: '/patient-dashboard/patient-lifestyle-plan',
+                element: <PatientLifeStyle />,
             },
             {
                 path: '/patients',

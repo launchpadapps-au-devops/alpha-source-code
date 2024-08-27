@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { login } from "./loginAPI";
+import axios from "axios";
+import { login } from "./loginAPI";  // Assuming this is the login function you've implemented to call the login API
+import { config } from "../../../config/config";
 
 export interface UserDetails {
     accessToken: string;
@@ -17,6 +19,7 @@ export interface LoginSliceState {
     loggedIn: boolean;
     loading: boolean;
     error: string | null;
+    userType: string | null;  // Added userType to the state
 }
 
 const initialState: LoginSliceState = {
@@ -32,27 +35,49 @@ const initialState: LoginSliceState = {
     accessToken: "",
     refreshTokenExpiresAt: "",
     refreshToken: "",
-    accessTokenExpiresAt: ""
+    accessTokenExpiresAt: "",
+    userType: null  // Initialize userType as null
 };
 
+// Thunk for logging in and fetching user profile
 export const loginThunk = createAsyncThunk(
     'auth/login',
     async (userData: { userEmail: string; password: string }, { rejectWithValue }) => {
         try {
+            // First, call the login API
             const response = await login(userData.userEmail, userData.password);
-            console.log(response.data, "response.data")
+            console.log(response.data, "response.data");
+
+            // Save tokens in local storage
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('accessTokenExpiresAt', response.data.accessTokenExpiresAt);
             localStorage.setItem('refreshToken', response.data.refreshToken);
             localStorage.setItem('refreshTokenExpiresAt', response.data.refreshTokenExpiresAt);
 
-            return response.data;
+            // Get access token for the next API call
+            const accessToken = response.data.accessToken;
+
+            // Second, call the profile API to fetch user details
+            const profileResponse = await axios.get( `${config.BASE_URL}/gateway/v1/staff/my-profile`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`, // Pass the access token in the header
+                    'accept': 'application/json',
+                },
+            });
+
+            // Extract userType from profile response
+            const { userType } = profileResponse.data.data;
+
+            // Return the combined response data (tokens and userType)
+            return { ...response.data, userType };
+
         } catch (error: any) {
             return rejectWithValue(error.message);
         }
     }
 );
 
+// Create the auth slice
 export const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -83,10 +108,16 @@ export const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(loginThunk.fulfilled, (state, action) => {
-               // state.userDetails = action.payload;
+                state.userDetails = {
+                    accessToken: action.payload.accessToken,
+                    accessTokenExpiresAt: action.payload.accessTokenExpiresAt,
+                    refreshToken: action.payload.refreshToken,
+                    refreshTokenExpiresAt: action.payload.refreshTokenExpiresAt,
+                };
                 state.loggedIn = true;
                 state.loading = false;
                 state.error = null;
+                state.userType = action.payload.userType; // Save userType to the state
             })
             .addCase(loginThunk.rejected, (state, action) => {
                 state.loading = false;
@@ -95,5 +126,6 @@ export const authSlice = createSlice({
     }
 });
 
+// Export the actions and reducer
 export const { initializeUser, setLoading } = authSlice.actions;
 export default authSlice.reducer;

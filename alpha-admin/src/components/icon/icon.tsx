@@ -24,7 +24,7 @@ import { ExclamationMark } from './glyps/warning';
 import { Upload } from './glyps/upload';
 import { Search } from './glyps/search';
 import { Vector } from './glyps/vector';
-
+import { DeleteWhite } from './glyps/delete-white';
 
 const glyphs = {
     add: <Add />,
@@ -35,6 +35,7 @@ const glyphs = {
     notePad: <NotePad />,
     graph: <Graph />,
     dashboard: <Dashboard />,
+    deleteWhite: <DeleteWhite />,
     user: <User />,
     keyboardArrowDown: <KeyboardArrowDown />,
     settings: <Settings />,
@@ -45,12 +46,11 @@ const glyphs = {
     key: <Key />,
     article: <Article />,
     shield: <Shield />,
-    delete: <Delete/>,
-    warning: <ExclamationMark/>,
+    delete: <Delete />,
+    warning: <ExclamationMark />,
     upload: <Upload />,
     search: <Search />,
     vector: <Vector />,
-
 };
 
 export type Glyph = keyof typeof glyphs;

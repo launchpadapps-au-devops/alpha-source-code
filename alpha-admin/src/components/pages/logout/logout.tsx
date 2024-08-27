@@ -5,6 +5,7 @@ import { Icon } from '../../icon/icon';
 import { AppButton } from '../../app-button/app-button';
 import AppButton_module from '../../app-button/app-button.module.scss';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../top-navigation/navigation-component/profile-menu/logOutAPI';
 
 export interface LogoutProps {
     className?: string;
@@ -14,9 +15,20 @@ export interface LogoutProps {
 
 export const Logout = ({ className, open = false, closeModal }: LogoutProps) => {
     const navigate = useNavigate();
-    const handlelogout = () => {
-        navigate('/login');
+
+    const handleLogoutClick = async () => {
+        try {
+            const response = await logout();
+            if (response) {
+                console.log('Logged out successfully');
+                navigate('/');
+            }
+        } catch (error) {
+            console.error('Error logging out:', error);
+            // Optionally handle the error (e.g., show an error message to the user)
+        }
     };
+
     return (
         <>
             <CustomDialog
@@ -49,7 +61,7 @@ export const Logout = ({ className, open = false, closeModal }: LogoutProps) => 
                                 buttonText="Yes, log out"
                                 showLeftIcon={false}
                                 showRightIcon={false}
-                                onButtonClick={handlelogout}
+                                onButtonClick={handleLogoutClick}
                             />
                         </div>
                     </div>

@@ -1,0 +1,23 @@
+@import '../../styles/global.scss';
+
+.empty-charts-wrapper {
+  max-width: 342px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  svg {
+    margin-bottom: 20px;
+  }
+  span {
+    font: $type-text-medium; //18/22
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  p {
+    font: $type-text-small; //14/20
+    text-align: center;
+  }
+}

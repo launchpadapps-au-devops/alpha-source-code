@@ -1,0 +1,38 @@
+@import '../../../../../styles/global.scss';
+.legends-data {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.legend-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  .ellipse {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+  }
+  .label-wrap {
+    display: flex;
+    flex-direction: column;
+    span {
+      font: $type-text-small; // 14
+      line-height: 1;
+      &:nth-child(1) {
+        font-weight: 600;
+        color: #333;
+      }
+      &:nth-child(2) {
+        font-weight: 400;
+        color: #495054;
+      }
+    }
+  }
+}

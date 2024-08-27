@@ -1,0 +1,11 @@
+@import '../../../../../styles/global.scss';
+
+.badge-wrapper {
+  padding: 8px;
+  font: $type-text-regular;
+  font-weight: 500;
+  text-align: center;
+  color: $color-blue-500; // #00acee
+  background: $color-sky-blue; // #e6f7fd;
+  border-radius: 6px;
+}

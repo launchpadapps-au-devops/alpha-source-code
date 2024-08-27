@@ -1,0 +1,45 @@
+@import '../../../../styles/global.scss';
+
+.nutrition-wrapper {
+  margin: 0 64px;
+  // flex: 1;
+
+  padding: 32px;
+  border: 1px solid $color-light-grey; //#ebebeb;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: $color-medium-black;
+  h1 {
+    font: $type-text-large; //20/25
+    color: $color-medium-black; // #22272b;
+    font-weight: 500;
+  }
+  .label-text {
+    font: $type-text-medium; //18/22
+  }
+  .data-value {
+    color: #22272b;
+    font: $type-text-regular; //16/22
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 12px;
+    gap: 4px;
+    span {
+      font: inherit;
+    }
+    span:nth-child(1) {
+      font: $type-heading-large; // 32/41
+      font-weight: 500;
+      margin-right: 8px;
+    }
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 20px;
+    column-gap: 20px;
+  }
+}

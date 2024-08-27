@@ -9,6 +9,9 @@ import { Divider } from '../divider/divider';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Logout } from '../../../pages/logout/logout';
+import { logout } from './logOutAPI';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../app/store';
 
 
 export interface ProfileMenuProps {
@@ -39,6 +42,8 @@ export const ProfileMenu = ({ className }: ProfileMenuProps) => {
         setModalOpen(false);
     };
 
+    const { userType } = useSelector((state: RootState) => state.login);
+
     return <div className={classNames(styles.root, className)}>
         <button
             className={classNames(styles['account-button'], open ? styles['active'] : '')}
@@ -51,7 +56,7 @@ export const ProfileMenu = ({ className }: ProfileMenuProps) => {
             <Avatar className={styles['avatar-wrap']}>OP</Avatar>
             <div className={styles['profile-detail']}>
                 <span>Alpha user</span>
-                <span>Admin</span>
+                {userType === 'admin' ? <span>Admin</span> : <span>Staff</span>}
             </div>
             <Icon glyph="keyboardArrowDown" width={20} height={20} />
         </button>
@@ -106,7 +111,7 @@ export const ProfileMenu = ({ className }: ProfileMenuProps) => {
                 onClick={handleModalOpen}
             >
                 <div className={styles['menu-item']}>
-                    <Icon glyph="logout" width={18} height={18} currentColor="currentColor" />
+                    <Icon  glyph="logout" width={18} height={18} currentColor="currentColor" />
                     <span>Logout</span>
                 </div>
             </MenuItem>

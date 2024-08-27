@@ -10,11 +10,24 @@ export interface AppButtonProps {
     showLeftIcon?: boolean;
     showRightIcon?: boolean;
     icon?: Glyph;
-    isDeleteButton?: boolean; // Add this prop
+    isDeleteButton?: boolean;
+    [x: string]: any;
 }
 
 export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
-    ({ className, buttonText, onButtonClick, showLeftIcon, showRightIcon, icon, isDeleteButton, ...props }, ref) => {
+    (
+        {
+            className,
+            buttonText,
+            onButtonClick,
+            showLeftIcon,
+            showRightIcon,
+            icon,
+            isDeleteButton,
+            ...props
+        },
+        ref
+    ) => {
         return (
             <button
                 {...props}
