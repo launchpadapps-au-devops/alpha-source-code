@@ -10,6 +10,7 @@ import { HealthDataModule } from './health-data/health-data.module';
 import { UserLifeStylePlanModule } from './user-lifestyle-plan/user-lifestyle-plan.module';
 import { UserDailyHabitsModule } from './user-daily-habits/user-daily-habits.module';
 import { UserMealModule } from './user-meal/user-meal.module';
+import { DataAnalyticModule } from './data-analytics/data-analytics.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UserMealModule } from './user-meal/user-meal.module';
     UserLifeStylePlanModule, 
     UserDailyHabitsModule,
     UserMealModule,
+    DataAnalyticModule
   ],
   controllers: [AppController],
   providers: [
