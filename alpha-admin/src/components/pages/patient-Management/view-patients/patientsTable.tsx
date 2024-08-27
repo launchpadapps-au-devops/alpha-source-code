@@ -18,7 +18,6 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
     // Directly accessing the patients array from state.patients
     const patients = useSelector((state: RootState) => state.patients.patients.patients);
 
-
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
@@ -27,12 +26,12 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
     }, [dispatch]);
 
     const handleEditClick = (patientId: string) => {
-        navigate(`/patient/profile/${patientId}`);
+        navigate(`/patient-profile`);
     };
 
     return (
         <>
-            <table className={classNames(styles['key-contacts-table'])}>
+            <table className={classNames(styles['key-contacts-table'], className)}>
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -44,8 +43,8 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                 </thead>
                 <tbody>
                     {patients.map((patient: Patient, index: number) => (
-                        <tr key={index}>
-                            <td >
+                        <tr key={index} onClick={() => handleEditClick(patient.id)} className={styles['clickable-row']}>
+                            <td>
                                 <div className={styles['flex-table-column']}>
                                     <Avatar
                                         className={styles['profile-image']}
@@ -64,7 +63,7 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                 </tbody>
             </table>
             <Pagination
-                count={10} 
+                count={10}
                 showFirstButton 
                 showLastButton
                 sx={{

@@ -4,6 +4,7 @@ import Avatar from '@mui/material/Avatar';
 import { useNavigate, useParams } from 'react-router-dom';
 import React from 'react';
 import { AppButton } from '../../../app-button/app-button';
+import { SidebarPatient } from '../patient-sidebar/patientSidebar';
 
 export interface PatientProfileProps {
     className?: string;
@@ -55,6 +56,8 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
     };
 
     return (
+        <>
+        <SidebarPatient/>
         <div className={classNames(styles['care-team-profile'], className)}>
             <div className={styles['top-header-block']}>
                 <h2>Patient Profile</h2>
@@ -120,5 +123,6 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
                 </div>
             </div>
         </div>
+        </>
     );
 };

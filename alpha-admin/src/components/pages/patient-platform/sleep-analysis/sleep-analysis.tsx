@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import styles from './sleep-analysis.module.scss';
 import { EmptyComponent } from '../../../empty-state-component/empty-component';
 import { useState } from 'react';
+import { SidebarPatient } from '../../patient-Management/patient-sidebar/patientSidebar';
 
 export interface SleepAnalysisProps {
     className?: string;
@@ -16,9 +17,12 @@ export const SleepAnalysis = ({ className }: SleepAnalysisProps) => {
         : 'The patient has not yet completed any sleep logging. They can easily log their sleep patterns through the patient app. Once completed, the sleep analysis data will be available here.';
 
     return (
+        <>
+        <SidebarPatient/>
         <div className={classNames(styles['sleep-analysis-wrapper'], className)}>
             <h1>Sleep analysis</h1>
             <EmptyComponent title={title} description={description} isComingSoon={isComingSoon} />
         </div>
+        </>
     );
 };

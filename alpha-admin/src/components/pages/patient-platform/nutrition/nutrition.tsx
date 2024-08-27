@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import styles from './nutrition.module.scss';
 import { DataCard } from '../../../data-card/data-card';
 import { EmptyComponent } from '../../../empty-state-component/empty-component';
+import { SidebarPatient } from '../../patient-Management/patient-sidebar/patientSidebar';
 
 export interface NutritionProps {
     className?: string;
@@ -9,6 +10,8 @@ export interface NutritionProps {
 
 export const Nutrition = ({ className }: NutritionProps) => {
     return (
+        <>
+        <SidebarPatient/>
         <div className={classNames(styles['nutrition-wrapper'], className)}>
             <h1>Nutrition</h1>
             <div className={styles['grid-layout']}>
@@ -62,5 +65,6 @@ They can easily log their food intake through the patient app.
 Once completed, the food logging will be available here."
             /> */}
         </div>
+        </>
     );
 };

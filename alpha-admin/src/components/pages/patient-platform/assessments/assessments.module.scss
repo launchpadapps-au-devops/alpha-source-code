@@ -4,12 +4,17 @@
   margin: 0 64px;
   min-height: 80vh;
   padding: 32px;
+  margin-top: 50px;
+  margin-right: 100px;
+  margin-left: 350px;
+  margin-bottom: 50px;
   border: 1px solid $color-light-grey; //#ebebeb;
   background: #fff;
   display: flex;
   flex-direction: column;
   gap: 20px;
   color: $color-medium-black;
+
   .stretched-tabs {
     > div {
       flex: 1;
@@ -19,18 +24,22 @@
   .tab-panel {
     display: flex;
     flex-direction: column;
-    height: 62vh;
-    overflow-y: auto;
+    /* Removed the height property to allow natural content expansion */
+    overflow-y: visible; /* Changed from auto to visible to prevent scrolling */
+    flex-grow: 1; /* This ensures the panel grows with the content */
+
     &.stretch-box {
       flex: 1;
       height: auto;
     }
+
     .assessment-list {
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
   }
+
   h1 {
     font: $type-text-large; //20/25
     color: $color-medium-black; // #22272b;
