@@ -22,6 +22,7 @@ export class StaffService {
                     id: permission.id,
                     name: permission.name,
                 })) : [],
+            userType: staff.userType
         });
     }
 
