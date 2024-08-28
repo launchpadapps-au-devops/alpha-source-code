@@ -113,7 +113,7 @@ spec:
         app: alpha-admin-deployment
     spec:
       containers:
-      - image: alphadev.azurecr.io/alpha-admin@sha256:a728bd789c6155adefb7764cf80741a4bf53366b7647770e06439dfb399a8ecf
+      - image: alphadev.azurecr.io/alpha-admin@sha256:81f4759e39b1c53206b8df218cc700da7412d532d9b9acb315e35606e7c978d6
         imagePullPolicy: IfNotPresent
         name: alpha-admin-container
         ports:
@@ -215,7 +215,7 @@ spec:
           value: http://alpha-backend-notification-ms-v1-service:3002
         - name: NOTFICATION_SERVICE_API_PREFIX
           value: /api/notification-ms/v1
-        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:d60f5e3c0fbe0f4076e0f6252c431b24206e27745f39f0cd3eb5ce51b07d3882
+        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:b439fcc5b13f34d48d10350ee75279a8167bea6d5ea4a8ad7301e9579af87850
         imagePullPolicy: IfNotPresent
         name: alpha-backend-api-gateway-v1-container
         ports:
@@ -484,7 +484,7 @@ spec:
           value: Aster Admin
         - name: SENDGRID_FROM_EMAIL
           value: admin@astercircular.co
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:d8abcc725d74a69a3b42ebab3e34e31a16fd7945db5d1dfb1340f24434c62f22
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:1f226966523a4a05f7f26edf4f62cc252e46226923eabbf81a640bc36d13cb56
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -572,7 +572,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: user_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:27d09f6b9f8713bf2e6df2f22e2eca36f56526b5cf2838abdf2a85b3e4823715
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:80a21eed697e683032c4317152923a723454d038bfb6e8a401cd60b5743e6860
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
