@@ -18,6 +18,7 @@ import { UnpublishLessonModal } from '../unpublish-lesson-modal/unpublishLessonM
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchLessonsThunk, updateLessonThunk } from '../lessonsSlice';
 import CategoryItem from '../../../categories/category-component/categoryItem/categoryItem';
+import TableFooter from '../../../content-components/table-footer/TableFooter';
 
 // Define the Lesson type
 type Lesson = {
@@ -51,6 +52,14 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
         setCurrentPage(page);
+    };
+
+    const handleNextPage = () => {
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    };
+
+    const handlePreviousPage = () => {
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
     };
 
     const handleToggle = (lesson: Lesson, index: number) => {
@@ -122,11 +131,11 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Lesson Code</TableCell>
-                            <TableCell>Lesson Name</TableCell>
-                            <TableCell>Date Created</TableCell>
-                            <TableCell>Quiz</TableCell>
-                            <TableCell>Published</TableCell>
+                            <TableCell className={styles.themecode}>Lesson Code</TableCell>
+                            <TableCell className={styles.themename}>Lesson Name</TableCell>
+                            <TableCell className={styles.themedate}>Date Created</TableCell>
+                            <TableCell className={styles.themehabit}>Quiz</TableCell>
+                            <TableCell className={styles.themepublished}>Published</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -164,12 +173,11 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
                 </Table>
             </TableContainer>
             <div className={styles.pagination}>
-                <Pagination
-                    count={totalPages}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    showFirstButton
-                    showLastButton
+                <TableFooter
+                    onNextPage={handleNextPage}
+                    onPreviousPage={handlePreviousPage}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
                 />
             </div>
             {openPublishModal && selectedThemeIndex !== null && (

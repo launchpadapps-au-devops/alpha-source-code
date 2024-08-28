@@ -13,6 +13,7 @@ import {
 } from '../categorySlice';
 import { useAppSelector, useAppDispatch } from '../../../../../../app/hooks';
 import { useLocation } from 'react-router-dom';
+import { DeleteCategoryModal } from '../../../content-components/delete-category-modal/DeleteCategoryModal';
 
 interface Category {
     id: number;
@@ -27,10 +28,7 @@ const CategoryList: React.FC = () => {
     const dispatch = useAppDispatch();
 
     const location = useLocation();
-
-    console.log('location', location.pathname); // Logs the current path, e.g., "/about"
-    console.log(location.search); // Logs the query string, e.g., "?name=harshavardhan"
-    console.log(location.hash);
+    const [openModal, setOpenModal] = useState(false);
 
     useEffect(() => {
         // Fetch categories
@@ -50,14 +48,12 @@ const CategoryList: React.FC = () => {
     const handleSaveAndAddMoreClick = (category: any) => {
         const updatedCategory = { ...category, name: editName }; // Create a shallow copy and update the name
         dispatch(updateCategoryThunk({ id: updatedCategory.id, data: updatedCategory }));
-        // Keep the edit mode active and clear the edit name field for the user to add a new one
         setEditName('');
     };
 
     const handleSaveClick = (category: any) => {
         const updatedCategory = { ...category, name: editName }; // Create a shallow copy and update the name
         dispatch(updateCategoryThunk({ id: updatedCategory.id, data: updatedCategory }));
-        // Exit the edit mode and clear the edit name field
         setEditId(null);
         setEditName('');
     };
@@ -68,10 +64,13 @@ const CategoryList: React.FC = () => {
         setNewCategoryName('');
     };
 
-    const handleDeleteClick = (id: number) => {
-        dispatch(deleteCategoryThunk({ id, name: editName }));
-        setEditId(null);
-        setEditName('');
+    const handleDeleteClick = (id: number | null) => {
+        if (id !== null) {
+            dispatch(deleteCategoryThunk({ id, name: editName }));
+            setEditId(null);
+            setEditName('');
+        }
+        setOpenModal(false);
     };
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +86,10 @@ const CategoryList: React.FC = () => {
 
     const handlePreviousPage = () => {
         setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
     };
 
     return (
@@ -109,20 +112,12 @@ const CategoryList: React.FC = () => {
                                     value={newCategoryName}
                                     onChange={(e) => setNewCategoryName(e.target.value)}
                                 />
-                              
-                                    {/* <AppButton
-                                                        buttonText="Save & add more"
-                                                        onButtonClick={() =>
-                                                            handleSaveAndAddMoreClick(category)
-                                                        }
-                                                    /> */}
                                     <AppButton
                                         buttonText="Add"
-                                        onButtonClick={() => handleNewCategory()}
+                                        onButtonClick={handleNewCategory}
                                     />
                                 </div>
                             </td>
-
                         </tr>
                     )}
                     {categories &&
@@ -148,12 +143,6 @@ const CategoryList: React.FC = () => {
                                                     onChange={handleNameChange}
                                                 />
                                                 <div className={styles.buttonContainer}>
-                                                    {/* <AppButton
-                                                        buttonText="Save & add more"
-                                                        onButtonClick={() =>
-                                                            handleSaveAndAddMoreClick(category)
-                                                        }
-                                                    /> */}
                                                     <EditButton
                                                         className={styles.smallButton}
                                                         buttonText="Save"
@@ -165,9 +154,7 @@ const CategoryList: React.FC = () => {
                                                     <DeleteButton
                                                         className={styles.smallButton}
                                                         buttonText="Delete"
-                                                        onButtonClick={() =>
-                                                            handleDeleteClick(category.id)
-                                                        }
+                                                        onButtonClick={() => setOpenModal(true)}
                                                     />
                                                 </div>
                                             </div>
@@ -194,6 +181,29 @@ const CategoryList: React.FC = () => {
                     totalPages={totalPages}
                 />
             </div>
+            {openModal && (
+                <DeleteCategoryModal
+                    open={openModal}
+                    descriptionText={
+                        <>
+                            <p>Are you sure you wish to delete this Category?</p> <br />
+                            <p>
+                                If you delete this Category, all Themes and Lessons tagged to it
+                                will lose their tags.
+                            </p><br />
+                            <p>
+                                However, the Lessons and Themes will remain available under
+                                ‘Lessons’ and ‘Themes’.
+                            </p>
+                        </>
+                    }
+                    title="Delete category"
+                    closeModal={handleCloseModal}
+                    cancelButtonText="Cancel"
+                    deleteButtonText="Yes, delete category"
+                    handleDelete={() => handleDeleteClick(editId)}  // Pass handleDeleteClick here
+                />
+            )}
         </div>
     );
 };

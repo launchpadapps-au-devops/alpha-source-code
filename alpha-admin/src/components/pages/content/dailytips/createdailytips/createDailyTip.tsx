@@ -4,7 +4,7 @@ import styles from './createDailyTip.module.scss';
 import { AppButton } from '../../../../app-button/app-button';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../content-components/sidebar/Sidebar';
-import { useEffect, useRef, useState } from 'react';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../../app/hooks';
 import { addTipThunk, fetchTipsThunk } from '../viewTipsSlice';
 import { EditButton } from '../../content-components/edit-button/edit-button';
@@ -55,6 +55,7 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
 
     const [newDailyTip, setnewDailyTip] = useState(false);
     const [newDailytipName, setNewDailytipName] = useState('');
+    const [newDailytipDay, setNewDailytipDay] = useState('');
 
     const handleEditClick = (tipId: number, content: string) => {
         setIsEditable(true);
@@ -78,7 +79,7 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
         }
 
         // Construct the updated tip data with all required fields
-        const updatedTipData: Tip = {
+        const updatedTipData: any = {
             ...updatedTip,
             content: editContent,
             // Include default or computed values for required fields
@@ -87,9 +88,14 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
         };
 
         console.log('Updated Tip Data:', updatedTipData);
-
+        const newUpdatedValue = {
+            
+                content: editContent
+                // day: updatedTip.day,
+            
+        };
         // Dispatch the updated single tip object
-        dispatch(addTipThunk(updatedTipData));
+        dispatch(addTipThunk(newUpdatedValue));
         dispatch(fetchTipsThunk());
 
         setEditTipId(null);
@@ -133,19 +139,20 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
         dispatch(
             addTipThunk({
                 content: newDailytipName,
-                day: undefined,
-                id: 0,
-                status: '',
-                tip: '',
-                version: 0,
-                createdAt: '',
-                updatedAt: '',
-                date: '',
+                day: newDailytipDay,
             })
         );
         setnewDailyTip(false);
         setNewDailytipName('');
     };
+
+    useEffect(() => {
+        setnewDailyTip(true);
+    }, []);
+
+    function handleSaveAndAddMoreClick(tips: any): void {
+        throw new Error('Function not implemented.');
+    }
 
     return (
         <div className={classNames(styles.container, className)}>
@@ -168,32 +175,45 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
                         <span className={styles.headerText}>Day</span>
                         <span className={styles.headerText}>Daily tips</span>
                     </div>
-                    <div className={styles.newTip}>
-                        {newDailyTip && (
+                       
+                    <List>
+                    {newDailyTip && (
                             <tr>
                                 <td>
                                     <div className={styles.categoryCell}>
                                         <input
                                             type="text"
-                                            className={styles.editInput}
+                                            className={styles.contentInput1}
+                                            value={newDailytipDay}
+                                            onChange={(e: { target: { value: SetStateAction<string>; }; }) => setNewDailytipDay(e.target.value)}
+                                        />
+                                        <input
+                                            type="text"
+                                            className={styles.contentInput}
                                             value={newDailytipName}
                                             onChange={(e) => setNewDailytipName(e.target.value)}
                                         />
 
-                                        {/* <AppButton
-                                        buttonText="Save & add more"
-                                        onButtonClick={() => handleSaveAndAddMoreClick(tips)}
-                                    /> */}
                                         <AppButton
-                                            buttonText="Add"
+                                        buttonText="Save & add more"
+                                        className={styles.button}
+                                        onButtonClick={() => handleSaveAndAddMoreClick(tips)}
+                                    />
+                                        <EditButton
+                                            buttonText="Save"
+                                            className={styles.button}
                                             onButtonClick={() => handleNewDailyTip()}
+                                        />
+                                        <DeleteButton
+                                            buttonText="Delete"
+                                            className={styles.button}
+                                            onButtonClick={() => setnewDailyTip(false)}
                                         />
                                     </div>
                                 </td>
                             </tr>
                         )}
-                    </div>
-                    <List>
+                    
                         {tips &&
                             tips.length > 0 &&
                             tips

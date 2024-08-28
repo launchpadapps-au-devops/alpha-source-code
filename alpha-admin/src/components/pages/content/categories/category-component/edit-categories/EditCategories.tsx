@@ -47,13 +47,13 @@ export const EditCategories = ({ className }: EditContentProps) => {
                         <DeleteButton showLeftIcon onButtonClick={handleDeleteModal} />
                         <EditButton
                             buttonText="Cancel"
-                            onButtonClick={() => navigate('/content/lessons')}
+                            onButtonClick={() => navigate('/content/categories')}
                         />
                     </div>
                     <div className={styles.rightButtonContainer}>
                         <AppButton
                             buttonText="Save updates"
-                            onButtonClick={() => navigate('/content/lessons')}
+                            onButtonClick={() => navigate('/content/categories')}
                         />
                     </div>
                 </header>
@@ -62,9 +62,19 @@ export const EditCategories = ({ className }: EditContentProps) => {
             {openModal && (
                 <DeleteCategoryModal
                     open={openModal}
-                    descriptionText="Are you sure you wish to delete this Category?
-                    If you delete this Category, all Themes and Lessons tagged to it will lose their tags.
-                    However, the Lessons and Themes will remain available under ‘Lessons’ and ‘Themes’."
+                    descriptionText={
+                        <>
+                            <p>Are you sure you wish to delete this Category?</p> <br />
+                            <p>
+                                If you delete this Category, all Themes and Lessons tagged to it
+                                will lose their tags.
+                            </p><br />
+                            <p>
+                                However, the Lessons and Themes will remain available under
+                                ‘Lessons’ and ‘Themes’.
+                            </p>
+                        </>
+                    }
                     title="Delete category"
                     closeModal={handleCloseModal}
                     cancelButtonText="Cancel" // Custom cancel button text

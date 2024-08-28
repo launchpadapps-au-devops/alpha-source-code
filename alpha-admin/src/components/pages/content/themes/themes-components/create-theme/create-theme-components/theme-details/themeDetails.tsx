@@ -31,7 +31,7 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
             <div className={styles.formGroup}>
                 <label htmlFor="themeCode">Theme code</label>
                 <input
-                    type="text"
+                    type="number"
                     id="themeCode"
                     value={data.themeData.themeCode}
                     onChange={(e) => {
@@ -39,7 +39,7 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                             ...data,
                             themeData: {
                                 ...data.themeData,
-                                themeCode: parseInt(e.target.value, 10),
+                                themeCode: e.target.value,
                             },
                         });
                     }}

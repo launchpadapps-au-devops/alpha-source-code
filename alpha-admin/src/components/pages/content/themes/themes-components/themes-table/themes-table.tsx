@@ -9,6 +9,7 @@ import {
     Paper,
     Switch,
     Pagination,
+    Checkbox,
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import classNames from 'classnames';
@@ -18,24 +19,41 @@ import { PublishThemesModal } from '../publish-theme-modal/PublisThemeModal';
 import { LessonSidebar, Lesson } from '../lessonsidebar/lessonSidebar';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchThemesThunk, updateThemeThunk } from '../themeSlice';
+import TableFooter from '../../../content-components/table-footer/TableFooter';
 
 export interface ThemesTableProps {
     themes: any;
     setThemes: any;
+    onUpdateThemes: (updatedLessons: Lesson[]) => void;
+    showSelectColumn?: boolean;
 }
 
-export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) => {
+export const ThemesTable: React.FC<ThemesTableProps> = ({
+    themes,
+    setThemes,
+    onUpdateThemes,
+    showSelectColumn = false,
+}) => {
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openModal, setOpenModal] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedLessons, setSelectedLessons] = useState<any>([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const itemsPerPage = 10;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
         setCurrentPage(page);
+    };
+
+    const handleNextPage = () => {
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    };
+
+    const handlePreviousPage = () => {
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
     };
 
     const handleToggle = (theme: any, index: number) => {
@@ -90,6 +108,14 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) =
         setOpenModal(false);
     };
 
+    const handleCheckboxChange = (theme: any, index: number) => {
+        const updatedThemes = [...themes];
+        updatedThemes[index].select = !updatedThemes[index].select;
+        setThemes(updatedThemes);
+        onUpdateThemes(theme);
+        localStorage.setItem('selectedThemes', JSON.stringify(updatedThemes));
+    };
+
     const handleViewLessons = (event: React.MouseEvent, lessons: any) => {
         event.stopPropagation();
         setSelectedLessons(lessons);
@@ -136,10 +162,16 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) =
                         >
                             <TableCell className={styles['theme-code']}>Theme code</TableCell>
                             <TableCell className={styles['theme-name']}>Theme name</TableCell>
+                            {showSelectColumn && (
+                                <TableCell className={styles['theme-date']}>Category</TableCell>
+                            )}
                             <TableCell className={styles['theme-date']}>Date created</TableCell>
                             <TableCell className={styles['theme-habit']}>Habit</TableCell>
                             <TableCell className={styles['theme-published']}>Published</TableCell>
                             <TableCell className={styles['theme-lessons']}>Lessons</TableCell>
+                            {showSelectColumn && (
+                                <TableCell className={styles['theme-lessons']}>Select</TableCell>
+                            )}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -153,9 +185,14 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) =
                                     {theme.themeCode}
                                 </TableCell>
                                 <TableCell className={styles['theme-name']}>{theme.name}</TableCell>
+                                {showSelectColumn && (
+                                    <TableCell className={styles['theme-date']}>
+                                        {theme.category.name}
+                                    </TableCell>
+                                )}
                                 <TableCell>{formatDate(theme.createdAt)}</TableCell>
                                 <TableCell>
-                                    {theme.habit ? <CheckCircleOutlineIcon /> : ''}
+                                    {theme.habits ? <CheckCircleOutlineIcon /> : ''}
                                 </TableCell>
                                 <TableCell onClick={(event) => event.stopPropagation()}>
                                     <Switch
@@ -171,18 +208,25 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({ themes, setThemes }) =
                                         View lessons
                                     </a>
                                 </TableCell>
+                                {showSelectColumn && (
+                                    <TableCell>
+                                        <Checkbox
+                                            checked={theme.select}
+                                            onChange={() => handleCheckboxChange(theme, index)}
+                                        />
+                                    </TableCell>
+                                )}
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
             <div className={styles.pagination}>
-                <Pagination
-                    count={Math.ceil(themes.length / itemsPerPage)}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    showFirstButton
-                    showLastButton
+                <TableFooter
+                    onNextPage={handleNextPage}
+                    onPreviousPage={handlePreviousPage}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
                 />
             </div>
             {openModal &&

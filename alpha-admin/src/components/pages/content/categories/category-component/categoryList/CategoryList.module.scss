@@ -77,12 +77,15 @@
 
     .pagination {
         display: flex;
-        justify-content: flex-end;
+        height: 60px;
+        padding: 10px 16px;
+        justify-content: space-between;
         align-items: center;
+        align-self: stretch;
 
         span,
         .nextButton {
-            margin: 0 500px;
+            margin: 0 410px;
             padding: 10px 24px;
             cursor: pointer;
         }

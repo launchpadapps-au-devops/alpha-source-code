@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { addTipThunk, fetchTipsThunk } from './viewTipsSlice';
 import { DeleteButton } from '../content-components/delete-button/delete-button';
+import TableFooter from '../content-components/table-footer/TableFooter';
 
 export interface ContentProps {
     className?: string;
@@ -43,6 +44,17 @@ export const DailyTips = ({ className }: ContentProps) => {
     const [editTipId, setEditTipId] = useState<number | null>(null);
     const [editContent, setEditContent] = useState('');
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const totalPages = 10;
+
+    const handleNextPage = () => {
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    };
+
+    const handlePreviousPage = () => {
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    };
+
     const handleEditClick = (tipId: number, content: string) => {
         setIsEditable(true);
         setEditTipId(tipId);
@@ -65,7 +77,7 @@ export const DailyTips = ({ className }: ContentProps) => {
         }
 
         // Construct the updated tip data with all required fields
-        const updatedTipData: Tip = {
+        const updatedTipData: any = {
             ...updatedTip,
             content: editContent,
             // Include default or computed values for required fields
@@ -74,9 +86,14 @@ export const DailyTips = ({ className }: ContentProps) => {
         };
 
         console.log('Updated Tip Data:', updatedTipData);
-
+        const newUpdatedValue = {
+            
+                content: editContent,
+                day: updatedTip.day,
+            
+        };
         // Dispatch the updated single tip object
-        dispatch(addTipThunk(updatedTipData));
+        dispatch(addTipThunk(newUpdatedValue));
         dispatch(fetchTipsThunk());
 
         setEditTipId(null);
@@ -234,6 +251,14 @@ export const DailyTips = ({ className }: ContentProps) => {
                                     </div>
                                 ))}
                     </List>
+                </div>
+                <div className={styles.pagination}>
+                    <TableFooter
+                        onNextPage={handleNextPage}
+                        onPreviousPage={handlePreviousPage}
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                    />
                 </div>
             </div>
         </div>

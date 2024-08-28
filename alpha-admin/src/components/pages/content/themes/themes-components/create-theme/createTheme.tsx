@@ -93,7 +93,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     const dispatch = useAppDispatch();
     const [data, setData] = useState({
         themeData: {
-            themeCode: Number,
+            themeCode: '0',
             categoryId: 1,
             isPublished: false,
             internalNotes: '',
@@ -129,8 +129,8 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
             .then((res: any) => {
                 if (res.payload.status === 200) {
                     navigate('/content/themes');
-                } else {
-                    alert('Error' + res.error.mess.status);
+                } else if (res.payload.status === 201){
+                    navigate('/content/themes');
                 }
             })
             .catch((err: any) => {

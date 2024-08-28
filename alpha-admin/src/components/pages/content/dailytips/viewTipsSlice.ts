@@ -63,7 +63,7 @@ export const fetchTipByDayThunk = createAsyncThunk(
 
 export const addTipThunk = createAsyncThunk(
     'tips/addTip',
-    async (tip: Tip, { dispatch, rejectWithValue }) => {
+    async (tip: any, { dispatch, rejectWithValue }) => {
         try {
             const response = await addTip(tip);
             dispatch(fetchTipsThunk());

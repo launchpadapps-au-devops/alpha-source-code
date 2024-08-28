@@ -18,7 +18,7 @@ const TableFooter: React.FC<TableFooterProps> = ({ onNextPage, onPreviousPage, c
         <FontAwesomeIcon icon={faChevronLeft} /> Back
       </button>
       <span className="page-info">
-        Page {currentPage} of {totalPages}
+      {currentPage} 
       </span>
       <button className="next-button" onClick={onNextPage} disabled={currentPage >= totalPages}>
         Next <FontAwesomeIcon icon={faChevronRight} />

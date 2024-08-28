@@ -67,11 +67,11 @@ export const LessonInformation = ({
             <div className={styles.section}>
                 <label>Lesson Code</label>
                 <input
-                    type="text"
+                    type="number"
                     placeholder="Add lesson code"
                     className={styles.lessonCodeInput}
                     value={data.lessonCode}
-                    onChange={(e) => setData({ ...data, lessonCode: parseInt(e.target.value, 10) })}
+                    onChange={(e) => setData({ ...data, lessonCode: e.target.value })}
                 />
             </div>
 

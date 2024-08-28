@@ -30,6 +30,8 @@ import TabBar from '../../../content/content-components/tab-bar/TabBar';
 import { AppButton } from '../../../../app-button/app-button';
 import { CheckBox } from '@mui/icons-material';
 import { Check } from '../../../../icon/glyps/check';
+import TableFooter from '../../../content/content-components/table-footer/TableFooter';
+import { ThemesTable } from '../../../content/themes/themes-components/themes-table/themes-table';
 
 // const initialLessons: Lesson[] = [
 //     { code: 1, title: 'Lesson 1', quiz: true, published: true },
@@ -48,6 +50,7 @@ export interface ThemesTableProps {
 export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, setThemeView }) => {
     // const [themes, setThemes] = useState(initialThemes);
     var [themes, setThemes] = useState<any>([]);
+    const [theme, setTheme] = useState([]);
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openModal, setOpenModal] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -56,6 +59,17 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
     const [selectedTab, setSelectedTab] = useState(0);
     const [selectedLessons, setSelectedLessons] = useState<any>([]);
     const tabs = ['All themes', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const totalPages = 10;
+
+    const handleNextPage = () => {
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    };
+
+    const handlePreviousPage = () => {
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    };
 
     useEffect(() => {
         dispatch(fetchThemesThunk()).then((response: any) => {
@@ -171,7 +185,13 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
                     </div>
                 </header>
                 <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
-                <Table className={classNames(styles['key-contacts-table'])}>
+                <ThemesTable
+                    themes={themes}
+                    setThemes={setThemes}
+                    onUpdateThemes={onUpdateThemes}
+                    showSelectColumn
+                />
+                {/* <Table className={classNames(styles['key-contacts-table'])}>
                     <TableHead>
                         <TableRow
                             style={{
@@ -238,11 +258,16 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
                                 </TableRow>
                             ))}
                     </TableBody>
-                </Table>
+                </Table> */}
             </TableContainer>
-            <div className={styles.pagination}>
-                <Pagination count={10} showFirstButton showLastButton />
-            </div>
+            {/* <div className={styles.pagination}>
+                <TableFooter
+                    onNextPage={handleNextPage}
+                    onPreviousPage={handlePreviousPage}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                />
+            </div> */}
             {/* {openModal &&
                 selectedThemeIndex !== null &&
                 (selectedThemeHasLessons() ? (
@@ -285,14 +310,14 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
                         handlePublish={handlePublish}
                     />
                 ))} */}
-            {console.log('lessonss', themes)}
-            {isSidebarOpen && (
+            {/* {console.log('lessonss', themes)} */}
+            {/* {isSidebarOpen && (
                 <LessonSidebar
                     isOpen={isSidebarOpen}
                     onClose={handleCloseSidebar}
                     lessons={selectedLessons}
                 />
-            )}
+            )} */}
         </>
     );
 };

@@ -46,7 +46,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     // Extract search query from URL
 
     let [data, setData] = React.useState({
-        lessonCode: Number,
+        lessonCode: 0,
         categoryId: 0,
         themeId: 0,
         status: 'ACTIVE',

@@ -13,6 +13,7 @@ import TabBar from '../content-components/tab-bar/TabBar';
 import { ThemesTable } from '../themes/themes-components/themes-table/themes-table';
 import { useAppDispatch } from '../../../../app/hooks';
 import { fetchThemesThunk } from './themes-components/themeSlice';
+import { Lesson } from './themes-components/lessonsidebar/lessonSidebar';
 
 export interface ContentProps {
     className?: string;
@@ -116,7 +117,10 @@ export const Themes = ({ className }: ContentProps) => {
                     </div>
                 </header>
                 <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
-                {/* <ThemesTable themes={theme} setThemes={setTheme} /> */}
+
+                <ThemesTable themes={theme} setThemes={setTheme} onUpdateThemes={function (updatedLessons: Lesson[]): void {
+                    throw new Error('Function not implemented.');
+                } }/>
             </div>
         </div>
     );

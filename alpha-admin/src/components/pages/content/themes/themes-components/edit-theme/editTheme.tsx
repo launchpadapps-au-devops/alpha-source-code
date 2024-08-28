@@ -2,7 +2,7 @@ import styles from './editTheme.module.scss';
 import { AppButton } from '../../../../../app-button/app-button';
 import { EditButton } from '../../../content-components/edit-button/edit-button';
 import Sidebar from '../../../content-components/sidebar/Sidebar';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 import ThemeDetails from '../create-theme/create-theme-components/theme-details/themeDetails';
 import { AddThemeDetails } from '../create-theme/create-theme-components/add-theme-details/addThemeDetails';
@@ -17,6 +17,7 @@ import { DeleteButton } from '../../../content-components/delete-button/delete-b
 import Habit from '../create-theme/create-theme-components/habit/habit';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchLessonsThunk } from '../../../lessons/lesson-components/lessonsSlice';
+import { fetchThemeByIdThunk } from '../themeSlice';
 
 export interface EditThemeProps {
     className?: string;
@@ -88,6 +89,39 @@ export const EditTheme = ({ className }: EditThemeProps) => {
     const [newLessons, setNewLessons] = useState([]);
     const [category, setCategory] = useState<string>('');
     const [showHabit, setShowHabit] = useState(false);
+    const { id } = useParams();
+    const [data, setData] = useState({
+        themeData: {
+            themeCode: '0',
+            categoryId: 1,
+            isPublished: false,
+            internalNotes: '',
+            name: '',
+            image: 'https://sample.com/sample.jpg',
+            description: 'Theme Description',
+            propertyTags: [
+                {
+                    key: 'value',
+                },
+            ],
+            habits: [
+                {
+                    id: 1,
+                    order: 1,
+                    name: 'value',
+                    timeAllocation: 1,
+                    pointAllocation: 50,
+                    instructions: 'value',
+                    meta: [
+                        {
+                            key: 'value',
+                        },
+                    ],
+                },
+            ],
+        },
+        lessonData: [],
+    });
 
     const handleUpdateLessons = (updatedLessons: Lesson[]) => {
         setLessons(updatedLessons);
@@ -121,6 +155,9 @@ export const EditTheme = ({ className }: EditThemeProps) => {
     const hideLessons = location.state?.hideLessons;
 
     useEffect(() => {
+        dispatch(fetchThemeByIdThunk(id)).then((res: any) => {
+            setData({ themeData: res.payload.data, lessonData: res.payload.data.lessons });
+        });
         dispatch(fetchLessonsThunk()).then((res: any) => {
             setNewLessons(res.payload.data);
             console.log(res.payload.data, 'lessons');
@@ -154,12 +191,12 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                     <div className={styles.leftColumn}>
                         <ThemeDetails
                             onCategoryChange={setCategory}
-                            data={undefined}
-                            setData={undefined}
+                            data={data}
+                            setData={setData}
                         />
                     </div>
                     <div className={styles.rightColumn}>
-                        <AddThemeDetails category={category} data={undefined} setData={undefined} />
+                        <AddThemeDetails category={category} data={data} setData={setData} />
                         {!hideLessons && (
                             <LessonManagement
                                 selectedLessons={selectedLessons}
@@ -182,11 +219,7 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                                 )}
                             </div>
                             {showHabit ? (
-                                <Habit
-                                    showDeleteButton={false}
-                                    data={undefined}
-                                    setData={undefined}
-                                />
+                                <Habit showDeleteButton={false} data={data} setData={setData} />
                             ) : (
                                 <EditButton
                                     buttonText="Add Habit"

@@ -72,7 +72,7 @@ export const addThemeThunk = createAsyncThunk(
 
 export const updateThemeThunk = createAsyncThunk(
     'theme/updateTheme',
-    async ({ id, theme }: { id: number; theme: any }, { dispatch, rejectWithValue }) => {
+    async ({ id, theme }: { id: any; theme: any }, { dispatch, rejectWithValue }) => {
         try {
             const response = await updateTheme(id, theme);
             dispatch(fetchThemesThunk());

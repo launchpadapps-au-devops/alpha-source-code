@@ -139,7 +139,7 @@ const router = createBrowserRouter([
                 element: <ViewThemes />,
             },
             {
-                path: '/content/themes/editTheme',
+                path: '/content/themes/editTheme/:id',
                 element: <EditTheme />,
             },
             {

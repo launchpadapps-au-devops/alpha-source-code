@@ -56,7 +56,8 @@ const addTip = async (tip: any): Promise<void> => {
     try {
         const response = await axios.post(
             apiURL,
-            { content: tip },
+            { dailyTipData: tip ,   position: "below",
+                referenceTipId: 1 },
             {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

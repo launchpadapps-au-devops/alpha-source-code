@@ -25,7 +25,8 @@ import { HabitAssigned } from './viewTheme-components/habit-assigned/habitAssign
 import { EditButton } from '../../../content-components/edit-button/edit-button';
 import { PublishButton } from '../../../content-components/publish-button/publishButton';
 import { useAppDispatch } from '../../../../../../app/hooks';
-import { fetchThemeByIdThunk } from '../themeSlice';
+import { fetchThemeByIdThunk, updateThemeThunk } from '../themeSlice';
+import { updateTheme } from '../themeAPI';
 
 export interface ContentProps {
     className?: string;
@@ -36,7 +37,7 @@ export const ViewThemes = ({ className }: ContentProps) => {
     const location = useLocation();
     const { isPublished } = location.state || {};
     const [isSidebarOpen, setSidebarOpen] = useState(false);
-    const [theme, setTheme] = useState({});
+    const [theme, setTheme] = useState<any>({});
     const params = useParams();
 
     const dispatch = useAppDispatch();
@@ -48,6 +49,23 @@ export const ViewThemes = ({ className }: ContentProps) => {
         });
     }, []);
 
+    const handlePublish = () => {
+        console.log('Publish');
+        const newData = {
+            themeData: {
+                isPublished: !theme.isPublished,
+            },
+        };
+        dispatch(updateThemeThunk({ id: params.id, theme: newData }))
+            .then((response: any) => {
+                navigate('/content/themes');
+            })
+            .catch((error: any) => {
+                console.log('Response ERROR ', error);
+                alert('Error updating theme');
+            });
+    };
+
     return (
         <div className={classNames(styles.container, className, { 'blur-effect': isSidebarOpen })}>
             <Sidebar />
@@ -56,7 +74,10 @@ export const ViewThemes = ({ className }: ContentProps) => {
                     <div className={styles.leftButtonContainer}>
                         <Typography variant="h5">View themes</Typography>
                         {isPublished ? (
-                            <PublishButton buttonText="Published" />
+                            <PublishButton
+                                buttonText="Published"
+                                onButtonClick={() => handlePublish()}
+                            />
                         ) : (
                             <PublishButton buttonText="Unpublished" isUnpublished />
                         )}
@@ -66,12 +87,14 @@ export const ViewThemes = ({ className }: ContentProps) => {
                             <EditButton
                                 showLeftIcon
                                 buttonText="Edit"
-                                onButtonClick={() => navigate('/content/themes/editTheme')}
+                                onButtonClick={() =>
+                                    navigate(`/content/themes/editTheme/${params.id}`)
+                                }
                             />
                             {!isPublished && (
                                 <AppButton
                                     buttonText="Publish"
-                                    onButtonClick={() => navigate('/careteam/createcontent')}
+                                    onButtonClick={() => handlePublish()}
                                 />
                             )}
                         </div>

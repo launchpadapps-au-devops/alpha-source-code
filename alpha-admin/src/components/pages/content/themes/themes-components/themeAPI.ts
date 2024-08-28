@@ -66,10 +66,7 @@ const addTheme = async (theme: { name: string; description: string }): Promise<v
     }
 };
 
-const updateTheme = async (
-    id: number,
-    theme: { name: string; description: string }
-): Promise<void> => {
+const updateTheme = async (id: number, theme: any): Promise<void> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/theme/${id}`;
     try {

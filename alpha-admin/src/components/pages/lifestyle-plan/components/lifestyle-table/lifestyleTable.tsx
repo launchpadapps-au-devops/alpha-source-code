@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './lifestyleTable.module.scss';
 import { useAppDispatch } from '../../../../../app/hooks';
 import { fetchPlansThunk, updatePlanThunk } from '../lifeStyleSlice';
+import TableFooter from '../../../content/content-components/table-footer/TableFooter';
 
 const initialLifeStyles = [
     { code: 1, name: 'Heart health', dateCreated: '26/06/2024', published: false },
@@ -40,28 +41,33 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({ plans, setPlans }) =>
         setCurrentPage(page);
     };
 
-    const handleToggle = (theme: any) => {
-        const newTheme = {
-            planData: {
-                planCode: theme.code,
-                name: theme.name,
-                image: theme.image,
-                description: theme.description,
-                internalNotes: theme.internalNotes,
-                status: theme.status,
-                isPublished: !theme.isPublished,
-                id: theme.id,
-            },
-            themes: theme.themes,
-        };
-        dispatch(updatePlanThunk({ id: theme.id, plan: newTheme })).then((data: any) => {
-            dispatch(fetchPlansThunk()).then((data: any) => {
-                if (data.payload) {
-                    setPlans(data.payload.data);
-                }
-            });
-        });
+const handleToggle = (theme: any) => {
+    const newTheme = {
+        planData: {
+            planCode: parseInt(theme.code, 10),
+            name: theme.name,
+            image: theme.image,
+            description: theme.description,
+            internalNotes: theme.internalNotes,
+            status: theme.status,
+            isPublished: !theme.isPublished,
+            id: parseInt(theme.id, 10),
+        },
+        themes: theme.themes.map((t: any) => ({
+            ...t,
+            id: parseInt(t.id, 10),
+            themeCode: parseInt(t.themeCode, 10),
+            categoryId: parseInt(t.categoryId, 10),
+        })),
     };
+    dispatch(updatePlanThunk({ id: newTheme.planData.id, plan: newTheme })).then((data: any) => {
+        dispatch(fetchPlansThunk()).then((data: any) => {
+            if (data.payload) {
+                setPlans(data.payload.data);
+            }
+        });
+    });
+};
 
     const handlePublish = () => {
         if (selectedThemeIndex !== null) {
