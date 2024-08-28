@@ -29,6 +29,7 @@ export class DataAnalyticService {
     ): Promise<{
         steps: number,
         averageStepsPerDay: number,
+        stepsPerDay: { date: string; steps: number }[],
         sleep: number,
         averageSleepPerDay: number,
         energy: number,
@@ -50,9 +51,20 @@ export class DataAnalyticService {
 
         const steps = userHealthData.filter((data) => data.dataType === DATA_TYPES.STEP_COUNT).reduce((acc, curr) => acc + curr.value, 0);
         const averageStepsPerDay = steps / (toDate.getDate() - fromDate.getDate() + 1);
+        const stepsPerDay = userHealthData
+            .filter(({ dataType }) => dataType === DATA_TYPES.STEP_COUNT)
+            .reduce((acc, { loggedAt, value }) => {
+                const dateString = new Date(loggedAt).toISOString().split('T')[0];
+                const existingEntry = acc.find((entry) => entry.date === dateString);
 
-        const sleep = userHealthData.filter((data) => data.dataType === DATA_TYPES.SLEEP).reduce((acc, curr) => acc + curr.value, 0);
-        const averageSleepPerDay = sleep / (toDate.getDate() - fromDate.getDate() + 1);
+                if (existingEntry) {
+                    existingEntry.steps += value;
+                } else {
+                    acc.push({ date: dateString, steps: value });
+                }
+
+                return acc;
+            }, [] as { date: string; steps: number }[]);
 
         const energy = userHealthData.filter((data) => data.dataType === DATA_TYPES.ENERGY).reduce((acc, curr) => acc + curr.value, 0);
         const averageEnergyPerDay = energy / (toDate.getDate() - fromDate.getDate() + 1);
@@ -67,11 +79,12 @@ export class DataAnalyticService {
         const calories = userMealLogs.reduce((acc, curr) => acc + curr.calories, 0);
         const averageCaloriesPerDay = calories / (toDate.getDate() - fromDate.getDate() + 1);
 
-        return { 
+        return {
             steps,
             averageStepsPerDay,
-            sleep,
-            averageSleepPerDay,
+            stepsPerDay,
+            sleep: 0,
+            averageSleepPerDay: 0,
             energy,
             averageEnergyPerDay,
             calories,
@@ -82,9 +95,27 @@ export class DataAnalyticService {
     async getActivePatients(
         fromDate?: Date,
         toDate?: Date,
-    ): Promise<number> {
+    ): Promise<{
+        users: {
+            id: string,
+            email: string,
+            firstName: string,
+            lastName: string,
+            dob: Date,
+            gender: string,
+            age: number,
+            onboardingCompletedAt: Date
+        } [],
+        count: number
+    }> {
         const users = await sessionService.findAllLoggedInSessionForUsers(fromDate, toDate, ['patient']);
-        return users.length;
+
+        return {
+            count: users.length,
+            users: users.map(({ id, email, firstName, lastName, dob, gender, onboardingCompletedAt }) => ({
+                id, email, firstName, lastName, dob, gender, onboardingCompletedAt, age: calculateAge(dob)
+            })),
+        }
     }
 
     async getRecentEnrollements(
@@ -97,6 +128,9 @@ export class DataAnalyticService {
             firstName: string,
             lastName: string,
             dob: Date,
+            gender: string,
+            age: number,
+            onboardingCompletedAt: Date
         }[],
         count: number
     }> {
@@ -105,8 +139,8 @@ export class DataAnalyticService {
         return {
             count: data.count,
             users: data.users
-                .map(({ id, email, firstName, lastName, dob }) => ({
-                    id, email, firstName, lastName, dob
+                .map(({ id, email, firstName, lastName, dob, gender, onboardingCompletedAt }) => ({
+                    id, email, firstName, lastName, dob, gender, onboardingCompletedAt, age: calculateAge(dob)
                 })),
         }
     }
@@ -126,3 +160,17 @@ export class DataAnalyticService {
         };
     }
 }
+
+function calculateAge(dob) {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    // Adjust age if the birthdate hasn't occurred yet this year
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+
+    return age;
+};
