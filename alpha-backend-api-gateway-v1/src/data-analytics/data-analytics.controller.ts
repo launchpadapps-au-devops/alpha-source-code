@@ -39,6 +39,20 @@ export class DataAnalyticController {
                     properties: {
                         steps: { type: 'number', example: 100 },
                         averageStepsPerDay: { type: 'number', example: 10 },
+                        stepsPerDay: { 
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    date: {
+                                        type: 'string',
+                                    },
+                                    steps: {
+                                        type: 'number'
+                                    }
+                                }
+                            }
+                        },
                         sleep: { type: 'number', example: 8 },
                         averageSleepPerDay: { type: 'number', example: 8 },
                         energy: { type: 'number', example: 100 },
@@ -78,7 +92,27 @@ export class DataAnalyticController {
             properties: {
                 statusCode: { type: 'number', example: 200 },
                 message: { type: 'string', example: 'Active patients fetched successfully' },
-                data: { type: 'object', properties: { count: { type: 'number', example: 10 } } },
+                data: { 
+                    type: 'object', 
+                    properties: {
+                        users: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    id: { type: 'string', example: '123' },
+                                    email: { type: 'string', example: 'abc@exmaple.com' },
+                                    firstName: { type: 'string', example: 'John' },
+                                    lastName: { type: 'string', example: 'Doe' },
+                                    dob: { type: 'string', example: '1990-01-01' },
+                                    gender: { type: 'string', example: 'male'},
+                                    age: { type: 'number', example: 25 }
+                                }
+                            }
+                        },
+                        count: { type: 'number', example: 10 } 
+                    } 
+                },
                 meta: { type: 'object', example: { } }
             },
             required: ['statusCode', 'data'],
@@ -122,6 +156,8 @@ export class DataAnalyticController {
                                     firstName: { type: 'string', example: 'John' },
                                     lastName: { type: 'string', example: 'Doe' },
                                     dob: { type: 'string', example: '1990-01-01' },
+                                    gender: { type: 'string', example: 'male'},
+                                    age: { type: 'number', example: 25 }
                                 }
                             }
                         },
