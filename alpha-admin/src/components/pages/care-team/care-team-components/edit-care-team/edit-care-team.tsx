@@ -29,6 +29,7 @@ export const PERMISSION_LEVEL = {
 export interface EditCareTeamProps {
     className?: string;
 }
+type Permission = { id: number; name: string };
 
 export const EditCareTeam = ({ className }: EditCareTeamProps) => {
     const navigate = useNavigate();
@@ -36,14 +37,25 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
     const params = useParams();
 
     const [openModal, setOpenModal] = useState(false);
+    const [permissions, SetPermissions] = useState([
+        { id: 1, name: 'Super Admin' },
+        { id: 2, name: 'Care Team Member' },
+    ]);
 
-    const [formValues, setFormValues] = useState({
+    const [formValues, setFormValues] = useState<{
+        firstName: string;
+        lastName: string;
+        phone: string;
+        email: string;
+        roleId: string;
+        permissions: Permission[];
+    }>({
         firstName: '',
         lastName: '',
         phone: '',
         email: '',
         roleId: '',
-        permissions: [] as string[],
+        permissions: [],
     });
 
     useEffect(() => {
@@ -51,9 +63,9 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
             const data = response.payload.data;
 
             // Extract permissions names and role ID
-            const permissions = data.permissions.map((permission: any) => permission.name);
+            const permissions = data.permissions.map((permission: any) => permission);
             // console.log('Permissions:', permissions);
-            const roleId = data.role.name; 
+            const roleId = data.role.name;
 
             setFormValues({
                 firstName: data.firstName,
@@ -64,20 +76,32 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                 permissions: permissions,
             });
 
-            // console.log('Form Values Set:', {
-            //     firstName: data.firstName,
-            //     lastName: data.lastName,
-            //     phone: data.phone,
-            //     email: data.email,
-            //     roleId: roleId,
-            //     permissions: permissions,
-            // });
+            console.log('Form Values Set:', {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                phone: data.phone,
+                email: data.email,
+                roleId: roleId,
+                permissions: permissions,
+            });
         });
     }, [dispatch, params.id]);
 
     // console.log('Current Form Values:', formValues);
 
     const handleChange = (field: string, value: any) => {
+        console.log(`Field: ${field}, Value: ${value}`);
+        if (field === 'permissions') {
+            const permission = permissions.find((permission) => permission.id === value);
+            if (permission) {
+                // Check if permission is found
+                setFormValues((prevValues) => ({
+                    ...prevValues,
+                    permissions: [permission],
+                }));
+            }
+            return;
+        }
         setFormValues((prevValues) => ({
             ...prevValues,
             [field]: value,
@@ -86,7 +110,15 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
 
     const handleformSucessModal = () => {
         setOpenModal(true);
-        dispatch(editStaffThunk({ id: params.id, formData: formValues }));
+        const newValues = {
+            firstName: formValues.firstName,
+            lastName: formValues.lastName,
+            phone: formValues.phone,
+            email: formValues.email,
+            roleId: formValues.roleId,
+            permissions: [formValues.permissions[0].id] ,
+        }
+        dispatch(editStaffThunk({ id: params.id, formData: newValues }));
         navigate('/careteam');
     };
 
@@ -171,9 +203,10 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Permissions" />
                             <CustomizedSelects
-                                multiple
-                                value={formValues.permissions}
-                                onChange={(e) => handleChange('permissions', e.target.value as string[])}
+                                value={formValues.permissions[0]?.id || ''}
+                                onChange={(e) =>
+                                    handleChange('permissions', e.target.value as string)
+                                }
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 MenuProps={MenuProps}
@@ -181,9 +214,9 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
                                 <CoustomMenuItem value="" disabled>
                                     <em>Select permission level</em>
                                 </CoustomMenuItem>
-                                {Object.entries(PERMISSION_LEVEL).map(([code, label]) => (
-                                    <CoustomMenuItem key={code} value={label}>
-                                        {label}
+                                {permissions.map((permission) => (
+                                    <CoustomMenuItem key={permission.id} value={permission.id}>
+                                        {permission.name}
                                     </CoustomMenuItem>
                                 ))}
                             </CustomizedSelects>

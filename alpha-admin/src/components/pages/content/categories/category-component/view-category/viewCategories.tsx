@@ -5,6 +5,7 @@ import styles from './viewCategories.module.scss';
 import { PublishCategoryModal } from '../publish-category-modal/PublishCategoryModal';
 import { useAppDispatch, useAppSelector } from '../../../../../../app/hooks';
 import { fetchCategoriesThunk, updateCategoryThunk } from '../categorySlice';
+import TableFooter from '../../../content-components/table-footer/TableFooter';
 
 interface Category {
     id: number;
@@ -16,6 +17,7 @@ interface Category {
 export const ViewCategories: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const dispatch = useAppDispatch();
 
@@ -30,6 +32,14 @@ export const ViewCategories: React.FC = () => {
             }
         });
     }, [dispatch]);
+
+    const handleNextPage = () => {
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    };
+
+    const handlePreviousPage = () => {
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    };
 
     const handleToggle = (category: Category, index: number) => {
         const newCategory = {
@@ -79,13 +89,12 @@ export const ViewCategories: React.FC = () => {
                     />
                 ))}
             </List>
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
-                <Pagination
-                    count={Math.ceil(categories.length / itemsPerPage)}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    showFirstButton
-                    showLastButton
+            <div className={styles.pagination}>
+                <TableFooter
+                    onNextPage={handleNextPage}
+                    onPreviousPage={handlePreviousPage}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
                 />
             </div>
             {openModal && (

@@ -38,9 +38,11 @@ const initialTipState: TipState = {
     tip: null,
 };
 
-export const fetchTipsThunk = createAsyncThunk('tips/getTips', async (_, { rejectWithValue }) => {
+export const fetchTipsThunk = createAsyncThunk(
+    'tips/getTips',
+     async (page: any, { rejectWithValue }) => {
     try {
-        const response = await getTips();
+        const response = await getTips(page);
         return response;
     } catch (error: any) {
         console.error('Response ERROR', error);
@@ -66,7 +68,7 @@ export const addTipThunk = createAsyncThunk(
     async (tip: any, { dispatch, rejectWithValue }) => {
         try {
             const response = await addTip(tip);
-            dispatch(fetchTipsThunk());
+            dispatch(fetchTipsThunk(1));
             return response;
         } catch (error: any) {
             return rejectWithValue(error.toString());

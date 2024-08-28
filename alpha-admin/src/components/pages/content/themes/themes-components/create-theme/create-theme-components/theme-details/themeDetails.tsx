@@ -27,7 +27,7 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
 
     return (
         <div className={styles.themeDetails}>
-            <h5>Theme detailsss</h5>
+            <h5>Theme details</h5>
             <div className={styles.formGroup}>
                 <label htmlFor="themeCode">Theme code</label>
                 <input
@@ -43,6 +43,7 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                             },
                         });
                     }}
+                    required
                 />
             </div>
             <div className={styles.formGroup}>
@@ -60,6 +61,7 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                             },
                         });
                     }}
+                    required
                 >
                     <option value="">Select category</option>
                     {categories.map((cat) => (

@@ -11,6 +11,8 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { EditButton } from '../content-components/edit-button/edit-button';
 import { ViewCategories } from './category-component/view-category/viewCategories';
 import { useEffect, useRef, useState } from 'react';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../back-button/backButton';
 
 export interface ContentProps {
     className?: string;
@@ -42,68 +44,75 @@ export const Categories = ({ className }: ContentProps) => {
     }, [buttonRef.current]);
 
     return (
-        <div className={classNames(styles.container, className)}>
-            <Sidebar />
-            <div className={styles.content}>
-                <header className={styles.header}>
-                    <Typography variant="h5">Categories</Typography>
-                    <div className={styles.buttonContainer}>
-                        <EditButton
-                            showLeftIcon
-                            buttonText="Edit categories"
-                            onButtonClick={() => navigate('/content/editcategories')}
-                        />
-                        <AppButton
-                            ref={buttonRef}
-                            showLeftIcon
-                            buttonText="Create content"
-                            onButtonClick={handleButtonClick}
-                        />
-                        <Menu
-                            id="simple-menu"
-                            anchorEl={anchorEl}
-                            keepMounted
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                            slotProps={{
-                                paper: {
-                                    style: {
-                                        width: menuWidth,
+        <>
+            <BackButton />
+            <div className={classNames(styles.container, className)}>
+                <Sidebar />
+                <div className={styles.content}>
+                    <header className={styles.header}>
+                        <Typography variant="h5">Categories</Typography>
+                        <div className={styles.buttonContainer}>
+                            <EditButton
+                                showLeftIcon
+                                buttonText="Edit categories"
+                                onButtonClick={() => navigate('/content/editcategories')}
+                            />
+                            <AppButton
+                                ref={buttonRef}
+                                showLeftIcon
+                                buttonText="Create content"
+                                onButtonClick={handleButtonClick}
+                            />
+                            <Menu
+                                id="simple-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                                slotProps={{
+                                    paper: {
+                                        style: {
+                                            width: menuWidth,
+                                        },
                                     },
-                                },
-                            }}
-                        >
-                            <MenuItem
-                                onClick={() => handleMenuItemClick('/content/createcategories')}
+                                }}
                             >
-                                <DashboardIcon style={{ marginRight: 8 }} />
-                                Category
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() => handleMenuItemClick('/content/themes/createtheme')}
-                            >
-                                <MenuBookIcon style={{ marginRight: 8 }} />
-                                Theme
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() => handleMenuItemClick('/content/lessons/createlesson')}
-                            >
-                                <LightbulbIcon style={{ marginRight: 8 }} />
-                                Lesson
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    handleMenuItemClick('/content/dailytips/createdailytips')
-                                }
-                            >
-                                <CalendarMonthIcon style={{ marginRight: 8 }} />
-                                Daily tip
-                            </MenuItem>
-                        </Menu>
-                    </div>
-                </header>
-                <ViewCategories />
+                                <MenuItem
+                                    onClick={() => handleMenuItemClick('/content/createcategories')}
+                                >
+                                    <DashboardIcon style={{ marginRight: 8 }} />
+                                    Category
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        handleMenuItemClick('/content/themes/createtheme')
+                                    }
+                                >
+                                    <MenuBookIcon style={{ marginRight: 8 }} />
+                                    Theme
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        handleMenuItemClick('/content/lessons/createlesson')
+                                    }
+                                >
+                                    <LightbulbIcon style={{ marginRight: 8 }} />
+                                    Lesson
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        handleMenuItemClick('/content/dailytips/createdailytips')
+                                    }
+                                >
+                                    <CalendarMonthIcon style={{ marginRight: 8 }} />
+                                    Daily tip
+                                </MenuItem>
+                            </Menu>
+                        </div>
+                    </header>
+                    <ViewCategories />
+                </div>
             </div>
-        </div>
+        </>
     );
 };

@@ -43,7 +43,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(fetchThemesThunk()).then((res: any) => {
+        dispatch(fetchThemesThunk(1)).then((res: any) => {
             console.log('res', res);
 
             // Extract lessons from the response and set them in the Lessons state

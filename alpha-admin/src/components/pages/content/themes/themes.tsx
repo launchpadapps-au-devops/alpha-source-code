@@ -14,6 +14,8 @@ import { ThemesTable } from '../themes/themes-components/themes-table/themes-tab
 import { useAppDispatch } from '../../../../app/hooks';
 import { fetchThemesThunk } from './themes-components/themeSlice';
 import { Lesson } from './themes-components/lessonsidebar/lessonSidebar';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../back-button/backButton';
 
 export interface ContentProps {
     className?: string;
@@ -25,6 +27,8 @@ export const Themes = ({ className }: ContentProps) => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [menuWidth, setMenuWidth] = useState<number>(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalRecords, setTotalRecords] = useState(0);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const dispatch = useAppDispatch();
 
@@ -49,9 +53,11 @@ export const Themes = ({ className }: ContentProps) => {
     };
 
     useEffect(() => {
-        dispatch(fetchThemesThunk()).then((res: any) => {
+        dispatch(fetchThemesThunk(1)).then((res: any) => {
             console.log('res', res);
             setTheme(res.payload.data);
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
         });
     }, []);
     useEffect(() => {
@@ -61,67 +67,85 @@ export const Themes = ({ className }: ContentProps) => {
     }, [buttonRef.current]);
 
     return (
-        <div className={classNames(styles.container, className, { 'blur-effect': isSidebarOpen })}>
-            <Sidebar />
-            <div className={styles.content}>
-                <header className={styles['header']}>
-                    <Typography variant="h5">Themes</Typography>
-                    <div className={styles.buttonContainer}>
-                        <AppButton
-                            ref={buttonRef}
-                            showLeftIcon
-                            buttonText="Create content"
-                            onButtonClick={handleButtonClick}
-                        />
-                        <Menu
-                            id="simple-menu"
-                            anchorEl={anchorEl}
-                            keepMounted
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                            slotProps={{
-                                paper: {
-                                    style: {
-                                        width: menuWidth,
+        <>
+            <BackButton />
+            <div
+                className={classNames(styles.container, className, {
+                    'blur-effect': isSidebarOpen,
+                })}
+            >
+                <Sidebar />
+                <div className={styles.content}>
+                    <header className={styles['header']}>
+                        <Typography variant="h5">Themes</Typography>
+                        <div className={styles.buttonContainer}>
+                            <AppButton
+                                ref={buttonRef}
+                                showLeftIcon
+                                buttonText="Create content"
+                                onButtonClick={handleButtonClick}
+                            />
+                            <Menu
+                                id="simple-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                                slotProps={{
+                                    paper: {
+                                        style: {
+                                            width: menuWidth,
+                                        },
                                     },
-                                },
-                            }}
-                        >
-                            <MenuItem
-                                onClick={() => handleMenuItemClick('/content/createcategories')}
+                                }}
                             >
-                                <DashboardIcon style={{ marginRight: 8 }} />
-                                Category
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() => handleMenuItemClick('/content/themes/createtheme')}
-                            >
-                                <MenuBookIcon style={{ marginRight: 8 }} />
-                                Theme
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() => handleMenuItemClick('/content/lessons/createlesson')}
-                            >
-                                <LightbulbIcon style={{ marginRight: 8 }} />
-                                Lesson
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    handleMenuItemClick('/content/dailytips/createdailytips')
-                                }
-                            >
-                                <CalendarMonthIcon style={{ marginRight: 8 }} />
-                                Daily tip
-                            </MenuItem>
-                        </Menu>
-                    </div>
-                </header>
-                <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
-
-                <ThemesTable themes={theme} setThemes={setTheme} onUpdateThemes={function (updatedLessons: Lesson[]): void {
-                    throw new Error('Function not implemented.');
-                } }/>
+                                <MenuItem
+                                    onClick={() => handleMenuItemClick('/content/createcategories')}
+                                >
+                                    <DashboardIcon style={{ marginRight: 8 }} />
+                                    Category
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        handleMenuItemClick('/content/themes/createtheme')
+                                    }
+                                >
+                                    <MenuBookIcon style={{ marginRight: 8 }} />
+                                    Theme
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        handleMenuItemClick('/content/lessons/createlesson')
+                                    }
+                                >
+                                    <LightbulbIcon style={{ marginRight: 8 }} />
+                                    Lesson
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        handleMenuItemClick('/content/dailytips/createdailytips')
+                                    }
+                                >
+                                    <CalendarMonthIcon style={{ marginRight: 8 }} />
+                                    Daily tip
+                                </MenuItem>
+                            </Menu>
+                        </div>
+                    </header>
+                    <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
+                    <ThemesTable
+                        themes={theme}
+                        setThemes={setTheme}
+                        totalPages={totalPages}
+                        totalRecords={totalRecords}
+                        setTotalPages={setTotalPages}
+                        setTotalRecords={setTotalRecords}
+                        onUpdateThemes={function (updatedLessons: Lesson[]): void {
+                            throw new Error('Function not implemented.');
+                        }}
+                    />
+                </div>
             </div>
-        </div>
+        </>
     );
 };

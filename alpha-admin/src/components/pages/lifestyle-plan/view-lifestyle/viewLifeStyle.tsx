@@ -7,6 +7,10 @@ import { LifestyleTable } from '../components/lifestyle-table/lifestyleTable';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../../../app/hooks';
 import { fetchPlansThunk } from '../components/lifeStyleSlice';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../back-button/backButton';
+
+
 export interface ReportsProps {
     className?: string;
 }
@@ -32,11 +36,7 @@ export const LifeStyle = ({ className }: ReportsProps) => {
     }, []);
     return (
         <div>
-            <Row className="my-2 mx-3">
-                <Col>
-                    <Button variant="primary">Back</Button>
-                </Col>
-            </Row>
+            <BackButton/>
 
             <div className="mx-5">
                 <Row>

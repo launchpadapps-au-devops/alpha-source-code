@@ -16,16 +16,15 @@ export const InternalNotes = ({ notes, setNotes, data, setData }: InternalNotesP
                 <label htmlFor="internal-notes" className="internal-notes-label">
                     Internal notes (optional)
                 </label>
-                <textarea
+                <input
+                    type="text"
                     id="internal-notes"
-                    className="internal-notes-textarea"
+                    className="internal-notes-input"
                     placeholder="Add internal notes (these won’t be seen by the patient)"
                     maxLength={150}
                     value={data.internalNotes}
                     onChange={(e) => setData({ ...data, internalNotes: e.target.value })}
-                >
-                    {data.internalNotes}
-                </textarea>
+                />
                 <div className="internal-notes-footer">150 characters</div>
             </div>
         </div>

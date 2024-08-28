@@ -147,19 +147,19 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
                                     onClick={() => handleRowClick(index)}
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    <TableCell>{lesson.lessonCode}</TableCell>
-                                    <TableCell>{lesson.name}</TableCell>
-                                    <TableCell>
+                                    <TableCell className={styles.themecode}>{lesson.lessonCode}</TableCell>
+                                    <TableCell className={styles.themename}>{lesson.name}</TableCell>
+                                    <TableCell className={styles.themedate}>
                                         {new Date(lesson.createdAt).toLocaleDateString()}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className={styles.themehabit}>
                                         {lesson.quizData.length > 0 ? (
                                             <CheckCircleOutlineIcon />
                                         ) : (
                                             ''
                                         )}
                                     </TableCell>
-                                    <TableCell onClick={(event) => event.stopPropagation()}>
+                                    <TableCell className={styles.themepublished} onClick={(event) => event.stopPropagation()}>
                                         <CategoryItem
                                             key={index}
                                             published={lesson.isPublished}

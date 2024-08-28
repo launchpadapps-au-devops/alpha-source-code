@@ -17,7 +17,9 @@ import { DeleteButton } from '../../../content-components/delete-button/delete-b
 import Habit from '../create-theme/create-theme-components/habit/habit';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchLessonsThunk } from '../../../lessons/lesson-components/lessonsSlice';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { fetchThemeByIdThunk } from '../themeSlice';
+import { BackButton } from '../../../../../back-button/backButton';
 
 export interface EditThemeProps {
     className?: string;
@@ -165,78 +167,81 @@ export const EditTheme = ({ className }: EditThemeProps) => {
     }, []);
 
     return (
-        <div className={classNames(styles.container, className)}>
-            <Sidebar />
-            <div className={styles.content}>
-                <header className={styles.header}>
-                    <h4>Edit theme</h4>
-                    <div className={styles.leftButtonContainer}>
-                        <EditButton
-                            buttonText="Cancel"
-                            onButtonClick={() => navigate('/content/themes')}
-                        />
-                    </div>
-                    <div className={styles.rightButtonContainer}>
-                        <EditButton
-                            buttonText="Save as draft"
-                            onButtonClick={() => navigate('/content/categories')}
-                        />
-                        <AppButton
-                            buttonText="Publish"
-                            onButtonClick={() => navigate('/careteam/createcontent')}
-                        />
-                    </div>
-                </header>
-                <div className={styles.themeContainer}>
-                    <div className={styles.leftColumn}>
-                        <ThemeDetails
-                            onCategoryChange={setCategory}
-                            data={data}
-                            setData={setData}
-                        />
-                    </div>
-                    <div className={styles.rightColumn}>
-                        <AddThemeDetails category={category} data={data} setData={setData} />
-                        {!hideLessons && (
-                            <LessonManagement
-                                selectedLessons={selectedLessons}
-                                onRemoveLesson={handleRemoveLessonFromTheme}
-                                onAddLessons={handleOpenSidebar}
+        <>
+            <BackButton/>
+            <div className={classNames(styles.container, className)}>
+                <Sidebar />
+                <div className={styles.content}>
+                    <header className={styles.header}>
+                        <h4>Edit theme</h4>
+                        <div className={styles.leftButtonContainer}>
+                            <EditButton
+                                buttonText="Cancel"
+                                onButtonClick={() => navigate('/content/themes')}
                             />
-                        )}
-                        <div className={styles.section}>
-                            <div className={styles.habitHeader}>
-                                <h3>
-                                    Habit <Vector />
-                                </h3>
-                                {showHabit && (
-                                    <DeleteButton
-                                        showLeftIcon
-                                        buttonText="Remove habit"
-                                        className={styles.removeHabitButton}
-                                        onButtonClick={handleRemoveHabitClick}
+                        </div>
+                        <div className={styles.rightButtonContainer}>
+                            <EditButton
+                                buttonText="Save as draft"
+                                onButtonClick={() => navigate('/content/categories')}
+                            />
+                            <AppButton
+                                buttonText="Publish"
+                                onButtonClick={() => navigate('/careteam/createcontent')}
+                            />
+                        </div>
+                    </header>
+                    <div className={styles.themeContainer}>
+                        <div className={styles.leftColumn}>
+                            <ThemeDetails
+                                onCategoryChange={setCategory}
+                                data={data}
+                                setData={setData}
+                            />
+                        </div>
+                        <div className={styles.rightColumn}>
+                            <AddThemeDetails category={category} data={data} setData={setData} />
+                            {!hideLessons && (
+                                <LessonManagement
+                                    selectedLessons={selectedLessons}
+                                    onRemoveLesson={handleRemoveLessonFromTheme}
+                                    onAddLessons={handleOpenSidebar}
+                                />
+                            )}
+                            <div className={styles.section}>
+                                <div className={styles.habitHeader}>
+                                    <h3>
+                                        Habit <Vector />
+                                    </h3>
+                                    {showHabit && (
+                                        <DeleteButton
+                                            showLeftIcon
+                                            buttonText="Remove habit"
+                                            className={styles.removeHabitButton}
+                                            onButtonClick={handleRemoveHabitClick}
+                                        />
+                                    )}
+                                </div>
+                                {showHabit ? (
+                                    <Habit showDeleteButton={false} data={data} setData={setData} />
+                                ) : (
+                                    <EditButton
+                                        buttonText="Add Habit"
+                                        onButtonClick={handleAddHabitClick}
                                     />
                                 )}
                             </div>
-                            {showHabit ? (
-                                <Habit showDeleteButton={false} data={data} setData={setData} />
-                            ) : (
-                                <EditButton
-                                    buttonText="Add Habit"
-                                    onButtonClick={handleAddHabitClick}
-                                />
-                            )}
                         </div>
                     </div>
+                    <SelectLessonSidebar
+                        isOpen={isSidebarOpen}
+                        onClose={handleCloseSidebar}
+                        lessons={lessons}
+                        onUpdateLessons={handleUpdateLessons}
+                        onAddLessonsToTheme={handleAddLessonsToTheme}
+                    />
                 </div>
-                <SelectLessonSidebar
-                    isOpen={isSidebarOpen}
-                    onClose={handleCloseSidebar}
-                    lessons={lessons}
-                    onUpdateLessons={handleUpdateLessons}
-                    onAddLessonsToTheme={handleAddLessonsToTheme}
-                />
             </div>
-        </div>
+        </>
     );
 };

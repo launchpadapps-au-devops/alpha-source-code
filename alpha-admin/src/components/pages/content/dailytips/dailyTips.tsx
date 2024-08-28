@@ -14,6 +14,8 @@ import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { addTipThunk, fetchTipsThunk } from './viewTipsSlice';
 import { DeleteButton } from '../content-components/delete-button/delete-button';
 import TableFooter from '../content-components/table-footer/TableFooter';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../back-button/backButton';
 
 export interface ContentProps {
     className?: string;
@@ -29,6 +31,10 @@ interface Tip {
     updatedAt: string;
     tip: string; // Add this property if required
     date: string; // Add this property if required
+    totalPages: number;
+    setTotalPages: any;
+    totalRecords: number;
+    setTotalRecords: any;
 }
 
 export const DailyTips = ({ className }: ContentProps) => {
@@ -43,16 +49,25 @@ export const DailyTips = ({ className }: ContentProps) => {
     const [isEditable, setIsEditable] = useState(false);
     const [editTipId, setEditTipId] = useState<number | null>(null);
     const [editContent, setEditContent] = useState('');
-
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalRecords, setTotalRecords] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = 10;
 
     const handleNextPage = () => {
+        console.log('currentPage', currentPage);
+        dispatch(fetchTipsThunk(currentPage + 1)).then((res: any) => {
+            console.log('res', res);
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
-
     const handlePreviousPage = () => {
-        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+        dispatch(fetchTipsThunk(currentPage - 1)).then((res: any) => {
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
+        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
     };
 
     const handleEditClick = (tipId: number, content: string) => {
@@ -80,6 +95,7 @@ export const DailyTips = ({ className }: ContentProps) => {
         const updatedTipData: any = {
             ...updatedTip,
             content: editContent,
+            status: "ACTIVE",
             // Include default or computed values for required fields
             tip: updatedTip.tip || '', // Set a default value if necessary
             date: updatedTip.date || new Date().toISOString(), // Set the current date or another appropriate value
@@ -94,7 +110,7 @@ export const DailyTips = ({ className }: ContentProps) => {
         };
         // Dispatch the updated single tip object
         dispatch(addTipThunk(newUpdatedValue));
-        dispatch(fetchTipsThunk());
+        dispatch(fetchTipsThunk(1));
 
         setEditTipId(null);
         setEditContent('');
@@ -102,6 +118,25 @@ export const DailyTips = ({ className }: ContentProps) => {
 
     const handleDeleteClick = (tipId: number) => {
         // Dispatch an action to delete the tip by its id
+        const updatedTip = tips.find((tip: Tip) => tip.id === tipId);
+        if (!updatedTip) {
+            alert('Tip not found.');
+            return;
+        }
+
+        // Construct the updated tip data with all required fields
+        const updatedTipData: any = {
+            ...updatedTip,
+            content: editContent,
+            status: "ARCHIVE",
+            // Include default or computed values for required fields
+            tip: updatedTip.tip || '', // Set a default value if necessary
+            date: updatedTip.date || new Date().toISOString(), // Set the current date or another appropriate value
+        };
+
+        dispatch(addTipThunk(updatedTipData));
+        dispatch(fetchTipsThunk(1));
+
         setEditTipId(null);
         setEditContent('');
     };
@@ -130,10 +165,16 @@ export const DailyTips = ({ className }: ContentProps) => {
     }, [buttonRef.current]);
 
     useEffect(() => {
-        dispatch(fetchTipsThunk());
+        dispatch(fetchTipsThunk(1)).then((res: any) => {
+            console.log('res', res);
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
     }, [dispatch]);
 
     return (
+        <>
+         <BackButton/>
         <div className={classNames(styles.container, className)}>
             <Sidebar />
             <div className={styles.content}>
@@ -262,5 +303,6 @@ export const DailyTips = ({ className }: ContentProps) => {
                 </div>
             </div>
         </div>
+        </>
     );
 };

@@ -24,6 +24,10 @@ import TableFooter from '../../../content-components/table-footer/TableFooter';
 export interface ThemesTableProps {
     themes: any;
     setThemes: any;
+    totalPages: number;
+    setTotalPages: any;
+    totalRecords: number;
+    setTotalRecords: any;
     onUpdateThemes: (updatedLessons: Lesson[]) => void;
     showSelectColumn?: boolean;
 }
@@ -33,13 +37,16 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
     setThemes,
     onUpdateThemes,
     showSelectColumn = false,
+    totalPages,
+    setTotalPages,
+    totalRecords,
+    setTotalRecords,
 }) => {
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openModal, setOpenModal] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedLessons, setSelectedLessons] = useState<any>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const itemsPerPage = 10;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -49,11 +56,23 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
     };
 
     const handleNextPage = () => {
+        console.log('currentPage', currentPage);
+        dispatch(fetchThemesThunk(currentPage + 1)).then((res: any) => {
+            console.log('res', res);
+            setThemes(res.payload.data);
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
 
     const handlePreviousPage = () => {
-        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+        // setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+        dispatch(fetchThemesThunk(currentPage - 1)).then((res: any) => {
+            setThemes(res.payload.data);
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
     };
 
     const handleToggle = (theme: any, index: number) => {
@@ -154,10 +173,9 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
                 <Table className={classNames(styles['key-contacts-table'])}>
                     <TableHead>
                         <TableRow
+                            className={styles['table-row']}
                             style={{
-                                textTransform: 'none',
-                                fontFamily: 'Public Sans',
-                                fontSize: '14px',
+                                cursor: 'pointer',
                             }}
                         >
                             <TableCell className={styles['theme-code']}>Theme code</TableCell>
@@ -175,7 +193,7 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {currentItems.map((theme: any, index: any) => (
+                        {themes.map((theme: any, index: any) => (
                             <TableRow
                                 key={index}
                                 onClick={() => handleRowClick(index)}

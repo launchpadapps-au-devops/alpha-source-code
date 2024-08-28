@@ -33,9 +33,9 @@ const initialThemeState: ThemeState = {
 
 export const fetchThemesThunk = createAsyncThunk(
     'themes/getThemes',
-    async (_, { rejectWithValue }) => {
+    async (page: any, { rejectWithValue }) => {
         try {
-            const response = await getThemes();
+            const response = await getThemes(page);
             return response;
         } catch (error) {
             console.log('Response ERROR ', error);
@@ -75,7 +75,7 @@ export const updateThemeThunk = createAsyncThunk(
     async ({ id, theme }: { id: any; theme: any }, { dispatch, rejectWithValue }) => {
         try {
             const response = await updateTheme(id, theme);
-            dispatch(fetchThemesThunk());
+            dispatch(fetchThemesThunk(1));
             return response;
         } catch (error) {
             return rejectWithValue(error);

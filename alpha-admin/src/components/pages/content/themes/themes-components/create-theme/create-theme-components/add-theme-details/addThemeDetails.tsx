@@ -22,8 +22,9 @@ export const AddThemeDetails: FC<AddThemeDetailsProps> = ({ category, data, setD
                 <label className={styles.label} htmlFor="internalNotes">
                     Internal notes
                 </label>
-                <textarea
+                <input
                     id="internalNotes"
+                    type="text"
                     className={styles.textarea}
                     value={data.themeData.internalNotes}
                     onChange={(e) => {
@@ -54,18 +55,21 @@ export const AddThemeDetails: FC<AddThemeDetailsProps> = ({ category, data, setD
                         });
                     }}
                     placeholder="Enter the theme name"
+                    required
                 />
             </div>
             <div className={styles.section}>
                 <label className={styles.label} htmlFor="themeDescription">
                     Theme description
                 </label>
-                <textarea
+                <input
                     id="themeDescription"
+                    type="text"
                     className={styles.textarea}
                     value={data.description}
                     onChange={(e) => setData({ ...data, description: e.target.value })}
                     placeholder="Enter the theme description"
+                    required
                 />
             </div>
         </div>

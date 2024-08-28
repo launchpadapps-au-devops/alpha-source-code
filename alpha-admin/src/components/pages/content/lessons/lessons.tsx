@@ -11,6 +11,8 @@ import Sidebar from '../content-components/sidebar/Sidebar';
 import { useEffect, useRef, useState } from 'react';
 import TabBar from '../content-components/tab-bar/TabBar';
 import { LessonTable } from './lesson-components/lesson-table/lessonTable';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../back-button/backButton';
 
 export interface LessonsProps {
     className?: string;
@@ -50,6 +52,8 @@ export const Lessons = ({ className }: LessonsProps) => {
     }, [buttonRef.current]);
 
     return (
+        <>
+        <BackButton/>
         <div className={classNames(styles.container, className)}>
             <Sidebar />
             <div className={styles.content}>
@@ -109,5 +113,6 @@ export const Lessons = ({ className }: LessonsProps) => {
                 <LessonTable />
             </div>
         </div>
+        </>
     );
 };

@@ -28,6 +28,8 @@ import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchThemesThunk } from '../../../themes/themes-components/themeSlice';
 import { fetchCategoriesThunk } from '../../../categories/category-component/categorySlice';
 import { addLessonThunk, fetchLessonByIdThunk, updateLessonThunk } from '../lessonsSlice';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../../../back-button/backButton';
 
 export interface ContentProps {
     className?: string;
@@ -135,7 +137,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     ]);
 
     useEffect(() => {
-        dispatch(fetchThemesThunk()).then((response: any) => {
+        dispatch(fetchThemesThunk(1)).then((response: any) => {
             setTheme(response.payload.data);
         });
         dispatch(fetchCategoriesThunk())
@@ -176,62 +178,65 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     };
 
     return (
-        <div className={classNames(styles.container, className)}>
-            <Sidebar />
-            <div className={styles.content}>
-                <header className={styles.header}>
-                    {isEditMode ? (
-                        <Typography variant="h5">Edit lesson</Typography>
-                    ) : (
-                        <Typography variant="h5">Create a new lesson</Typography>
-                    )}
-                    <div className={styles.buttonContainer}>
-                        <EditButton
-                            buttonText="Cancel"
-                            onButtonClick={() => navigate('/content/lessons')}
-                        />
-                        {/* <EditButton
+        <>
+            <BackButton />
+            <div className={classNames(styles.container, className)}>
+                <Sidebar />
+                <div className={styles.content}>
+                    <header className={styles.header}>
+                        {isEditMode ? (
+                            <Typography variant="h5">Edit lesson</Typography>
+                        ) : (
+                            <Typography variant="h5">Create a new lesson</Typography>
+                        )}
+                        <div className={styles.buttonContainer}>
+                            <EditButton
+                                buttonText="Cancel"
+                                onButtonClick={() => navigate('/content/lessons')}
+                            />
+                            {/* <EditButton
                             buttonText="Save as draft"
                             onButtonClick={() => navigate('/careteam/createcontent')}
                         /> */}
-                        <AppButton buttonText="Preview" onButtonClick={() => handlePreview()} />
-                    </div>
-                </header>
-                <div className={styles.mainContent}>
-                    <LessonInformation
-                        data={data}
-                        setData={setData}
-                        isEditMode={isEditMode}
-                        theme={theme}
-                        setTheme={setTheme}
-                        selectedTheme={selectedTheme}
-                        setSelectedTheme={setSelectedTheme}
-                    />
-                    <div className={styles.rightContent}>
-                        <InternalNotes
-                            notes={notes}
-                            setNotes={setNotes}
+                            <AppButton buttonText="Preview" onButtonClick={() => handlePreview()} />
+                        </div>
+                    </header>
+                    <div className={styles.mainContent}>
+                        <LessonInformation
                             data={data}
                             setData={setData}
+                            isEditMode={isEditMode}
+                            theme={theme}
+                            setTheme={setTheme}
+                            selectedTheme={selectedTheme}
+                            setSelectedTheme={setSelectedTheme}
                         />
-                        <DashboardCardDetails
-                            dashboardCardDetails={dashboardCardDetails}
-                            setDashboardCardDetails={setDashboardCardDetails}
-                            data={data}
-                            setData={setData}
-                        />
-                        <LessonContent
-                            screenData={screenData}
-                            setScreenData={setScreenData}
-                            // isEditMode={isEditMode}
-                            quizData={quizData}
-                            setQuizData={setQuizData}
-                            data={data}
-                            setData={setData}
-                        />
+                        <div className={styles.rightContent}>
+                            <InternalNotes
+                                notes={notes}
+                                setNotes={setNotes}
+                                data={data}
+                                setData={setData}
+                            />
+                            <DashboardCardDetails
+                                dashboardCardDetails={dashboardCardDetails}
+                                setDashboardCardDetails={setDashboardCardDetails}
+                                data={data}
+                                setData={setData}
+                            />
+                            <LessonContent
+                                screenData={screenData}
+                                setScreenData={setScreenData}
+                                // isEditMode={isEditMode}
+                                quizData={quizData}
+                                setQuizData={setQuizData}
+                                data={data}
+                                setData={setData}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };

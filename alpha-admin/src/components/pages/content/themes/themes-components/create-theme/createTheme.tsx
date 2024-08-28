@@ -19,6 +19,8 @@ import { useDispatch } from 'react-redux';
 import { addThemeThunk } from '../themeSlice';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchLessonsThunk } from '../../../lessons/lesson-components/lessonsSlice';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../../../back-button/backButton';
 
 export interface CreateThemeProps {
     className?: string;
@@ -177,6 +179,8 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     }, []);
 
     return (
+        <>
+          <BackButton/>
         <div className={classNames(styles.container, className)}>
             <Sidebar />
             <div className={styles.content}>
@@ -248,5 +252,6 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                 />
             </div>
         </div>
+        </>
     );
 };

@@ -1,7 +1,7 @@
 .container {
   display: flex;
   height: 100vh;
-  background-color: #f5f5f5;
+  background: #F9FAFE;
 }
 
 .content {
@@ -15,6 +15,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px; /* Adjust padding as needed */
+  background: #F9FAFE;
 }
 
 .leftButtonContainer {
@@ -22,6 +23,7 @@
   gap: 50px; /* Adjust gap as needed */
   align-items: center;
   margin-left: -550px; /* Adjust margin as needed to control spacing */
+  background: #F9FAFE;
 }
 
 .rightButtonContainer {
@@ -29,7 +31,7 @@
   gap: 10px; /* Adjust gap as needed */
   align-items: center;
   margin-left: 50px; /* Adjust margin as needed to control spacing */
-  background-color: #fff;
+  background: #F9FAFE;
 }
 
 .ButtonContainer{
@@ -37,7 +39,7 @@
   gap: 10px; /* Adjust gap as needed */
   align-items: center;
   margin-left: 1200px; /* Adjust margin as needed to control spacing */
-  background-color: #fff;
+  background: #F9FAFE;
 }
 
 .themeContainer {
@@ -85,4 +87,34 @@
   flex-direction: column;
   gap: 8px;
   width: 100%; /* Ensure full width for section */
+}
+
+.backbutton {
+  display: flex;
+  align-items: center; /* Aligns the icon and text vertically */
+  width: 1440px;
+  padding: 0px 40px;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--Gray-04, #EBEBEB);
+  background: #F9FAFE;
+  padding: 12px 32px;
+
+  .backButton {
+      display: flex;
+      align-items: center; /* Aligns icon and text inside the button */
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--primary-02-main, #146CFD) !important; /* Force the color to apply */
+      font-family: "Public Sans";
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 20px;
+  }
+
+  .arrowIcon {
+      color: var(--primary-02-main, #146CFD) !important; /* Force the icon color to apply */
+      margin-right: 8px; /* Adds space between the icon and the text */
+  }
 }

@@ -111,6 +111,7 @@ const CategoryList: React.FC = () => {
                                     className={styles.editInput}
                                     value={newCategoryName}
                                     onChange={(e) => setNewCategoryName(e.target.value)}
+                                    required
                                 />
                                     <AppButton
                                         buttonText="Add"
@@ -141,6 +142,7 @@ const CategoryList: React.FC = () => {
                                                     type="text"
                                                     value={editName}
                                                     onChange={handleNameChange}
+                                                    required
                                                 />
                                                 <div className={styles.buttonContainer}>
                                                     <EditButton

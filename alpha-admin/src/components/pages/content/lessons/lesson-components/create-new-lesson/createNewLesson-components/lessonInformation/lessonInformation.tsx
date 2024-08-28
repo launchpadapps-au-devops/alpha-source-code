@@ -71,7 +71,13 @@ export const LessonInformation = ({
                     placeholder="Add lesson code"
                     className={styles.lessonCodeInput}
                     value={data.lessonCode}
-                    onChange={(e) => setData({ ...data, lessonCode: e.target.value })}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        if (/^[1-9]\d*$/.test(value) || value === '') {
+                            setData({ ...data, lessonCode: value });
+                        }
+                    }}
+                    required
                 />
             </div>
 
@@ -84,6 +90,7 @@ export const LessonInformation = ({
                         readOnly
                         className={styles.inputWithPlusIcon}
                         value={selectedTheme.name}
+                        required
                     />
                     <AddIcon className={styles.plusIcon} />
                 </div>
@@ -97,15 +104,16 @@ export const LessonInformation = ({
                 >
                     <select
                         className={styles.customSelect}
-                        value={data.categoryId}
+                        value={data.categoryId || ''}
                         onChange={(e) =>
                             setData({
                                 ...data,
                                 categoryId: parseInt(e.target.value, 10),
                             })
                         }
+                        required
                     >
-                        <option hidden disabled selected>
+                        <option value="" disabled hidden>
                             Select category
                         </option>
                         {categories.map((category: any) => (
@@ -129,15 +137,16 @@ export const LessonInformation = ({
                 >
                     <select
                         className={styles.customSelect}
-                        value={data.duration}
+                        value={data.duration || ''}
                         onChange={(e) =>
                             setData({
                                 ...data,
-                                duration: parseInt(e.target.value),
+                                duration: parseInt(e.target.value, 10),
                             })
                         }
+                        required
                     >
-                        <option hidden disabled selected>
+                        <option value="" disabled>
                             Select duration
                         </option>
                         <option value={10}>10 minutes</option>
@@ -160,15 +169,16 @@ export const LessonInformation = ({
                 >
                     <select
                         className={styles.customSelect}
-                        value={data.points}
+                        value={data.points || ''}
                         onChange={(e) =>
                             setData({
                                 ...data,
                                 points: parseInt(e.target.value),
                             })
                         }
+                        required
                     >
-                        <option hidden disabled selected>
+                        <option value="" hidden disabled selected>
                             Select points
                         </option>
                         <option value={200}>200 points</option>
@@ -183,7 +193,7 @@ export const LessonInformation = ({
                     />
                 </div>
             </div>
-            <LessonTags data={data} setData={setData} isEditMode={isEditMode} />
+            <LessonTags data={data} setData={setData} isEditMode={isEditMode}/>
             <SelectTheme
                 isOpen={isSidebarOpen}
                 onClose={handleCloseSidebar}

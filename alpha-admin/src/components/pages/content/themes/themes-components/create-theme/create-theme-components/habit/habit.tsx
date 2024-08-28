@@ -45,6 +45,7 @@ const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData }) => {
                     maxLength={150}
                     className={styles.habitNameInput}
                     placeholder="Enter the habit name"
+                    required
                 />
             </div>
             <div className={styles.sideBySide}>
@@ -69,6 +70,7 @@ const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData }) => {
                             });
                         }}
                         className={styles.timeAllocationSelect}
+                        required
                     >
                         <option hidden disabled selected>
                             Select duration
@@ -98,6 +100,7 @@ const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData }) => {
                             });
                         }}
                         className={styles.timeAllocationSelect}
+                        required
                     >
                         <option hidden disabled selected>
                             Select points
@@ -112,9 +115,10 @@ const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData }) => {
             </div>
             <div className={styles.inputGroup}>
                 <label htmlFor="habitInstruction">Habit instruction</label>
-                <textarea
+                <input
                     id="habitInstruction"
                     name="habitInstruction"
+                    type="text"
                     value={data.themeData.habits[0].instruction}
                     onChange={(e) =>
                         setData({
@@ -130,6 +134,7 @@ const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData }) => {
                     maxLength={200}
                     className={styles.textarea}
                     placeholder="Enter the habit instruction"
+                    required
                 />
             </div>
         </>

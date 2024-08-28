@@ -20,9 +20,9 @@ interface TipResponse {
     data: Tip;
 }
 
-const getTips = async (): Promise<TipsResponse> => {
+const getTips = async (page: any): Promise<TipsResponse> => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/gateway/v1/daily-tip`;
+    const apiURL = `${config.BASE_URL}/gateway/v1/daily-tip?page=${page}`;
     try {
         const response = await axios.get(apiURL, {
             headers: {
@@ -56,8 +56,7 @@ const addTip = async (tip: any): Promise<void> => {
     try {
         const response = await axios.post(
             apiURL,
-            { dailyTipData: tip ,   position: "below",
-                referenceTipId: 1 },
+            { dailyTipData: tip },
             {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

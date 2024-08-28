@@ -1,10 +1,8 @@
-/* src/themes-table.module.scss */
 @import '../../../../../../styles/global.scss';
 
 .key-contacts-table {
   width: 100%;
   border-collapse: collapse;
- 
 
   a {
     color: #146CFD; /* Change link color to blue */
@@ -18,7 +16,7 @@
   }
 
   th {
-    background-color: $color-background;
+    background: var(--Gray-04, #EBEBEB) !important;
   }
 
   .theme-code, .theme-name, .theme-date, .theme-habit, .theme-published, .theme-lessons {
@@ -29,42 +27,43 @@
     font-size: 14px;
     font-weight: 500;
     color: $color-medium-black;
+    background: var(--Gray-04, #EBEBEB) !important;
   }
 
   .themecode {
     width: 128px;
     height: 47px;
-    padding: $spacing-2;
+    padding: 16px;
   }
 
   .themename {
     width: 490px;
     height: 47px;
-    padding: $spacing-2 $spacing-3;
+    padding: 16px;
   }
   
   .themedate {
     width: 238px;
     height: 47px;
-    padding: $spacing-2;
+    padding: 16px;
   }
 
   .themehabit {
     width: 129px;
     height: 47px;
-    padding: $spacing-2;
+    padding: 16px;
   }
   
   .themepublished {
     width: 129px;
     height: 47px;
-    padding: $spacing-5;
+    padding: 16px;
   }
   
   .themelessons {
     width: 129px;
     height: 47px;
-    padding: $spacing-2;
+    padding: 16px;
     }
   }
 

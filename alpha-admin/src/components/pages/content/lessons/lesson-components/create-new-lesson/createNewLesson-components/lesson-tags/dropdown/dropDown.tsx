@@ -95,6 +95,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode
                                 type="checkbox"
                                 checked={selectedOptions.includes(option)}
                                 onChange={() => handleOptionChange(option)}
+                                required
                             />
                             {option}
                         </label>

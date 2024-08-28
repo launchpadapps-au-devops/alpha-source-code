@@ -12,6 +12,8 @@ import AssignedThemes from './viewLifestyle-components/assigned-themes/AssignedT
 import { useAppDispatch } from '../../../../../app/hooks';
 import { fetchPlanByIdThunk, fetchPlansThunk } from '../lifeStyleSlice';
 import { fetchThemeByIdThunk } from '../../../content/themes/themes-components/themeSlice';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../../back-button/backButton';
 
 export interface ContentProps {
     className?: string;
@@ -38,47 +40,54 @@ export const ViewLifeStyle = ({ className }: ContentProps) => {
     }, []);
 
     return (
-        <div className={classNames(styles.container, className, { 'blur-effect': isSidebarOpen })}>
-            {/* <Sidebar /> */}
-            <div className={styles.content}>
-                <header className={styles.header}>
-                    <div className={styles.leftButtonContainer}>
-                        <Typography variant="h5">Lifestyle plan</Typography>
-                        {isPublished ? (
-                            <PublishButton buttonText="Published" />
-                        ) : (
-                            <PublishButton buttonText="Unpublished" isUnpublished />
-                        )}
-                    </div>
-                    <div className={styles.rightButtonContainer}>
-                        <div className={styles.buttonContainer}>
-                            {!isPublished && (
-                                <AppButton
-                                    buttonText="Publish"
-                                    onButtonClick={() => navigate('/careteam/createcontent')}
-                                />
+        <div>
+            <BackButton />
+            <div
+                className={classNames(styles.container, className, {
+                    'blur-effect': isSidebarOpen,
+                })}
+            >
+                {/* <Sidebar /> */}
+                <div className={styles.content}>
+                    <header className={styles.header}>
+                        <div className={styles.leftButtonContainer}>
+                            <Typography variant="h5">Lifestyle plan</Typography>
+                            {isPublished ? (
+                                <PublishButton buttonText="Published" />
+                            ) : (
+                                <PublishButton buttonText="Unpublished" isUnpublished />
                             )}
-
-                            <EditButton
-                                showLeftIcon
-                                buttonText={
-                                    isPublished == true ? 'Edit Plan' : 'Edit Lifestyle plan'
-                                }
-                                onButtonClick={() => navigate(`/lifestyle-plan/edit/${id}`)}
-                            />
                         </div>
-                    </div>
-                </header>
-                <LifestyleInformation
-                    plan={plan}
-                    setPlan={setPlan}
-                    // planName="Heart health"
-                    // planDuration="90 Days"
-                    // planDescription="Heart health is a transformative theme designed to help individuals achieve optimal heart health and wellness. Participants will learn evidence-based strategies and practical techniques to enhance their heart health, leading to better overall health and well-being."
-                    // internalNotes="Internal notes go here"
-                />
+                        <div className={styles.rightButtonContainer}>
+                            <div className={styles.buttonContainer}>
+                                {!isPublished && (
+                                    <AppButton
+                                        buttonText="Publish"
+                                        onButtonClick={() => navigate('/careteam/createcontent')}
+                                    />
+                                )}
 
-                {plan && plan.id && <AssignedThemes plan={plan} />}
+                                <EditButton
+                                    showLeftIcon
+                                    buttonText={
+                                        isPublished == true ? 'Edit Plan' : 'Edit Lifestyle plan'
+                                    }
+                                    onButtonClick={() => navigate(`/lifestyle-plan/edit/${id}`)}
+                                />
+                            </div>
+                        </div>
+                    </header>
+                    <LifestyleInformation
+                        plan={plan}
+                        setPlan={setPlan}
+                        // planName="Heart health"
+                        // planDuration="90 Days"
+                        // planDescription="Heart health is a transformative theme designed to help individuals achieve optimal heart health and wellness. Participants will learn evidence-based strategies and practical techniques to enhance their heart health, leading to better overall health and well-being."
+                        // internalNotes="Internal notes go here"
+                    />
+
+                    {plan && plan.id && <AssignedThemes plan={plan} />}
+                </div>
             </div>
         </div>
     );

@@ -33,6 +33,50 @@ export const LessonContent = ({
     const [activeQuizIndex, setActiveQuizIndex] = useState<number | null>(null);
     const [quizType, setQuizType] = useState<'multiple-choice' | 'free-text' | null>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const [isFileUploaded, setIsFileUploaded] = useState(false); // State to track file upload
+    const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error messages
+
+    const dispatch = useAppDispatch();
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const fileType = file.type;
+            const fileSize = file.size;
+            const isImage = fileType === 'image/jpeg' || fileType === 'image/png';
+            const isVideo = fileType === 'video/mp4';
+
+            // Validate file type and size
+            if (isImage && fileSize <= 2 * 1024 * 1024) {
+                // Image less than or equal to 2MB
+                dispatch(uploadFile(file)).then((response: any) => {
+                    const updatedScreenData = [...data.screenData];
+                    updatedScreenData[index].media = response.payload.data.data.url;
+                    setData({ ...data, screenData: updatedScreenData });
+                    setIsFileUploaded(true);
+                    setErrorMessage(null); // Clear any error message
+                });
+            } else if (isVideo && fileSize <= 100 * 1024 * 1024) {
+                // Video less than or equal to 100MB
+                dispatch(uploadFile(file)).then((response: any) => {
+                    const updatedScreenData = [...data.screenData];
+                    updatedScreenData[index].media = response.payload.data.data.url;
+                    setData({ ...data, screenData: updatedScreenData });
+                    setIsFileUploaded(true);
+                    setErrorMessage(null); // Clear any error message
+                });
+            } else {
+                // Invalid file type or size
+                if (!isImage && !isVideo) {
+                    setErrorMessage('Only JPG, PNG images or MP4 videos are allowed.');
+                } else if (isImage && fileSize > 2 * 1024 * 1024) {
+                    setErrorMessage('Image size should be less than or equal to 2MB.');
+                } else if (isVideo && fileSize > 100 * 1024 * 1024) {
+                    setErrorMessage('Video size should be less than or equal to 100MB.');
+                }
+            }
+        }
+    };
 
     const handleAddScreen = () => {
         const newScreen = {
@@ -92,18 +136,6 @@ export const LessonContent = ({
         setData({ ...data, quizData: updatedQuizData });
     };
 
-    const dispatch = useAppDispatch();
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            dispatch(uploadFile(file)).then((response: any) => {
-                const updatedScreenData = [...data.screenData];
-                updatedScreenData[index].media = response.payload.data.data.url;
-                setData({ ...data, screenData: updatedScreenData });
-            });
-        }
-    };
     useEffect(() => {
         setScreenData(screens);
     }, [screens]);
@@ -118,9 +150,12 @@ export const LessonContent = ({
                     <h3>Screen {index + 1}</h3>
                     <div className="cover-image-section">
                         <label htmlFor="cover-image" className="cover-image-label">
-                            Image or Video
+                            Image or Video <span style={{ color: 'red' }}>*</span>{' '}
+                            {/* Required indicator */}
                         </label>
-                        <div className="cover-image-hint">File must be less than 5MB / KB</div>
+                        <div className="cover-image-hint">
+                            Image: JPG, PNG, max 2MB; Video: MP4, max 100MB
+                        </div>
                         <UploadButton
                             showLeftIcon
                             buttonText="Upload media"
@@ -129,6 +164,22 @@ export const LessonContent = ({
                             setData={setData}
                             handleFileChange={(e) => handleFileChange(e, index)}
                         />
+                        {errorMessage && (
+                            <div
+                                className="error-message"
+                                style={{ color: 'red', marginTop: '5px' }}
+                            >
+                                {errorMessage}
+                            </div>
+                        )}
+                        {!isFileUploaded && (
+                            <div
+                                className="error-message"
+                                style={{ color: 'red', marginTop: '5px' }}
+                            >
+                                Please upload a valid file.
+                            </div>
+                        )}
                     </div>
                     <div className="subtitle input-field">
                         <label>Subtitle</label>
@@ -141,6 +192,7 @@ export const LessonContent = ({
                                 updatedScreenData[index].subtitle = e.target.value;
                                 setData({ ...data, screenData: updatedScreenData });
                             }}
+                            required
                         />
                     </div>
                     <div className="content input-field">
@@ -154,6 +206,7 @@ export const LessonContent = ({
                                 updatedScreenData[index].content = e.target.value;
                                 setData({ ...data, screenData: updatedScreenData });
                             }}
+                            required
                         />
                     </div>
                 </div>
@@ -187,6 +240,7 @@ export const LessonContent = ({
                             placeholder="Enter quiz name"
                             value={quiz.quizName || ''}
                             onChange={(e) => handleQuizChange(index, 'quizName', e.target.value)}
+                            required
                         />
                     </div>
                     <div className="quiz-question input-field">
@@ -196,6 +250,7 @@ export const LessonContent = ({
                             placeholder="Enter quiz question"
                             value={quiz.question || ''}
                             onChange={(e) => handleQuizChange(index, 'question', e.target.value)}
+                            required
                         />
                     </div>
                     <div className="user-instruction input-field">
@@ -207,6 +262,7 @@ export const LessonContent = ({
                             onChange={(e) =>
                                 handleQuizChange(index, 'userInstructions', e.target.value)
                             }
+                            required
                         />
                     </div>
                     {quiz.type === 'multiple-choice' && (
@@ -223,6 +279,7 @@ export const LessonContent = ({
                                                 updatedOptions[optionIndex] = e.target.value;
                                                 handleQuizChange(index, 'options', updatedOptions);
                                             }}
+                                            required
                                         />
                                         <Checkbox
                                             checked={quiz.answer?.includes(option)}

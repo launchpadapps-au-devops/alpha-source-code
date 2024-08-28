@@ -11,6 +11,8 @@ import { PublishButton } from '../../../content-components/publish-button/publis
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { useEffect, useState } from 'react';
 import { fetchLessonByIdThunk } from '../lessonsSlice';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../../../back-button/backButton';
 
 const categories = [
     {
@@ -97,6 +99,8 @@ export const ViewLessons = ({
     }, []);
 
     return (
+        <>
+          <BackButton/>
         <div className={classNames(styles.container, className)}>
             <Sidebar />
             <div className={styles.content}>
@@ -166,5 +170,6 @@ export const ViewLessons = ({
                 {/* Conditionally render TagsComponent */}
             </div>
         </div>
+        </>
     );
 };

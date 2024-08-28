@@ -14,7 +14,8 @@ import { useAppDispatch } from '../../../../../app/hooks';
 import { addPlanThunk, fetchPlanByIdThunk, updatePlanThunk } from '../lifeStyleSlice';
 import { fetchThemesThunk } from '../../../content/themes/themes-components/themeSlice';
 import { AddThemes } from '../add-themes/addThemes';
-
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../../back-button/backButton';
 export interface CreateLifestyleProps {
     className?: string;
 }
@@ -76,7 +77,7 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
 
             // setThemeView(true);
         }
-        dispatch(fetchThemesThunk()).then((data: any) => {
+        dispatch(fetchThemesThunk(1)).then((data: any) => {
             if (data.payload) {
                 console.log('data', data.payload.data);
                 setThemes(data.payload.data);
@@ -125,6 +126,7 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
 
     return (
         <>
+            <BackButton />
             {!themeView ? (
                 <div className={classNames(styles.container, className)}>
                     <div className={styles.content}>

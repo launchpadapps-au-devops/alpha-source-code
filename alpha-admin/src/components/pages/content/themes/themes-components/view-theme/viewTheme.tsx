@@ -27,7 +27,8 @@ import { PublishButton } from '../../../content-components/publish-button/publis
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchThemeByIdThunk, updateThemeThunk } from '../themeSlice';
 import { updateTheme } from '../themeAPI';
-
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { BackButton } from '../../../../../back-button/backButton';
 export interface ContentProps {
     className?: string;
 }
@@ -67,43 +68,50 @@ export const ViewThemes = ({ className }: ContentProps) => {
     };
 
     return (
-        <div className={classNames(styles.container, className, { 'blur-effect': isSidebarOpen })}>
-            <Sidebar />
-            <div className={styles.content}>
-                <header className={styles.header}>
-                    <div className={styles.leftButtonContainer}>
-                        <Typography variant="h5">View themes</Typography>
-                        {isPublished ? (
-                            <PublishButton
-                                buttonText="Published"
-                                onButtonClick={() => handlePublish()}
-                            />
-                        ) : (
-                            <PublishButton buttonText="Unpublished" isUnpublished />
-                        )}
-                    </div>
-                    <div className={styles.rightButtonContainer}>
-                        <div className={styles.buttonContainer}>
-                            <EditButton
-                                showLeftIcon
-                                buttonText="Edit"
-                                onButtonClick={() =>
-                                    navigate(`/content/themes/editTheme/${params.id}`)
-                                }
-                            />
-                            {!isPublished && (
-                                <AppButton
-                                    buttonText="Publish"
+        <>
+            <BackButton/>
+            <div
+                className={classNames(styles.container, className, {
+                    'blur-effect': isSidebarOpen,
+                })}
+            >
+                <Sidebar />
+                <div className={styles.content}>
+                    <header className={styles.header}>
+                        <div className={styles.leftButtonContainer}>
+                            <Typography variant="h5">View themes</Typography>
+                            {isPublished ? (
+                                <PublishButton
+                                    buttonText="Published"
                                     onButtonClick={() => handlePublish()}
                                 />
+                            ) : (
+                                <PublishButton buttonText="Unpublished" isUnpublished />
                             )}
                         </div>
-                    </div>
-                </header>
-                <ThemeInformation theme={theme} />
-                <AssignedLessons theme={theme} />
-                <HabitAssigned theme={theme} />
+                        <div className={styles.rightButtonContainer}>
+                            <div className={styles.buttonContainer}>
+                                <EditButton
+                                    showLeftIcon
+                                    buttonText="Edit"
+                                    onButtonClick={() =>
+                                        navigate(`/content/themes/editTheme/${params.id}`)
+                                    }
+                                />
+                                {!isPublished && (
+                                    <AppButton
+                                        buttonText="Publish"
+                                        onButtonClick={() => handlePublish()}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </header>
+                    <ThemeInformation theme={theme} />
+                    <AssignedLessons theme={theme} />
+                    <HabitAssigned theme={theme} />
+                </div>
             </div>
-        </div>
+        </>
     );
 };

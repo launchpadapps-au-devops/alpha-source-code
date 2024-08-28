@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './dashBoardCardDetails.scss';
 import { UploadButton } from '../../../../../content-components/upload-button/uploadButton';
 import { Vector } from '../../../../../../../icon/glyps/vector';
@@ -19,6 +19,7 @@ export const DashboardCardDetails = ({
     setData,
 }: DashboardCardDetailsProps) => {
     const dispatch = useAppDispatch();
+    const [isFileUploaded, setIsFileUploaded] = useState(false); // State to track file upload
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -27,10 +28,12 @@ export const DashboardCardDetails = ({
 
             dispatch(uploadFile(file)).then((response: any) => {
                 setData({ ...data, coverImage: response.payload.data.data.url });
+                setIsFileUploaded(true); // Set to true once the file is uploaded
                 console.log('File uploaded', response.payload.data.data.url);
             });
         }
     };
+
     return (
         <div className="dashboard-card-details-container">
             <div className="dashboard-card-header">
@@ -38,9 +41,9 @@ export const DashboardCardDetails = ({
             </div>
             <div className="cover-image-section">
                 <label htmlFor="cover-image" className="cover-image-label">
-                    Cover image
+                    Cover image <span style={{ color: 'red' }}>*</span> {/* Indicate it's required */}
                 </label>
-                <div className="cover-image-hint">File must be less than 5MB / KB</div>
+                <div className="cover-image-hint"> Image: JPG, PNG, max 2MB; Video: MP4, max 100MB</div>
                 <UploadButton
                     showLeftIcon
                     buttonText="Upload media"
@@ -48,6 +51,11 @@ export const DashboardCardDetails = ({
                     setData={setData}
                     handleFileChange={handleFileChange}
                 />
+                {!isFileUploaded && (
+                    <div className="error-message" style={{ color: 'red', marginTop: '5px' }}>
+                        Please upload a file.
+                    </div>
+                )}
             </div>
             <div className="lesson-name-section">
                 <label htmlFor="lesson-name" className="lesson-name-label">
@@ -66,6 +74,7 @@ export const DashboardCardDetails = ({
                         })
                     }
                     maxLength={50}
+                    required
                 />
                 <div className="lesson-name-footer">50 characters</div>
             </div>
@@ -86,6 +95,7 @@ export const DashboardCardDetails = ({
                         })
                     }
                     maxLength={200}
+                    required
                 />
                 <div className="lesson-description-footer">200 characters</div>
             </div>

@@ -3,6 +3,7 @@ import TabBar from '../../../../../content/content-components/tab-bar/TabBar';
 import styles from './AssignedThemes.module.scss';
 import { Typography } from '@mui/material';
 import { ThemesTable } from '../../../../../content/themes/themes-components/themes-table/themes-table';
+import { Lesson } from '../../../../../content/themes/themes-components/lessonsidebar/lessonSidebar';
 
 export interface AssignedThemesProps {
     className?: string;
@@ -24,7 +25,17 @@ const AssignedThemes = ({ className, plan }: AssignedThemesProps) => {
             </div>
             <div>
                 <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
-                <ThemesTable themes={plan.themes} setThemes={undefined} />
+                <ThemesTable
+                    themes={plan.themes}
+                    setThemes={undefined}
+                    totalPages={0}
+                    setTotalPages={undefined}
+                    totalRecords={0}
+                    setTotalRecords={undefined}
+                    onUpdateThemes={function (updatedLessons: Lesson[]): void {
+                        throw new Error('Function not implemented.');
+                    }}
+                />
             </div>
         </>
     );

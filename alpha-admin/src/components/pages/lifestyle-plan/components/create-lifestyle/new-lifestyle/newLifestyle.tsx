@@ -43,18 +43,21 @@ export const NewLifestyle = ({
                         value={planName}
                         onChange={(e) => setPlanName(e.target.value)}
                         placeholder="Enter the plan name"
+                        required
                     />
                 </div>
                 <div className={styles.section}>
                     <label className={styles.label} htmlFor="themeDescription">
                         Plan description
                     </label>
-                    <textarea
+                    <input
                         id="themeDescription"
+                        type="text"
                         className={styles.textarea}
                         value={planDescription}
                         onChange={(e) => setPlanDescription(e.target.value)}
                         placeholder="Enter the Plan description "
+                        required
                     />
                 </div>
             </div>
@@ -65,12 +68,14 @@ export const NewLifestyle = ({
                 <label className={styles.label} htmlFor="internalNotes">
                     Internal notes
                 </label>
-                <textarea
+                <input
                     id="internalNotes"
+                    type="text"
                     className={styles.textarea}
                     value={internalNotes}
                     onChange={(e) => setInternalNotes(e.target.value)}
                     placeholder="This lesson will be great for anyone on the heart health plan."
+                    required
                 />
             </div>
         </div>

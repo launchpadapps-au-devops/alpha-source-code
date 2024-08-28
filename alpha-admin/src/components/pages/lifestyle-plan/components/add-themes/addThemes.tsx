@@ -72,7 +72,7 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
     };
 
     useEffect(() => {
-        dispatch(fetchThemesThunk()).then((response: any) => {
+        dispatch(fetchThemesThunk(1)).then((response: any) => {
             if (response.payload) {
                 console.log('Response ', response);
                 setThemes(response.payload.data);
@@ -190,6 +190,10 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
                     setThemes={setThemes}
                     onUpdateThemes={onUpdateThemes}
                     showSelectColumn
+                    totalPages={0}
+                    setTotalPages={undefined}
+                    totalRecords={0}
+                    setTotalRecords={undefined}
                 />
                 {/* <Table className={classNames(styles['key-contacts-table'])}>
                     <TableHead>
