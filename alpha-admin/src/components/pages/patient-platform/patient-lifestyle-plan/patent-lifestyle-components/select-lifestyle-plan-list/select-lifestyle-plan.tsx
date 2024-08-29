@@ -1,3 +1,4 @@
+import React from 'react';
 import classNames from 'classnames';
 import styles from './select-life-style-plan.module.scss';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -11,16 +12,18 @@ import Radio from '@mui/material/Radio';
 
 export interface SelectLifeStylePlanProps {
     className?: string;
-    selectedPlan: string | null;
-    onPlanSelect: (plan: string) => void;
+    selectedPlanId: string | null; // Updated to use planId
+    onPlanSelect: (planId: string) => void; // Updated to use planId
+    planId: string | number; // Accepts both string and number types
     title: string; // New prop for the title
     description: string; // New prop for the description
 }
 
 export const SelectLifeStylePlan = ({
     className,
-    selectedPlan,
+    selectedPlanId,
     onPlanSelect,
+    planId, // Receive planId
     title,
     description,
 }: SelectLifeStylePlanProps) => {
@@ -63,11 +66,10 @@ export const SelectLifeStylePlan = ({
                                     />
                                 </svg>
                             </div>
-                            {/* Use title prop instead of hardcoded text */}
                             <span style={{ maxWidth: '80%' }}>{title}</span>
                             <Radio
-                                checked={selectedPlan === title}
-                                onChange={() => onPlanSelect(title)}
+                                checked={selectedPlanId === planId.toString()} // Convert planId to string for comparison
+                                onChange={() => onPlanSelect(planId.toString())} // Convert planId to string
                                 sx={{
                                     marginLeft: 'auto',
                                     marginRight: '40px',
@@ -83,10 +85,7 @@ export const SelectLifeStylePlan = ({
                 <CustomAccordionDetails>
                     <div className={styles['item-details']}>
                         <span className={styles['label-text']}>About this plan</span>
-                        {/* Use description prop instead of hardcoded text */}
                         <p>{description}</p>
-
-                        {/* Additional static or dynamic content goes here */}
                     </div>
                 </CustomAccordionDetails>
             </CustomAccordion>

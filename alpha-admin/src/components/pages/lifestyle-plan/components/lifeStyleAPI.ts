@@ -2,7 +2,7 @@ import axios from 'axios';
 import { config } from '../../../../config/config';
 
 interface Plan {
-    id: number;
+    id: any;
     name: string;
     description: string;
 }

@@ -6,10 +6,10 @@ import { InProgress } from './patent-lifestyle-components/in-progress-plan/in-pr
 import { DailogModal } from './patent-lifestyle-components/dialog-modal/dialog-modal';
 import { RemoveLifestyle } from './patent-lifestyle-components/remove-lifestyle-modal/remove-lifestyle-modal';
 import { Plan } from '../../lifestyle-plan/components/lifeStyleSlice';
-import { getLifestylePlans, assignLifestylePlan } from './patientLifeStyleAPI';
+import { getLifestylePlans, assignLifestylePlan } from './patientLifeStyleAPI'; 
 import { SelectLifeStylePlan } from './patent-lifestyle-components/select-lifestyle-plan-list/select-lifestyle-plan';
 import { SidebarPatient } from '../../patient-Management/patient-sidebar/patientSidebar';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 export interface PatientLifeStyle {
     className?: string;
@@ -18,19 +18,17 @@ export interface PatientLifeStyle {
 export const PatientLifeStyle = ({ className }: PatientLifeStyle) => {
     const location = useLocation();
     const patientId = location.state?.patientId; // This is the userId in your API call
-    const navigate = useNavigate();
 
     const [isInProgress, setIsInProgress] = useState(false);
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
-    const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null); // Change to planId
+    const [selectedPlanId, setSelectedPlanId] = useState<any>(null); // Store planId instead of name
     const [plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [page, setPage] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
 
     useEffect(() => {
-        console.log('Patient ID useeffect: ', patientId);
         const fetchPlans = async () => {
             if (loading || !hasMore) return;
 
@@ -80,11 +78,10 @@ export const PatientLifeStyle = ({ className }: PatientLifeStyle) => {
         }
         setLoading(true); // Show loading state
         try {
-            await assignLifestylePlan(patientId, selectedPlanId); // Use selectedPlanId
+            await assignLifestylePlan(patientId, selectedPlanId);
             setIsAssignModalOpen(true); // Open modal on success
         } catch (error) {
             console.error('Error assigning plan to patient:', error);
-            // Handle error, possibly show a message or modal
         } finally {
             setLoading(false); // Hide loading state
         }
@@ -95,8 +92,7 @@ export const PatientLifeStyle = ({ className }: PatientLifeStyle) => {
     };
 
     const handleCloseAssignModal = () => {
-        //setIsAssignModalOpen(false);
-        navigate('/patient-dashboard');
+        setIsAssignModalOpen(false);
     };
 
     const handleCloseRemoveModal = () => {
@@ -131,8 +127,9 @@ export const PatientLifeStyle = ({ className }: PatientLifeStyle) => {
                 {plans.map((plan) => (
                     <SelectLifeStylePlan
                         key={plan.id}
-                        selectedPlan={selectedPlanId || ''}
-                        onPlanSelect={() => handlePlanSelect(plan.id)} // Pass plan.id
+                        planId={plan.id}  // Pass planId here
+                        selectedPlanId={selectedPlanId} // Pass selectedPlanId to handle the selected state
+                        onPlanSelect={handlePlanSelect} // Update the function signature
                         title={plan.name}
                         description={plan.description}
                     />
@@ -143,7 +140,7 @@ export const PatientLifeStyle = ({ className }: PatientLifeStyle) => {
                     open={isAssignModalOpen}
                     closeModal={handleCloseAssignModal}
                     title="Plan assigned to patient."
-                    descriptionText="The plan was successfully assigned to the patients."
+                    descriptionText="The plan was successfully assigned to the patient."
                 />
                 <RemoveLifestyle open={isRemoveModalOpen} closeModal={handleCloseRemoveModal} />
             </main>
