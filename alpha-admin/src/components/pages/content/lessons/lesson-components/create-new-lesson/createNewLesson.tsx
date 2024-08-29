@@ -140,7 +140,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
         dispatch(fetchThemesThunk(1)).then((response: any) => {
             setTheme(response.payload.data);
         });
-        dispatch(fetchCategoriesThunk())
+        dispatch(fetchCategoriesThunk(1))
             .then((response: any) => {
                 setCategories(response.payload.data);
             })

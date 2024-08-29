@@ -33,9 +33,9 @@ const initialLessonState: LessonState = {
 
 export const fetchLessonsThunk = createAsyncThunk(
     'lessons/getLessons',
-    async (_, { rejectWithValue }) => {
+    async (page:any, { rejectWithValue }) => {
         try {
-            const response = await getLessons();
+            const response = await getLessons(page);
             return response;
         } catch (error) {
             console.log('Response ERROR ', error);
@@ -62,7 +62,7 @@ export const addLessonThunk = createAsyncThunk(
     async (data: any, { dispatch, rejectWithValue }) => {
         try {
             const response = await addLesson(data);
-            dispatch(fetchLessonsThunk());
+            dispatch(fetchLessonsThunk(1));
             return response;
         } catch (error) {
             return rejectWithValue(error);
@@ -75,7 +75,7 @@ export const addLessonsBulkThunk = createAsyncThunk(
     async (lessons: { title: string; content: string }[], { dispatch, rejectWithValue }) => {
         try {
             const response = await addLessonsBulk(lessons);
-            dispatch(fetchLessonsThunk());
+            dispatch(fetchLessonsThunk(1));
             return response;
         } catch (error) {
             return rejectWithValue(error);
@@ -88,7 +88,7 @@ export const updateLessonThunk = createAsyncThunk(
     async ({ id, data }: { id: any; data: any }, { dispatch, rejectWithValue }) => {
         try {
             const response = await updateLesson(id, data);
-            dispatch(fetchLessonsThunk());
+            dispatch(fetchLessonsThunk(1));
             return response;
         } catch (error) {
             return rejectWithValue(error);

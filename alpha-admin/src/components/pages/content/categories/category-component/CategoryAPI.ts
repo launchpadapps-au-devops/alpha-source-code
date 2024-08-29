@@ -19,9 +19,9 @@ interface CategoryResponse {
     data: Category;
 }
 
-const getCategories = async (): Promise<CategoriesResponse> => {
+const getCategories = async (page: any): Promise<CategoriesResponse> => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/gateway/v1/category`;
+    const apiURL = `${config.BASE_URL}/gateway/v1/category?page=${page}`;
     try {
         const response = await axios.get(apiURL, {
             headers: {

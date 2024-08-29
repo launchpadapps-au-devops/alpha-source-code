@@ -28,6 +28,10 @@ type Lesson = {
     createdAt: string;
     quizData: any[];
     isPublished: boolean;
+    totalPages: number;
+    setTotalPages: any;
+    totalRecords: number;
+    setTotalRecords: any;
 };
 
 export const LessonTable: React.FC<{ className?: string }> = ({ className }) => {
@@ -35,31 +39,38 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
     const navigate = useNavigate();
     const [lessons, setLessons] = useState<Lesson[]>([]);
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);
-    const [totalPages, setTotalPages] = useState(1);
+    // const [itemsPerPage] = useState(10);
     const [openPublishModal, setOpenPublishModal] = useState(false);
     const [openUnpublishModal, setOpenUnpublishModal] = useState(false);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        dispatch(fetchLessonsThunk()).then((res: any) => {
+        dispatch(fetchLessonsThunk(1)).then((res: any) => {
             if (res.payload) {
                 setLessons(res.payload.data);
-                setTotalPages(Math.ceil(res.payload.data.length / itemsPerPage));
+                setTotalPages(res.payload.meta.totalPages);
+                setTotalRecords(res.payload.meta.totalRecords);
             }
         });
     }, [dispatch]);
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-        setCurrentPage(page);
-    };
-
     const handleNextPage = () => {
+        console.log('currentPage', currentPage);
+        dispatch(fetchLessonsThunk(currentPage + 1)).then((res: any) => {
+            console.log('res', res);
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
-
     const handlePreviousPage = () => {
-        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+        dispatch(fetchLessonsThunk(currentPage - 1)).then((res: any) => {
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
+        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
     };
 
     const handleToggle = (lesson: Lesson, index: number) => {
@@ -78,10 +89,10 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
             dispatch(updateLessonThunk({ id: lessonToUpdate.id, data: updatedLesson })).then(
                 (response: any) => {
                     if (response.payload) {
-                        dispatch(fetchLessonsThunk()).then((res: any) => {
+                        dispatch(fetchLessonsThunk(1)).then((res: any) => {
                             if (res.payload) {
                                 setLessons(res.payload.data);
-                                setTotalPages(Math.ceil(res.payload.data.length / itemsPerPage));
+                                // setTotalPages(Math.ceil(res.payload.data.length / itemsPerPage));
                             }
                         });
                     }
@@ -98,10 +109,10 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
             dispatch(updateLessonThunk({ id: lessonToUpdate.id, data: updatedLesson })).then(
                 (response: any) => {
                     if (response.payload) {
-                        dispatch(fetchLessonsThunk()).then((res: any) => {
+                        dispatch(fetchLessonsThunk(1)).then((res: any) => {
                             if (res.payload) {
                                 setLessons(res.payload.data);
-                                setTotalPages(Math.ceil(res.payload.data.length / itemsPerPage));
+                                // setTotalPages(Math.ceil(res.payload.data.length / itemsPerPage));
                             }
                         });
                     }
@@ -140,7 +151,7 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
                     </TableHead>
                     <TableBody>
                         {lessons
-                            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                            // .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                             .map((lesson, index) => (
                                 <TableRow
                                     key={index}

@@ -45,11 +45,11 @@ const initialCategoryState: CategoryState = {
     category: null,
 };
 
-export const fetchCategoriesThunk = createAsyncThunk<CategoriesResponse>(
+export const fetchCategoriesThunk = createAsyncThunk<CategoriesResponse,any>(
     'categories/getCategories',
-    async (_, { rejectWithValue }) => {
+    async (page: any,{ rejectWithValue }) => {
         try {
-            const response = await getCategories();
+            const response = await getCategories(page);
             console.log('Response ', response);
             return response;
         } catch (error) {
@@ -88,7 +88,7 @@ export const addCategoryThunk = createAsyncThunk(
                 },
             };
             const response = await addCategory(newCategory);
-            dispatch(fetchCategoriesThunk());
+            dispatch(fetchCategoriesThunk(1));
 
             return response;
         } catch (error) {
@@ -102,7 +102,7 @@ export const addCategoriesBulkThunk = createAsyncThunk(
     async (categories: { name: string; description: string }[], { dispatch, rejectWithValue }) => {
         try {
             const response = await addCategoriesBulk(categories);
-            dispatch(fetchCategoriesThunk());
+            dispatch(fetchCategoriesThunk(1));
             return response;
         } catch (error) {
             return rejectWithValue(error);
@@ -115,7 +115,7 @@ export const updateCategoryThunk = createAsyncThunk(
     async ({ id, data }: { id: number; data: any }, { dispatch, rejectWithValue }) => {
         try {
             const response = await updateCategory(id, data);
-            dispatch(fetchCategoriesThunk());
+            dispatch(fetchCategoriesThunk(1));
             return response;
         } catch (error) {
             return rejectWithValue(error);
@@ -138,7 +138,7 @@ export const deleteCategoryThunk = createAsyncThunk(
                 id: id,
             };
             const response = await updateCategory(id, newCategory);
-            dispatch(fetchCategoriesThunk());
+            dispatch(fetchCategoriesThunk(1));
             return response;
         } catch (error) {
             return rejectWithValue(error);

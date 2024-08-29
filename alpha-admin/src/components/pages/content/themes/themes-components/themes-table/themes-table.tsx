@@ -51,10 +51,6 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-        setCurrentPage(page);
-    };
-
     const handleNextPage = () => {
         console.log('currentPage', currentPage);
         dispatch(fetchThemesThunk(currentPage + 1)).then((res: any) => {
@@ -73,6 +69,7 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
             setTotalPages(res.payload.meta.totalPages);
             setTotalRecords(res.payload.meta.totalRecords);
         });
+        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
     };
 
     const handleToggle = (theme: any, index: number) => {

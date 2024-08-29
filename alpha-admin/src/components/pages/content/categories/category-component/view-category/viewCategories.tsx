@@ -12,33 +12,50 @@ interface Category {
     name: string;
     isPublished: boolean;
     status: string;
+    totalPages: number;
+    setTotalPages: any;
+    totalRecords: number;
+    setTotalRecords: any;
 }
 
 export const ViewCategories: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const dispatch = useAppDispatch();
 
     const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number | null>(null);
     const [openModal, setOpenModal] = useState(false);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        dispatch(fetchCategoriesThunk()).then((response: any) => {
+        dispatch(fetchCategoriesThunk(1)).then((response: any) => {
             if (response.payload) {
-                console.log('Response ', response);
-                setCategories(response.payload.data);
+                setTotalPages(response.payload.meta.totalPages);
+                setTotalRecords(response.payload.meta.totalRecords);
+                const activeCategories = response.payload.data.filter((category: Category) => category.status.toLowerCase() === 'active');
+                setCategories(activeCategories);
             }
         });
     }, [dispatch]);
+    
 
     const handleNextPage = () => {
+        console.log('currentPage', currentPage);
+        dispatch(fetchCategoriesThunk(currentPage + 1)).then((res: any) => {
+            console.log('res', res);
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
-
     const handlePreviousPage = () => {
-        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+        dispatch(fetchCategoriesThunk(currentPage - 1)).then((res: any) => {
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
+        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
     };
 
     const handleToggle = (category: Category, index: number) => {
@@ -50,7 +67,7 @@ export const ViewCategories: React.FC = () => {
         dispatch(updateCategoryThunk({ id: category.id, data: newCategory })).then(
             (response: any) => {
                 if (response.payload) {
-                    dispatch(fetchCategoriesThunk()).then((response: any) => {
+                    dispatch(fetchCategoriesThunk(1)).then((response: any) => {
                         if (response.payload) {
                             console.log('Response ', response);
                             setCategories(response.payload.data);

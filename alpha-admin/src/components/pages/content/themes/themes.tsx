@@ -60,6 +60,7 @@ export const Themes = ({ className }: ContentProps) => {
             setTotalRecords(res.payload.meta.totalRecords);
         });
     }, []);
+    
     useEffect(() => {
         if (buttonRef.current) {
             setMenuWidth(buttonRef.current.offsetWidth);

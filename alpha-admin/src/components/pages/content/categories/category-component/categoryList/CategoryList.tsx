@@ -19,6 +19,10 @@ interface Category {
     id: number;
     name: string;
     status: string; // Added status field to the Category interface
+    totalPages: number;
+    setTotalPages: any;
+    totalRecords: number;
+    setTotalRecords: any;
 }
 
 const CategoryList: React.FC = () => {
@@ -30,28 +34,46 @@ const CategoryList: React.FC = () => {
     const location = useLocation();
     const [openModal, setOpenModal] = useState(false);
 
-    useEffect(() => {
-        // Fetch categories
-        if (location.pathname === '/content/createcategories') {
-            setNewCategory(true);
-        }
-    }, []);
-
     const [editId, setEditId] = useState<number | null>(null);
     const [editName, setEditName] = useState('');
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    useEffect(() => {
+        // Fetch categories
+        dispatch(fetchCategoriesThunk(1)).then((response: any) => {
+            setTotalPages(response.payload.meta.totalPages);
+            setTotalRecords(response.payload.meta.totalRecords);
+        if (location.pathname === '/content/createcategories') {
+            setNewCategory(true);
+        }});
+    }, [dispatch, location.pathname]);
+
+    const handleNextPage = () => {
+        console.log('currentPage', currentPage);
+        dispatch(fetchCategoriesThunk(currentPage + 1)).then((res: any) => {
+            console.log('res', res);
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    };
+    const handlePreviousPage = () => {
+        dispatch(fetchCategoriesThunk(currentPage - 1)).then((res: any) => {
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
+        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
+    };
+
 
     const handleEditClick = (category: Category) => {
         setEditId(category.id);
         setEditName(category.name);
     };
 
-    const handleSaveAndAddMoreClick = (category: any) => {
-        const updatedCategory = { ...category, name: editName }; // Create a shallow copy and update the name
-        dispatch(updateCategoryThunk({ id: updatedCategory.id, data: updatedCategory }));
-        setEditName('');
-    };
-
-    const handleSaveClick = (category: any) => {
+    const handleSaveClick = (category: Category) => {
         const updatedCategory = { ...category, name: editName }; // Create a shallow copy and update the name
         dispatch(updateCategoryThunk({ id: updatedCategory.id, data: updatedCategory }));
         setEditId(null);
@@ -77,20 +99,13 @@ const CategoryList: React.FC = () => {
         setEditName(e.target.value);
     };
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = 10;
-
-    const handleNextPage = () => {
-        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-    };
-
-    const handlePreviousPage = () => {
-        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-    };
-
     const handleCloseModal = () => {
         setOpenModal(false);
     };
+
+    const activeCategories = categories.filter(
+        (category: Category) => category.status.toLowerCase() === 'active'
+    );
 
     return (
         <div className={styles.categoryList}>
@@ -105,74 +120,57 @@ const CategoryList: React.FC = () => {
                     {newCategory && (
                         <tr>
                             <td>
-                            <div className={styles.categoryCell}>
-                                <input
-                                    type="text"
-                                    className={styles.editInput}
-                                    value={newCategoryName}
-                                    onChange={(e) => setNewCategoryName(e.target.value)}
-                                    required
-                                />
-                                    <AppButton
-                                        buttonText="Add"
-                                        onButtonClick={handleNewCategory}
+                                <div className={styles.categoryCell}>
+                                    <input
+                                        type="text"
+                                        className={styles.editInput}
+                                        value={newCategoryName}
+                                        onChange={(e) => setNewCategoryName(e.target.value)}
+                                        required
                                     />
+                                    <AppButton buttonText="Add" onButtonClick={handleNewCategory} />
                                 </div>
                             </td>
                         </tr>
                     )}
-                    {categories &&
-                        categories.length > 0 &&
-                        categories.filter(
-                            (category: { status: string }) =>
-                                category.status.toLowerCase() == 'active'
-                        ).length > 0 &&
-                        categories
-                            .filter(
-                                (category: { status: string }) =>
-                                    category.status.toLowerCase() == 'active'
-                            )
-                            .map((category: Category) => (
-                                <tr key={category.id}>
-                                    <td className={styles.categoryCell}>
-                                        {editId === category.id ? (
-                                            <div className={styles.editContainer}>
-                                                <input
-                                                    className={styles.editInput}
-                                                    type="text"
-                                                    value={editName}
-                                                    onChange={handleNameChange}
-                                                    required
-                                                />
-                                                <div className={styles.buttonContainer}>
-                                                    <EditButton
-                                                        className={styles.smallButton}
-                                                        buttonText="Save"
-                                                        onButtonClick={() =>
-                                                            handleSaveClick(category)
-                                                        }
-                                                    />
-
-                                                    <DeleteButton
-                                                        className={styles.smallButton}
-                                                        buttonText="Delete"
-                                                        onButtonClick={() => setOpenModal(true)}
-                                                    />
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <>
-                                                <span>{category.name}</span>
-                                                <EditButton
-                                                    buttonText="Edit"
-                                                    onButtonClick={() => handleEditClick(category)}
-                                                    className={styles.editButton}
-                                                />
-                                            </>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
+                    {activeCategories.map((category: Category) => (
+                        <tr key={category.id}>
+                            <td className={styles.categoryCell}>
+                                {editId === category.id ? (
+                                    <div className={styles.editContainer}>
+                                        <input
+                                            className={styles.editInput}
+                                            type="text"
+                                            value={editName}
+                                            onChange={handleNameChange}
+                                            required
+                                        />
+                                        <div className={styles.buttonContainer}>
+                                            <EditButton
+                                                className={styles.smallButton}
+                                                buttonText="Save"
+                                                onButtonClick={() => handleSaveClick(category)}
+                                            />
+                                            <DeleteButton
+                                                className={styles.smallButton}
+                                                buttonText="Delete"
+                                                onButtonClick={() => setOpenModal(true)}
+                                            />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <span>{category.name}</span>
+                                        <EditButton
+                                            buttonText="Edit"
+                                            onButtonClick={() => handleEditClick(category)}
+                                            className={styles.editButton}
+                                        />
+                                    </>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
             <div className={styles.pagination}>
