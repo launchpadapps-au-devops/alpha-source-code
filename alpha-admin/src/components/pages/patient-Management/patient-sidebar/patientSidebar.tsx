@@ -82,7 +82,8 @@ export const SidebarPatient = ({ className }: SidebarPatientProps)  => {
                 navigate(path || '', { state: { patientId }, replace: true });
                 console.log('Patient ID patient-profile: ', patientId  , path);
             } else {
-                navigate(path || '', { replace: true });
+                navigate(path || '',{ state: { patientId },  replace: true });
+                console.log('Patient ID patient-profile: ', patientId  , path);
             }
         }
         setSelectedItem(item);

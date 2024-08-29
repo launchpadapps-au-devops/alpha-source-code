@@ -3,6 +3,7 @@ import styles from './dialog-modal.module.scss';
 import { CustomDialog } from '../../../../../mui-dialog-style';
 import { Icon } from '../../../../../icon/icon';
 import { AppButton } from '../../../../../app-button/app-button';
+import { useNavigate } from 'react-router-dom';
 
 export interface DailogModalProps {
     className?: string;
@@ -21,6 +22,13 @@ export const DailogModal = ({
     closeModal,
     handleButton,
 }: DailogModalProps) => {
+
+    const navigate = useNavigate();
+
+    const handleContinueButton = () => {
+        
+       navigate('/patient-dashboard');
+    };
     return (
         <CustomDialog
             onClose={closeModal}
@@ -38,7 +46,7 @@ export const DailogModal = ({
                     <h3 id="customized-dialog-title">{title}</h3>
                     <p>{descriptionText}</p>
                 </div>
-                <AppButton buttonText="Continue" onButtonClick={handleButton} />
+                <AppButton buttonText="Continue" onButtonClick={handleContinueButton} />
             </div>
         </CustomDialog>
     );
