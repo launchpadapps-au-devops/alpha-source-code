@@ -34,6 +34,7 @@ export class AuthService {
             platform: user.platform,
             role: user.role,
             sub: user.id,
+            userId: user.id
         }, { expiresIn: '1h' });
 
         const refreshToken = this.jwtService.sign({
@@ -42,6 +43,7 @@ export class AuthService {
             platform: user.platform,
             role: user.role,
             sub: user.id,
+            userId: user.id
         }, { expiresIn: '7d' });
 
         const accessTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
