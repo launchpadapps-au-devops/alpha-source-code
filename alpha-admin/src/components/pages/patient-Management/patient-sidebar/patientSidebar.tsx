@@ -43,7 +43,15 @@ const StyledListItemButton = styled(ListItemButton)<{ selected: boolean }>(({ se
     },
 }));
 
-export const SidebarPatient: React.FC = () => {
+export interface SidebarPatientProps {
+    className?: string;
+    patientId: any;
+    
+}
+
+
+export const SidebarPatient = ({ className ,patientId }: SidebarPatientProps)  => {
+
     const [collapsed, setCollapsed] = useState(false);
     const [selectedItem, setSelectedItem] = useState('');
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -55,6 +63,8 @@ export const SidebarPatient: React.FC = () => {
             '/patient-dashboard': 'Patient Dashboard',
             '/patient-profile': 'Patient Profile',
         };
+        console.log('Path Map: ', pathMap);
+        console.log('Patient Id Sidebar ',patientId );
         setSelectedItem(pathMap[location.pathname.split('/').slice(0, 3).join('/')] || 'Patients');
     }, [location.pathname]);
 
@@ -67,7 +77,13 @@ export const SidebarPatient: React.FC = () => {
             setExpandedCategory(expandedCategory === item ? null : item);
         } else {
             setExpandedCategory(null);
-            navigate(path || '', { replace: true });
+            if (item === 'Patient Profile') {
+                // Navigate to /patient-profile and pass patientId as state
+                navigate(path || '', { state: { patientId }, replace: true });
+                console.log('Patient ID patient-profile: ', patientId  , path);
+            } else {
+                navigate(path || '', { replace: true });
+            }
         }
         setSelectedItem(item);
     };

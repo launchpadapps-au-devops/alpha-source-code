@@ -10,6 +10,7 @@ import { EmptyComponent } from '../../../empty-state-component/empty-component';
 import { DataCard } from '../../../data-card/data-card';
 import { ActivityChart } from '../activity/activity-bar-chart/activity-chart-';
 import { SidebarPatient } from '../../patient-Management/patient-sidebar/patientSidebar';
+import { useLocation } from 'react-router-dom';
 
 // Define a type for the keys of motivationsData
 type MotivationLevel =
@@ -48,6 +49,10 @@ const motivationsData: Record<MotivationLevel, string[]> = {
 };
 
 export const PatientDashboard = ({ className }: PatientDashboardProps) => {
+
+    const location = useLocation(); // Use useLocation to access state
+    const patientId = location.state?.patientId; // Retrieve patientId from state
+    
     const [selectedMotivation, setSelectedMotivation] = useState<MotivationLevel | null>(
         'Very unmotivated'
     );
@@ -66,9 +71,9 @@ export const PatientDashboard = ({ className }: PatientDashboardProps) => {
 
     return (
         <>
-        <SidebarPatient/>
+        <SidebarPatient  patientId={patientId}/>
         <div className={classNames(styles['patient-dashboard'], className)}>
-            <h1>Patient dashboard</h1>
+            <h1>Patient dashboard </h1>
             <div className={styles['patient-flex-layout']}>
                 <div className={styles['left-block']}>
                     <div className={styles['profile-block']}>

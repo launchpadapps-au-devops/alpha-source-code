@@ -26,7 +26,8 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
     }, [dispatch]);
 
     const handleEditClick = (patientId: string) => {
-        navigate('/patient-dashboard');
+        navigate('/patient-dashboard', { state: { patientId } });
+        console.log('Patient ID patient-dashboard: ', patientId);
     };
 
     return (

@@ -73,3 +73,19 @@ export const addPatientAPI = async (patientData: CreatePatientData): Promise<Pat
         throw error;
     }
 };
+
+export const getPatientProfile = async (id: string): Promise<any> => {
+    const accessToken = localStorage.getItem('accessToken');
+    const apiURL = `${config.BASE_URL}/gateway/v1/patient/${id}`;
+
+    try {
+        const response = await axios.get(apiURL, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data as any;
+    } catch (error) {
+        throw error;
+    }
+};

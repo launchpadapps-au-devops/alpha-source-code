@@ -1,10 +1,14 @@
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../../app/store';
 import classNames from 'classnames';
 import styles from './patient-profile.module.scss';
 import Avatar from '@mui/material/Avatar';
-import { useNavigate, useParams } from 'react-router-dom';
-import React from 'react';
 import { AppButton } from '../../../app-button/app-button';
 import { SidebarPatient } from '../patient-sidebar/patientSidebar';
+import { getPatientProfile } from '../patientsAPI';
+
 
 export interface PatientProfileProps {
     className?: string;
@@ -12,7 +16,12 @@ export interface PatientProfileProps {
 
 export const PatientProfile = ({ className }: PatientProfileProps) => {
     const navigate = useNavigate();
-    const params = useParams();
+    const dispatch = useDispatch<AppDispatch>();
+
+    const patients = useSelector((state: RootState) => state.patients.patients);
+
+    const location = useLocation(); // Use useLocation to access state
+    const patientId = location.state?.patientId; // Retrieve patientId from state
 
     const [member, setMember] = React.useState({
         id: '',
@@ -21,35 +30,47 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
         lastName: '',
         fullName: '',
         phone: '',
-        role: {
-            id: '',
-            name: '',
-        },
-        permissions: [
-            {
-                id: '',
-                name: '',
-            },
-        ],
+        profilePicture: '',
+        gender: '',
+        dob: '',
+        height: 0,
+        heightUnit: '',
+        weight: 0,
+        weightUnit: '',
+        bmi: 0,
     });
 
-    const dummydata = {
-        id: 6,
-        email: 'alpha@alpha.com.au',
-        firstName: 'Nahid',
-        lastName: 'Hasan',
-        fullName: 'Nahid Hasan',
-        phone: '0483 987 738',
-        role: {
-            id: 1,
-            name: 'Male',
-        },
-        age: '37 years 03 months',
-        height: '170cm',
-        weight: '75kg',
-        bmi: '25.95',
-        address: '10 Gumtree court, Sydney, NSW, 2001',
-    };
+    useEffect(() => {
+        if (patientId) {
+            const fetchProfile = async () => {
+                try {
+                    const response = await getPatientProfile(patientId);
+                    const patientData = response.data;
+
+                    setMember({
+                        id: patientData.id,
+                        email: patientData.email,
+                        firstName: patientData.firstName,
+                        lastName: patientData.lastName,
+                        fullName: `${patientData.firstName} ${patientData.lastName}`,
+                        phone: patientData.phone,
+                        profilePicture: patientData.profilePicture,
+                        gender: patientData.gender,
+                        dob: patientData.dob,
+                        height: patientData.height,
+                        heightUnit: patientData.heightUnit,
+                        weight: patientData.weight,
+                        weightUnit: patientData.weightUnit,
+                        bmi: patientData.bmi,
+                    });
+                } catch (error) {
+                    console.error("Error fetching patient profile:", error);
+                }
+            };
+
+            fetchProfile();
+        }
+    }, [patientId]);
 
     const handleEditClick = (memberId: string) => {
         navigate(`/careteam/editteamcare/${memberId}`);
@@ -57,72 +78,58 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
 
     return (
         <>
-        <SidebarPatient/>
-        <div className={classNames(styles['care-team-profile'], className)}>
-            <div className={styles['top-header-block']}>
-                <h2>Patient Profile</h2>
-                <AppButton
-                    className={styles['edit-profile-button']} // Add this class
-                    buttonText="Edit profile"
-                    showLeftIcon
-                    icon="edit"
-                    onButtonClick={() => handleEditClick(member.id)}
-                />
-            </div>
-            <div className={styles['profile-detail-wrapper']}>
-                <div className={styles['left-profile-block']}>
-                    <Avatar className={styles['profile-image']} src="" />
-                    <div className={styles['profile-info']}>
-                        <span className={styles['profile-name']}>
-                            {dummydata.firstName} {dummydata.lastName}
-                        </span>
-                        <br></br>
-                        <br></br>
-                        <span className={styles['profile-role']}>{dummydata.role.name}</span>
-                        <br></br>
-                        <br></br>
-                        <span className={styles['profile-age']}>{dummydata.age}</span>
-                    </div>
-                    <div className={styles['add-plan-button']}>Add lifestyle plan</div>
-                    <div className={styles['profile-stats']}>
-                        <div>
-                            <span className={styles['stat-label']}>Height</span>
-                            <span className={styles['stat-value']}>{dummydata.height}</span>
-                            <br></br>
-                            <br></br>
-                        </div>
-                        <div>
-                            <span className={styles['stat-label']}>Weight</span>
-                            <span className={styles['stat-value']}>{dummydata.weight}</span>
-                            <br></br>
-                            <br></br>
-                        </div>
-                        <div>
-                            <span className={styles['stat-label']}>BMI</span>
-                            <span className={styles['stat-value']}>{dummydata.bmi}</span>
-                        </div>
-                    </div>
+            <SidebarPatient patientId={patientId} />
+            <div className={classNames(styles['care-team-profile'], className)}>
+                <div className={styles['top-header-block']}>
+                    <h2>Patient Profile</h2>
+                    <AppButton
+                        className={styles['edit-profile-button']}
+                        buttonText="Edit profile"
+                        showLeftIcon
+                        icon="edit"
+                        onButtonClick={() => handleEditClick(member.id)}
+                    />
                 </div>
-
-                <div className={styles['right-profile-block']}>
-                    <h3>Personal details</h3>
-                    <div className={styles['details-block']}>
-                        <div className={styles['profile-details-wrapper']}>
-                            <span className={styles['label']}>Email</span>
-                            <span className={styles['details']}>{dummydata.email}</span>
+                <div className={styles['profile-detail-wrapper']}>
+                    <div className={styles['left-profile-block']}>
+                        <Avatar className={styles['profile-image']} src={member.profilePicture || ""} />
+                        <div className={styles['profile-info']}>
+                            <span className={styles['profile-name']}>
+                                {member.firstName} {member.lastName}
+                            </span>
+                            <br />
+                            <span className={styles['profile-role']}>{member.gender}</span>
+                            <br />
+                            <span className={styles['profile-age']}>{member.fullName}</span>
                         </div>
-                        <div className={styles['profile-details-wrapper']}>
-                            <span className={styles['label']}>Phone</span>
-                            <span className={styles['details']}>{dummydata.phone}</span>
+                        <div className={styles['add-plan-button']}>Add lifestyle plan</div>
+                        <div className={styles['profile-stats']}>
+                            <div>
+                                <span className={styles['stat-label']}>Height: {member.height} {member.heightUnit}</span>
+                            </div>
+                            <div>
+                                <span className={styles['stat-label']}>Weight: {member.weight} {member.weightUnit}</span>
+                            </div>
+                            <div>
+                                <span className={styles['stat-label']}>BMI: {member.bmi}</span>
+                            </div>
                         </div>
-                        <div className={styles['profile-details-wrapper']}>
-                            <span className={styles['label']}>Address</span>
-                            <span className={styles['details']}>{dummydata.address}</span>
+                    </div>
+                    <div className={styles['right-profile-block']}>
+                        <h3>Personal details</h3>
+                        <div className={styles['details-block']}>
+                            <div className={styles['profile-details-wrapper']}>
+                                <span className={styles['label']}>Email</span>
+                                <span className={styles['details']}>{member.email}</span>
+                            </div>
+                            <div className={styles['profile-details-wrapper']}>
+                                <span className={styles['label']}>Phone</span>
+                                <span className={styles['details']}>{member.phone}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         </>
     );
 };
