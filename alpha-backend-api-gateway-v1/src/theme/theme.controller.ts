@@ -133,12 +133,12 @@ export class ThemeController {
                 throw new NotFoundException('Some lessons not found');
             }
 
-            if(lessons.some((l) => l.themeId && l.themeId !== id)) {
+            if(lessons?.some((l) => l.themeId && l.themeId !== id)) {
                 throw new NotFoundException('Some lessons already have theme assigned');
             }
     
             await this.lessonService.bulkUpdateLesson(
-                lessons.map(lesson => ({ ...lesson, themeId: id })),
+                lessons?.map(lesson => ({ ...lesson, themeId: id })) || [],
             )
     
             const lessonIds = lessons.map(l => l.id);
