@@ -27,11 +27,23 @@ export class DataAnalyticController {
         @Query('toDate') toDate: Date
     ): Promise<{
         message: string,
-        data: { count: number },
+        data: {
+            users: {
+                id: string;
+                email: string;
+                firstName: string;
+                lastName: string;
+                dob: Date;
+                gender: string;
+                age: number;
+                onboardingCompletedAt: Date;
+            }[];
+            count: number;
+        }
     }> {
         const data = await this.dataAnalyticService.getActivePatients(fromDate, toDate);
         return {
-            data: { count: data },
+            data,
             message: 'Active patients fetched successfully',
         }
     }
@@ -41,7 +53,7 @@ export class DataAnalyticController {
         @Query('fromDate') fromDate: Date,
         @Query('toDate') toDate: Date
     ) {
-        const data = this.dataAnalyticService.getRecentEnrollements(fromDate, toDate);
+        const data = await this.dataAnalyticService.getRecentEnrollements(fromDate, toDate);
         return {
             data,
             message: 'Recent enrollements fetched successfully',

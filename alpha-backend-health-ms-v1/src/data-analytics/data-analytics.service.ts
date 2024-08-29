@@ -111,10 +111,10 @@ export class DataAnalyticService {
         const users = await sessionService.findAllLoggedInSessionForUsers(fromDate, toDate, ['patient']);
 
         return {
-            count: users.length,
-            users: users.map(({ id, email, firstName, lastName, dob, gender, onboardingCompletedAt }) => ({
+            count: users.length || 0,
+            users: users?.map(({ id, email, firstName, lastName, dob, gender, onboardingCompletedAt }) => ({
                 id, email, firstName, lastName, dob, gender, onboardingCompletedAt, age: calculateAge(dob)
-            })),
+            })) || [],
         }
     }
 
