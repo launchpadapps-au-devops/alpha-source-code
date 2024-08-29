@@ -97,7 +97,7 @@ export const SidebarPatient: React.FC = () => {
                         </StyledListItemButton>
                         <StyledListItemButton
                             selected={selectedItem === 'Lifestyle plan'}
-                            onClick={() => handleItemClick('Lifestyle plan', '/patient-dashboard/lifestyle-plan')}
+                            onClick={() => handleItemClick('Lifestyle plan', '/patient-dashboard/patient-lifestyle-plan')}
                             style={{ paddingLeft: '32px' }}
                         >
                             <ListItemText primary="Lifestyle plan" />

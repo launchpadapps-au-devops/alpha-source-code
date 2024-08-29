@@ -9,6 +9,7 @@ import { Badge } from '../../../badge/badge';
 import { EmptyComponent } from '../../../empty-state-component/empty-component';
 import { DataCard } from '../../../data-card/data-card';
 import { ActivityChart } from '../activity/activity-bar-chart/activity-chart-';
+import { SidebarPatient } from '../../patient-Management/patient-sidebar/patientSidebar';
 
 // Define a type for the keys of motivationsData
 type MotivationLevel =
@@ -64,6 +65,8 @@ export const PatientDashboard = ({ className }: PatientDashboardProps) => {
     const hasMotivations = Object.keys(motivationsData).length > 0;
 
     return (
+        <>
+        <SidebarPatient/>
         <div className={classNames(styles['patient-dashboard'], className)}>
             <h1>Patient dashboard</h1>
             <div className={styles['patient-flex-layout']}>
@@ -211,5 +214,6 @@ export const PatientDashboard = ({ className }: PatientDashboardProps) => {
                 </DataCard>
             </div>
         </div>
+        </>
     );
 };

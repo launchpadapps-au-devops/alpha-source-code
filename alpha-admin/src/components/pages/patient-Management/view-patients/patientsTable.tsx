@@ -26,7 +26,7 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
     }, [dispatch]);
 
     const handleEditClick = (patientId: string) => {
-        navigate(`/patient-profile`);
+        navigate('/patient-dashboard');
     };
 
     return (
