@@ -215,7 +215,7 @@ spec:
           value: http://alpha-backend-notification-ms-v1-service:3002
         - name: NOTFICATION_SERVICE_API_PREFIX
           value: /api/notification-ms/v1
-        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:4ebe47277b4fc3ba1f3d969a0f9fcc292aaae6bf69f58e11326864a9caff424f
+        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:6f8a6f68343b36f7d7cfaee64fe66281f1ddbee2e48030081eed3fb19ba6eecf
         imagePullPolicy: IfNotPresent
         name: alpha-backend-api-gateway-v1-container
         ports:
@@ -303,7 +303,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: cms_queue
-        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:7610e8f041a1de9e2a87dac502fd486007ce16b47f8d89b68b3594dcd76754fe
+        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:1297fc94d2b8bd58ddc8c2afe978c32f3185fe30fbc6863851e353fa3d1cc1fe
         name: alpha-backend-cms-ms-v1-container
         ports:
         - containerPort: 3003
@@ -484,7 +484,7 @@ spec:
           value: Aster Admin
         - name: SENDGRID_FROM_EMAIL
           value: admin@astercircular.co
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:5232df341cab5178c0de8eab5cb7ba089bd1d760a09dc3a297fb4168e3b7afa4
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:581038371b8f1d782a74b2bbc9d701829ed798664393e30f1f72c272238b48f0
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -572,7 +572,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: user_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:d17ff4c1b9fab4891eccf74c98fae373942cf1c3e3faebef4ec9b42f426399a3
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:a036a68663194f0247d2318b3c4cde26e7cbf426e188801924b9d18676fbd67c
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
