@@ -1,10 +1,9 @@
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import styles from './patientsTable.module.scss';
-import AppButton_module from '../../../../app-button/app-button.module.scss';
-import Pagination from '@mui/material/Pagination';
 import Avatar from '@mui/material/Avatar';
+import Pagination from '@mui/material/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../../../app/store';
 import { fetchPatients } from '../patientsSlice';
@@ -15,19 +14,28 @@ export interface PatientsTableProps {
 }
 
 export const PatientsTable = ({ className }: PatientsTableProps) => {
-    // Directly accessing the patients array from state.patients
-    const patients = useSelector((state: RootState) => state.patients.patients.patients);
+    // State to manage pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const patientsPerPage = 10; // Number of patients per page
+
+    // Fetch patients and metadata from the Redux store
+    const patients = useSelector((state: RootState) => state.patients.patients); // Only includes patients for the current page
+    const totalPatients = useSelector((state: RootState) => state.patients.meta?.totalRecords || 0); // Assuming `meta` contains `totalRecords`
 
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
     useEffect(() => {
-        dispatch(fetchPatients());
-    }, [dispatch]);
+        // Fetch patients for the current page with the limit of 10 per page
+        dispatch(fetchPatients(currentPage));
+    }, [dispatch, currentPage]);
+
+    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+        setCurrentPage(page); // Update the current page
+    };
 
     const handleEditClick = (patientId: string) => {
         navigate('/patient-dashboard', { state: { patientId } });
-        console.log('Patient ID patient-dashboard: ', patientId);
     };
 
     return (
@@ -43,8 +51,8 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {patients.map((patient: Patient, index: number) => (
-                        <tr key={index} onClick={() => handleEditClick(patient.id)} className={styles['clickable-row']}>
+                    {patients.map((patient: Patient) => (
+                        <tr key={patient.id} onClick={() => handleEditClick(patient.id)} className={styles['clickable-row']}>
                             <td>
                                 <div className={styles['flex-table-column']}>
                                     <Avatar
@@ -64,8 +72,10 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                 </tbody>
             </table>
             <Pagination
-                count={10}
-                showFirstButton 
+                count={Math.ceil(totalPatients / patientsPerPage)} // Calculate the total number of pages
+                page={currentPage} // Controlled pagination component
+                onChange={handlePageChange}
+                showFirstButton
                 showLastButton
                 sx={{
                     '.MuiPagination-ul': {

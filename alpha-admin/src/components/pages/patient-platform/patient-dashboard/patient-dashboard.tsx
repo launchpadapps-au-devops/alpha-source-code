@@ -71,7 +71,7 @@ export const PatientDashboard = ({ className }: PatientDashboardProps) => {
 
     return (
         <>
-        <SidebarPatient  patientId={patientId}/>
+        <SidebarPatient />
         <div className={classNames(styles['patient-dashboard'], className)}>
             <h1>Patient dashboard </h1>
             <div className={styles['patient-flex-layout']}>

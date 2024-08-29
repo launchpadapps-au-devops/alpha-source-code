@@ -78,7 +78,7 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
 
     return (
         <>
-            <SidebarPatient patientId={patientId} />
+            <SidebarPatient />
             <div className={classNames(styles['care-team-profile'], className)}>
                 <div className={styles['top-header-block']}>
                     <h2>Patient Profile</h2>

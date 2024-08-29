@@ -2,7 +2,6 @@ import axios from "axios";
 import { config } from "../../../config/config";
 import { CreatePatientData } from "./create-patient/create-patient";
 
-
 export interface MetaData {
     page: number;
     limit: number;
@@ -41,9 +40,9 @@ export interface PatientsResponse {
     meta: MetaData;
 }
 
-export const getPatients = async (): Promise<PatientsResponse> => {
+export const getPatients = async (page: number = 1, limit: number = 10): Promise<PatientsResponse> => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/gateway/v1/patient`;
+    const apiURL = `${config.BASE_URL}/gateway/v1/patient?page=${page}&limit=${limit}`; // Add limit to API URL
 
     try {
         const response = await axios.get(apiURL, {
@@ -53,6 +52,7 @@ export const getPatients = async (): Promise<PatientsResponse> => {
         });
         return response.data as PatientsResponse;
     } catch (error) {
+        console.error('Error fetching patients:', error); // Improved error logging
         throw error;
     }
 };

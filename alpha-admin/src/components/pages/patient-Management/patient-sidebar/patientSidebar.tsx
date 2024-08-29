@@ -45,18 +45,18 @@ const StyledListItemButton = styled(ListItemButton)<{ selected: boolean }>(({ se
 
 export interface SidebarPatientProps {
     className?: string;
-    patientId: any;
     
 }
 
 
-export const SidebarPatient = ({ className ,patientId }: SidebarPatientProps)  => {
+export const SidebarPatient = ({ className }: SidebarPatientProps)  => {
 
     const [collapsed, setCollapsed] = useState(false);
     const [selectedItem, setSelectedItem] = useState('');
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
+    const patientId = location.state?.patientId; 
 
     useEffect(() => {
         const pathMap: { [key: string]: string } = {

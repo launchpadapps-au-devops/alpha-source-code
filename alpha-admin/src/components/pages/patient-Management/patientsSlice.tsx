@@ -1,43 +1,57 @@
-import { createAsyncThunk, createSlice, combineReducers, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getPatients, addPatientAPI, PatientsResponse, Patient, MetaData } from './patientsAPI';
 import { CreatePatientData } from './create-patient/create-patient';
 
+// Define the state interface
 export interface PatientsState {
     loading: boolean;
+    loadingMore: boolean;
     errorMessage: string | null;
     patients: Patient[];
     meta: MetaData | null;
+    currentPage: number;
 }
 
+// Initial state for the slice
 const initialState: PatientsState = {
     loading: false,
+    loadingMore: false,
     errorMessage: null,
     patients: [],
     meta: null,
+    currentPage: 1,
 };
 
-// Thunk to fetch patients
-export const fetchPatients = createAsyncThunk('patients/getPatients', async (_, { rejectWithValue }) => {
-    try {
-        const response: PatientsResponse = await getPatients();
-        return response;
-    } catch (error) {
-        console.log('Response ERROR ', error);
-        return rejectWithValue(error);
+// Thunk to fetch patients with pagination
+export const fetchPatients = createAsyncThunk(
+    'patients/getPatients',
+    async (page: number = 1, { rejectWithValue }) => {
+        try {
+            const limit = 10; // Number of patients per page
+            const response: PatientsResponse = await getPatients(page, limit); // Pass the page and limit to getPatients
+            return response;
+        } catch (error) {
+            console.log('Response ERROR', error);
+            return rejectWithValue(error);
+        }
     }
-});
+);
 
 // Thunk to add a new patient
-export const addNewPatient = createAsyncThunk('patients/addPatient', async (patientData: CreatePatientData, { rejectWithValue }) => {
-    try {
-        const response: PatientsResponse = await addPatientAPI(patientData);
-        return response;
-    } catch (error) {
-        console.error('Add Patient ERROR ', error);
-        return rejectWithValue(error);
+export const addNewPatient = createAsyncThunk(
+    'patients/addPatient',
+    async (patientData: CreatePatientData, { rejectWithValue }) => {
+        try {
+            const response: PatientsResponse = await addPatientAPI(patientData);
+            return response;
+        } catch (error) {
+            console.error('Add Patient ERROR', error);
+            return rejectWithValue(error);
+        }
     }
-});
+);
 
+// Slice for managing patients state
 export const patientsSlice = createSlice({
     name: 'patients',
     initialState,
@@ -53,12 +67,14 @@ export const patientsSlice = createSlice({
             })
             .addCase(fetchPatients.fulfilled, (state, action: PayloadAction<PatientsResponse>) => {
                 state.loading = false;
-                state.patients = action.payload.data;
+                state.loadingMore = false;
+                state.patients = action.payload.data; // Replace the state with new data for the selected page
                 state.meta = action.payload.meta;
                 state.errorMessage = null;
             })
             .addCase(fetchPatients.rejected, (state, action) => {
                 state.loading = false;
+                state.loadingMore = false;
                 state.errorMessage = action.payload as string;
             })
             .addCase(addNewPatient.pending, (state) => {
@@ -78,8 +94,4 @@ export const patientsSlice = createSlice({
 
 export const { addPatient } = patientsSlice.actions;
 
-const rootReducer = combineReducers({
-    patients: patientsSlice.reducer,
-});
-
-export default rootReducer;
+export default patientsSlice.reducer;
