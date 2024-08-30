@@ -39,9 +39,13 @@ export const EditCategories = ({ className }: EditContentProps) => {
         setOpenModal(false);
     };
 
+    const handleBackClick = () => {
+        navigate(-1); // This will navigate to the previous page
+    };
+
     return (
         <>
-            <BackButton/>
+            <BackButton onClick={handleBackClick}/>
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>

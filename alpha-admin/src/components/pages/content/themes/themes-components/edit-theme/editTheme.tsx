@@ -160,15 +160,19 @@ export const EditTheme = ({ className }: EditThemeProps) => {
         dispatch(fetchThemeByIdThunk(id)).then((res: any) => {
             setData({ themeData: res.payload.data, lessonData: res.payload.data.lessons });
         });
-        dispatch(fetchLessonsThunk()).then((res: any) => {
+        dispatch(fetchLessonsThunk(1)).then((res: any) => {
             setNewLessons(res.payload.data);
             console.log(res.payload.data, 'lessons');
         });
     }, []);
 
+    const handleBackClick = () => {
+        navigate(-1); // This will navigate to the previous page
+    };
+
     return (
         <>
-            <BackButton/>
+            <BackButton onClick={handleBackClick}/>
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>
@@ -183,11 +187,11 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                         <div className={styles.rightButtonContainer}>
                             <EditButton
                                 buttonText="Save as draft"
-                                onButtonClick={() => navigate('/content/categories')}
+                                onButtonClick={() => navigate('/content/themes')}
                             />
                             <AppButton
                                 buttonText="Publish"
-                                onButtonClick={() => navigate('/careteam/createcontent')}
+                                onButtonClick={() => navigate('/content/themes')}
                             />
                         </div>
                     </header>

@@ -172,15 +172,19 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     const hideLessons = location.state?.hideLessons;
 
     useEffect(() => {
-        dispatch(fetchLessonsThunk()).then((res: any) => {
+        dispatch(fetchLessonsThunk(1)).then((res: any) => {
             setNewLessons(res.payload.data);
             console.log(res.payload.data, 'lessons');
         });
     }, []);
 
+    const handleBackClick = () => {
+        navigate(-1); // This will navigate to the previous page
+    };
+
     return (
         <>
-          <BackButton/>
+          <BackButton onClick={handleBackClick}/>
         <div className={classNames(styles.container, className)}>
             <Sidebar />
             <div className={styles.content}>

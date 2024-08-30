@@ -39,9 +39,13 @@ export const ViewLifeStyle = ({ className }: ContentProps) => {
         });
     }, []);
 
+    const handleBackClick = () => {
+        navigate(-1); // This will navigate to the previous page
+    };
+
     return (
         <div>
-            <BackButton />
+            <BackButton onClick={handleBackClick}/>
             <div
                 className={classNames(styles.container, className, {
                     'blur-effect': isSidebarOpen,

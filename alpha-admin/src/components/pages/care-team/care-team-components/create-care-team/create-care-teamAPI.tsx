@@ -9,10 +9,10 @@ interface staff {
     data: [];
 }
 
-const getStaff = async (): Promise<staff> => {
+const getStaff = async (page:any): Promise<staff> => {
     const accessToken = localStorage.getItem('accessToken');
     const token = 'token';
-    let apiURL = `${config.BASE_URL}/gateway/v1/staff`;
+    let apiURL = `${config.BASE_URL}/gateway/v1/staff?page=${page}`;
     try {
         const response = await axios.get(apiURL, {
             headers: {

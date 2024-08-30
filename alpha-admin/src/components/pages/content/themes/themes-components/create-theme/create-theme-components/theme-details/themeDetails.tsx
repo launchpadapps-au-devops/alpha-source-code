@@ -18,7 +18,7 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(fetchCategoriesThunk());
+        dispatch(fetchCategoriesThunk(1));
     }, []);
 
     useEffect(() => {
