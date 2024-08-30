@@ -30,9 +30,9 @@ export class HealthDataController {
     @Get('/questionaries')
     async getHealthProfileQuestionaries(
         @Headers('x-request-userId') reqUserId: string,
-        @Query() query: any
+        @Query('userId') userId?: string
     ) {
-        const data = await this.healthDataService.getHealthProfileQuestionaries(reqUserId);
+        const data = await this.healthDataService.getHealthProfileQuestionaries(userId);
 
         return {
             message: 'Health profile questionaries fetched successfully',

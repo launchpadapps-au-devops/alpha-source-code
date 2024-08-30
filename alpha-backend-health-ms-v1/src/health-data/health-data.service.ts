@@ -25,7 +25,7 @@ export class HealthDataService {
         });
     }
 
-    async getHealthProfileQuestionaries(
+    async getHealthProfileQuestionaries( 
         userId: string
     ) {
         return healthProfileQuestionariesService.findAllHealthQuestionAnswer(userId);
