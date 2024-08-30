@@ -37,58 +37,78 @@ export class DataAnalyticService {
         calories: number,
         averageCaloriesPerDay: number,
     }> {
-        const { data: userHealthData } = await userHealthDataService.findAllUserHealthData(
+        // Set default dates if not provided
+        const startDate = fromDate ? new Date(fromDate) : new Date();
+        const endDate = toDate ? new Date(toDate) : new Date();
+    
+        // Calculate the number of days between the two dates
+        const daysDifference = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    
+        // Fetch user health data
+        const { data: userHealthData = [] } = await userHealthDataService.findAllUserHealthData(
             { page: null, limit: null },
             {},
             {
                 userId,
-                fromDate,
-                toDate
+                fromDate: startDate,
+                toDate: endDate
             },
         );
-
-        const steps = userHealthData.filter((data) => data.dataType === DATA_TYPES.STEP_COUNT).reduce((acc, curr) => acc + curr.value, 0);
-        const averageStepsPerDay = steps / (toDate.getDate() - fromDate.getDate() + 1);
+    
+        // Calculate steps and steps per day
+        const steps = userHealthData
+            .filter((data) => data.dataType === DATA_TYPES.STEP_COUNT)
+            .reduce((acc, curr) => acc + curr.value, 0);
+    
         const stepsPerDay = userHealthData
             .filter(({ dataType }) => dataType === DATA_TYPES.STEP_COUNT)
             .reduce((acc, { loggedAt, value }) => {
                 const dateString = new Date(loggedAt).toISOString().split('T')[0];
                 const existingEntry = acc.find((entry) => entry.date === dateString);
-
+    
                 if (existingEntry) {
                     existingEntry.steps += value;
                 } else {
                     acc.push({ date: dateString, steps: value });
                 }
-
+    
                 return acc;
             }, [] as { date: string; steps: number }[]);
-
-        const energy = userHealthData.filter((data) => data.dataType === DATA_TYPES.ENERGY).reduce((acc, curr) => acc + curr.value, 0);
-        const averageEnergyPerDay = energy / (toDate.getDate() - fromDate.getDate() + 1);
-
-        const { data: userMealLogs } = await userMealLogService.findAllUserMealLogs(
+    
+        const averageStepsPerDay = daysDifference > 0 ? steps / daysDifference : 0;
+    
+        // Calculate energy and average energy per day
+        const energy = userHealthData
+            .filter((data) => data.dataType === DATA_TYPES.ENERGY)
+            .reduce((acc, curr) => acc + curr.value, 0);
+    
+        const averageEnergyPerDay = daysDifference > 0 ? energy / daysDifference : 0;
+    
+        // Fetch user meal logs
+        const { data: userMealLogs = [] } = await userMealLogService.findAllUserMealLogs(
             { page: null, limit: null },
             {},
-            { userId, loggedAt: { $gte: fromDate, $lte: toDate } },
+            { userId, loggedAt: { $gte: startDate, $lte: endDate } },
         );
-
-
-        const calories = userMealLogs.reduce((acc, curr) => acc + curr.calories, 0);
-        const averageCaloriesPerDay = calories / (toDate.getDate() - fromDate.getDate() + 1);
-
+    
+        // Calculate calories and average calories per day
+        // const calories = userMealLogs.reduce((acc, curr) => acc + curr.calories, 0);
+        // const averageCaloriesPerDay = daysDifference > 0 ? calories / daysDifference : 0;
+    
+        // Return calculated data
         return {
             steps,
             averageStepsPerDay,
             stepsPerDay,
-            sleep: 0,
-            averageSleepPerDay: 0,
+            sleep: 0, // Placeholder for sleep calculation
+            averageSleepPerDay: 0, // Placeholder for average sleep calculation
             energy,
             averageEnergyPerDay,
-            calories,
-            averageCaloriesPerDay
+            calories: 0,
+            averageCaloriesPerDay: 0
         };
     }
+    
 
     async getActivePatients(
         fromDate?: Date,
