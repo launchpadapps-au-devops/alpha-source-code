@@ -38,8 +38,13 @@ export class DataAnalyticService {
         averageCaloriesPerDay: number,
     }> {
         // Set default dates if not provided
-        const startDate = fromDate ? new Date(fromDate) : new Date();
-        const endDate = toDate ? new Date(toDate) : new Date();
+        const startDate = fromDate ? new Date(fromDate) : new Date(new Date().setDate(1)); // Default to the start of the current month
+        const endDate = toDate ? new Date(toDate) : new Date(); // Default to today
+        
+        // Ensure that startDate and endDate are valid Date objects
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            throw new Error("Invalid date provided.");
+        }
     
         // Calculate the number of days between the two dates
         const daysDifference = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
@@ -85,11 +90,11 @@ export class DataAnalyticService {
         const averageEnergyPerDay = daysDifference > 0 ? energy / daysDifference : 0;
     
         // Fetch user meal logs
-        const { data: userMealLogs = [] } = await userMealLogService.findAllUserMealLogs(
-            { page: null, limit: null },
-            {},
-            { userId, loggedAt: { $gte: startDate, $lte: endDate } },
-        );
+        // const { data: userMealLogs = [] } = await userMealLogService.findAllUserMealLogs(
+        //     { page: null, limit: null },
+        //     {},
+        //     { userId, loggedAt: { $gte: startDate, $lte: endDate } },
+        // );
     
         // Calculate calories and average calories per day
         // const calories = userMealLogs.reduce((acc, curr) => acc + curr.calories, 0);
@@ -107,8 +112,7 @@ export class DataAnalyticService {
             calories: 0,
             averageCaloriesPerDay: 0
         };
-    }
-    
+    }    
 
     async getActivePatients(
         fromDate?: Date,
