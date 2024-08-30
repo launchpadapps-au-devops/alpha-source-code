@@ -1,4 +1,4 @@
-import { Request, Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Request, Body, Controller, Get, Post, UseGuards, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { HealthDataService } from './health-data.service';
 import { CreateHealthProfileQuestionariesDto, GetHealthProfileQuestionariesDto, CreateSurveyAnswerDto, GetSurveyAnswerDto, CreateUserHealthDataDto, GetUserHealthDataDto } from './health-data.dto';
@@ -53,6 +53,11 @@ export class HealthDataController {
     @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiQuery({ 
+        name: 'userId', 
+        required: false, 
+        type: Number 
+    })
     @ApiResponse({
         status: 200,
         schema: {
@@ -73,7 +78,8 @@ export class HealthDataController {
     @ApiBearerAuth()
     @Get('/questionaries')
     async getHealthProfileQuestionaries(
-        @Request() req
+        @Request() req,
+        @Query('userId') userId?: number
     ): Promise<object> {
         return await this.healthDataService.getHealthProfileQuestionaries(req.user);
     }

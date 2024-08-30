@@ -31,12 +31,14 @@ export class HealthDataService {
         );
     }
 
-    async getHealthProfileQuestionaries(reqUser = { userId: null }) {
+    async getHealthProfileQuestionaries(userId, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.healthApiUrl}${this.healthApiPrefix}/health-data/questionaries`,
             'GET',
             {},
-            {},
+            {
+                userId
+            },
             {
                 'x-request-userId': reqUser.userId
             }
