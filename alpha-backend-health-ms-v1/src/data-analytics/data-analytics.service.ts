@@ -42,10 +42,8 @@ export class DataAnalyticService {
             {},
             {
                 userId,
-                loggedAt: {
-                    $gte: fromDate || new Date(new Date().setDate(new Date().getDate() - 1)),
-                    $lte: toDate || new Date()
-                }
+                fromDate,
+                toDate
             },
         );
 
