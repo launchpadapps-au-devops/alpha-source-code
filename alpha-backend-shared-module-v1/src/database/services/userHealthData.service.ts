@@ -1,4 +1,4 @@
-import { Repository, ILike, FindManyOptions, In } from "typeorm";
+import { Repository, ILike, FindManyOptions, In, MoreThan, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
 import { DatabaseModule } from "../index";
 import { UserHealthData } from "../entities";
 import { NotFoundException } from "@nestjs/common";
@@ -68,10 +68,12 @@ class UserHealthDataService {
     limit: number;
     page: number;
   }> {
-    const { searchText, ...restFilters } = filters;
+    const { searchText, fromDate, toDate, ...restFilters } = filters;
   
     const where: any = {
       ...(searchText ? { userId: ILike(`%${searchText}%`) } : {}),
+      ...(fromDate ? { createdAt: MoreThanOrEqual(fromDate) }: {}),
+      ...(toDate ? { createdAt: LessThanOrEqual(toDate) }: {}),
       ...restFilters,
     };
   

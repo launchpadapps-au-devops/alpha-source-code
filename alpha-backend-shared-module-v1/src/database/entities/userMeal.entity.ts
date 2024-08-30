@@ -25,7 +25,7 @@ export class UserMealLog {
     @Column({ type: 'varchar', nullable: true })
     intakeTime: string;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamp', nullable: true, default: new Date() })
     loggedAt: Date;
 
     @Column({ type: 'float', nullable: true })

@@ -27,7 +27,7 @@ export class UserHealthData {
     @Column({ type: 'varchar', nullable: true })
     unit: string;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamp', nullable: true, default: new Date() })
     loggedAt: Date;
 
     @Column({ type: 'jsonb', nullable: true })
