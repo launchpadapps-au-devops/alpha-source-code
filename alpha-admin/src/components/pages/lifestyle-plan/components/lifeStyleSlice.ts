@@ -33,9 +33,9 @@ const initialPlanState: PlanState = {
 
 export const fetchPlansThunk = createAsyncThunk(
     'plans/getPlans',
-    async (page:any, { rejectWithValue }) => {
+    async (_, { rejectWithValue }) => {
         try {
-            const response = await getPlans(page);
+            const response = await getPlans();
             return response;
         } catch (error) {
             console.log('Response ERROR ', error);
@@ -75,7 +75,7 @@ export const updatePlanThunk = createAsyncThunk(
     async ({ id, plan }: { id: any; plan: any }, { dispatch, rejectWithValue }) => {
         try {
             const response = await updatePlan(id, plan);
-            dispatch(fetchPlansThunk(1));
+            dispatch(fetchPlansThunk());
             return response;
         } catch (error) {
             return rejectWithValue(error);

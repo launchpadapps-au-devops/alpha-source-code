@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Container, Row, Col, Table, Button, ToggleButton } from 'react-bootstrap';
 import { Icon } from '../../../icon/icon';
 import styles from './viewLifeStyle.module.scss';
@@ -9,6 +9,7 @@ import { useAppDispatch } from '../../../../app/hooks';
 import { fetchPlansThunk } from '../components/lifeStyleSlice';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../back-button/backButton';
+
 
 export interface ReportsProps {
     className?: string;
@@ -21,30 +22,21 @@ export const LifeStyle = ({ className }: ReportsProps) => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [plans, setPlans] = React.useState([]);
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalRecords, setTotalRecords] = useState(0);
     const handleButtonClick = () => {
         navigate('/lifestyle-plan/new');
     };
 
     useEffect(() => {
-        dispatch(fetchPlansThunk(1)).then((res: any) => {
-            console.log('data', res);
-            if (res.payload) {
-                setPlans(res.payload.data);
-                setTotalPages(res.payload.meta.totalPages);
-                setTotalRecords(res.payload.meta.totalRecords);
+        dispatch(fetchPlansThunk()).then((data: any) => {
+            console.log('data', data);
+            if (data.payload) {
+                setPlans(data.payload.data);
             }
         });
     }, []);
-
-    const handleBackClick = () => {
-        navigate(-1); // This will navigate to the previous page
-    };
-
     return (
         <div>
-            <BackButton onClick={handleBackClick}/>
+            <BackButton/>
 
             <div className="mx-5">
                 <Row>
@@ -62,14 +54,7 @@ export const LifeStyle = ({ className }: ReportsProps) => {
             </div>
             <div className="mx-5">
                 <Row>
-                    <LifestyleTable
-                        plans={plans}
-                        setPlans={setPlans}
-                        totalPages={totalPages}
-                        totalRecords={totalRecords}
-                        setTotalPages={setTotalPages}
-                        setTotalRecords={setTotalRecords}
-                    />
+                    <LifestyleTable plans={plans} setPlans={setPlans} />
                 </Row>
             </div>
         </div>

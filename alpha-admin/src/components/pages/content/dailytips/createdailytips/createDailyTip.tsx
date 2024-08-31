@@ -194,13 +194,9 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
         throw new Error('Function not implemented.');
     }
 
-    const handleBackClick = () => {
-        navigate(-1); // This will navigate to the previous page
-    };
-
     return (
         <>
-         <BackButton onClick={handleBackClick}/>
+         <BackButton/>
         <div className={classNames(styles.container, className)}>
             <Sidebar />
             <div className={styles.content}>

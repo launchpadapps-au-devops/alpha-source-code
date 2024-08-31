@@ -19,8 +19,7 @@ interface Category {
 }
 
 export const ViewCategories: React.FC = () => {
-    // const [categories, setCategories] = useState<Category[]>([]);
-    const categories = useAppSelector((state: any) => state.categories.categories.categories);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const dispatch = useAppDispatch();
 
@@ -30,18 +29,13 @@ export const ViewCategories: React.FC = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const activeCategories = categories.filter(
-        (category: Category) => category.status.toLowerCase() === 'active'
-    );
-
-    console.log('Active categories',activeCategories)
-
     useEffect(() => {
         dispatch(fetchCategoriesThunk(1)).then((response: any) => {
             if (response.payload) {
                 setTotalPages(response.payload.meta.totalPages);
                 setTotalRecords(response.payload.meta.totalRecords);
-                // setCategories(activeCategories);
+                const activeCategories = response.payload.data.filter((category: Category) => category.status.toLowerCase() === 'active');
+                setCategories(activeCategories);
             }
         });
     }, [dispatch]);
@@ -76,7 +70,7 @@ export const ViewCategories: React.FC = () => {
                     dispatch(fetchCategoriesThunk(1)).then((response: any) => {
                         if (response.payload) {
                             console.log('Response ', response);
-                            // setCategories(response.payload.data);
+                            setCategories(response.payload.data);
                         }
                     });
                 }
@@ -93,8 +87,8 @@ export const ViewCategories: React.FC = () => {
     };
 
     const indexOfLastItem = currentPage * itemsPerPage;
-    // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    // const currentCategories = categories.slice(indexOfFirstItem, indexOfLastItem);
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentCategories = categories.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
         <div className={styles.categories}>
@@ -103,7 +97,7 @@ export const ViewCategories: React.FC = () => {
                 <span className={styles.headerText}>Published</span>
             </div>
             <List>
-                {activeCategories.map((category: Category, index: number) => (
+                {currentCategories.map((category, index) => (
                     <CategoryItem
                         key={index}
                         name={category.name}

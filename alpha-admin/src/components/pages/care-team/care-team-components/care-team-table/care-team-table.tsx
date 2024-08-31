@@ -9,7 +9,6 @@ import { AppDispatch, RootState } from '../../../../../app/store';
 import { useEffect, useState } from 'react';
 import { staffThunk } from '../create-care-team/create-care-teamSlice';
 import { useNavigate } from 'react-router-dom';
-import TableFooter from '../../../content/content-components/table-footer/TableFooter';
 
 export interface CareTeamTableProps {
     className?: string;
@@ -36,34 +35,9 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
     const { staff, loading, errorMessage } = useSelector((state: RootState) => state.staff.staff);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const handleNextPage = () => {
-        console.log('currentPage', currentPage);
-        dispatch(staffThunk(currentPage + 1)).then((res: any) => {
-            console.log('res', res);
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-    };
-    const handlePreviousPage = () => {
-        dispatch(staffThunk(currentPage - 1)).then((res: any) => {
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
-    };
 
     useEffect(() => {
-        dispatch(staffThunk(1)).then((response: any) => {
-            if (response.payload) {
-                setTotalPages(response.payload.meta.totalPages);
-                setTotalRecords(response.payload.meta.totalRecords);
-            }
-        });
+        dispatch(staffThunk());
     }, [dispatch]);
 
     const handleEditClick = (memberId: string) => {
@@ -122,14 +96,29 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
                 </tr>
             </tbody> */}
             </table>
-            <div className={styles.pagination}>
-                <TableFooter
-                    onNextPage={handleNextPage}
-                    onPreviousPage={handlePreviousPage}
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                />
-            </div>
+            <Pagination count={10} showFirstButton showLastButton
+                sx={{
+                    '.MuiPagination-ul': {
+                        display: "flex",
+                        justifyContent: "center",
+                        padding: '10px 16px',
+                    },
+                    '.MuiInputBase-root': {
+                        display: 'none',
+                    },
+                    '.MuiTablePagination-selectLabel': {
+                        display: 'none',
+                    },
+                    '.MuiTablePagination-displayedRows': {
+                        fontSize: 14,
+                        fontFamily: 'Inter',
+                        color: '#B0B0B0',
+                        '&:before': {
+                            content: '"Showing "',
+                        },
+                    },
+                }}
+            />
         </>
     );
 };

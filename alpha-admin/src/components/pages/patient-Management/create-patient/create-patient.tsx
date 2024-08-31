@@ -12,6 +12,8 @@ import { Checkbox } from '@mui/material';
 import { addNewPatient } from '../patientsSlice';
 import { toast } from 'react-toastify';
 import { AppButton } from '../../../app-button/app-button';
+import Sidebar from '../../content/content-components/sidebar/Sidebar';
+import { SidebarPatient } from '../patient-sidebar/patientSidebar';
 
 export interface CreatePatientProps {
     className?: string;
@@ -128,6 +130,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
 
     return (
         <>
+        <SidebarPatient/>
             <div className={classNames(styles['create-team-wrapper'], className)}>
                 <div>
                     <h2>Create new patient</h2>

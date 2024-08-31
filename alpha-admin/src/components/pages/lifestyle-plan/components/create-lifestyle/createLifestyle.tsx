@@ -124,13 +124,9 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
         }
     };
 
-    const handleBackClick = () => {
-        navigate(-1); // This will navigate to the previous page
-    };
-
     return (
         <>
-            <BackButton onClick={handleBackClick}/>
+            <BackButton />
             {!themeView ? (
                 <div className={classNames(styles.container, className)}>
                     <div className={styles.content}>

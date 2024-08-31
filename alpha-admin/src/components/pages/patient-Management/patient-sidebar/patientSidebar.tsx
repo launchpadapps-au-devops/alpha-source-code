@@ -4,10 +4,11 @@ import { List, ListItemButton, ListItemIcon, ListItemText, IconButton } from '@m
 import styled from '@emotion/styled';
 import CategoryIcon from '@mui/icons-material/Category';
 import './patientSidebar.module.scss';
+import { BackButtonPatient } from '../../../back-button-patient/backButtonPatient';
 
-const SidebarPatientContainer = styled('div')<{ collapsed: boolean }>(({ collapsed }) => ({
+const SidebarPatientContainer = styled('div')<{ collapsed: boolean; sidebarHeight: number }>(({ collapsed, sidebarHeight }) => ({
     width: collapsed ? '85px' : '250px',
-    height: 'calc(100vh - 130px)', // Height calculation to fit within viewport with top margin
+    height: `${sidebarHeight}px`, // Dynamically adjust height based on scroll
     backgroundColor: '#ffffff',
     padding: '16px',
     boxSizing: 'border-box',
@@ -52,11 +53,27 @@ export interface SidebarPatientProps {
 export const SidebarPatient = ({ className }: SidebarPatientProps)  => {
 
     const [collapsed, setCollapsed] = useState(false);
+    const [sidebarHeight, setSidebarHeight] = useState(window.innerHeight - 130);
     const [selectedItem, setSelectedItem] = useState('');
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
     const patientId = location.state?.patientId; 
+
+    useEffect(() => {
+        const handleScroll = () => {
+            // Calculate the new height for the sidebar dynamically
+            const newHeight = window.innerHeight - 130 + window.scrollY;
+            setSidebarHeight(newHeight);
+        };
+
+        // Add event listener for window scroll
+        window.addEventListener('scroll', handleScroll);
+
+        // Clean up the event listener on component unmount
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
 
     useEffect(() => {
         const pathMap: { [key: string]: string } = {
@@ -90,7 +107,9 @@ export const SidebarPatient = ({ className }: SidebarPatientProps)  => {
     };
 
     return (
-        <SidebarPatientContainer collapsed={collapsed}>
+        <>
+        <BackButtonPatient/>
+        <SidebarPatientContainer collapsed={collapsed} sidebarHeight={sidebarHeight}>
             <List component="nav">
                 <StyledListItemButton
                     selected={selectedItem === 'Patient Dashboard'}
@@ -154,5 +173,6 @@ export const SidebarPatient = ({ className }: SidebarPatientProps)  => {
                 </StyledListItemButton>
             </List>
         </SidebarPatientContainer>
+        </>
     );
 };
