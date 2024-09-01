@@ -25,9 +25,20 @@ const initialLifeStyles = [
 export interface lifeStyleProps {
     plans: any;
     setPlans: any;
+    totalPages: number;
+    setTotalPages: any;
+    totalRecords: number;
+    setTotalRecords: any;
 }
 
-export const LifestyleTable: React.FC<lifeStyleProps> = ({ plans, setPlans }) => {
+export const LifestyleTable: React.FC<lifeStyleProps> = ({
+    plans,
+    setPlans,
+    totalPages,
+    setTotalPages,
+    totalRecords,
+    setTotalRecords,
+}) => {
     const [LifeStyles, setLifeStyles] = useState(initialLifeStyles);
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openPublishModal, setOpenPublishModal] = useState(false);
@@ -37,37 +48,56 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({ plans, setPlans }) =>
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-        setCurrentPage(page);
+    const handleNextPage = () => {
+        console.log('currentPage', currentPage);
+        dispatch(fetchPlansThunk(currentPage + 1)).then((res: any) => {
+            console.log('res', res);
+            setLifeStyles(res.payload.data);
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
 
-const handleToggle = (theme: any) => {
-    const newTheme = {
-        planData: {
-            planCode: parseInt(theme.code, 10),
-            name: theme.name,
-            image: theme.image,
-            description: theme.description,
-            internalNotes: theme.internalNotes,
-            status: theme.status,
-            isPublished: !theme.isPublished,
-            id: parseInt(theme.id, 10),
-        },
-        themes: theme.themes.map((t: any) => ({
-            ...t,
-            id: parseInt(t.id, 10),
-            themeCode: parseInt(t.themeCode, 10),
-            categoryId: parseInt(t.categoryId, 10),
-        })),
-    };
-    dispatch(updatePlanThunk({ id: newTheme.planData.id, plan: newTheme })).then((data: any) => {
-        dispatch(fetchPlansThunk()).then((data: any) => {
-            if (data.payload) {
-                setPlans(data.payload.data);
-            }
+    const handlePreviousPage = () => {
+        // setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+        dispatch(fetchPlansThunk(currentPage - 1)).then((res: any) => {
+            setLifeStyles(res.payload.data);
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
         });
-    });
-};
+        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
+    };
+
+    const handleToggle = (theme: any) => {
+        const newTheme = {
+            planData: {
+                planCode: parseInt(theme.code, 10),
+                name: theme.name,
+                image: theme.image,
+                description: theme.description,
+                internalNotes: theme.internalNotes,
+                status: theme.status,
+                isPublished: !theme.isPublished,
+                id: parseInt(theme.id, 10),
+            },
+            themes: theme.themes.map((t: any) => ({
+                ...t,
+                id: parseInt(t.id, 10),
+                themeCode: parseInt(t.themeCode, 10),
+                categoryId: parseInt(t.categoryId, 10),
+            })),
+        };
+        dispatch(updatePlanThunk({ id: newTheme.planData.id, plan: newTheme })).then(
+            (data: any) => {
+                dispatch(fetchPlansThunk(1)).then((data: any) => {
+                    if (data.payload) {
+                        setPlans(data.payload.data);
+                    }
+                });
+            }
+        );
+    };
 
     const handlePublish = () => {
         if (selectedThemeIndex !== null) {
@@ -122,7 +152,7 @@ const handleToggle = (theme: any) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {currentItems.map((theme: any, index: any) => (
+                        {plans.map((theme: any, index: any) => (
                             <TableRow
                                 key={index}
                                 onClick={() => handleRowClick(theme.id)}
@@ -142,12 +172,11 @@ const handleToggle = (theme: any) => {
                 </Table>
             </TableContainer>
             <div className={styles.pagination}>
-                <Pagination
-                    count={Math.ceil(plans.length / itemsPerPage)}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    showFirstButton
-                    showLastButton
+                <TableFooter
+                    onNextPage={handleNextPage}
+                    onPreviousPage={handlePreviousPage}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
                 />
             </div>
             {/* {openPublishModal && selectedThemeIndex !== null && (

@@ -47,31 +47,23 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        dispatch(fetchLessonsThunk(1)).then((res: any) => {
+        dispatch(fetchLessonsThunk(currentPage)).then((res: any) => {
             if (res.payload) {
-                setLessons(res.payload.data);
                 setTotalPages(res.payload.meta.totalPages);
                 setTotalRecords(res.payload.meta.totalRecords);
+                setLessons(res.payload.data);
             }
         });
-    }, [dispatch]);
-
+    }, [dispatch, currentPage]);
+    
     const handleNextPage = () => {
-        console.log('currentPage', currentPage);
-        dispatch(fetchLessonsThunk(currentPage + 1)).then((res: any) => {
-            console.log('res', res);
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
+    
     const handlePreviousPage = () => {
-        dispatch(fetchLessonsThunk(currentPage - 1)).then((res: any) => {
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
     };
+    
 
     const handleToggle = (lesson: Lesson, index: number) => {
         setSelectedThemeIndex(index);

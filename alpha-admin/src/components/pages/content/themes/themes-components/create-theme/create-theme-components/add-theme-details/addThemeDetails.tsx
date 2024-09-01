@@ -66,8 +66,8 @@ export const AddThemeDetails: FC<AddThemeDetailsProps> = ({ category, data, setD
                     id="themeDescription"
                     type="text"
                     className={styles.textarea}
-                    value={data.description}
-                    onChange={(e) => setData({ ...data, description: e.target.value })}
+                    value={data.themeData.description}
+                    onChange={(e) => setData({ ...data.themeData, description: e.target.value })}
                     placeholder="Enter the theme description"
                     required
                 />

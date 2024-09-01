@@ -144,7 +144,7 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
 
     const handleRowClick = (index: number) => {
         navigate(`/content/themes/viewtheme/${themes[index].id}`, {
-            state: { isPublished: themes[index].published },
+            state: { isPublished: themes[index].isPublished },
         });
     };
 

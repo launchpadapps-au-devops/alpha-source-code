@@ -10,16 +10,14 @@ interface ThemeDetailsProps {
 }
 
 const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, setData }) => {
-    // const [themeCode, setThemeCode] = useState<string>('1');
     const [category, setCategory] = useState<string>('');
 
     const categories = useAppSelector((state) => state.categories.categories.categories);
-    console.log(categories, 'categories');
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(fetchCategoriesThunk());
-    }, []);
+        dispatch(fetchCategoriesThunk(1));
+    }, [dispatch]);
 
     useEffect(() => {
         onCategoryChange(category);
@@ -50,7 +48,7 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                 <label htmlFor="category">Category</label>
                 <select
                     id="category"
-                    value={data.themeData.categoryId}
+                    value={data.themeData.category?.id || ''}
                     onChange={(e) => {
                         setCategory(e.target.value);
                         setData({
@@ -69,11 +67,6 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                             {cat.name}
                         </option>
                     ))}
-                    {/* {categories.map((cat) => (
-                        <option key={cat} value={cat}>
-                            {cat}
-                        </option>
-                    ))} */}
                 </select>
             </div>
         </div>

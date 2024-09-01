@@ -37,9 +37,9 @@ interface staffFormData {
     permissions: Array<any>;
 }
 
-export const staffThunk = createAsyncThunk('staff/getStaff', async (_, { rejectWithValue }) => {
+export const staffThunk = createAsyncThunk('staff/getStaff', async (page:any, { rejectWithValue }) => {
     try {
-        const response = await getStaff();
+        const response = await getStaff(page);
         return response;
     } catch (error) {
         console.log('Response ERROR ', error);
