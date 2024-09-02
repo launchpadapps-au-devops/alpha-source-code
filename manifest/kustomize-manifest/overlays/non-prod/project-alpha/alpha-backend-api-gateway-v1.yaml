@@ -56,7 +56,7 @@ spec:
             value: "apigateway_queue"
           - name: SUPER_ADMIN_TOKEN
             value: "@su93r@dm1n"  
-          - name: NOTFICATION_SERVICE_BASE_URL
+          - name: NOTIFICATION_SERVICE_BASE_URL
             value: "http://alpha-backend-notification-ms-v1-service:3002"  
-          - name: NOTFICATION_SERVICE_API_PREFIX
+          - name: NOTIFICATION_SERVICE_API_PREFIX
             value: "/api/notification-ms/v1"  
