@@ -56,7 +56,6 @@ export class HealthDataController {
     @ApiQuery({ 
         name: 'userId', 
         required: false, 
-        type: String, 
     })
     @ApiResponse({
         status: 200,
