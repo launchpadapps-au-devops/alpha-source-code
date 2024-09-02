@@ -12,7 +12,7 @@ export class Notification {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ type: 'varchar', nullable: true })
     userId: string;
 
     @ManyToMany(() => User, () => {}, {
