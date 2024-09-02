@@ -60,7 +60,7 @@ export class PatientService {
             { limit: query.limit, page: query.page },
             {},
             {
-                ...(query.searchKey && query.searchValue ? [{ key: query.searchKey, value: query.searchValue }] : []),
+                ...(query.searchKey && query.searchValue ? [{ [query.searchKey]: query.searchValue }] : []),
                 userType: 'patient'
             }
         );
