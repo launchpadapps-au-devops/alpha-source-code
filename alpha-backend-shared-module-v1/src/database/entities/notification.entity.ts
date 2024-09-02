@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { User } from '.';
 
 export enum NotificationType {
     SMS = 'sms',
@@ -10,6 +11,15 @@ export enum NotificationType {
 export class Notification {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column()
+    userId: string;
+
+    @ManyToMany(() => User, () => {}, {
+        onDelete: 'CASCADE'
+    })
+    @JoinColumn({ name: 'userId' })
+    user: User;
 
     @Column({ type: 'jsonb' })
     recipients: string[];
@@ -68,4 +78,18 @@ export class Notification {
 
     @Column({ type: 'jsonb', nullable: true })
     error: string;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @ManyToOne(() => User, { nullable: true })
+    @JoinColumn({ name: 'createdBy' })
+    createdBy: User;
+
+    @ManyToOne(() => User, { nullable: true })
+    @JoinColumn({ name: 'updatedBy' })
+    updatedBy: User;
 }

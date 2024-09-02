@@ -1,6 +1,7 @@
 import { User } from "./user.entity";
 import { Permission } from "./permission.entity";
 import { Notification, NotificationType } from "./notification.entity";
+import { NotificationPreference } from "./notificationPreference.entity";
 import { Session } from "./session.entity";
 import { Policy } from "./policy.entity";
 import { HealthProfileQuestionaries } from "./HealthProfileQuestionaries.entity";
@@ -28,7 +29,8 @@ export {
   User,
   Permission,
 
-  Notification, 
+  Notification,
+  NotificationPreference,
   NotificationType,
 
   Session,

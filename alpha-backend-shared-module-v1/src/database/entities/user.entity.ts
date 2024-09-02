@@ -23,6 +23,7 @@ import { Permission } from './permission.entity';
 import { HealthProfileQuestionaries } from './HealthProfileQuestionaries.entity';
 import { UserPlan } from './userPlan.entity';
 import { UserHealthData } from './userHealthData.entity';
+import { NotificationPreference } from './notificationPreference.entity';
 
 @Entity('users')
 export class User {
@@ -202,6 +203,10 @@ export class User {
 
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[];
+
+  @OneToMany(() => NotificationPreference, (notificationPreference) => notificationPreference.user)
+  notificationPreference: NotificationPreference[];
+
 
   @OneToMany(
     () => HealthProfileQuestionaries,
