@@ -78,7 +78,12 @@ export class EnvConfigService {
             cms: {
                 host: this.get('CMS_SERVICE_BASE_URL') as string,
                 port: this.get('CMS_SERVICE_API_PREFIX') as string 
-            }
+            },
+
+            notification: {
+                host: this.get('NOTIFICATION_SERVICE_BASE_URL') as string,
+                port: this.get('NOTIFICATION_SERVICE_API_PREFIX') as string 
+            },
         }
     }
 
