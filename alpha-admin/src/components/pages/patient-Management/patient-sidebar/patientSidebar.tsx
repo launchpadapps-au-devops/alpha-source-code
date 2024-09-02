@@ -46,12 +46,9 @@ const StyledListItemButton = styled(ListItemButton)<{ selected: boolean }>(({ se
 
 export interface SidebarPatientProps {
     className?: string;
-    
 }
 
-
 export const SidebarPatient = ({ className }: SidebarPatientProps)  => {
-
     const [collapsed, setCollapsed] = useState(false);
     const [sidebarHeight, setSidebarHeight] = useState(window.innerHeight - 130);
     const [selectedItem, setSelectedItem] = useState('');
@@ -74,15 +71,22 @@ export const SidebarPatient = ({ className }: SidebarPatientProps)  => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-
     useEffect(() => {
         const pathMap: { [key: string]: string } = {
             '/patient-dashboard': 'Patient Dashboard',
             '/patient-profile': 'Patient Profile',
         };
-        console.log('Path Map: ', pathMap);
-        console.log('Patient Id Sidebar ',patientId );
-        setSelectedItem(pathMap[location.pathname.split('/').slice(0, 3).join('/')] || 'Patients');
+
+        const currentPath = location.pathname.split('/').slice(0, 3).join('/');
+        const selectedCategory = pathMap[currentPath] || 'Patients';
+
+        setSelectedItem(selectedCategory);
+
+        if (currentPath.startsWith('/patient-dashboard')) {
+            setExpandedCategory('Patient Dashboard');  // Keep Patient Dashboard expanded
+        } else {
+            setExpandedCategory(null);
+        }
     }, [location.pathname]);
 
     const toggleSidebar = () => {
@@ -95,12 +99,9 @@ export const SidebarPatient = ({ className }: SidebarPatientProps)  => {
         } else {
             setExpandedCategory(null);
             if (item === 'Patient Profile') {
-                // Navigate to /patient-profile and pass patientId as state
                 navigate(path || '', { state: { patientId }, replace: true });
-                console.log('Patient ID patient-profile: ', patientId  , path);
             } else {
-                navigate(path || '',{ state: { patientId },  replace: true });
-                console.log('Patient ID patient-profile: ', patientId  , path);
+                navigate(path || '', { state: { patientId }, replace: true });
             }
         }
         setSelectedItem(item);

@@ -20,8 +20,7 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
 
     const patients = useSelector((state: RootState) => state.patients.patients);
 
-    const location = useLocation(); // Use useLocation to access state
-    const patientId = location.state?.patientId; // Retrieve patientId from state
+     const patientId =  localStorage.getItem('selectedPatientId');
 
     const [member, setMember] = React.useState({
         id: '',

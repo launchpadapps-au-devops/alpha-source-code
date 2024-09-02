@@ -16,8 +16,7 @@ export interface PatientLifeStyle {
 }
 
 export const PatientLifeStyle = ({ className }: PatientLifeStyle) => {
-    const location = useLocation();
-    const patientId = location.state?.patientId; // This is the userId in your API call
+    const patientId =  localStorage.getItem('selectedPatientId');
 
     const [isInProgress, setIsInProgress] = useState(false);
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
