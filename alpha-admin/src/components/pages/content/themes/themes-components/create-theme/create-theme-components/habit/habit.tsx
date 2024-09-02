@@ -87,7 +87,7 @@ const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData }) => {
                     <select
                         id="pointsAllocation"
                         name="pointsAllocation"
-                        value={data.themeData.habits[0].pointsAllocation}
+                        value={data.themeData.habits[0].pointAllocation}
                         onChange={(e) => {
                             setData({
                                 ...data,

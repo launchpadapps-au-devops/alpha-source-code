@@ -11,13 +11,13 @@ interface ForgotPasswordDataResponse {
 
 export async function forgotPassword(email: string): Promise<{ data: ForgotPasswordDataResponse }> {
     const response = await axios.post(
-        `${config.BASE_URL}/api/v1/auth/forgot-password`,
+        `${config.BASE_URL}/gateway/v1/auth/password/otp`,
         { email },
         {
             headers: {
+                'accept': 'application/json',
                 'Content-Type': 'application/json',
-                'ollie-x-user-type': 'admin',
-                'ollie-x-user-platform': 'web-practice-management',
+                'alpha-x-platform': 'alpha-admin-web',
                 'ngrok-skip-browser-warning': true,
             },
         }

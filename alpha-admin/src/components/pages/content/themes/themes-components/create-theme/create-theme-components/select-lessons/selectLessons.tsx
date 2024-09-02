@@ -10,14 +10,15 @@ import { EditButton } from '../../../../../content-components/edit-button/edit-b
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../../../../../../../app/hooks';
 import { fetchThemesThunk } from '../../../themeSlice';
+import { fetchLessonsThunk } from '../../../../../lessons/lesson-components/lessonsSlice';
 
 export interface Lesson {
-    code: number;
-    title: string;
-    date: string;
-    published: boolean;
+    lessonCode: number;
+    name: string;
+    createdAt: string;
+    isPublished: boolean;
     category: string;
-    quiz: boolean;
+    quizData: boolean;
     select: boolean;
 }
 
@@ -47,19 +48,54 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
             console.log('res', res);
 
             // Extract lessons from the response and set them in the Lessons state
-            const extractedLessons = res.payload.data.flatMap((theme: any) =>
-                theme.lessons.map((lesson: any) => ({
-                    code: lesson.id,
-                    title: lesson.name,
-                    date: theme.createdAt,
-                    published: lesson.isPublished,
-                    category: theme.category.name,
-                    quiz: false, // Assuming no quiz data is provided
-                    select: false,
-                }))
-            );
+            // const extractedLessons = res.payload.data.flatMap((theme: any) =>
+            //     theme.lessons.map((lesson: any) => ({
+            //         code: lesson.id,
+            //         title: lesson.name,
+            //         date: theme.createdAt,
+            //         published: lesson.isPublished,
+            //         category: theme.category.name,
+            //         quiz: false, // Assuming no quiz data is provided
+            //         select: false,
+            //     }))
+            // );
+
+            // setLessons(extractedLessons);
+        });
+    }, []);
+    useEffect(() => {
+        dispatch(fetchLessonsThunk(1)).then((res: any) => {
+            console.log('res', res);
+
+            const extractedLessons = res.payload.data.flatMap((lesson: any) => ({
+                lessonCode: lesson.id,
+                name: lesson.name,
+                createdAt: lesson.createdAt,
+                isPublished: lesson.isPublished,
+                category: lesson.category.name,
+                quizData: false,
+                select: false,
+            }));
 
             setLessons(extractedLessons);
+
+            // Extract lessons from the response and set them in the Lessons state
+            // const extractedLessons = res.payload.data.Flatmap((lesson: any) =>
+            //     lessons.map((lesson: any) => 
+            // ({
+            //         code: lesson.id,
+            //         title: lesson.name,
+            //         date: lesson.createdAt,
+            //         published: lesson.isPublished,
+            //         category: lesson.category.name,
+            //         quiz: false, // Assuming no quiz data is provided
+            //         select: false,
+            //     })
+            //     )
+            // )
+
+            // setLessons(res.payload.data);
+            // setLessons(extractedLessons);
         });
     }, []);
 
@@ -89,7 +125,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
     };
 
     const handleRowClick = (lesson: Lesson) => {
-        navigate(`/content/lessons/viewlesson/${lesson.code}`, {
+        navigate(`/content/lessons/viewlesson/${lesson.lessonCode}`, {
             state: { showTags: false, showAlternateButtons: true },
         });
     };
@@ -99,7 +135,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
     };
 
     const filteredLessons = Lessons.filter((lesson: Lesson) =>
-        lesson.title.toLowerCase().includes(searchQuery.toLowerCase())
+        (lesson.name.toLowerCase()).includes(searchQuery.toLowerCase())
     );
 
     const handleCreateNewLesson = () => {
@@ -159,11 +195,11 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
                     <tbody>
                         {filteredLessons.map((lesson: Lesson, index: number) => (
                             <tr key={index} onClick={() => handleRowClick(lesson)}>
-                                <td>{lesson.code}</td>
-                                <td>{lesson.title}</td>
-                                <td>{lesson.date}</td>
-                                <td>{lesson.published ? <CheckCircleOutlineIcon /> : ''}</td>
-                                <td>{lesson.quiz ? <CheckCircleOutlineIcon /> : ''}</td>
+                                <td>{lesson.lessonCode}</td>
+                                <td>{lesson.name}</td>
+                                <td>{lesson.createdAt}</td>
+                                <td>{lesson.isPublished ? <CheckCircleOutlineIcon /> : ''}</td>
+                                <td>{lesson.quizData ? <CheckCircleOutlineIcon /> : ''}</td>
                                 <td onClick={(event) => event.stopPropagation()}>
                                     <Checkbox
                                         checked={lesson.select}

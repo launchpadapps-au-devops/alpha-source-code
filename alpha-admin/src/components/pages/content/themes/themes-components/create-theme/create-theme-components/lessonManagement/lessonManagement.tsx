@@ -69,12 +69,12 @@ export const LessonManagement: FC<LessonManagementProps> = ({
                     <tbody>
                         {selectedLessons.map((lesson, index) => (
                             <tr key={index}>
-                                <td>{lesson.code}</td>
-                                <td>{lesson.title}</td>
+                                <td>{lesson.lessonCode}</td>
+                                <td>{lesson.name}</td>
                                 <td>{lesson.category}</td>
-                                <td>{lesson.quiz ? <CheckCircleOutlineIcon /> : ''}</td>
+                                <td>{lesson.quizData ? <CheckCircleOutlineIcon /> : ''}</td>
                                 <td>
-                                    <Delete onClick={() => onRemoveLesson(lesson.code)} />
+                                    <Delete onClick={() => onRemoveLesson(lesson.lessonCode)} />
                                 </td>
                             </tr>
                         ))}

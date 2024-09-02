@@ -28,57 +28,57 @@ export interface CreateThemeProps {
 
 const initialLessons: Lesson[] = [
     {
-        code: 1,
-        title: 'Lesson 1',
-        date: '26/06/2023',
-        published: true,
+        lessonCode: 1,
+        name: 'Lesson 1',
+        createdAt: '26/06/2023',
+        isPublished: true,
         category: 'Nutrition',
-        quiz: true,
+        quizData: true,
         select: false,
     },
     {
-        code: 2,
-        title: 'Lesson 2',
-        date: '26/06/2023',
-        published: false,
+        lessonCode: 2,
+        name: 'Lesson 2',
+        createdAt: '26/06/2023',
+        isPublished: false,
         category: 'Nutrition',
-        quiz: false,
+        quizData: false,
         select: false,
     },
     {
-        code: 3,
-        title: 'Lesson 3',
-        date: '26/06/2023',
-        published: true,
+        lessonCode: 3,
+        name: 'Lesson 3',
+        createdAt: '26/06/2023',
+        isPublished: true,
         category: 'Nutrition',
-        quiz: false,
+        quizData: false,
         select: false,
     },
     {
-        code: 4,
-        title: 'Lesson 4',
-        date: '26/06/2023',
-        published: true,
+        lessonCode: 4,
+        name: 'Lesson 4',
+        createdAt: '26/06/2023',
+        isPublished: true,
         category: 'Nutrition',
-        quiz: true,
+        quizData: true,
         select: false,
     },
     {
-        code: 5,
-        title: 'Lesson 5',
-        date: '26/06/2023',
-        published: true,
+        lessonCode: 5,
+        name: 'Lesson 5',
+        createdAt: '26/06/2023',
+        isPublished: true,
         category: 'Nutrition',
-        quiz: false,
+        quizData: false,
         select: false,
     },
     {
-        code: 6,
-        title: 'Lesson 6',
-        date: '26/06/2023',
-        published: true,
+        lessonCode: 6,
+        name: 'Lesson 6',
+        createdAt: '26/06/2023',
+        isPublished: true,
         category: 'Nutrition',
-        quiz: true,
+        quizData: true,
         select: false,
     },
 ];
@@ -151,7 +151,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     };
 
     const handleRemoveLessonFromTheme = (lessonCode: number) => {
-        setSelectedLessons((prev) => prev.filter((lesson) => lesson.code !== lessonCode));
+        setSelectedLessons((prev) => prev.filter((lesson) => lesson.lessonCode !== lessonCode));
     };
 
     const handleOpenSidebar = () => {

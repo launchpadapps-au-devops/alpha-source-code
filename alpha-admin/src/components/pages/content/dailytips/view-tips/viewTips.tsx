@@ -46,7 +46,7 @@ export const ViewTips = ({ className }: ViewTipsProps) => {
 
     useEffect(() => {
         console.log(tips, 'tips');
-        dispatch(fetchTipsThunk());
+        dispatch(fetchTipsThunk(1));
     }, [dispatch]);
 
     const handleTipChange = (event: React.ChangeEvent<HTMLInputElement>) => {

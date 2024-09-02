@@ -18,7 +18,7 @@ import Habit from '../create-theme/create-theme-components/habit/habit';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchLessonsThunk } from '../../../lessons/lesson-components/lessonsSlice';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import { fetchThemeByIdThunk } from '../themeSlice';
+import { addThemeThunk, fetchThemeByIdThunk, updateThemeThunk } from '../themeSlice';
 import { BackButton } from '../../../../../back-button/backButton';
 
 export interface EditThemeProps {
@@ -27,57 +27,57 @@ export interface EditThemeProps {
 
 const initialLessons: Lesson[] = [
     {
-        code: 1,
-        title: 'Lesson 1',
-        date: '26/06/2023',
-        published: true,
+        lessonCode: 1,
+        name: 'Lesson 1',
+        createdAt: '26/06/2023',
+        isPublished: true,
         category: 'Nutrition',
-        quiz: true,
+        quizData: true,
         select: false,
     },
     {
-        code: 2,
-        title: 'Lesson 2',
-        date: '26/06/2023',
-        published: false,
+        lessonCode: 2,
+        name: 'Lesson 2',
+        createdAt: '26/06/2023',
+        isPublished: false,
         category: 'Nutrition',
-        quiz: false,
+        quizData: false,
         select: false,
     },
     {
-        code: 3,
-        title: 'Lesson 3',
-        date: '26/06/2023',
-        published: true,
+        lessonCode: 3,
+        name: 'Lesson 3',
+        createdAt: '26/06/2023',
+        isPublished: true,
         category: 'Nutrition',
-        quiz: false,
+        quizData: false,
         select: false,
     },
     {
-        code: 4,
-        title: 'Lesson 4',
-        date: '26/06/2023',
-        published: true,
+        lessonCode: 4,
+        name: 'Lesson 4',
+        createdAt: '26/06/2023',
+        isPublished: true,
         category: 'Nutrition',
-        quiz: true,
+        quizData: true,
         select: false,
     },
     {
-        code: 5,
-        title: 'Lesson 5',
-        date: '26/06/2023',
-        published: true,
+        lessonCode: 5,
+        name: 'Lesson 5',
+        createdAt: '26/06/2023',
+        isPublished: true,
         category: 'Nutrition',
-        quiz: false,
+        quizData: false,
         select: false,
     },
     {
-        code: 6,
-        title: 'Lesson 6',
-        date: '26/06/2023',
-        published: true,
+        lessonCode: 6,
+        name: 'Lesson 6',
+        createdAt: '26/06/2023',
+        isPublished: true,
         category: 'Nutrition',
-        quiz: true,
+        quizData: true,
         select: false,
     },
 ];
@@ -125,6 +125,21 @@ export const EditTheme = ({ className }: EditThemeProps) => {
         lessonData: [],
     });
 
+    const submitData = (id:any) => {
+        dispatch(updateThemeThunk({ id, theme: data.themeData })) 
+        .then((res: any) => {
+            console.log(data.themeData);
+                if (res.payload.status === 200) {
+                    navigate('/content/themes');
+                } else if (res.payload.status === 201){
+                    navigate('/content/themes');
+                }
+            })
+            .catch((err: any) => {
+                console.log(err);
+                alert('Error' + err);
+            });
+    };
     const handleUpdateLessons = (updatedLessons: Lesson[]) => {
         setLessons(updatedLessons);
     };
@@ -135,7 +150,7 @@ export const EditTheme = ({ className }: EditThemeProps) => {
     };
 
     const handleRemoveLessonFromTheme = (lessonCode: number) => {
-        setSelectedLessons((prev) => prev.filter((lesson) => lesson.code !== lessonCode));
+        setSelectedLessons((prev) => prev.filter((lesson) => lesson.lessonCode !== lessonCode));
     };
 
     const handleOpenSidebar = () => {
@@ -191,7 +206,7 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                             />
                             <AppButton
                                 buttonText="Publish"
-                                onButtonClick={() => navigate('/content/themes')}
+                                onButtonClick={() => submitData(id)}
                             />
                         </div>
                     </header>
@@ -210,6 +225,7 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                                     selectedLessons={selectedLessons}
                                     onRemoveLesson={handleRemoveLessonFromTheme}
                                     onAddLessons={handleOpenSidebar}
+                                    newLessons={newLessons}
                                 />
                             )}
                             <div className={styles.section}>

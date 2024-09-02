@@ -49,14 +49,14 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
     const handleFormSuccessModal = () => {
         const roleId = formValues.role ? parseInt(formValues.role, 10) : null;
         const permissionId = formValues.permission ? parseInt(formValues.permission, 10) : null;
-
+    
         console.log(`Role ID: ${roleId}, Permission ID: ${permissionId}`);
-
+    
         if (roleId === null || permissionId === null) {
             alert('Please select a valid role and permission');
             return;
         }
-
+    
         const data = {
             userData: {
                 firstName: formValues.firstName,
@@ -65,12 +65,19 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                 phone: formValues.phoneNumber,
                 roleId: roleId,
             },
-            permissions: [permissionId]
+            permissions: [permissionId],
         };
         console.log('Payload data:', data);
-        dispatch(addNewStaffThunk(data));
-        navigate('/careteam');
+    
+        dispatch(addNewStaffThunk(data)).then((response) => {
+            if (response.meta.requestStatus === 'fulfilled') {
+                setOpenModal(true);  // Open the modal after the API call is successful
+            } else {
+                alert('Failed to create profile. Please try again.');
+            }
+        });
     };
+    
 
     const handleCloseModal = () => {
         setOpenModal(false);
