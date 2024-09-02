@@ -8,7 +8,7 @@ import {
     notificationService,
     userService
   } from '@launchpadapps-au/alpha-shared';
-import { NotificationCategory, NotificationSubcategory } from './notificationCategory';
+import { NotificationCategory, NotificationSubcategory } from '../common/notificationCategory';
 
 @Injectable()
 export class EmailHandler {

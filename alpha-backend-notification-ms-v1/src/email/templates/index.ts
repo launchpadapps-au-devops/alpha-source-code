@@ -1,5 +1,5 @@
 // Import Area
-import {  NotificationSubcategory } from "../notificationCategory";
+import {  NotificationSubcategory } from "../../common/notificationCategory";
 import patientInvitationTemplate from "./patient-invitation.template";
 import staffInvitationTemplate from "./staff-invitation.template";
 import forgotPasswordTemplate from "./forgot-password.template";
