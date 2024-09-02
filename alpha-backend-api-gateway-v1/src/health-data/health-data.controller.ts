@@ -56,7 +56,7 @@ export class HealthDataController {
     @ApiQuery({ 
         name: 'userId', 
         required: false, 
-        type: Number 
+        type: String, 
     })
     @ApiResponse({
         status: 200,
@@ -81,7 +81,7 @@ export class HealthDataController {
         @Request() req,
         @Query('userId') userId?: number
     ): Promise<object> {
-        return await this.healthDataService.getHealthProfileQuestionaries(req.user);
+        return await this.healthDataService.getHealthProfileQuestionaries(userId, req.user);
     }
 
 
