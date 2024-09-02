@@ -211,9 +211,9 @@ spec:
           value: apigateway_queue
         - name: SUPER_ADMIN_TOKEN
           value: '@su93r@dm1n'
-        - name: NOTFICATION_SERVICE_BASE_URL
+        - name: NOTIFICATION_SERVICE_BASE_URL
           value: http://alpha-backend-notification-ms-v1-service:3002
-        - name: NOTFICATION_SERVICE_API_PREFIX
+        - name: NOTIFICATION_SERVICE_API_PREFIX
           value: /api/notification-ms/v1
         image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:2f9c7f7cd89cc63365faf8b17d6e7a22e008a6ef95a790bde0f798d198a9ab66
         imagePullPolicy: IfNotPresent
@@ -390,7 +390,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:abe09d5894244b1c53066595fc43995054f8293fbb7829a7584cf449b22bf11d
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:733fa10efa4ebe3aa3e05eb27bedbe84a3795d4ba506439a161b13cdd8680dcd
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
