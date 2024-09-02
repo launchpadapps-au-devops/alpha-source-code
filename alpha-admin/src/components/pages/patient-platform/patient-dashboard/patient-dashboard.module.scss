@@ -1,11 +1,11 @@
 @import '../../../../styles/global.scss';
 
 .patient-dashboard {
- // margin: 0 64px 64px 64px;
- margin-top: 50px;
- margin-right: 100px;
- margin-left: 350px;
- margin-bottom: 50px;
+  // margin: 0 64px 64px 64px;
+  margin-top: 50px;
+  margin-right: 100px;
+  margin-left: 350px;
+  margin-bottom: 50px;
   flex: 1;
   padding: 32px;
   border: 1px solid $color-light-grey; //#ebebeb;
@@ -114,6 +114,7 @@
       }
 
       .content-block {
+        display: flex;
         padding: 20px;
         border: 1px solid $color-light-grey; //#ebebeb
         border-radius: 12px;
@@ -136,6 +137,7 @@
         flex-wrap: wrap;
         gap: 8px;
       }
+
       .motivation-list {
         padding: 16px;
         border: 1px solid #8ce0ff;

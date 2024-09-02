@@ -36,6 +36,8 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
 
     const handleEditClick = (patientId: string) => {
         navigate('/patient-dashboard', { state: { patientId } });
+        localStorage.setItem('selectedPatientId', patientId);
+        navigate('/patient-dashboard');
     };
 
     return (
@@ -51,14 +53,20 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {patients.map((patient: Patient) => (
-                        <tr key={patient.id} onClick={() => handleEditClick(patient.id)} className={styles['clickable-row']}>
+                    {patients.map((patient: Patient, index: number) => (
+                        <tr
+                            key={index}
+                            onClick={() => handleEditClick(patient.id)}
+                            className={styles['clickable-row']}
+                        >
                             <td>
                                 <div className={styles['flex-table-column']}>
                                     <Avatar
                                         className={styles['profile-image']}
                                         alt={`${patient.firstName} ${patient.lastName}`}
-                                        src={patient.profilePicture || "/static/images/avatar/1.jpg"}
+                                        src={
+                                            patient.profilePicture || '/static/images/avatar/1.jpg'
+                                        }
                                     />
                                     {patient.firstName} {patient.lastName}
                                 </div>
@@ -79,8 +87,8 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                 showLastButton
                 sx={{
                     '.MuiPagination-ul': {
-                        display: "flex",
-                        justifyContent: "center",
+                        display: 'flex',
+                        justifyContent: 'center',
                         padding: '10px 16px',
                     },
                     '.MuiInputBase-root': {

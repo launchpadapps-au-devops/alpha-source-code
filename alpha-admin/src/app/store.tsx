@@ -13,6 +13,11 @@ import tipsReducer from '../components/pages/content/dailytips/viewTipsSlice';
 import fileUploadReducer from '../components/fileUpload/fileUploadSlice';
 import patientsSlice from '../components/pages/patient-Management/patientsSlice';
 
+//Dashboard
+import activePatientReducer from '../components/pages/dashboard/dashboard-components/activePatientsSlice';
+
+//Patient Platform
+import getPatientDataOverviewReducer from '../components/pages/patient-platform/patientDataOverviewSlice';
 
 const rootReducer = combineReducers({
     login: authSlice,
@@ -28,6 +33,12 @@ const rootReducer = combineReducers({
     tips: tipsReducer,
     fileUpload: fileUploadReducer,
     patients: patientsSlice,
+
+    // Dashboard
+    activePatients: activePatientReducer,
+
+    //Patient Platform
+    patientDataAnalyticsOverview: getPatientDataOverviewReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

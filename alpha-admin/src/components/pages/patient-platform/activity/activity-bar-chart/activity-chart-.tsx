@@ -11,6 +11,9 @@ import {
 } from 'date-fns';
 import { useEffect, useState } from 'react';
 import ActivityBarChart from './activitybarchart';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../../../app/store';
+import { fetchPatientDataOverviewThunk } from '../../patientDataOverviewSlice';
 
 export interface ActivityChartProps {
     className?: string;
@@ -31,16 +34,24 @@ export const ActivityChart = ({ className }: ActivityChartProps) => {
     const [chartData, setChartData] = useState<number[]>([]);
     const [labels, setLabels] = useState<string[]>([]);
 
+    const dispatch = useDispatch<AppDispatch>();
+    const { loading, data: patientData } = useSelector(
+        (state: RootState) => state.patientDataAnalyticsOverview
+    );
+
     // useEffect(() => {
-    //     // Simulate fetching data for the week
     //     const fetchData = async () => {
     //         const dates = eachDayOfInterval({
     //             start: startOfWeek(currentWeek),
     //             end: endOfWeek(currentWeek),
     //         });
 
-    //         const data = dates.map(() => Math.floor(Math.random() * 10000));
     //         const formattedLabels = dates.map((date) => format(date, 'MMM d'));
+
+    //         const data = dates.map((date) => {
+    //             const dayData = sampleData.find((item) => isSameDay(new Date(item.date), date));
+    //             return dayData ? dayData.steps : 0;
+    //         });
 
     //         setChartData(data);
     //         setLabels(formattedLabels);
@@ -51,6 +62,21 @@ export const ActivityChart = ({ className }: ActivityChartProps) => {
 
     useEffect(() => {
         const fetchData = async () => {
+            const id = localStorage.getItem('selectedPatientId');
+            if (!id) return;
+
+            const fromDate = format(startOfWeek(currentWeek), 'yyyy-MM-dd');
+            const toDate = format(endOfWeek(currentWeek), 'yyyy-MM-dd');
+
+            // Dispatch the thunk to fetch patient data
+            dispatch(fetchPatientDataOverviewThunk({ id, fromDate, toDate }));
+        };
+
+        fetchData();
+    }, [currentWeek, dispatch]);
+
+    useEffect(() => {
+        if (patientData) {
             const dates = eachDayOfInterval({
                 start: startOfWeek(currentWeek),
                 end: endOfWeek(currentWeek),
@@ -59,16 +85,16 @@ export const ActivityChart = ({ className }: ActivityChartProps) => {
             const formattedLabels = dates.map((date) => format(date, 'MMM d'));
 
             const data = dates.map((date) => {
-                const dayData = sampleData.find((item) => isSameDay(new Date(item.date), date));
+                const dayData = patientData.stepsPerDay.find((item) =>
+                    isSameDay(new Date(item.date), date)
+                );
                 return dayData ? dayData.steps : 0;
             });
 
             setChartData(data);
             setLabels(formattedLabels);
-        };
-
-        fetchData();
-    }, [currentWeek]);
+        }
+    }, [patientData, currentWeek]);
 
     const handlePrevWeek = () => {
         setCurrentWeek((prev) => subWeeks(prev, 1));

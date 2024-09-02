@@ -5,13 +5,28 @@ import { Analytics } from '@mui/icons-material';
 import { LegendData } from './dashboard-components/legend-data/legend-data';
 import { DoughnutChart } from './dashboard-components/legend-data/doughnutChartData';
 import DashboardBarGarph from './dashboard-components/dashboard-bar-graph/dashboard-bar-garph';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../app/store';
+import { fetchActivePatientsThunk } from './dashboard-components/activePatientsSlice';
+import { useEffect } from 'react';
 
 export const Dashboard: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const { users, loading, errorMessage, count } = useSelector(
+        (state: RootState) => state.activePatients.activePatients
+    );
+
+    useEffect(() => {
+        dispatch(fetchActivePatientsThunk());
+    }, [dispatch]);
+
     const legendItems = [
         { label: 'Fats', percentage: '63.2%', color: '#006FF7' },
         { label: 'Protein', percentage: '36.8%', color: '#FFAC2E' },
         { label: 'Carbohydrates', percentage: '36.8%', color: '#CA6B6E' },
     ];
+
+    console.log(count);
 
     return (
         <main className={classNames(styles['container'], styles['dashboard-block'])}>
@@ -31,7 +46,7 @@ export const Dashboard: React.FC = () => {
                     <label>Total active patients in age group</label>
                     <DataCard className={classNames(styles['graph-card'])}>
                         <div className={styles['min-height']}>
-                            <DashboardBarGarph />
+                            <DashboardBarGarph users={users} count={count} />
                         </div>
                     </DataCard>
                 </div>

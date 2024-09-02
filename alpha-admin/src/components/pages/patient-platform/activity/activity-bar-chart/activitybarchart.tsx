@@ -66,9 +66,9 @@ const ActivityBarChart: React.FC<ActivityBarChartProps> = ({ labels, data }) => 
         scales: {
             x: {
                 ticks: {
-                    autoSkip: true,
+                    autoSkip: false,
                     autoSkipPadding: 26,
-                    maxRotation: 0,
+                    maxRotation: 80,
                     font: {
                         family: 'Public Sans',
                         size: 14,
