@@ -390,7 +390,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:f2a91e15f0b7b4ded326db5814d121ef3dde0d00d14323108fd6c3dd0c1f757b
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:9a8c806c2f0f98683bce550546189ef2e9f5e6068ee32240b0f7b1df47bfe2db
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
