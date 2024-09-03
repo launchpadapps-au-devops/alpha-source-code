@@ -14,6 +14,7 @@ import {
 import { useAppSelector, useAppDispatch } from '../../../../../../app/hooks';
 import { useLocation } from 'react-router-dom';
 import { DeleteCategoryModal } from '../../../content-components/delete-category-modal/DeleteCategoryModal';
+import { PublishCategoryModal } from '../publish-category-modal/PublishCategoryModal';
 
 interface Category {
     id: number;
@@ -39,15 +40,17 @@ const CategoryList: React.FC = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [publishModalOpen, setPublishModalOpen] = useState(false);
 
     useEffect(() => {
         // Fetch categories
         dispatch(fetchCategoriesThunk(1)).then((response: any) => {
             setTotalPages(response.payload.meta.totalPages);
             setTotalRecords(response.payload.meta.totalRecords);
-        if (location.pathname === '/content/createcategories') {
-            setNewCategory(true);
-        }});
+            if (location.pathname === '/content/createcategories') {
+                setNewCategory(true);
+            }
+        });
     }, [dispatch, location.pathname]);
 
     const handleNextPage = () => {
@@ -66,7 +69,6 @@ const CategoryList: React.FC = () => {
         });
         setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
     };
-
 
     const handleEditClick = (category: Category) => {
         setEditId(category.id);
@@ -101,6 +103,10 @@ const CategoryList: React.FC = () => {
 
     const handleCloseModal = () => {
         setOpenModal(false);
+    };
+
+    const handleClosePublishModal = () => {
+        setPublishModalOpen(false);
     };
 
     const activeCategories = categories.filter(
@@ -190,7 +196,8 @@ const CategoryList: React.FC = () => {
                             <p>
                                 If you delete this Category, all Themes and Lessons tagged to it
                                 will lose their tags.
-                            </p><br />
+                            </p>
+                            <br />
                             <p>
                                 However, the Lessons and Themes will remain available under
                                 ‘Lessons’ and ‘Themes’.
@@ -201,7 +208,16 @@ const CategoryList: React.FC = () => {
                     closeModal={handleCloseModal}
                     cancelButtonText="Cancel"
                     deleteButtonText="Yes, delete category"
-                    handleDelete={() => handleDeleteClick(editId)}  // Pass handleDeleteClick here
+                    handleDelete={() => handleDeleteClick(editId)} // Pass handleDeleteClick here
+                />
+            )}
+            {publishModalOpen && (
+                <PublishCategoryModal
+                    open={publishModalOpen}
+                    descriptionText="Are you sure you wish to publish this Category?"
+                    title="Publish category"
+                    closeModal={handleClosePublishModal}
+                    // handlePublish={() => console.log('Category Published')} // Implement your publish logic here
                 />
             )}
         </div>

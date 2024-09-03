@@ -206,7 +206,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                     descriptionText="Profile has been successfully created and the sign up link sent to the patient."
                     title="Profile created & link sent"
                     closeModal={handleCloseModal}
-                    handleButton={() => navigate('/careteam/editcareteam')}
+                    handleButton={() => navigate('/careteam')}
                 />
             )}
         </>

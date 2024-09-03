@@ -19,7 +19,6 @@ interface Category {
 }
 
 export const ViewCategories: React.FC = () => {
-    // const [categories, setCategories] = useState<Category[]>([]);
     const categories = useAppSelector((state: any) => state.categories.categories.categories);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const dispatch = useAppDispatch();
@@ -34,28 +33,23 @@ export const ViewCategories: React.FC = () => {
         (category: Category) => category.status.toLowerCase() === 'active'
     );
 
-    console.log('Active categories',activeCategories)
-
     useEffect(() => {
         dispatch(fetchCategoriesThunk(1)).then((response: any) => {
             if (response.payload) {
                 setTotalPages(response.payload.meta.totalPages);
                 setTotalRecords(response.payload.meta.totalRecords);
-                // setCategories(activeCategories);
             }
         });
     }, [dispatch]);
-    
 
     const handleNextPage = () => {
-        console.log('currentPage', currentPage);
         dispatch(fetchCategoriesThunk(currentPage + 1)).then((res: any) => {
-            console.log('res', res);
             setTotalPages(res.payload.meta.totalPages);
             setTotalRecords(res.payload.meta.totalRecords);
         });
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
+    
     const handlePreviousPage = () => {
         dispatch(fetchCategoriesThunk(currentPage - 1)).then((res: any) => {
             setTotalPages(res.payload.meta.totalPages);
@@ -70,31 +64,45 @@ export const ViewCategories: React.FC = () => {
             isPublished: !category.isPublished, // Toggle the isPublished flag
         };
 
-        dispatch(updateCategoryThunk({ id: category.id, data: newCategory })).then(
-            (response: any) => {
-                if (response.payload) {
-                    dispatch(fetchCategoriesThunk(1)).then((response: any) => {
-                        if (response.payload) {
-                            console.log('Response ', response);
-                            // setCategories(response.payload.data);
-                        }
-                    });
+        if (!category.isPublished) {
+            // Only open the modal if the category is being published
+            setOpenModal(true);
+            setSelectedCategoryIndex(index);
+        } else {
+            // If unpublishing, proceed without showing the modal
+            dispatch(updateCategoryThunk({ id: category.id, data: newCategory })).then(
+                (response: any) => {
+                    if (response.payload) {
+                        dispatch(fetchCategoriesThunk(1));
+                    }
                 }
-            }
-        );
+            );
+        }
     };
 
     const handleCloseModal = () => {
         setOpenModal(false);
+        setSelectedCategoryIndex(null);
     };
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-        setCurrentPage(page);
-    };
+    const handlePublish = () => {
+        if (selectedCategoryIndex !== null) {
+            const categoryToPublish = activeCategories[selectedCategoryIndex];
+            const newCategory = {
+                ...categoryToPublish,
+                isPublished: true,
+            };
 
-    const indexOfLastItem = currentPage * itemsPerPage;
-    // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    // const currentCategories = categories.slice(indexOfFirstItem, indexOfLastItem);
+            dispatch(updateCategoryThunk({ id: categoryToPublish.id, data: newCategory })).then(
+                (response: any) => {
+                    if (response.payload) {
+                        dispatch(fetchCategoriesThunk(1));
+                    }
+                }
+            );
+        }
+        handleCloseModal();
+    };
 
     return (
         <div className={styles.categories}>
@@ -120,13 +128,22 @@ export const ViewCategories: React.FC = () => {
                     totalPages={totalPages}
                 />
             </div>
-            {openModal && (
+            {openModal && selectedCategoryIndex !== null && (
                 <PublishCategoryModal
                     open={openModal}
-                    descriptionText={`Are you sure you wish to publish this category?
-                      All lessons and themes tagged with this category will now be visible to patients.`}
+                    descriptionText={
+                    <>
+                    <p>
+                    Are you sure you wish to publish this category?
+                    </p><br />
+                    <p>
+                      All lessons and themes tagged with this category will now be visible to patients.
+                    </p>
+                    </>
+                    }
                     title="Publish Category"
                     closeModal={handleCloseModal}
+                    handlePublish={handlePublish}
                 />
             )}
         </div>

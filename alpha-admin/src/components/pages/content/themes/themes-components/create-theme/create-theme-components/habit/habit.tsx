@@ -91,12 +91,15 @@ const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData }) => {
                         onChange={(e) => {
                             setData({
                                 ...data,
+                                themeData: {
+                                    ...data.themeData,
                                 habits: [
                                     {
                                         ...data.themeData.habits[0],
-                                        pointsAllocation: e.target.value,
+                                        pointAllocation: e.target.value,
                                     },
                                 ],
+                            },
                             });
                         }}
                         className={styles.timeAllocationSelect}

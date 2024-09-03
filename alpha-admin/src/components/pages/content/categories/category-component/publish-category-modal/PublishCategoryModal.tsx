@@ -9,7 +9,7 @@ export interface PublishCategoryModalProps {
     className?: string;
     title?: string;
     open: boolean;
-    descriptionText?: string;
+    descriptionText?: React.ReactNode;
     closeModal?: () => void;
     handlePublish?: () => void;
 }

@@ -10,7 +10,7 @@ interface ThemeDetailsProps {
 }
 
 const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, setData }) => {
-    const [category, setCategory] = useState<string>('');
+    const [category, setCategory] = useState<string>(data.themeData.category?.id || '');
 
     const categories = useAppSelector((state) => state.categories.categories.categories);
     const dispatch = useAppDispatch();
@@ -22,6 +22,11 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
     useEffect(() => {
         onCategoryChange(category);
     }, [category, onCategoryChange]);
+
+    useEffect(() => {
+        // Sync local state with data prop
+        setCategory(data.themeData.category?.id || '');
+    }, [data.themeData.category]);
 
     return (
         <div className={styles.themeDetails}>
@@ -48,14 +53,15 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                 <label htmlFor="category">Category</label>
                 <select
                     id="category"
-                    value={data.themeData.category?.id || ''}
+                    value={category}
                     onChange={(e) => {
-                        setCategory(e.target.value);
+                        const selectedCategoryId = e.target.value;
+                        setCategory(selectedCategoryId);
                         setData({
                             ...data,
                             themeData: {
                                 ...data.themeData,
-                                categoryId: parseInt(e.target.value, 10),
+                                category: { id: parseInt(selectedCategoryId, 10) }, // assuming category is an object with id and other properties
                             },
                         });
                     }}

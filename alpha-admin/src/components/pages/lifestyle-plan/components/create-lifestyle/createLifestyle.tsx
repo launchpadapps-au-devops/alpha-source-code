@@ -16,9 +16,11 @@ import { fetchThemesThunk } from '../../../content/themes/themes-components/them
 import { AddThemes } from '../add-themes/addThemes';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../back-button/backButton';
+
 export interface CreateLifestyleProps {
     className?: string;
 }
+
 export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -61,8 +63,10 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
         setSelectedThemes([...selectedThemes, theme.id]);
     };
 
+    const isEditMode = location.pathname.includes('/lifestyle-plan/edit');
+
     useEffect(() => {
-        if (location.pathname.includes('/lifestyle-plan/edit')) {
+        if (isEditMode) {
             console.log('edit');
             dispatch(fetchPlanByIdThunk(id)).then((data: any) => {
                 if (data.payload) {
@@ -86,42 +90,47 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
     }, []);
 
     const handleSubmit = () => {
-        if (location.pathname.includes('/lifestyle-plan/edit')) {
-            const data = {
-                planData: {
-                    // 4 digit random number
-                    planCode: Math.random().toString().slice(2, 6),
-                    name: planName,
-                    image: 'https://sample.com/sample.jpg',
-                    description: planDescription,
-                    internalNotes: internalNotes,
-                    status: 'ACTIVE',
-                    isPublished: false,
-                },
-                themes: selectedThemes,
-            };
+        const data = {
+            planData: {
+                planCode: Math.random().toString().slice(2, 6),
+                name: planName,
+                image: 'https://sample.com/sample.jpg',
+                description: planDescription,
+                internalNotes: internalNotes,
+                status: 'ACTIVE',
+                isPublished: false,
+            },
+            themes: selectedThemes,
+        };
+
+        if (isEditMode) {
             dispatch(updatePlanThunk({ id: id, plan: data })).then(() => {
                 navigate('/lifestyle-plan');
             });
-            return;
         } else {
-            const data = {
-                planData: {
-                    // 4 digit random number
-                    planCode: Math.random().toString().slice(2, 6),
-                    name: planName,
-                    image: 'https://sample.com/sample.jpg',
-                    description: planDescription,
-                    internalNotes: internalNotes,
-                    status: 'ACTIVE',
-                    isPublished: false,
-                },
-                themes: selectedThemes,
-            };
             dispatch(addPlanThunk(data)).then(() => {
                 navigate('/lifestyle-plan');
             });
         }
+    };
+
+    const handleDelete = () => {
+        const data = {
+            planData: {
+                planCode: Math.random().toString().slice(2, 6),
+                name: planName,
+                image: 'https://sample.com/sample.jpg',
+                description: planDescription,
+                internalNotes: internalNotes,
+                status: 'ARCHIVE',
+                isPublished: false,
+            },
+            themes: selectedThemes,
+        };
+            dispatch(updatePlanThunk({ id: id, plan: data })).then(() => {
+                navigate('/lifestyle-plan');
+            });
+        
     };
 
     const handleBackClick = () => {
@@ -130,13 +139,16 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
 
     return (
         <>
-            <BackButton onClick={handleBackClick}/>
+            <BackButton onClick={handleBackClick} />
             {!themeView ? (
                 <div className={classNames(styles.container, className)}>
                     <div className={styles.content}>
                         <header className={styles.header}>
-                            <h4>Create new Lifestyle plan</h4>
+                            <h4>
+                                {isEditMode ? 'Edit Lifestyle Plan' : 'Create new Lifestyle plan'}
+                            </h4>
                             <div className={styles.leftButtonContainer}>
+                                {isEditMode && <DeleteButton showLeftIcon onButtonClick={() => handleDelete()}/>}{' '}
                                 <EditButton
                                     buttonText="Cancel"
                                     onButtonClick={() => navigate('/lifestyle-plan')}
@@ -163,29 +175,6 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
                                     planDescription={planDescription}
                                     setPlanDescription={setPlanDescription}
                                 />
-                                {/* <div className={styles.section}>
-                            <div className={styles.habitHeader}>
-                                <h3>
-                                    Habit <Vector />
-                                </h3>
-                                {showHabit && (
-                                    <DeleteButton
-                                        showLeftIcon
-                                        buttonText="Remove habit"
-                                        className={styles.removeHabitButton}
-                                        onButtonClick={handleRemoveHabitClick}
-                                    />
-                                )}
-                            </div>
-                            {/* {showHabit ? (
-                                <Habit showDeleteButton={false} />
-                            ) : (
-                                <EditButton
-                                    buttonText="Add Habit"
-                                    onButtonClick={handleAddHabitClick}
-                                />
-                            )} */}
-                                {/* </div>  */}
                                 <div className={styles.ButtonContainer}>
                                     <EditButton
                                         buttonText="Continue"

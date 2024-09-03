@@ -15,23 +15,6 @@ export interface CareTeamTableProps {
     className?: string;
 }
 
-// const dummyData = [
-//     { name: 'Dr. John Doe', role: 'General Practitioner', permissionLevel: 'Full access' },
-//     { name: 'Dr. Jane Smith', role: 'Cardiologist', permissionLevel: 'Read-only' },
-//     { name: 'Nurse Mary Johnson', role: 'Nurse', permissionLevel: 'Limited access' },
-//     { name: 'Dr. Emily Davis', role: 'Pediatrician', permissionLevel: 'Full access' },
-//     { name: 'Dr. Michael Wilson', role: 'Surgeon', permissionLevel: 'Full access' },
-//     { name: 'Dr. Sarah Brown', role: 'Psychiatrist', permissionLevel: 'Read-only' },
-//     { name: 'Nurse Jessica Martinez', role: 'Nurse', permissionLevel: 'Limited access' },
-//     { name: 'Dr. David Garcia', role: 'Oncologist', permissionLevel: 'Full access' },
-//     { name: 'Dr. Jennifer Rodriguez', role: 'Dermatologist', permissionLevel: 'Full access' },
-//     { name: 'Nurse James Lee', role: 'Nurse', permissionLevel: 'Limited access' }
-// ];
-
-/**
- * This component was created using Codux's Default new component template.
- * To create custom component templates, see https://help.codux.com/kb/en/article/kb16522
- */
 export const CareTeamTable = ({ className }: CareTeamTableProps) => {
     const { staff, loading, errorMessage } = useSelector((state: RootState) => state.staff.staff);
     const dispatch = useDispatch<AppDispatch>();

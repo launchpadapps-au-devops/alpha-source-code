@@ -28,7 +28,7 @@ import { ViewLessons } from './components/pages/content/lessons/lesson-component
 import { CreateNewLesson } from './components/pages/content/lessons/lesson-components/create-new-lesson/createNewLesson';
 import { EditTheme } from './components/pages/content/themes/themes-components/edit-theme/editTheme';
 import { ViewTips } from './components/pages/content/dailytips/view-tips/viewTips';
-import { LifeStyle } from './components/pages/lifestyle-plan/view-lifestyle/viewLifeStyle';
+import { LifeStyle } from './components/pages/lifestyle-plan/view-lifestyle/LifeStyle';
 import { ViewLifeStyle } from './components/pages/lifestyle-plan/components/view-lifestyle/viewLifestyle';
 import { CreateLifestyle } from './components/pages/lifestyle-plan/components/create-lifestyle/createLifestyle';
 import { DailyTips } from './components/pages/content/dailytips/dailyTips';

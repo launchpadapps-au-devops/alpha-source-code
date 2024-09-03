@@ -134,6 +134,8 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = plans.slice(indexOfFirstItem, indexOfLastItem);
 
+    const activePlans = plans.filter((plan: any) => plan.status.toLowerCase() === 'active');
+
     return (
         <>
             <TableContainer component={Paper}>
@@ -152,7 +154,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {plans.map((theme: any, index: any) => (
+                        {activePlans.map((theme: any, index: any) => (
                             <TableRow
                                 key={index}
                                 onClick={() => handleRowClick(theme.id)}
