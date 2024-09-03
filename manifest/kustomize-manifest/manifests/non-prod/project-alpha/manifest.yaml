@@ -215,7 +215,7 @@ spec:
           value: http://alpha-backend-notification-ms-v1-service:3002
         - name: NOTIFICATION_SERVICE_API_PREFIX
           value: /api/notification-ms/v1
-        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:efb5b4b4b2d87ed42730621385d958417ea4755868c57f2f79b010325195e38f
+        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:3d72d3bb0086b7a34bcb0bf3bb4dcb176cf4c39a1e659061592a930c0a497e7b
         imagePullPolicy: IfNotPresent
         name: alpha-backend-api-gateway-v1-container
         ports:
@@ -303,7 +303,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: cms_queue
-        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:d3ac3a19d40cb0e13a3874689a5075ec6b54faec56ffc2dc36091adaabffd2d9
+        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:fbff3d6019a0fabd31f15aeb216eec4bfc5c4b6784bca5c74b9a32fbce9a59ec
         name: alpha-backend-cms-ms-v1-container
         ports:
         - containerPort: 3003
@@ -390,7 +390,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:8700b8ccf31b749cf2584585b21f5828b6b4ebf946d2d12c551d7d6958fb85d8
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:c6b229f45a73609fbc5b60a1083b7431f37e3d684b91503a16aa96957c56cdaf
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
@@ -484,7 +484,7 @@ spec:
           value: Aster Admin
         - name: SENDGRID_FROM_EMAIL
           value: admin@astercircular.co
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:d3cfb518ffd68657dfe6c1f5208ade19aa6b5342081eb814c72822bf35143999
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:550f571ef25c0035c10f09ac52fef040061523b0a52c1050d9d68d044818858e
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -572,7 +572,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: user_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:60b76cafdcd2852f33f3128397fa30f7a5ad2fd20e2cec6f89063dcd48bd7e0a
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:af3b420e0094c275eba53246ebf7024d802d763dad7ad3264b564f11d87b4552
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
