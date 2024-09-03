@@ -29,7 +29,7 @@ export class ThemeController {
             type: 'object',
             properties: {
                 themeData: { type: 'object', $ref: getSchemaPath(CreateThemeDto) },
-                lessonData: { type: 'array', example: [1, 2 ,3] },
+                lessonData: { type: 'array', example: [1, 2, 3] },
             }
         }
     })
@@ -56,21 +56,24 @@ export class ThemeController {
         @Request() req,
         @Body() payload: {
             themeData: CreateThemeDto,
-            lessonData: number [],
+            lessonData: number[],
         }
     ) {
-        const { data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData);
-        if(lessons.length !== payload.lessonData.length) {
-            throw new NotFoundException('Some lessons not found');
-        }
+        let lessons = [];
+        if (payload.lessonData?.length === 0) {
+            ({ data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData));
+            if (lessons.length !== payload.lessonData.length) {
+                throw new NotFoundException('Some lessons not found');
+            }
 
-        if(lessons.some((l) => l.themeId)) {
-            throw new NotFoundException('Some lessons already have theme assigned');
+            if (lessons.some((l) => l.themeId)) {
+                throw new NotFoundException('Some lessons already have theme assigned');
+            }
         }
 
         const theme = await this.themeService.createTheme(payload.themeData, req.user);
-        
-        await this.lessonService.bulkUpdateLesson(
+
+        lessons.length &&  await this.lessonService.bulkUpdateLesson(
             lessons?.map(lesson => ({ ...lesson, themeId: theme.data.id })),
         )
 
@@ -87,7 +90,7 @@ export class ThemeController {
         type: 'number',
         required: true
     })
-    @ApiBody({ 
+    @ApiBody({
         schema: {
             type: 'object',
             properties: {
@@ -120,31 +123,35 @@ export class ThemeController {
         @Param('id') id: number,
         @Body() payload: {
             themeData: Partial<Theme>,
-            lessonData: number [],
+            lessonData: number[],
         }
     ) {
         const existingTheme = await this.themeService.findThemeById(id);
 
         let lessons = [];
-        if(payload.lessonData?.length) {
+        if (payload.lessonData?.length) {
             ({ data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData));
 
-            if(lessons?.length !== payload.lessonData.length) {
+            if (lessons?.length !== payload.lessonData.length) {
                 throw new NotFoundException('Some lessons not found');
             }
 
-            if(lessons?.some((l) => l.themeId && l.themeId !== id)) {
+            if (lessons?.some((l) => l.themeId && l.themeId !== id)) {
                 throw new NotFoundException('Some lessons already have theme assigned');
             }
-    
-            await this.lessonService.bulkUpdateLesson(
+
+            lessons.length && await this.lessonService.bulkUpdateLesson(
                 lessons?.map(lesson => ({ ...lesson, themeId: id })) || [],
             )
-    
-            const lessonIds = lessons.map(l => l.id);
+
+            const lessonIds = lessons?.map(l => l.id) || [];
             const removeLessonIds = existingTheme?.data?.lessons?.filter(l => !lessonIds.includes(l.id))?.map((l) => l.id) || [];
-            const { data: lessonsToRemove = [] } = await this.lessonService.findLessonByIds(removeLessonIds);
-    
+            
+            
+            const { data: lessonsToRemove = [] } = removeLessonIds?.length 
+                ? await this.lessonService.findLessonByIds(removeLessonIds)
+                : [];
+
             lessonsToRemove?.length && await this.lessonService.bulkUpdateLesson(
                 lessonsToRemove.map(lesson => ({ ...lesson, themeId: null })),
             )
