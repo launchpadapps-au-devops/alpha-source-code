@@ -1,0 +1,52 @@
+@import '../../../../styles/global.scss';
+
+.account-button {
+    padding: 0;
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-2; //16px
+    border: 0px;
+
+    .avatar-wrap {
+        background-color: $color-sky-blue; // #e6f7fd;
+        width: 40px;
+        height: 40px;
+        color: $color-blue; // #146cfd;
+        font: $type-text-regular;
+        font-family: 500;
+        text-align: center;
+    }
+
+    .profile-detail {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+
+        & :nth-child(1) {
+            font: $type-text-regular;
+            color: $color-medium-black; // #22272b;
+            font-weight: 500;
+        }
+
+        & :nth-child(2) {
+            font: $type-text-small;
+            color: $color-medium-grey; // #495054;
+            font-weight: 400;
+
+
+        }
+    }
+
+
+}
+
+.menu-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    //padding: 10px 16px;
+    gap: $spacing-1-5; //16px
+}

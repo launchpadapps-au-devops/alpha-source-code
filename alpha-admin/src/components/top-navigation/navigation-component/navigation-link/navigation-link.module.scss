@@ -1,0 +1,35 @@
+@import '../../../../styles/global.scss';
+
+.root {}
+
+.nav-link-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-1;
+    font: $type-text-regular;
+    font-family: inherit;
+    font-weight: 400;
+    color: $color-medium-grey;
+    align-items: center;
+    padding-top: 28px;
+    padding-bottom: 28px;
+    border-bottom: 3px solid transparent;
+
+    &:hover {
+        color: $color-blue;
+        border-bottom: 3px solid $color-blue;
+    }
+
+    &.active {
+        color: $color-blue;
+        border-bottom: 3px solid $color-blue;
+    }
+}
+
+.icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+}

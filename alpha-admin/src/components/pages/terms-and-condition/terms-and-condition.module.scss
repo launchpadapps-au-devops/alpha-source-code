@@ -1,0 +1,52 @@
+@import '../../../styles/global.scss';
+
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2-5;
+    background-color: $color-white;
+    padding: $spacing-4;
+    border: 1px solid $color-light-grey;
+}
+
+.terms-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    span {
+        font: $type-text-large;
+        font-weight: 500;
+        color: $color-medium-black;
+    }
+}
+
+.terms-detail {
+    font: $type-text-regular;
+    font-weight: 400;
+    color: $color-medium-grey;
+}
+
+.divider {
+    height: 1px;
+    background-color: $color-divider;
+}
+
+.accordion-list-heading {
+    font: $type-text-regular;
+    color: $color-medium-grey;
+}
+
+.accordion-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    list-style: none;
+
+}
+
+.save-buttons-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-1-5
+}

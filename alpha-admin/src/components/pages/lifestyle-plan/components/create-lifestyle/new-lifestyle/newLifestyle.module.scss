@@ -1,0 +1,102 @@
+.container {
+  width: 100%; /* Adjust width as needed */
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: center;
+}
+.section-container {
+  width: 100%; /* Adjust width as needed */
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  padding: 16px;
+  background: #F9FAFE;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: center;
+}
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%; /* Ensure full width for section */
+}
+
+.label {
+  font-weight: bold;
+}
+
+.input,
+.textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%; /* Ensure full width for input and textarea */
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.addButton {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.addButton:hover {
+  background-color: #0056b3;
+}
+
+.lessonsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+
+  th,
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #f9f9f9;
+    text-align: center;
+  }
+
+  td {
+    text-align: center;
+  }
+}
+
+.habitHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Ensure full width for header */
+}
+
+.removeHabitButton {
+  display: flex;
+  width: 180px;
+  padding: 12px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--Red, #eb5757);
+  background: var(--Shades-White, #fff);
+}

@@ -1,0 +1,128 @@
+@import '../../../../../styles/global.scss';
+.care-team-profile {
+  width: 100%;
+  max-width: 1118px;
+  padding: $spacing-2; //16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: $spacing-2; //16px;;
+  margin: 92px auto;
+  background-color: $color-white;
+  border-radius: $spacing-1; //8px
+  -webkit-border-radius: $spacing-1;
+  -moz-border-radius: $spacing-1;
+  -ms-border-radius: $spacing-1;
+  -o-border-radius: $spacing-1;
+  .top-header-block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    h2 {
+      font: $type-heading-regular;
+      font-weight: 500;
+      padding: $spacing-1 0;
+      color: $color-medium-black; //#22272b;
+      margin-bottom: $spacing-2; //16px;
+    }
+  }
+  .profile-detail-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 20px;
+
+    .left-profile-block {
+      max-width: 222px;
+      padding: $spacing-2; //16px
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: center;
+      flex: 1;
+      gap: 20px;
+      border-radius: $spacing-1;
+      border: 1px solid $color-light-grey; //#ebebeb:;
+      -webkit-border-radius: $spacing-1;
+      -moz-border-radius: $spacing-1;
+      -ms-border-radius: $spacing-1;
+      -o-border-radius: $spacing-1;
+      .profile-image {
+        width: 96px;
+        height: 96px;
+        color: #009dd9;
+        background-color: #e6f7fd;
+      }
+      .profile-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .profile-name {
+          text-align: center;
+          font: $type-text-large;
+          font-weight: 500;
+          color: $color-light-black; //#333333;
+        }
+        .profile-role {
+          text-align: center;
+          font: $type-text-regular; //16px/22px
+          font-weight: 500;
+          color: $color-medium-grey; //#495054;
+        }
+        .profile-workplace {
+          text-align: center;
+          font: $type-text-small; //14px/20px
+          color: $color-medium-grey; //#495054;
+        }
+        .profile-status {
+          text-align: center;
+          font: $type-text-small; //14px/20px
+          color: $color-medium-grey; //#495054;
+        }
+      }
+    }
+    .right-profile-block {
+      padding: $spacing-3; //24px
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
+      align-self: flex-start;
+      border-radius: $spacing-1;
+      gap: $spacing-4; //32px;;
+      border: 1px solid $color-light-grey; //#ebebeb:;
+      -webkit-border-radius: $spacing-1;
+      -moz-border-radius: $spacing-1;
+      -ms-border-radius: $spacing-1;
+      -o-border-radius: $spacing-1;
+      h3 {
+        font: $type-text-medium; //18px/22px;
+        font-weight: 500;
+        color: $color-light-black; //#333333;
+      }
+      .details-block {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-3; //24px;
+        .profile-details-wrapper {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          gap: $spacing-1; //8px;
+          .label {
+            font: $type-text-small; //14px/20px ;
+            font-weight: 500;
+            color: $color-light-black; //#333333;;
+          }
+          .details {
+            font: $type-text-medium; //18px/22px;
+            color: $color-medium-grey; //#495054
+          }
+        }
+      }
+    }
+  }
+}

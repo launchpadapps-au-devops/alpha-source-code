@@ -1,0 +1,40 @@
+@import '../../styles/global.scss';
+
+.accordion-header {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-2;
+  font: $type-text-medium;
+  font-family: 500;
+  color: $color-medium-black;
+  align-items: center;
+}
+
+.number-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: $color-light-grey;
+  border-radius: 100%;
+}
+
+.edit-accordion-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2-5;
+}
+
+.edit-accordion-header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+
+}
+
+.edit-accordion-body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+}
