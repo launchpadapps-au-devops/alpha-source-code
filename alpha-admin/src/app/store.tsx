@@ -22,8 +22,8 @@ import { forgotOtpVerifyAuthSlice } from '../components/pages/forgot-password/fo
 
 const rootReducer = combineReducers({
     login: authSlice,
-    forgotPassword: forgotAuthSlice,
-    forgotPasswordOtpVerify: forgotOtpVerifyAuthSlice,
+    // forgotPassword: forgotAuthSlice,
+    // forgotPasswordOtpVerify: forgotOtpVerifyAuthSlice,
     // resetPassword: resetPasswordReducer,
     staff: staffReducer,
     addNewStaff: addNewStaffReducer,
