@@ -14,7 +14,7 @@ interface TableFooterProps {
 export const TableFooter: React.FC<TableFooterProps> = ({ onNextPage, onPreviousPage, currentPage, totalPages }) => {
   return (
     <div className="table-footer">
-      {/* <button className="prev-button" onClick={onPreviousPage} disabled={currentPage <= 1}>
+      <button className="prev-button" onClick={onPreviousPage} disabled={currentPage <= 1}>
         <FontAwesomeIcon icon={faChevronLeft} /> Back
       </button>
       <span className="page-info">
@@ -22,7 +22,7 @@ export const TableFooter: React.FC<TableFooterProps> = ({ onNextPage, onPrevious
       </span>
       <button className="next-button" onClick={onNextPage} disabled={currentPage >= totalPages}>
         Next <FontAwesomeIcon icon={faChevronRight} />
-      </button> */}
+      </button>
     </div>
   );
 };
