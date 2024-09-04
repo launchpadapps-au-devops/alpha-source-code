@@ -5,7 +5,7 @@ import styles from './viewCategories.module.scss';
 import { PublishCategoryModal } from '../publish-category-modal/PublishCategoryModal';
 import { useAppDispatch, useAppSelector } from '../../../../../../app/hooks';
 import { fetchCategoriesThunk, updateCategoryThunk } from '../categorySlice';
-import TableFooter from '../../../content-components/table-footer/TableFooter';
+import {TableFooter} from '../../../content-components/table-footer/TableFooter';
 
 interface Category {
     id: number;

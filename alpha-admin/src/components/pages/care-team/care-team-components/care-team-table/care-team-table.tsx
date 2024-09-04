@@ -9,7 +9,7 @@ import { AppDispatch, RootState } from '../../../../../app/store';
 import { useEffect, useState } from 'react';
 import { staffThunk } from '../create-care-team/create-care-teamSlice';
 import { useNavigate } from 'react-router-dom';
-import TableFooter from '../../../content/content-components/table-footer/TableFooter';
+import {TableFooter} from '../../../content/content-components/table-footer/TableFooter';
 
 export interface CareTeamTableProps {
     className?: string;

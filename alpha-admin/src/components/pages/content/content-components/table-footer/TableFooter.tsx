@@ -11,7 +11,7 @@ interface TableFooterProps {
   totalPages: number;
 }
 
-const TableFooter: React.FC<TableFooterProps> = ({ onNextPage, onPreviousPage, currentPage, totalPages }) => {
+export const TableFooter: React.FC<TableFooterProps> = ({ onNextPage, onPreviousPage, currentPage, totalPages }) => {
   return (
     <div className="table-footer">
       <button className="prev-button" onClick={onPreviousPage} disabled={currentPage <= 1}>
@@ -27,4 +27,3 @@ const TableFooter: React.FC<TableFooterProps> = ({ onNextPage, onPreviousPage, c
   );
 };
 
-export default TableFooter;

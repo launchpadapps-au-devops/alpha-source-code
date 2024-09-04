@@ -18,7 +18,7 @@ import { UnpublishLessonModal } from '../unpublish-lesson-modal/unpublishLessonM
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchLessonsThunk, updateLessonThunk } from '../lessonsSlice';
 import CategoryItem from '../../../categories/category-component/categoryItem/categoryItem';
-import TableFooter from '../../../content-components/table-footer/TableFooter';
+import {TableFooter} from '../../../content-components/table-footer/TableFooter';
 
 // Define the Lesson type
 type Lesson = {

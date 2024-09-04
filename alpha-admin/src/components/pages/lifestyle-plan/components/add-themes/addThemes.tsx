@@ -30,7 +30,7 @@ import TabBar from '../../../content/content-components/tab-bar/TabBar';
 import { AppButton } from '../../../../app-button/app-button';
 import { CheckBox } from '@mui/icons-material';
 import { Check } from '../../../../icon/glyps/check';
-import TableFooter from '../../../content/content-components/table-footer/TableFooter';
+import {TableFooter} from '../../../content/content-components/table-footer/TableFooter';
 import { ThemesTable } from '../../../content/themes/themes-components/themes-table/themes-table';
 
 // const initialLessons: Lesson[] = [

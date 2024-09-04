@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './lifestyleTable.module.scss';
 import { useAppDispatch } from '../../../../../app/hooks';
 import { fetchPlansThunk, updatePlanThunk } from '../lifeStyleSlice';
-import TableFooter from '../../../content/content-components/table-footer/TableFooter';
+import {TableFooter} from '../../../content/content-components/table-footer/TableFooter';
 
 const initialLifeStyles = [
     { code: 1, name: 'Heart health', dateCreated: '26/06/2024', published: false },

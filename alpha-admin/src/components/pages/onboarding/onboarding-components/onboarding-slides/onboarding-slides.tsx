@@ -12,7 +12,7 @@ export interface OnboardingSlidesProps {
 export const OnboardingSlides = ({ className }: OnboardingSlidesProps) => {
     const slides = [
         { image: onboardingFirstSlide, heading: 'Feature 1', detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do.' },
-        { image: onboardingSecondSlide, heading: 'devops feature', detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do.' },
+        { image: onboardingSecondSlide, heading: 'Feature 2', detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do.' },
         { image: onboardingThirdSlide, heading: 'Feature 3', detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do.' }
     ];
 

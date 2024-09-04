@@ -19,7 +19,7 @@ import { PublishThemesModal } from '../publish-theme-modal/PublisThemeModal';
 import { LessonSidebar, Lesson } from '../lessonsidebar/lessonSidebar';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchThemesThunk, updateThemeThunk } from '../themeSlice';
-import TableFooter from '../../../content-components/table-footer/TableFooter';
+import {TableFooter} from '../../../content-components/table-footer/TableFooter';
 
 export interface ThemesTableProps {
     themes: any;
