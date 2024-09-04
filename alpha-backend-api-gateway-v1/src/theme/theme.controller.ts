@@ -145,7 +145,7 @@ export class ThemeController {
             )
 
             const lessonIds = lessons?.map(l => l.id) || [];
-            const removeLessonIds = existingTheme?.data?.lessons?.filter(l => !lessonIds.includes(l.id))?.map((l) => l.id) || [];
+            const removeLessonIds = existingTheme?.lessons?.filter(l => !lessonIds.includes(l.id))?.map((l) => l.id) || [];
             
             
             const { data: lessonsToRemove = [] } = removeLessonIds?.length 
