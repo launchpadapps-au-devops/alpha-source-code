@@ -1,7 +1,7 @@
 import { combineReducers, Action, ThunkAction, configureStore } from '@reduxjs/toolkit';
 import authSlice from '../components/pages/login/loginSlice';
 import { setupListeners } from '@reduxjs/toolkit/query';
-// import forgotPasswordReducer from '../components/pages/forgot-password-components/forgot-password-slice';
+import forgotPasswordReducer, { forgotAuthSlice } from '../components/pages/forgot-password/forgot-password-slice';
 // import resetPasswordReducer from '../components/Pages/reset-password/reset-passwordSlice'
 import staffReducer from '../components/pages/care-team/care-team-components/create-care-team/create-care-teamSlice';
 import addNewStaffReducer from '../components/pages/care-team/care-team-components/create-care-team/create-care-teamSlice';
@@ -18,10 +18,12 @@ import activePatientReducer from '../components/pages/dashboard/dashboard-compon
 
 //Patient Platform
 import getPatientDataOverviewReducer from '../components/pages/patient-platform/patientDataOverviewSlice';
+import { forgotOtpVerifyAuthSlice } from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
 
 const rootReducer = combineReducers({
     login: authSlice,
-    // forgotPassword: forgotPasswordReducer,
+    forgotPassword: forgotAuthSlice,
+    forgotPasswordOtpVerify: forgotOtpVerifyAuthSlice,
     // resetPassword: resetPasswordReducer,
     staff: staffReducer,
     addNewStaff: addNewStaffReducer,

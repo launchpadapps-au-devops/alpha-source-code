@@ -69,19 +69,19 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
         setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
     };
 
-    const handleToggle = (theme: any) => {
+    const handleToggle = (plan: any) => {
         const newTheme = {
             planData: {
-                planCode: parseInt(theme.code, 10),
-                name: theme.name,
-                image: theme.image,
-                description: theme.description,
-                internalNotes: theme.internalNotes,
-                status: theme.status,
-                isPublished: !theme.isPublished,
-                id: parseInt(theme.id, 10),
+                planCode: parseInt(plan.code, 10),
+                name: plan.name,
+                image: plan.image,
+                description: plan.description,
+                internalNotes: plan.internalNotes,
+                status: plan.status,
+                isPublished: !plan.isPublished,
+                id: parseInt(plan.id, 10),
             },
-            themes: theme.themes.map((t: any) => ({
+            themes: plan.themes.map((t: any) => ({
                 ...t,
                 id: parseInt(t.id, 10),
                 themeCode: parseInt(t.themeCode, 10),
@@ -154,18 +154,18 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {activePlans.map((theme: any, index: any) => (
+                        {activePlans.map((plan: any, index: any) => (
                             <TableRow
                                 key={index}
-                                onClick={() => handleRowClick(theme.id)}
+                                onClick={() => handleRowClick(plan.id)}
                                 style={{ cursor: 'pointer' }}
                             >
-                                <TableCell className={styles['code']}>{theme.name}</TableCell>
-                                <TableCell>{theme.createdAt}</TableCell>
+                                <TableCell className={styles['code']}>{plan.name}</TableCell>
+                                <TableCell>{plan.createdAt}</TableCell>
                                 <TableCell onClick={(event) => event.stopPropagation()}>
                                     <Switch
-                                        checked={theme.isPublished}
-                                        onChange={() => handleToggle(theme)}
+                                        checked={plan.isPublished}
+                                        onChange={() => handleToggle(plan)}
                                     />
                                 </TableCell>
                             </TableRow>

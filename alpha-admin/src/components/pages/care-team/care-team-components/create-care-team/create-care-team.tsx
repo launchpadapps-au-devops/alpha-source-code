@@ -99,6 +99,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="text"
                                 value={formValues.firstName}
                                 onChange={(e) => handleChange('firstName', e.target.value)}
+                                required
                             />
                         </div>
                         <div className={styles['input-wrapper']}>
@@ -110,6 +111,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="text"
                                 value={formValues.lastName}
                                 onChange={(e) => handleChange('lastName', e.target.value)}
+                                required
                             />
                         </div>
                         <div className={styles['input-wrapper']}>
@@ -121,6 +123,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="text"
                                 value={formValues.phoneNumber}
                                 onChange={(e) => handleChange('phoneNumber', e.target.value)}
+                                required
                             />
                         </div>
                         <div className={styles['input-wrapper']}>
@@ -132,6 +135,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="email"
                                 value={formValues.email}
                                 onChange={(e) => handleChange('email', e.target.value)}
+                                required
                             />
                         </div>
                     </div>
@@ -147,6 +151,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 MenuProps={MenuProps}
+                                required
                             >
                                 <CoustomMenuItem value="" disabled>
                                     <em>Select role</em>
@@ -174,6 +179,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 MenuProps={MenuProps}
+                                required
                             >
                                 <CoustomMenuItem value="" disabled>
                                     <em>Select permission level</em>
