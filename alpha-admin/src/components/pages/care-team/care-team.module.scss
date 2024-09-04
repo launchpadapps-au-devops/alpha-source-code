@@ -1,0 +1,31 @@
+@import '../../../styles/global.scss';
+
+.care-team-block {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.care-team-main-wrapper {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1282px;
+  margin: 92px auto;
+  display: flex;
+  flex-direction: column;
+  background-color: $color-white; //#ffffff
+
+  header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-2; //16px;
+
+    h2 {
+      font: $type-heading-regular; //20px/25px
+      color: $color-medium-black; //#22272b;
+      font-weight: 500;
+    }
+  }
+}

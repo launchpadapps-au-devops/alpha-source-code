@@ -1,0 +1,168 @@
+/* src/themes-table.module.scss */
+@import '../../../../../styles/global.scss';
+
+.key-contacts-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  a {
+    color: #146cfd; /* Change link color to blue */
+    text-decoration: none;
+  }
+
+  th,
+  td {
+    padding: $spacing-2;
+    text-align: left;
+    border-bottom: 1px solid $color-divider;
+  }
+
+  th {
+    background: var(--Gray-04, #EBEBEB) !important;
+  }
+
+  .code,
+  .name,
+  .date,
+  .published {
+    vertical-align: middle;
+    height: 47px; /* Ensure consistent height */
+    align-items: center;
+    font-family: $font-family-public-sans !important;
+    font-size: 14px;
+    font-weight: 500;
+    color: $color-medium-black;
+  }
+
+  .name {
+    width: 590px;
+    height: 47px;
+    padding: $spacing-2 $spacing-3;
+  }
+
+  .date {
+    width: 238px;
+    height: 47px;
+    padding: $spacing-2;
+  }
+
+  .published {
+    width: 129px;
+    height: 47px;
+    padding: $spacing-2;
+  }
+}
+
+.flex-table-column {
+  display: flex;
+  align-items: center;
+}
+
+.profile-image {
+  margin-right: $spacing-2;
+}
+
+.table-icon-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination {
+  display: flex;
+  height: 60px;
+  padding: 10px 16px;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+
+  span,
+  .nextButton {
+    margin: 0 520px;
+    padding: 10px 24px;
+    cursor: pointer;
+  }
+
+  .nextButton {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+
+  // Added specificity
+  &.MuiPagination-ul {
+    display: flex;
+  }
+
+  &.MuiTablePagination-selectLabel,
+  &.MuiInputBase-root {
+    display: none;
+  }
+
+  &.MuiTablePagination-displayedRows {
+    font-size: 14px;
+    font-family: $font-family-public-sans;
+    color: $color-medium-grey;
+
+    &:before {
+      content: 'Showing ';
+    }
+  }
+}
+
+@media (max-width: $media-tablet) {
+  .code,
+  .name,
+  .date,
+  .published {
+    font-size: 12px;
+    padding: $spacing-1;
+  }
+
+  .code {
+    width: 100px;
+  }
+
+  .name {
+    width: 300px;
+  }
+
+  .date,
+  .habit,
+  .published {
+    width: 100px;
+  }
+
+  th,
+  td {
+    padding: $spacing-1;
+  }
+}
+
+@media (max-width: $media-mobile) {
+  .code,
+  .name,
+  .date,
+  .habit,
+  .published {
+    display: block;
+    width: 100%;
+    padding: $spacing-1;
+  }
+
+  th,
+  td {
+    display: block;
+    width: 100%;
+    padding: $spacing-1;
+  }
+
+  .pagination {
+    padding: $spacing-1;
+  }
+}

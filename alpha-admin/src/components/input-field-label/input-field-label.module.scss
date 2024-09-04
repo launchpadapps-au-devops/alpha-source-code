@@ -1,0 +1,10 @@
+@import '../../styles/global.scss';
+
+.root {}
+
+.input-label-wrapper {
+    font: $type-text-small;
+    font-family: inherit;
+    font-weight: 500;
+    color: $color-black;
+}

@@ -1,0 +1,53 @@
+@import '../../../../styles/global.scss';
+
+.lifestyle-outer-wrapper {
+  margin-left: 350px; 
+  margin-top: 3px; 
+  margin-right: 80px;  // Set this to match the width of your sidebar when expanded
+  padding: 32px;
+  border: 1px solid $color-light-grey;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: $color-medium-black;
+
+  header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-text {
+    font: $type-text-regular;
+    font-weight: 500;
+    color: $color-medium-black;
+    text-wrap: nowrap;
+  }
+
+  .content-block {
+    padding: 20px;
+    border: 1px solid $color-light-grey;
+    border-radius: 12px;
+
+    &.flex-horizontal {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    &.flex-verticle {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .progress-bar-width {
+      max-width: 478px;
+    }
+  }
+}
+

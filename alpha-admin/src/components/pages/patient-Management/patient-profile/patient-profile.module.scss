@@ -1,0 +1,212 @@
+@import '../../../../styles/global.scss';
+
+.care-team-profile {
+  width: 100%;
+  max-width: 1118px;
+  padding: $spacing-2;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: $spacing-2;
+  margin: 3px auto;
+  margin-left: 400px;
+  background-color: $color-white;
+  border-radius: $spacing-1;
+
+  .top-header-block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    h2 {
+      font: $type-heading-regular;
+      font-weight: 500;
+      padding: $spacing-1 0;
+      color: $color-medium-black;
+      margin-bottom: $spacing-2;
+    }
+  }
+
+  .profile-detail-wrapper {
+    display: flex;
+    gap: 20px;
+
+    .left-profile-block {
+        max-width: 250px;
+        background-color: #f9fafb;
+        border: 1px solid $color-light-grey;
+        border-radius: $spacing-1;
+        padding: $spacing-3;
+        display: flex;
+        flex-direction: column;
+        align-items: center; // Center content horizontally
+        justify-content: space-between; // Space out content evenly
+        text-align: center; // Center text
+    
+        .profile-image {
+            width: 96px;
+            height: 96px;
+            color: #009dd9;
+            background-color: #e6f7fd;
+            margin-bottom: $spacing-2;
+        }
+    
+        .profile-info {
+            margin-bottom: $spacing-2;
+    
+            .profile-name {
+                font: $type-text-large;
+                font-weight: 500;
+                color: $color-light-black;
+                margin-bottom: 8px;
+            }
+    
+            .profile-role,
+            .profile-age {
+                font: $type-text-small;
+                color: hsl(0, 0%, 64%);
+                margin-bottom: 8px;
+            }
+        }
+    
+        .add-plan-button {
+            margin: $spacing-2 0;
+            padding: $spacing-2;
+            width: 100%;
+            background-color: #006eff;
+            color: white;
+            border-radius: $spacing-1;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .profile-stats {
+          width: 100%;
+          margin-top: $spacing-2;
+          border-top: 1px solid $color-light-grey;
+          padding-top: $spacing-2;
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-2;
+        
+          div {
+            display: flex;  // Flex container for each stat
+            justify-content: flex-start;  // Align items to start
+            align-items: center;  // Center items vertically
+            width: 100%;  // Ensure each stat takes full width
+            padding: 4px 0;  // Adds vertical padding for spacing
+        
+            .stat-label {
+              font: $type-text-small;
+              color: hsl(0, 0%, 64%);
+              text-align: left;  // Aligns label text to the left
+              width: 80px;  // Fixed width for labels to align numbers vertically
+              margin-right: 20px;  // Space between label and value
+              flex-shrink: 0;  // Prevents the label from shrinking
+            }
+        
+            .stat-value {
+              font-weight: 600;
+              color: black;
+              text-align: left;  // Align value text to the left
+              flex: 1;  // Takes up the remaining space
+              min-width: 50px;  // Ensures values start from the same position
+            }
+          }
+        }
+        
+        
+    }
+    
+
+    .right-profile-block {
+      flex: 1;
+      background-color: $color-white;
+      border: 1px solid $color-light-grey;
+      border-radius: $spacing-1;
+      padding: $spacing-3;
+
+      h3 {
+        font: $type-text-medium;
+        font-weight: 500;
+        color: $color-light-black;
+        margin-bottom: $spacing-3;
+      }
+
+      .details-block {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-3;
+
+        .profile-details-wrapper {
+          display: flex;
+          flex-direction: column;
+
+          .label {
+            font: $type-text-small;
+            font-weight: 500;
+            color: $color-medium-grey;
+            margin-bottom: $spacing-1;
+          }
+
+          .details {
+            font: $type-text-medium;
+            color: #4F4F4F;
+          }
+        }
+      }
+    }
+  }
+}
+
+.edit-profile-button {
+    padding: $spacing-2 $spacing-3;
+    border: 1px solid #006eff; // Blue border color
+    background-color: transparent; // No fill color
+    color: #006eff; // Blue text color
+    border-radius: $spacing-1;
+    cursor: pointer;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background-color: #006eff; // Optional: Add a blue background on hover
+        color: white; // Optional: Change text color to white on hover
+    }
+}
+
+.profile-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  margin-top: $spacing-2;
+}
+
+.button-container {
+  display: flex;
+  gap: $spacing-2;
+  margin-top: $spacing-2;
+  justify-content: center; // Center align the buttons
+}
+
+.primary-button {
+  flex: 1; // Make buttons take equal space if needed
+  text-align: center;
+  white-space: nowrap; // Prevents text from wrapping to a new line
+  padding: $spacing-2 $spacing-3; // Adjust padding to suit your needs
+}
+
+.secondary-button {
+  flex: 1; // Make buttons take equal space if needed
+  text-align: center;
+  white-space: nowrap; // Prevents text from wrapping to a new line
+  padding: $spacing-2 $spacing-3; // Adjust padding to suit your needs
+  background-color: transparent;
+  color: #006eff;
+  border: 1px solid #006eff;
+  border-radius: $spacing-1;
+  cursor: pointer;
+  //text-align: center;
+}
