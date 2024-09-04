@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DailyTips, dailyTipsService, PaginationDto, SortingDto, GenericFilterDto } from '@launchpadapps-au/alpha-shared';
+import { filter } from 'rxjs';
 
 
 @Injectable()
@@ -37,6 +38,6 @@ export class DailyTipsService {
         limit?: number,
         page?: number
     }> {
-        return dailyTipsService.findAllDailyTips(pagination, sortOptions, filters);
+        return dailyTipsService.findAllDailyTips(pagination, sortOptions, { ...filter, status: 'ACTIVE'});
     }
 }
