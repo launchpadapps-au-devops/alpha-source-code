@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EnvConfigService } from './common/config/envConfig.service';
 import { EmailModule } from './email/email.module';
+import { HandlerModule } from './handler/handler.module';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { EmailModule } from './email/email.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    EmailModule
+    EmailModule,
+    HandlerModule
   ],
   controllers: [AppController],
   providers: [

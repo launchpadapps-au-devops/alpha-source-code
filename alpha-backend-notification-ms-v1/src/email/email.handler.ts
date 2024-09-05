@@ -2,7 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as sgMail from '@sendgrid/mail';
 import { ConfigService } from '@nestjs/config';
 import * as handlebars from 'handlebars';
-import emailTemplate from './templates';
+import templates from '../common/templates/';;
+
 import { 
     Notification,
     notificationService,
@@ -47,11 +48,11 @@ export class EmailHandler {
                 switch (notificationData.subcategoryId) {
                     case NotificationSubcategory.PATIENT_INVITATION:
                         emailObject.subject = 'You are invited on Alpha';
-                        emailObject.template = emailTemplate[NotificationSubcategory.PATIENT_INVITATION]
+                        emailObject.template = templates[NotificationSubcategory.PATIENT_INVITATION]
                         break;
                     case NotificationSubcategory.STAFF_INVITATION:
                         emailObject.subject = 'You are invited on Alpha';
-                        emailObject.template = emailTemplate[NotificationSubcategory.STAFF_INVITATION]
+                        emailObject.template = templates[NotificationSubcategory.STAFF_INVITATION]
                         break;
                     default:
                         Logger.error('Invalid email category');
@@ -61,14 +62,18 @@ export class EmailHandler {
                 switch (notificationData.subcategoryId) {
                     case NotificationSubcategory.FORGOT_PASSWORD_OTP:
                         emailObject.subject = 'Reset your password';
-                        emailObject.template = emailTemplate[NotificationSubcategory.FORGOT_PASSWORD_OTP]
+                        emailObject.template = templates[NotificationSubcategory.FORGOT_PASSWORD_OTP]
+                        break;
+                    case NotificationSubcategory.PASSWORD_CHANGED:
+                        emailObject.subject = 'Password Reset Successfully';
+                        emailObject.template = templates[NotificationSubcategory.PASSWORD_CHANGED]
                         break;
                     default:
-                        Logger.error('Invalid email category');
+                        Logger.error('Invalid email Notificatoin');
                 }
                 break;
             default:
-                Logger.error('Invalid email category');
+                Logger.error('Invalid email Notification');
         }
 
         return emailObject;
@@ -85,12 +90,11 @@ export class EmailHandler {
         cc = users.filter(user => cc.includes(user.id));
         bcc = users.filter(user => bcc.includes(user.id));
 
-            return {
-                to: to.map(user => user.email).join(','),
-                cc: cc.map(user => user.email).join(','),
-                bcc: bcc.map(user => user.email).join(','),
-            };
-       
+        return {
+            to: to.map(user => user.email).join(','),
+            cc: cc.map(user => user.email).join(','),
+            bcc: bcc.map(user => user.email).join(','),
+        };
     }
 
     protected async sendEmail(to: string, subject: string, htmlContent: string, cc: string = '', bcc: string = ''): Promise<void> {
