@@ -193,7 +193,7 @@ export const LessonInformation = ({
                     />
                 </div>
             </div>
-            <LessonTags data={data} setData={setData} isEditMode={isEditMode}/>
+            <LessonTags data={data} setData={setData} isEditMode={isEditMode} />
             <SelectTheme
                 isOpen={isSidebarOpen}
                 onClose={handleCloseSidebar}

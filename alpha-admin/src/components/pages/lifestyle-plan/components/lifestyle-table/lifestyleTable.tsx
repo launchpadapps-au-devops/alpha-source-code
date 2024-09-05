@@ -71,33 +71,27 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
     };
 
     const handleToggle = (plan: any) => {
+        const themeids = plan.themes.map((t: any) => t.id);
         const newTheme = {
             planData: {
-                planCode: parseInt(plan.code, 10),
-                name: plan.name,
-                image: plan.image,
-                description: plan.description,
-                internalNotes: plan.internalNotes,
-                status: plan.status,
+                // planCode: parseInt(plan.code, 10),
+                // name: plan.name,
+                // image: plan.image,
+                // description: plan.description,
+                // internalNotes: plan.internalNotes,
+                // status: plan.status,
                 isPublished: !plan.isPublished,
-                id: parseInt(plan.id, 10),
+                // id: parseInt(plan.id, 10),
             },
-            themes: plan.themes.map((t: any) => ({
-                ...t,
-                id: parseInt(t.id, 10),
-                themeCode: parseInt(t.themeCode, 10),
-                categoryId: parseInt(t.categoryId, 10),
-            })),
+            themes: themeids,
         };
-        dispatch(updatePlanThunk({ id: newTheme.planData.id, plan: newTheme })).then(
-            (data: any) => {
-                dispatch(fetchPlansThunk(1)).then((data: any) => {
-                    if (data.payload) {
-                        setPlans(data.payload.data);
-                    }
-                });
-            }
-        );
+        dispatch(updatePlanThunk({ id: plan.id, plan: newTheme })).then((data: any) => {
+            dispatch(fetchPlansThunk(1)).then((data: any) => {
+                if (data.payload) {
+                    setPlans(data.payload.data);
+                }
+            });
+        });
     };
 
     const handlePublish = () => {

@@ -50,7 +50,6 @@ export const SelectTheme: React.FC<SelectThemeSidebarProps> = ({
     const handleTabChange = (newValue: number) => {
         setSelectedTab(newValue);
     };
-    
 
     useEffect(() => {
         const isAnyLessonSelected = localLessons.some((lesson) => lesson.select);
