@@ -17,6 +17,7 @@ export class PatientService {
     #formatPatientData(patient) {
         return {
             id: patient.id,
+            name: patient.name,
             firstName: patient.firstName,
             lastName: patient.lastName,
             nickName: patient.nickName,
