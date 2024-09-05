@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../../../app/store';
 import { addNewStaffThunk } from './create-care-teamSlice';
+import { BackButton } from '../../../../back-button/backButton';
 
 export interface CreateCareTeamProps {
     className?: string;
@@ -84,8 +85,13 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
         navigate('/careteam');
     };
 
+    const handleBackClick = () => {
+        navigate(-1); // This will navigate to the previous page
+    };
+
     return (
         <>
+        <BackButton onClick={handleBackClick}/>
             <div className={classNames(styles['create-team-wrapper'], className)}>
                 <div>
                     <h2>Create new care team member</h2>

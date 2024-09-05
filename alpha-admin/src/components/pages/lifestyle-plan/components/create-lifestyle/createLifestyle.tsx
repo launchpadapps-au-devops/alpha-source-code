@@ -16,21 +16,13 @@ import { fetchThemesThunk } from '../../../content/themes/themes-components/them
 import { AddThemes } from '../add-themes/addThemes';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../back-button/backButton';
-import { EditorState } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 export interface CreateLifestyleProps {
     className?: string;
 }
 
 export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
-    const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
-    // Function to handle editor state change
-    const onEditorStateChange = (newState: any) => {
-        setEditorState(newState);
-    };
     const navigate = useNavigate();
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -147,13 +139,6 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
 
     return (
         <>
-            <Editor
-                editorState={editorState}
-                toolbarClassName="toolbarClassName"
-                wrapperClassName="wrapperClassName"
-                editorClassName="editorClassName"
-                onEditorStateChange={onEditorStateChange}
-            />
             <BackButton onClick={handleBackClick} />
             {!themeView ? (
                 <div className={classNames(styles.container, className)}>
