@@ -1,0 +1,45 @@
+.table-footer-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-top: 1px solid #ccc;
+    height: 100vh;
+
+    button {
+        display: flex; /* Ensure the button uses flexbox */
+        align-items: center; /* Vertically center the content */
+        justify-content: center; /* Horizontally center the content */
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: var(--Gray-01, #22272B);
+        font-family: "Public Sans", sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 20px; /* 142.857% */
+      }
+      
+      button:disabled {
+        color: #ccc;
+        cursor: not-allowed;
+      }
+      
+      .prev-button {
+        margin-right: auto;
+      }
+      
+      .next-button {
+        margin-left: auto;
+      }
+      
+      .page-info {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+      
+  }
+  

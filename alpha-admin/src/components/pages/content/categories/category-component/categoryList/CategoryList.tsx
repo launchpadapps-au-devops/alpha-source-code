@@ -15,6 +15,7 @@ import { useAppSelector, useAppDispatch } from '../../../../../../app/hooks';
 import { useLocation } from 'react-router-dom';
 import { DeleteCategoryModal } from '../../../content-components/delete-category-modal/DeleteCategoryModal';
 import { PublishCategoryModal } from '../publish-category-modal/PublishCategoryModal';
+import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
 
 interface Category {
     id: number;
@@ -180,7 +181,7 @@ const CategoryList: React.FC = () => {
                 </tbody>
             </table>
             <div className={styles.pagination}>
-                <TableFooter
+                <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
                     currentPage={currentPage}
