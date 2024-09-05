@@ -303,7 +303,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: cms_queue
-        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:bd1b58cdc962f09b2ba9eae8fead86e9414eb53bb00d60fadf2a0a8c24a448d4
+        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:d4080a26e28dc1aa44dbdc1ed2338060f8ea81e396daee60296173f8256a32bf
         name: alpha-backend-cms-ms-v1-container
         ports:
         - containerPort: 3003
@@ -390,7 +390,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:4a5a584edc16e6d5d82a486e18184b6b6dd14aa8adea8e0f1fda6294483d1d63
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:84b21b07a6a4886e86e2c5d97b2646287aeff6cc547085e2363cbc2781a9e293
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
