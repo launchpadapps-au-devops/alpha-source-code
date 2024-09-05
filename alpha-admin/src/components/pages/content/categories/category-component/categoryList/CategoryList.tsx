@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './CategoryList.module.scss';
 import { EditButton } from '../../../content-components/edit-button/edit-button';
-import {TableFooter} from '../../../content-components/table-footer/TableFooter';
+// import {TableFooter} from '../../../content-components/table-footer/TableFooter';
 import { AppButton } from '../../../../../app-button/app-button';
 import { DeleteButton } from '../../../content-components/delete-button/delete-button';
 import { useDispatch } from 'react-redux';
