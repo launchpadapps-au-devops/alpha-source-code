@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
-import styles from './TableFooter.module.scss';
+import styles from './tablestyles.module.scss';
 
 interface TableFooterProps {
   onNextPage: () => void;
@@ -12,7 +12,7 @@ interface TableFooterProps {
 
 export const TableFooter: React.FC<TableFooterProps> = ({ onNextPage, onPreviousPage, currentPage, totalPages }) => {
   return (
-    <div className={styles['table-footer']}>
+    <div className={styles['table-footer-wrapper']}>
       <button className={styles['prev-button']} onClick={onPreviousPage} disabled={currentPage <= 1}>
         <FontAwesomeIcon icon={faChevronLeft} /> Back
       </button>
