@@ -63,6 +63,10 @@ export class User {
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
+  // fcm token
+  @Column({ type: 'varchar', nullable: true })
+  fcmToken: string;
+
   @Column({ type: 'varchar', length: 255, nullable: true })
   @Exclude({ toPlainOnly: true })
   password: string;
