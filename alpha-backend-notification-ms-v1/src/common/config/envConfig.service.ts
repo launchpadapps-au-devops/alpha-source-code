@@ -27,13 +27,6 @@ export class EnvConfigService {
         }
     }
 
-    get jwt(){
-        return {
-            secret: this.get('JWT_SECRET') as string,
-            expiresIn: this.get('JWT_EXPIRES_IN') as string
-        }
-    }
-
     get db() {
         return {
             host: this.get('DB_HOST') as string,

@@ -25,13 +25,6 @@ export class EnvironmentVariables {
     @Type(() => Boolean)
     APP_DEBUG: boolean;
 
-    // JWT 
-    @IsString()
-    JWT_SECRET: string;
-
-    @IsString()
-    JWT_EXPIRES_IN: string;
-
     // DB Config
     @IsString()
     DB_HOST: string;

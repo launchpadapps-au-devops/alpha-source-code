@@ -9,25 +9,23 @@ import { log } from 'console';
   const app = await NestFactory.create(AppModule);
   const configService = app.get(EnvConfigService);
 
-  if (configService.app.env === 'local') {
-    DatabaseModule.initialize({
-      type: 'postgres',
-      ...configService.db,
-    });
+  DatabaseModule.initialize({
+    type: 'postgres',
+    ...configService.db,
+  });
 
-    app.connectMicroservice<MicroserviceOptions>({
-      transport: Transport.RMQ,
-      options: {
-        urls: [`amqp://${configService.rabbitmq.host}:${configService.rabbitmq.port}`],
-        queue: configService.rabbitmq.queue,
-        queueOptions: {
-          durable: false
-        },
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [`amqp://${configService.rabbitmq.host}:${configService.rabbitmq.port}`],
+      queue: configService.rabbitmq.queue,
+      queueOptions: {
+        durable: false
       },
-    });
-  
-    await app.startAllMicroservices();
-  }
+    },
+  });
+
+  await app.startAllMicroservices();
 
   app.setGlobalPrefix(configService.app.apiPrefix);
   await app.listen(configService.app.port);
