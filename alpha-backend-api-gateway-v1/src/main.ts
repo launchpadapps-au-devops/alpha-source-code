@@ -26,32 +26,30 @@ import { log } from 'console';
   const configService = app.get(EnvConfigService);
 
   // Holding this till we setup the database and rabbitmq in services
-  if (configService.app.env === 'local') {
-    DatabaseModule.initialize({
-      type: 'postgres',
-      ...configService.db,
-    });
+  DatabaseModule.initialize({
+    type: 'postgres',
+    ...configService.db,
+  });
 
-    app.connectMicroservice<MicroserviceOptions>({
-      transport: Transport.RMQ,
-      options: {
-        urls: [`amqp://${configService.rabbitmq.host}:${configService.rabbitmq.port}`],
-        queue: configService.rabbitmq.queue,
-        queueOptions: {
-          durable: false
-        },
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [`amqp://${configService.rabbitmq.host}:${configService.rabbitmq.port}`],
+      queue: configService.rabbitmq.queue,
+      queueOptions: {
+        durable: false
       },
-    });
-  
-    await app.startAllMicroservices();
-  }
+    },
+  });
+
+  await app.startAllMicroservices();
 
   app.setGlobalPrefix(configService.app.apiPrefix);
 
   const config = new DocumentBuilder()
     .setTitle('🙋‍♂️⚙️ Alpha Backend API Gateway')
     .setDescription(
-  `🚀 **Welcome to the Alpha Project API Documentation!**
+      `🚀 **Welcome to the Alpha Project API Documentation!**
       This API is the backbone of the Alpha project, designed to provide a secure and efficient user experience.
   Dive into our detailed documentation for insights on integrating with our endpoints!`
     )
