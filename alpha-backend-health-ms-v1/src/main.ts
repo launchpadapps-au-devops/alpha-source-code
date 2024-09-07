@@ -18,32 +18,30 @@ import { SuccessResponse, ValidationError, InternalServerError } from './common/
   const configService = app.get(EnvConfigService);
 
   // Holding this till we setup the database and rabbitmq in services
-  if (configService.app.env === 'local') {
-    DatabaseModule.initialize({
-      type: 'postgres',
-      ...configService.db,
-    });
+  DatabaseModule.initialize({
+    type: 'postgres',
+    ...configService.db,
+  });
 
-    app.connectMicroservice<MicroserviceOptions>({
-      transport: Transport.RMQ,
-      options: {
-        urls: [`amqp://${configService.rabbitmq.host}:${configService.rabbitmq.port}`],
-        queue: configService.rabbitmq.queue,
-        queueOptions: {
-          durable: false
-        },
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [`amqp://${configService.rabbitmq.host}:${configService.rabbitmq.port}`],
+      queue: configService.rabbitmq.queue,
+      queueOptions: {
+        durable: false
       },
-    });
-  
-    await app.startAllMicroservices();
-  }
+    },
+  });
+
+  await app.startAllMicroservices();
 
   app.setGlobalPrefix(configService.app.apiPrefix);
 
   const config = new DocumentBuilder()
     .setTitle('🙋‍♂️⚙️ Alpha User Microservice')
     .setDescription(
-  `🚀 **Welcome to the Alpha Project API Documentation!**
+      `🚀 **Welcome to the Alpha Project API Documentation!**
       This API is the backbone of the Alpha project, designed to provide a secure and efficient user experience. Here’s what you can do with our API:
   - **User Registration 📝**: Easily create new user accounts, kickstarting the onboarding process with simplicity.
   - **Authentication and Security 🔒**: Leverage robust security measures for user login, including token generation and verification, to protect user data.
