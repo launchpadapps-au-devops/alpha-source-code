@@ -43,7 +43,7 @@ export class ThemeService {
             updatedBy: reqUser.userId,
         });
 
-        if(data.habits.length) {
+        if(data.habits?.length) {
             try {
                 await habitService.bulkUpdateHabit(
                     data?.habits?.map(h => ({
