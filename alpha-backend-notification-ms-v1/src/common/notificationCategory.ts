@@ -2,7 +2,10 @@ export const NotificationCategory = {
     ACCOUNT_INVITATION: 1,
     ACCOUNT_AUTH: 2,
     ACTIVITY: 3,
-    ENGAGEMENT: 4,
+    ENGAGEMENT_LEVEL_ALERT: 4,
+    PROGRESS_MILESTONE: 5,
+    INACTIVITY_NUDGES: 6,
+    ENCOURAGEMENT_NOTIFICATION: 7,
 }
 
 export const NotificationSubcategory = {
@@ -14,18 +17,25 @@ export const NotificationSubcategory = {
     FORGOT_PASSWORD_OTP: 2,         // TYPE: Email // Forgot Password
     PASSWORD_CHANGED: 5,            // TYPE: Email // Password Successfully Changed
 
-    // ACTIVITY
-    PATIENT_INACTIVITY: 7,          // TYPE: PUSH  // Inactivity
-    PATIENT_NOT_STARTED: 8,         // TYPE: Email // Not Started
-    PATIENT_THEME_MILESTONE: 9,     // TYPE: PUSH  // Milestone
-    PATIENT_HABIT_EXPIRY: 10,       // TYPE: PUSH  // Milestone
+    // Engagement Level Alert
+    THIRD_INACTIVITY: 14,               // TYPE: Email
+    DOCTOR_APPOINTMENT_REMINDER: 15,    // TYPE: Email
 
-    // ENGAGEMENT
-    PATIENT_EVERYDAY_REMINDER: 11,      // TYPE: PUSH  // Everyday Reminder
-    PATIENT_NOTIFICATION_IGNORE: 12,    // TYPE: Email // Re-engagement email targeted to hook interest of user
-    PATIENT_APPOINTMENT_REMINDER: 13,   // TYPE: Email // Appointment reminder email
+    // Progress Milestone
+    THEME_COMPLETED: 16,                // TYPE: PUSH  // Milestone
+    HABIT_COMPLETED: 17,                // TYPE: PUSH  // Milestone
+
+    // Inactivity Nudges
+    INACTIVITY_3DAYS: 18,           // TYPE: PUSH  // Inactivity
+    NOT_STARTED: 19,                // TYPE: Email // Not Started
+
+    // Encourgament Notification
+    EVERYDAY_REMINDER: 20,          // TYPE: PUSH  // Everyday Reminder
 }
 
 export const NotificationPreferenceInit = [
-    { category: 1, subCategory: [1, 3] }
+    { category: NotificationCategory.ENGAGEMENT_LEVEL_ALERT, subCategory: [ NotificationSubcategory.THIRD_INACTIVITY, NotificationSubcategory.DOCTOR_APPOINTMENT_REMINDER ] },
+    { category: NotificationCategory.PROGRESS_MILESTONE, subCategory: [ NotificationSubcategory.THEME_COMPLETED, NotificationSubcategory.HABIT_COMPLETED ] },
+    { category: NotificationCategory.INACTIVITY_NUDGES, subCategory: [ NotificationSubcategory.INACTIVITY_3DAYS, NotificationSubcategory.NOT_STARTED ] },
+    { category: NotificationCategory.ENCOURAGEMENT_NOTIFICATION, subCategory: [ NotificationSubcategory.EVERYDAY_REMINDER ] },
 ]

@@ -45,11 +45,7 @@ export class AppService {
       const newNotificationPreference = []
       for(const { category: categoryId, subCategory } of NotificationPreferenceInit) {
         for(const subcategoryId of subCategory) {
-          newNotificationPreference.push({
-            userId,
-            categoryId,
-            subcategoryId
-          })
+          newNotificationPreference.push({ userId, categoryId, subcategoryId })
         }
       }
 
