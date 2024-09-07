@@ -1,4 +1,4 @@
-import { Request, Body, Controller, Get, Post, UseGuards, Query } from '@nestjs/common';
+import { Request, Body, Controller, Get, Post, UseGuards, Query, ForbiddenException } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { HealthDataService } from './health-data.service';
 import { CreateHealthProfileQuestionariesDto, GetHealthProfileQuestionariesDto, CreateSurveyAnswerDto, GetSurveyAnswerDto, CreateUserHealthDataDto, GetUserHealthDataDto } from './health-data.dto';
@@ -51,10 +51,11 @@ export class HealthDataController {
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
-    @UserTypes(USER_TYPES.PATIENT)
-    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
     @ApiQuery({ 
         name: 'userId', 
+        type: 'string',
         required: false, 
     })
     @ApiResponse({
@@ -80,6 +81,12 @@ export class HealthDataController {
         @Request() req,
         @Query('userId') userId?: number
     ): Promise<object> {
+        if(req.user.typ === USER_TYPES.PATIENT && userId) {
+            if(userId !== req.user.userId) {
+                throw new ForbiddenException('You are not allowed to access this resource');
+            }
+        }
+
         return await this.healthDataService.getHealthProfileQuestionaries(userId, req.user);
     }
 

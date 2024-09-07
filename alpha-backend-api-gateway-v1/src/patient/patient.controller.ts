@@ -83,14 +83,14 @@ export class PatientController {
     @Get('/')
     async getPatients(
         @Request() req,
-        @Query('page') page?: number,
-        @Query('limit') limit?: number,
+        @Query('page') page: number = 1,
+        @Query('limit') limit: number = 10,
         @Query('searchKey') searchKey?: string,
         @Query('searchValue') searchValue?: string
     ): Promise<object> {
         return await this.patientService.getPatientUserProfiles({
-            page,
-            limit,
+            page: isNaN(page) ? 1 : page,
+            limit: isNaN(limit) ? 10 : limit,
             searchKey,
             searchValue
         },
@@ -156,8 +156,8 @@ export class PatientController {
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
-    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.PATIENT)
-    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
     @ApiParam({
         name: 'id',
         type: 'string',

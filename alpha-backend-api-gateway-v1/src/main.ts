@@ -9,6 +9,7 @@ import { HttpExceptionFilter } from './app/filters/http-exception.filter';
 import { EnvConfigService } from './common/config/envConfig.service';
 import { SuccessResponse, ValidationError, InternalServerError } from './common/dto/response.dto';
 import { log } from 'console';
+import { ValidationPipe } from '@nestjs/common';
 
 (async function () {
 
@@ -45,6 +46,12 @@ import { log } from 'console';
   await app.startAllMicroservices();
 
   app.setGlobalPrefix(configService.app.apiPrefix);
+
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,  // Remove any properties that are not in the DTO
+    //forbidNonWhitelisted: true,  // Throw an error if extra properties are sent
+    transform: true,  // Automatically transform payloads to DTO instances
+  }));
 
   const config = new DocumentBuilder()
     .setTitle('🙋‍♂️⚙️ Alpha Backend API Gateway')

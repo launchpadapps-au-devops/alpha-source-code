@@ -20,7 +20,6 @@ export class CreatePatientDetailsDto {
     @ApiProperty({ example: 'To be fit' })
     goal: string;
 
-    // profilePic
     @ApiProperty({ example: 'https://sample.com/sample.jpg' })
     @IsOptional()
     @IsString()
@@ -45,9 +44,8 @@ export class CreatePatientDetailsDto {
 
     @ApiProperty({ example: '1990-01-01' })
     @IsOptional()
-    @IsDateString()
-    @Type(() => Date)
-    dob?: Date;
+    @IsDateString() // Expecting a valid ISO 8601 date string (e.g., "1990-01-01")
+    dob?: string;
 
     @ApiProperty({ example: '123, Sample Street' })
     @IsOptional()
@@ -97,7 +95,6 @@ export class CreatePatientDetailsDto {
     @IsNumber()
     @IsOptional()
     dataConsentVersion: number = 1;
-
 
     @ApiProperty({ example: true })
     @IsBoolean()

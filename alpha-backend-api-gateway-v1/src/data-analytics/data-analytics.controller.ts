@@ -20,7 +20,7 @@ export class DataAnalyticController {
     ) { }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
     @ApiParam({ name: 'userId', required: false, description: 'Only allowed in case of Admin' })
@@ -39,7 +39,7 @@ export class DataAnalyticController {
                     properties: {
                         steps: { type: 'number', example: 100 },
                         averageStepsPerDay: { type: 'number', example: 10 },
-                        stepsPerDay: { 
+                        stepsPerDay: {
                             type: 'array',
                             items: {
                                 type: 'object',
@@ -59,6 +59,15 @@ export class DataAnalyticController {
                         averageEnergyPerDay: { type: 'number', example: 100 },
                         calories: { type: 'number', example: 1000 },
                         averageCaloriesPerDay: { type: 'number', example: 1000 },
+                        nutritionData: {
+                            type: 'object',
+                            properties: {
+                                calories: { type: 'number', example: 1000 },
+                                protein: { type: 'number', example: 100 },
+                                carbs: { type: 'number', example: 100 },
+                                fats: { type: 'number', example: 100 },
+                            }
+                        },
                     },
                 }
             },
@@ -75,11 +84,11 @@ export class DataAnalyticController {
             req.query.fromDate,
             req.query.toDate,
             { userId: req.user.userId }
-        );        
+        );
     }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
     @ApiQuery({ name: 'fromDate', required: false })
@@ -92,8 +101,8 @@ export class DataAnalyticController {
             properties: {
                 statusCode: { type: 'number', example: 200 },
                 message: { type: 'string', example: 'Active patients fetched successfully' },
-                data: { 
-                    type: 'object', 
+                data: {
+                    type: 'object',
                     properties: {
                         users: {
                             type: 'array',
@@ -105,15 +114,15 @@ export class DataAnalyticController {
                                     firstName: { type: 'string', example: 'John' },
                                     lastName: { type: 'string', example: 'Doe' },
                                     dob: { type: 'string', example: '1990-01-01' },
-                                    gender: { type: 'string', example: 'male'},
+                                    gender: { type: 'string', example: 'male' },
                                     age: { type: 'number', example: 25 }
                                 }
                             }
                         },
-                        count: { type: 'number', example: 10 } 
-                    } 
+                        count: { type: 'number', example: 10 }
+                    }
                 },
-                meta: { type: 'object', example: { } }
+                meta: { type: 'object', example: {} }
             },
             required: ['statusCode', 'data'],
         },
@@ -130,7 +139,7 @@ export class DataAnalyticController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
     @ApiQuery({ name: 'fromDate', required: false })
@@ -143,8 +152,8 @@ export class DataAnalyticController {
             properties: {
                 statusCode: { type: 'number', example: 200 },
                 message: { type: 'string', example: 'Recent enrollements fetched successfully' },
-                data: { 
-                    type: 'object', 
+                data: {
+                    type: 'object',
                     properties: {
                         users: {
                             type: 'array',
@@ -156,15 +165,15 @@ export class DataAnalyticController {
                                     firstName: { type: 'string', example: 'John' },
                                     lastName: { type: 'string', example: 'Doe' },
                                     dob: { type: 'string', example: '1990-01-01' },
-                                    gender: { type: 'string', example: 'male'},
+                                    gender: { type: 'string', example: 'male' },
                                     age: { type: 'number', example: 25 }
                                 }
                             }
                         },
-                        count: { type: 'number', example: 10 } 
-                    } 
+                        count: { type: 'number', example: 10 }
+                    }
                 },
-                meta: { type: 'object', example: { } }
+                meta: { type: 'object', example: {} }
             },
             required: ['statusCode', 'data'],
         },
@@ -181,7 +190,7 @@ export class DataAnalyticController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
     @ApiQuery({ name: 'userId', required: false })
@@ -195,8 +204,8 @@ export class DataAnalyticController {
             properties: {
                 statusCode: { type: 'number', example: 200 },
                 message: { type: 'string', example: 'Lesson feedbacks fetched successfully' },
-                data: { 
-                    type: 'object', 
+                data: {
+                    type: 'object',
                     properties: {
                         userLessonFeedbacks: {
                             type: 'array',
@@ -237,9 +246,9 @@ export class DataAnalyticController {
                         totalFeedbacks: { type: 'number', example: 10 },
                         positivePercentage: { type: 'number', example: 50 },
                         negativePercentage: { type: 'number', example: 50 },
-                    } 
+                    }
                 },
-                meta: { type: 'object', example: { } }
+                meta: { type: 'object', example: {} }
             },
             required: ['statusCode', 'data'],
         },
