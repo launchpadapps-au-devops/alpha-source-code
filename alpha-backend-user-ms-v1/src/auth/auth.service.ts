@@ -35,7 +35,7 @@ export class AuthService {
             role: user.role,
             sub: user.id,
             userId: user.id
-        }, { expiresIn: '1h' });
+        }, { expiresIn: '1d' });
 
         const refreshToken = this.jwtService.sign({
             email: user.email,
