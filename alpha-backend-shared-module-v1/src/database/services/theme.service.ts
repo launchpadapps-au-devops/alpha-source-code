@@ -20,14 +20,15 @@ class ThemeService implements IThemeService {
 
   async updateTheme(id: number, data: Partial<Theme>): Promise<Theme> {
     const theme = await ThemeService.themeRepository.findOne({
-      where: { id }
+      where: { id },
+      relations: ['lessons']
     });
 
     if (!theme) {
       throw new NotFoundException(`Theme with id ${id} not found`);
     }
 
-    if(Object(data).hasOwnProperty('isPublished') && data.isPublished) {
+    if(Object(data).hasOwnProperty('isPublished') && data.isPublished && theme.lessons?.length) {
       const lesson = await lessonService.findLessonByIds(theme.lessons.map(l => l.id));
       if(lesson.some(l => !l.isPublished)) {
         throw new BadRequestException('Some lessons are not published');

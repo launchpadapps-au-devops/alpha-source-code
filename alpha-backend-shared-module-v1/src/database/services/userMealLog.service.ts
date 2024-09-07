@@ -1,7 +1,5 @@
-import { Repository, In, FindManyOptions, ILike } from "typeorm";
+import { Repository, In, FindManyOptions, ILike, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
 import { DatabaseModule } from "../index";
-import { IUserPlanService } from "../interfaces/IUserPlan.interface";
-import { UserPlan } from "../entities/userPlan.entity";
 import { NotFoundException } from "@nestjs/common";
 import { GenericFilterDto, PaginationDto, SortOrderType, SortingDto } from "../dto";
 import { UserMealLog } from "../entities/userMeal.entity";
@@ -62,10 +60,12 @@ class UserMealLogService {
     limit: number;
     page: number;
   }> {
-    const { searchText, ...restFilters } = filters;
+    const { searchText, fromDate, toDate, ...restFilters } = filters;
 
     const where: any = {
       ...(searchText ? { name: ILike(`%${searchText}%`) } : {}),
+      ...(fromDate ? { createdAt: MoreThanOrEqual(fromDate) }: {}),
+      ...(toDate ? { createdAt: LessThanOrEqual(toDate) }: {}),      
       ...restFilters,
     };
 

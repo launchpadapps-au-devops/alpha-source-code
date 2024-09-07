@@ -22,10 +22,6 @@ class LessonService implements ILessonService {
       where: { id }
     }); 
 
-    if(lesson.themeId && lesson.themeId !== data.themeId) {
-      throw new BadRequestException('Lesson is already associated with a theme');
-    }
-
     if (!lesson) {
       throw new NotFoundException(`Lesson with id ${id} not found`);
     }

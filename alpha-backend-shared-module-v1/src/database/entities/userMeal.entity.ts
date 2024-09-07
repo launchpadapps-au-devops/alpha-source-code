@@ -38,7 +38,7 @@ export class UserMealLog {
     unit: string;
 
     @Column({ type: 'jsonb', nullable: true })
-    nutritionData: object;
+    nutritionData: any;
 
     @Column({ type: 'jsonb', nullable: true })
     meta: object;

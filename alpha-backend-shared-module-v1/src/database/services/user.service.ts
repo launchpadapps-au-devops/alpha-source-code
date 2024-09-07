@@ -1,4 +1,4 @@
-import { Any, Between, FindManyOptions, FindOneOptions, ILike, Repository } from "typeorm";
+import { Any, Between, FindManyOptions, FindOneOptions, ILike, Raw, Repository } from "typeorm";
 import { DatabaseModule } from "../index";
 import { IUserService } from "../interfaces/IUserService.interface";
 import { User } from "../entities/user.entity";
@@ -51,7 +51,7 @@ class UserService implements IUserService {
     return UserService.userRepository.findOne(options);
   }
 
-  async find(options: FindManyOptions): Promise<User []> {
+  async find(options: FindManyOptions): Promise<User[]> {
     return UserService.userRepository.find(options);
   }
 
@@ -66,18 +66,40 @@ class UserService implements IUserService {
     page?: number
   }> {
 
-    const { searchText, ...restFilters } = filters;
+    const { searchText, searchKey, searchValue, ...restFilters } = filters;
+
+    const userEntityMetadata = UserService.userRepository.metadata;
+    const searchColumn = userEntityMetadata.findColumnWithPropertyPath(searchKey);
+    
+    if (!searchColumn) {
+      throw new Error(`Invalid search key: ${searchKey}`);
+    }
+    
     const [data, totalRecords] = await UserService.userRepository.findAndCount({
-      relations: UserService.relations,
       where: {
-        ...(searchText ? { email: ILike(`%${searchText}%`) } : {}),
-        ...restFilters
+        ...(searchKey && searchValue
+          ? searchColumn.type === 'date'
+            ? {
+                [searchKey]: Raw(
+                  () => `"${searchKey}"::DATE = :searchValue::DATE`,
+                  { searchValue }
+                ),
+              }
+            : searchColumn.type === 'varchar'
+            ? { [searchKey]: ILike(`%${searchValue}%`) }
+            : { [searchKey]: searchValue } // Direct comparison for numbers and other types
+          : {}
+        ),
+        ...restFilters,
+        ...(searchText
+          ? { firstName: ILike(`%${searchText}%`) }
+          : {}),
       },
       order: {
-        [sortOptions.sortField]: sortOptions.sortOrder
+        [sortOptions.sortField]: sortOptions.sortOrder,
       },
       skip: (pagination.page - 1) * pagination.limit,
-      take: pagination.limit
+      take: pagination.limit,
     });
 
     return {
@@ -146,10 +168,10 @@ class UserService implements IUserService {
     users: Partial<User>[],
     count: number
   }> {
-    const [ users, count ] = await UserService.userRepository.findAndCount({ 
-      where: { 
+    const [users, count] = await UserService.userRepository.findAndCount({
+      where: {
         userType: 'patient',
-        onboardingCompletedAt: Between(fromDate, toDate) 
+        onboardingCompletedAt: Between(fromDate, toDate)
       },
     });
 
