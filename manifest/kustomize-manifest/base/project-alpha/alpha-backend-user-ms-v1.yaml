@@ -28,7 +28,7 @@ spec:
           command: ['sh', '-c', 'until nc -z alpha-rabbitmq-service 5672; do echo waiting for rabbitmq ; sleep 2; done;']
       containers:
         - name: alpha-backend-user-ms-v1-conatiner
-          image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:61987b5fb75c01e6033f168239bef72069667a21302c1622a18bc4812efc489c
+          image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:b231baaa05be1cf2aad773c49672bef6d18f5f4b1d95310fb62d95af7f1054f8
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3001
