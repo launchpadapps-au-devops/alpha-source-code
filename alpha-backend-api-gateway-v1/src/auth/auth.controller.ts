@@ -270,6 +270,7 @@ export class AuthController {
     await this.messageService.publishToNotification(
       'notification.register',
       {
+        userId: user.data.id,
         recipients: [user.data.id],
         type: 'email',
         categoryId: 2, // Account Auth

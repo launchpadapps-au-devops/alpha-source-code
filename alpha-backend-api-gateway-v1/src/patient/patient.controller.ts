@@ -231,6 +231,7 @@ export class PatientController {
         await this.messageService.publishToNotification(
             'notification.register',
             {
+                userId: data.id,
                 recipients: [data.id],
                 type: 'email',
                 categoryId: 1, // Account Invitation
