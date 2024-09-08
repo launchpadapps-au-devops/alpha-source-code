@@ -52,6 +52,20 @@ export class EnvConfigService {
         }
     }
 
+    get sendgrid() {
+        return {
+            apiKey: this.get('SENDGRID_API_KEY') as string,
+            fromEmail: this.get('SENDGRID_FROM_EMAIL') as string,
+            fromName: this.get('SENDGRID_FROM_NAME') as string
+        }
+    }
+
+    get firebase() {
+        return {
+            serviceAccountBase64: this.get('SERVICE_ACCOUNT_BASE64') as string
+        }
+    }
+
     private validateEnvConfig(): EnvironmentVariables {
         const envConfig = plainToInstance(
             EnvironmentVariables, 

@@ -10,13 +10,14 @@ import {
     userService
   } from '@launchpadapps-au/alpha-shared';
 import { NotificationCategory, NotificationSubcategory } from '../common/notificationCategory';
+import { EnvConfigService } from 'src/common/config/envConfig.service';
 
 @Injectable()
 export class EmailHandler {
     constructor(
-        protected readonly configService: ConfigService,
+        private readonly envConfigService: EnvConfigService,
     ) {
-        sgMail.setApiKey(this.configService.get<string>('SENDGRID_API_KEY'));
+        sgMail.setApiKey(this.envConfigService.sendgrid.apiKey);
     }
 
     async handle(notificationData: Notification): Promise<void> {
@@ -72,6 +73,29 @@ export class EmailHandler {
                         Logger.error('Invalid email Notificatoin');
                 }
                 break;
+            case NotificationCategory.ENGAGEMENT_LEVEL_ALERT:
+                switch (notificationData.subcategoryId) {
+                    case NotificationSubcategory.THIRD_INACTIVITY:
+                        emailObject.subject = 'Inactivity Alert';
+                        emailObject.template = templates[NotificationSubcategory.THIRD_INACTIVITY]
+                        break;
+                    case NotificationSubcategory.DOCTOR_APPOINTMENT_REMINDER:
+                        emailObject.subject = 'Doctor Appointment Reminder';
+                        emailObject.template = templates[NotificationSubcategory.DOCTOR_APPOINTMENT_REMINDER]
+                        break;
+                    default:
+                        Logger.error('Invalid email Notification');
+                }
+                break;
+            case NotificationCategory.INACTIVITY_NUDGES:
+                switch (notificationData.subcategoryId) {
+                    case NotificationSubcategory.NOT_STARTED:
+                        emailObject.subject = 'Get Started';
+                        emailObject.template = templates[NotificationSubcategory.NOT_STARTED]
+                        break;
+                    default:
+                        Logger.error('Invalid email Notification');
+                }
             default:
                 Logger.error('Invalid email Notification');
         }
@@ -103,8 +127,8 @@ export class EmailHandler {
             cc,
             bcc,
             from: {
-                name: this.configService.get<string>('SENDGRID_FROM_NAME'),
-                email: this.configService.get<string>('SENDGRID_FROM_EMAIL'),
+                name: this.envConfigService.sendgrid.fromName,
+                email: this.envConfigService.sendgrid.fromEmail,
             },
             subject,
             html: htmlContent,

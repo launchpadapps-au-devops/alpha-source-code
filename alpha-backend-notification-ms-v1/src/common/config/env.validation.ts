@@ -58,8 +58,21 @@ export class EnvironmentVariables {
     @IsString()
     RABBITMQ_QUEUE: string;
 
-
     // SEND GRID
     @IsString()
+    @IsOptional()
     SENDGRID_API_KEY: string;
+
+    @IsString()
+    @IsOptional()
+    SENDGRID_FROM_EMAIL: string;
+
+    @IsString()
+    @IsOptional()
+    SENDGRID_FROM_NAME: string;
+
+    // Firebase
+    @IsString()
+    @IsOptional()
+    SERVICE_ACCOUNT_BASE64: string;
 }

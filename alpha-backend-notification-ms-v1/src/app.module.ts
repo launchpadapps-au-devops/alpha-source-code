@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EnvConfigService } from './common/config/envConfig.service';
@@ -12,6 +13,7 @@ import { HandlerModule } from './handler/handler.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ScheduleModule.forRoot(),
     EmailModule,
     HandlerModule
   ],
@@ -21,4 +23,5 @@ import { HandlerModule } from './handler/handler.module';
     EnvConfigService
   ],
 })
+
 export class AppModule {}

@@ -7,16 +7,22 @@ import {
     userService
   } from '@launchpadapps-au/alpha-shared';
 import { NotificationCategory, NotificationSubcategory } from '../common/notificationCategory';
+import * as path from 'path';
+import { EnvConfigService } from 'src/common/config/envConfig.service';
 
 @Injectable()
 export class PushNotificationHandler {
+    private readonly logger = new Logger(PushNotificationHandler.name);
+
     constructor(
-        protected readonly configService: ConfigService,
+        private readonly envConfigService: EnvConfigService,
     ) {
+        const serviceAccount = JSON.parse(Buffer.from(this.envConfigService.firebase.serviceAccountBase64, 'base64').toString()); 
         admin.initializeApp({
-            credential: admin.credential.applicationDefault(),
-            databaseURL: this.configService.get<string>('FIREBASE_DATABASE_URL'),
+            credential: admin.credential.cert(serviceAccount),
         });
+
+        this.logger.log('Firebase initialized for messaging');
     }
 
     async handle(notificationData: Notification): Promise<void> {
@@ -64,6 +70,39 @@ export class PushNotificationHandler {
                     case NotificationSubcategory.FORGOT_PASSWORD_OTP:
                         pushObject.title = 'Password Reset';
                         pushObject.body = 'Use the OTP provided to reset your password.';
+                        break;
+                    default:
+                        Logger.error('Invalid push notification category');
+                }
+                break;
+            case NotificationCategory.PROGRESS_MILESTONE:
+                switch (notificationData.subcategoryId) {
+                    case NotificationSubcategory.THEME_COMPLETED:
+                        pushObject.title = '🎉 Congratulations on Your Milestone! 🎉';
+                        pushObject.body = `You've completed a level and taken a big step forward! 🌟 Keep growing and reaching your goals. We're cheering you on! 🚀`;
+                        break;
+                    case NotificationSubcategory.HABIT_COMPLETED:
+                        pushObject.title = '🎉 You Did It! 🎉';
+                        pushObject.body = `You've successfully completed a habit! 🌟 Keep up the fantastic work and continue growing. We're so proud of you! 🌱`;
+                        break;
+                    default:
+                        Logger.error('Invalid push notification category');
+                }
+            case NotificationCategory.INACTIVITY_NUDGES:
+                switch (notificationData.subcategoryId) {
+                    case NotificationSubcategory.INACTIVITY_3DAYS:
+                        pushObject.title = 'It can be tricky to stay on track';
+                        pushObject.body = `We're here to support you! Let's get back on track together.`;
+                        break;
+                    default:
+                        Logger.error('Invalid push notification category');
+                }
+                break;
+            case NotificationCategory.ENCOURAGEMENT_NOTIFICATION:
+                switch (notificationData.subcategoryId) {
+                    case NotificationSubcategory.EVERYDAY_REMINDER:
+                        pushObject.title = '🌞 Good morning!';
+                        pushObject.body = `Dive into today’s cards to continue your health journey. You’re doing great 💪✨`;
                         break;
                     default:
                         Logger.error('Invalid push notification category');

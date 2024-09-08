@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
 import { PushNotificationHandler } from './push.handler';
+import { ConfigModule } from '@nestjs/config';
+import { EnvConfigService } from 'src/common/config/envConfig.service';
 
 @Module({
-  providers: [PushNotificationHandler],
+  imports: [ConfigModule],
+  providers: [PushNotificationHandler, EnvConfigService],
   exports: [PushNotificationHandler],
 })
 
