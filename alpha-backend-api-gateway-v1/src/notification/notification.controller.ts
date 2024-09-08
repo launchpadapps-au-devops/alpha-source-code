@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Headers, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { NotificationResponseDto, CreateNotificationPreferenceDto, NotificationPreferenceResponseDto, UpdateNotificationPreferenceDto, UpdateNotificationDto } from './notification.dto';
 import { NotificationService } from './notification.service';
@@ -21,7 +21,13 @@ export class NotificationController {
     @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
-    @ApiQuery({ name: 'userId', type: 'string', required: true, example: 'userId' })
+    @ApiQuery({ 
+        name: 'userId', 
+        type: 'string', 
+        required: false, 
+        example: 'userId',
+        description: "Only allowed for admin and staff"
+    })
     @ApiQuery({
         name: 'page',
         type: 'number',
@@ -72,7 +78,15 @@ export class NotificationController {
     async getNotifications(
         @Request() req,
     ) {
-        const { userId, page, limit, sortField, sortOrder } = req.query;
+        let { userId, page, limit, sortField, sortOrder } = req.query;
+
+        if(req.user.type === USER_TYPES.PATIENT) {
+            if(userId !== req.user.id) {
+                throw new ForbiddenException('You are not allowed for this operation');
+            }
+
+            userId = req.user.id;
+        }
 
         return this.notificationService.getNotifications(
             { page, limit },

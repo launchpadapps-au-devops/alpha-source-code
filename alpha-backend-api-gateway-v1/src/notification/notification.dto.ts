@@ -177,6 +177,25 @@ export class NotificationResponseDto extends CreateNotificationDto {
     @IsNumber()
     id: number;
 
+    // is seen
+    @ApiProperty({ example: false })
+    @IsBoolean()
+    seen: boolean;
+
+    // seen at
+    @ApiProperty({ example: '2021-01-01T00:00:00.000Z' })
+    @IsDateString()
+    seenAt: Date;
+
+    // is reminded
+    @ApiProperty({ example: false })
+    @IsBoolean()
+    isReminded: boolean;
+
+    // reminded at
+    @ApiProperty({ example: '2021-01-01T00:00:00.000Z' })
+    @IsDateString()
+
     @ApiProperty({ example: '2021-01-01T00:00:00.000Z' })
     @IsDateString()
     createdAt: Date;
