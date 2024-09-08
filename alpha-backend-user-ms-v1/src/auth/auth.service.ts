@@ -72,15 +72,18 @@ export class AuthService {
         ipAddress: string,
     ) {
         const user = await this.validateUser(email, password);
-        if(!user) {
+        if (!user) {
             throw new UnauthorizedException('Invalid email or password');
         }
 
-        if(user.platform !== platform) {
+        if (user.platform !== platform) {
             throw new UnauthorizedException('Invalid platform');
         }
 
-       return this.getTokens(user.id, deviceInfo, ipAddress);
+        const tokens = await this.getTokens(user.id, deviceInfo, ipAddress);
+        await userService.updateUser(user.id, { lastLoginAt: new Date() });
+
+        return tokens;
     }
 
     async logout(userId: string) {
@@ -133,7 +136,7 @@ export class AuthService {
             throw new UnauthorizedException('Invalid OTP');
         }
 
-       return this.getTokens(user.id);
+        return this.getTokens(user.id);
     }
 
     async resetPassword(payload: { email: string, otp: number, password: string }, reqUser = { userId: null }) {
@@ -159,7 +162,7 @@ export class AuthService {
         if (!session) {
             throw new UnauthorizedException();
         }
-        
+
         return session;
     }
 
