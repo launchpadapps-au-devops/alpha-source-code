@@ -94,6 +94,7 @@ class NotificationService implements INotificationService {
 
     notification.proccessed = processed;
     notification.error = error;
+    notification.status = error ? 'failed': 'sent';
 
     await NotificationService.notificationRepository.save(notification);
   }
