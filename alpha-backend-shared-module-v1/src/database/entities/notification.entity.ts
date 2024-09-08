@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, BeforeUpdate } from 'typeorm';
 import { User } from '.';
 
 export enum NotificationType {
@@ -64,8 +64,31 @@ export class Notification {
     @Column({ type: 'timestamp', nullable: true })
     scheduletime: Date;
 
+    @Column({ type: 'boolean', default: false })
+    isSeen: boolean;
+
+    @BeforeUpdate()
+    updateSeenAt() {
+        if (this.isSeen) {
+            this.seenAt = new Date();
+        }
+    }
+
     @Column({ type: 'timestamp', nullable: true })
     seenAt: Date;
+
+    @Column({ type: 'boolean', default: false })
+    isReminded: boolean;
+
+    @BeforeUpdate()
+    updateRemindedAt() {
+        if (this.isReminded) {
+            this.remindedAt = new Date();
+        }
+    }
+
+    @Column({ type: 'timestamp', nullable: true })
+    remindedAt: Date;
 
     @Column({ type: 'enum', enum: ['pending', 'sent', 'failed'], default: 'pending' })
     status: string;

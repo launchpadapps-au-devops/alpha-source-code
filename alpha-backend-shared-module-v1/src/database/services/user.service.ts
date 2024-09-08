@@ -61,52 +61,57 @@ class UserService implements IUserService {
     filters: GenericFilterDto = {},
   ): Promise<{
     data: User[],
-    totalRecords: number
+    totalRecords: number,
     limit?: number,
     page?: number
   }> {
-
     const { searchText, searchKey, searchValue, ...restFilters } = filters;
 
     const userEntityMetadata = UserService.userRepository.metadata;
-    const searchColumn = userEntityMetadata.findColumnWithPropertyPath(searchKey);
-    
-    if (!searchColumn) {
+    const searchColumn = searchKey ? userEntityMetadata.findColumnWithPropertyPath(searchKey) : null;
+
+    if (searchKey && !searchColumn) {
       throw new Error(`Invalid search key: ${searchKey}`);
     }
-    
-    const [data, totalRecords] = await UserService.userRepository.findAndCount({
+
+    // Build the query options dynamically
+    const queryOptions: any = {
       where: {
         ...(searchKey && searchValue
           ? searchColumn.type === 'date'
             ? {
-                [searchKey]: Raw(
-                  () => `"${searchKey}"::DATE = :searchValue::DATE`,
-                  { searchValue }
-                ),
-              }
+              [searchKey]: Raw(
+                () => `"${searchKey}"::DATE = :searchValue::DATE`,
+                { searchValue }
+              ),
+            }
             : searchColumn.type === 'varchar'
-            ? { [searchKey]: ILike(`%${searchValue}%`) }
-            : { [searchKey]: searchValue } // Direct comparison for numbers and other types
+              ? { [searchKey]: ILike(`%${searchValue}%`) }
+              : { [searchKey]: searchValue } // Direct comparison for numbers and other types
           : {}
         ),
         ...restFilters,
-        ...(searchText
-          ? { firstName: ILike(`%${searchText}%`) }
-          : {}),
+        ...(searchText ? { firstName: ILike(`%${searchText}%`) } : {}),
       },
       order: {
         [sortOptions.sortField]: sortOptions.sortOrder,
       },
-      skip: (pagination.page - 1) * pagination.limit,
-      take: pagination.limit,
-    });
+    };
+
+    // Apply pagination if it's provided, otherwise return all records
+    if (pagination?.page && pagination?.limit) {
+      queryOptions.skip = (pagination.page - 1) * pagination.limit;
+      queryOptions.take = pagination.limit;
+    }
+
+    // Fetch data and total count
+    const [data, totalRecords] = await UserService.userRepository.findAndCount(queryOptions);
 
     return {
       data,
       totalRecords,
-      limit: pagination.limit,
-      page: pagination.page
+      limit: pagination?.limit, // Pass limit only if pagination is provided
+      page: pagination?.page,   // Pass page only if pagination is provided
     };
   }
 
@@ -176,6 +181,20 @@ class UserService implements IUserService {
     });
 
     return { users, count };
+  }
+
+  async findUserBetweenDates(
+    fromDateKey: string,
+    fromDate: Date,
+    toDateKey: string,
+    toDate: Date,
+  ): Promise<User[]> {
+    return UserService.userRepository.find({
+      where: {
+        ...(fromDateKey && fromDate ? { [fromDateKey]: Raw(alias => `${alias} >= :fromDate`, { fromDate }) } : {}),
+        ...(toDateKey && toDate ? { [toDateKey]: Raw(alias => `${alias} <= :toDate`, { toDate }) } : {}),
+      }
+    });
   }
 }
 

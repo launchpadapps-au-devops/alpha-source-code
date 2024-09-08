@@ -15,7 +15,11 @@ class NotificationService implements INotificationService {
     return DatabaseModule.getRepository(NotificationPreference);
   }
 
-  async createNotification(data: Notification): Promise<Notification> {
+  async createNotification(data: Partial<Notification>): Promise<Notification> {
+    return await NotificationService.notificationRepository.save(data);
+  }
+
+  async addUpdateBulkNotification(data: Partial<Notification[]>): Promise<Notification[]> {
     return await NotificationService.notificationRepository.save(data);
   }
 
@@ -39,27 +43,41 @@ class NotificationService implements INotificationService {
     filters: GenericFilterDto = {},
   ): Promise<{
     data: Notification[],
-    totalRecords: number
+    totalRecords: number,
     limit?: number,
     page?: number
   }> {
-
-    const { searchText, ...restFilters } = filters;
-    const [data, totalRecords] = await NotificationService.notificationRepository.findAndCount({
+  
+    const { searchText, userIds, ...restFilters } = filters;
+  
+    const isPaginationProvided = pagination && pagination.limit && pagination.page;
+  
+    const queryOptions: any = {
       relations: [],
-      where: { ...restFilters },
+      where: {
+        ...(searchText ? { title: ILike(`%${searchText}%`) } : {}),
+        ...(userIds ? { userId: In(userIds) } : {}),
+        ...restFilters 
+      },
       order: {
         [sortOptions.sortField]: sortOptions.sortOrder
-      },
-      skip: (pagination.page - 1) * pagination.limit,
-      take: pagination.limit
-    });
-
+      }
+    };
+  
+    // Apply skip and take only if pagination is provided
+    if (isPaginationProvided) {
+      queryOptions.skip = (pagination.page - 1) * pagination.limit;
+      queryOptions.take = pagination.limit;
+    }
+  
+    // Fetch data and total count
+    const [data, totalRecords] = await NotificationService.notificationRepository.findAndCount(queryOptions);
+  
     return {
       data,
       totalRecords,
-      limit: pagination.limit,
-      page: pagination.page
+      limit: isPaginationProvided ? pagination.limit : undefined,
+      page: isPaginationProvided ? pagination.page : undefined
     };
   }
 

@@ -162,6 +162,22 @@ class UserLessonService implements IUserLessonService {
       }
     });
   }
+
+  async findUserLessonBetweenDates(
+    fromDateKey: string,
+    fromDate: Date,
+    toDateKey: string,
+    toDate: Date,
+    userIds?: string[],
+  ): Promise<UserLesson[]> {
+    return UserLessonService.UserLessonRepository.find({
+      where: {
+        ...(fromDateKey && fromDate ? { [fromDateKey]: ILike(`%${fromDate}%`) } : {}),
+        ...(toDateKey && toDate ? { [toDateKey]: ILike(`%${toDate}%`) } : {}),
+        ...(userIds ? { userId: In(userIds) } : {}),
+      },
+    });
+  }
 }
 
 export const userLessonService = new UserLessonService();
