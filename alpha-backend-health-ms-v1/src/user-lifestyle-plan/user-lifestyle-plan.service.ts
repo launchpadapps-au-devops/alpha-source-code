@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { MessagingService } from '../common/messaging.service';
 import {
     UserPlan,
     UserTheme,
@@ -16,12 +17,16 @@ import {
     userHabitService,
     Category,
     UserCategory,
-    userCategoryService
+    userCategoryService,
+    NotificationType,
+    userService
 } from '@launchpadapps-au/alpha-shared';
 
 @Injectable()
 export class UserLifeStylePlanService {
-    constructor() { }
+    constructor(
+        private readonly messagingService: MessagingService
+    ) { }
 
     async assignUserLifestylePlan(data: Partial<UserPlan>, reqUser = { userId: null }) {
         const userPlan = await userPlanService.createUserPlan({
@@ -187,6 +192,8 @@ export class UserLifeStylePlanService {
         };
 
         const userLesson = await userLessonService.findUserLessonById(userLessonId);
+        const user = await userService.findUserById(userLesson.userId);
+
         if (!userLesson) {
             throw new BadRequestException('User Lesson not found');
         }
@@ -224,10 +231,27 @@ export class UserLifeStylePlanService {
             userTheme.isCompleted = true;
             userTheme.completedAt = new Date();
             userTheme.updatedBy = reqUser.userId;
+
+            this.messagingService.publishToNotification(
+                'notification.register',
+                {
+                    userId: userTheme.userId,
+                    recipients: [userTheme.userId],
+                    type: NotificationType.PUSH,
+                    categoryId: 5, // PROGRESS_MILESTONE
+                    subcategoryId: 16, // THEME_COMPLETED
+                    data: {
+                        themeId: userTheme.themeId,
+                        themeName: userTheme.theme.name,
+                        themeCode: userTheme.theme.themeCode,
+                        points: userTheme.totalPoint,
+                        firstName: user.firstName || user.name,
+                    }
+                }
+            )
         }
 
         await userThemeService.updateUserTheme(userTheme.id, userTheme);
-
 
         /** User Category Update */
         const userCategory = await userCategoryService.findUserCategoryById(userLesson.userCategoryId);

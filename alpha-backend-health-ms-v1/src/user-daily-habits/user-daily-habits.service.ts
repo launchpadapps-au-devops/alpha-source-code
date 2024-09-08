@@ -1,14 +1,19 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { MessagingService } from 'src/common/messaging.service';
 import {
     userHabitService,
     userThemeService,
     habitService,
-    UserHabitProgress
+    UserHabitProgress,
+    NotificationType,
+    userService
 } from '@launchpadapps-au/alpha-shared';
 
 @Injectable()
 export class UserDailyHabitsService {
-    constructor() { }
+    constructor(
+        private readonly messagingService: MessagingService,
+    ) { }
 
     async addUserDailyHabit(userId: string) {
         const existingHabits = (await userHabitService.findUserHabitsByUserId(userId))
@@ -138,7 +143,7 @@ export class UserDailyHabitsService {
 
     async markUserDailyHabitProgressAsComplete(userHabitProgressId: string, reqUser = { userId: null }) {
         const userHabitProgress = await userHabitService.findUserHabitProgressById(userHabitProgressId);
-
+        const user = await userService.findUserById(userHabitProgress.userId);
         if (userHabitProgress.isCompleted) {
             throw new BadRequestException('Habit already completed');
         }
@@ -148,6 +153,23 @@ export class UserDailyHabitsService {
         userHabitProgress.updatedBy = reqUser.userId;
 
         await userHabitService.updateUserHabitProgress(userHabitProgressId, userHabitProgress);
+
+        this.messagingService.publishToNotification(
+            'notification.register',
+            {
+                userId: userHabitProgress.userId,
+                recipients: [userHabitProgress.userId],
+                type: NotificationType.PUSH,
+                categoryId: 5, // PROGRESS_MILESTONE
+                subcategoryId: 17, // THEME_COMPLETED
+                data: {
+                    firstName: user.firstName || user.name,
+                    habitId: userHabitProgress.userHabit.habitId,
+                    habitName: userHabitProgress.userHabit.habit.name,
+                    points: userHabitProgress.userHabit.habit.pointAllocation,
+                }
+            }
+        )
 
         const userHabitProgresses = await userHabitService.findUserHabitProgressByUserHabitId(userHabitProgress.userHabitId);
         
