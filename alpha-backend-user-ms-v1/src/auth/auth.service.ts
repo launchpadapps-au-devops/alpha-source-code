@@ -63,7 +63,6 @@ export class AuthService {
         return { accessToken, accessTokenExpiresAt, refreshToken, refreshTokenExpiresAt };
     }
 
-
     async login(
         email: string,
         password: string,
@@ -168,5 +167,26 @@ export class AuthService {
 
     async getUserById(userId: string): Promise<any> {
         return userService.findUserById(userId);
+    }
+
+    async checkPasswordMatch(payload: { email: string, password: string }) {
+        const user = await userService.findUserByEmailOrFail(payload.email);
+        if (!user) {
+            throw new UnauthorizedException('Invalid user');
+        }
+
+        if (!user.validatePassword(payload.password)) return false; 
+        return true;
+    }
+
+    async setUserFCMToken(userId: string, fcmToken: string) {
+        return userService.updateUser(
+            userId,
+            {
+                fcmToken,
+                updatedBy: userId as any,
+            },
+            
+        );
     }
 }

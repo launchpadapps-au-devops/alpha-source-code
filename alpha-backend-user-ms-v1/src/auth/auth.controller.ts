@@ -138,4 +138,32 @@ export class AuthController {
       data,
     }
   }
+
+  @Post('/user/password/match')
+  async checkPasswordMatch(
+    @Headers('x-request-userId') reqUserId: string, // No use case
+    @Body() payload: {
+      email: string,
+      password: string,
+    },
+  ) {
+    const data = await this.authService.checkPasswordMatch(payload);
+    return {
+      message: 'Password matched result',
+      data: { isMatched: data },
+    }
+  }
+
+  @Post('/user/fcm-token')
+  async setUserFCMToken(
+    @Headers('x-request-userId') reqUserId: string,
+    @Body() payload: {
+      fcmToken: string,
+    },
+  ) {
+    await this.authService.setUserFCMToken(reqUserId, payload.fcmToken);
+    return {
+      message: 'FCM token updated successfully',
+    }
+  }
 }
