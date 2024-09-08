@@ -1,4 +1,4 @@
-import { notificationService, NotificationType, userLessonService, userService } from '@launchpadapps-au/alpha-shared';
+import { notificationService, NotificationType, sessionService, userLessonService, userService } from '@launchpadapps-au/alpha-shared';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { NotificationCategory, NotificationSubcategory } from 'src/common/notificationCategory';
@@ -6,6 +6,48 @@ import { NotificationCategory, NotificationSubcategory } from 'src/common/notifi
 @Injectable()
 export class NotificationCron {
     constructor() { }
+
+    /**
+     * Notifcation Subcategory -> 
+     * Send notification to users who have not logged in for 3 day
+     */
+    @Cron(CronExpression.EVERY_DAY_AT_9AM)
+    async sendNotificationForInactivityIn3Days() {
+        try {
+            const users = await userService.find({ where: { lastLoginAt: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000) } });
+            if (!users.length) return;
+
+            const { data: userNotifications } = await notificationService.findAllNotification(
+                {},
+                { sortField: 'createdAt', sortOrder: 'DESC' },
+                {
+                    categoryId: NotificationCategory.INACTIVITY_NUDGES,
+                    subcategoryId: NotificationSubcategory.INACTIVITY_3DAYS,
+                    fromDate: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000),
+                    toDate: new Date(),
+                }
+            );
+
+            const notificationToSend = [];
+            for(const user of users) {
+                const notification = userNotifications.find(({ userId }) => userId === user.id);
+                if (notification) continue;
+
+                notificationToSend.push({
+                    userId: user.id,
+                    recipients: [user.id],
+                    type: NotificationType.EMAIL,
+                    data: { firstName: user.firstName },
+                    categoryId: NotificationCategory.INACTIVITY_NUDGES,
+                    subcategoryId: NotificationSubcategory.INACTIVITY_3DAYS,
+                });
+            }
+
+            await notificationService.addUpdateBulkNotification(notificationToSend);
+        } catch (error) {
+            Logger.error('Error in Sending Notification For Inactivity', error);
+        }
+    }
 
     /**
      * Notifcation Subcategory -> THIRD_INACTIVITY
@@ -151,6 +193,48 @@ export class NotificationCron {
             await notificationService.addUpdateBulkNotification(notificationToSend);
         } catch (error) {
             Logger.error('Error in Sending Not Started Notification', error);
+        }
+    }
+
+    /**
+     * Notifcation Subcategory -> Everyday Reminder
+     * Send notification to users for everyday reminder
+     */
+    @Cron(CronExpression.EVERY_DAY_AT_11AM)
+    async sendEverydayReminder() {
+        try {
+            const users = await userService.find({ where: { lastLoginAt: new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000) } });
+            if (!users.length) return;
+
+            const { data: userNotifications } = await notificationService.findAllNotification(
+                {},
+                { sortField: 'createdAt', sortOrder: 'DESC' },
+                {
+                    categoryId: NotificationCategory.ENCOURAGEMENT_NOTIFICATION,
+                    subcategoryId: NotificationSubcategory.EVERYDAY_REMINDER,
+                    fromDate: new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000),
+                    toDate: new Date(),
+                }
+            );
+
+            const notificationToSend = [];
+            for(const user of users) {
+                const notification = userNotifications.find(({ userId }) => userId === user.id);
+                if (notification) continue;
+
+                notificationToSend.push({
+                    userId: user.id,
+                    recipients: [user.id],
+                    type: NotificationType.PUSH,
+                    data: { firstName: user.firstName },
+                    categoryId: NotificationCategory.ENCOURAGEMENT_NOTIFICATION,
+                    subcategoryId: NotificationSubcategory.EVERYDAY_REMINDER,
+                });
+            }
+
+            await notificationService.addUpdateBulkNotification(notificationToSend);
+        } catch (error) {
+            Logger.error('Error in Sending Everyday Reminder', error);
         }
     }
 }

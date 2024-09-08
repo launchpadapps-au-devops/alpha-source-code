@@ -48,7 +48,6 @@ export class AppController {
       data: { id: data.id }
     }
  }
-
   
   @Get()
   async getNotification(
