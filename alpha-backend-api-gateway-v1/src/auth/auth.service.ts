@@ -150,4 +150,28 @@ export class AuthService {
             }
         );
     }
+
+    async checkPasswordMatch(payload: { email: string, password: string }, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.userApiUrl}${this.userApiPrefix}/auth/user/password/match`,
+            'POST',
+            payload,
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+    async setUserFCMToken(userId: string, fcmToken: string, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.userApiUrl}${this.userApiPrefix}/auth/user/fcm-token`,
+            'POST',
+            { fcmToken },
+            {},
+            {
+                'x-request-userId': userId
+            }
+        );
+    }
 }

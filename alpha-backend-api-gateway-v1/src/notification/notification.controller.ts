@@ -91,7 +91,12 @@ export class NotificationController {
         return this.notificationService.getNotifications(
             { page, limit },
             { sortField, sortOrder },
-            { userId }
+            { 
+                userId,
+                isSeen: true,
+                proccessed: true,
+                status: 'sent'
+            }
         );
     }
 

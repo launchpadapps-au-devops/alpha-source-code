@@ -418,4 +418,101 @@ export class AuthController {
       meta: {}
     }
   }
+
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          example: 'abc@gmail.com',
+        },
+        password: {
+          type: 'string',
+          example: 'password',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: {
+          type: 'number',
+          example: 200,
+        },
+        message: {
+          type: 'string',
+          example: 'Password matched successfully',
+        },
+        data: {
+          type: 'object',
+          properties: {
+            isMatched: {
+              type: 'boolean',
+              example: true,
+            },
+          },
+        },
+        meta: {
+          type: 'object',
+        }
+      },
+    }
+  })
+  @Post('/user/password/match')
+  async matchPassword(
+    @Body() payload: {
+      email: string;
+      password: string;
+    }
+  ) {
+    return this.authService.matchPassword(payload);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        fcmToken: {
+          type: 'string',
+          example: 'fcmToken',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: {
+          type: 'number',
+          example: 200,
+        },
+        message: {
+          type: 'string',
+          example: 'FCM token updated successfully',
+        },
+        data: {
+          type: 'object',
+          example: null
+        },
+        meta: {
+          type: 'object',
+        }
+      },
+    }
+  })
+  @Post('user/fcm-token')
+  async setUserFCMToken(
+    @Request() req,
+    @Body() payload: {
+      fcmToken: string;
+    }
+  ) {
+    return this.authService.setUserFCMToken(req.user.userId, payload.fcmToken, req.user);
+  }
 }

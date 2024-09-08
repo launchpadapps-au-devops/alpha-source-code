@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.24.0",
-    "@launchpadapps-au/alpha-shared": "^4.6.1",
+    "@launchpadapps-au/alpha-shared": "^4.6.2",
     "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.1",
