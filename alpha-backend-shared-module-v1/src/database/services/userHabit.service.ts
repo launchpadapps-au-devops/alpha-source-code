@@ -192,6 +192,7 @@ class UserHabitService {
   async findUserHabitProgressById(id: string): Promise<UserHabitProgress> {
     return UserHabitService.UserHabitProgressRepository.findOne({
       where: { id },
+      relations: ['userHabit, userHabit.habit'],
     });
   }
 

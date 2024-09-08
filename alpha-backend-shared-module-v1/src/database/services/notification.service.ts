@@ -1,4 +1,4 @@
-import { ILike, In, Repository, UpdateResult } from "typeorm";
+import { ILike, In, MoreThan, Repository, UpdateResult } from "typeorm";
 import { DatabaseModule } from "../index";
 import { INotificationService } from "../interfaces/INotificationService.interface";
 import { Notification, NotificationType } from "../entities/notification.entity";
@@ -48,7 +48,7 @@ class NotificationService implements INotificationService {
     page?: number
   }> {
   
-    const { searchText, userIds, ...restFilters } = filters;
+    const { searchText, userIds, fromDate, toDate,  ...restFilters } = filters;
   
     const isPaginationProvided = pagination && pagination.limit && pagination.page;
   
@@ -57,6 +57,8 @@ class NotificationService implements INotificationService {
       where: {
         ...(searchText ? { title: ILike(`%${searchText}%`) } : {}),
         ...(userIds ? { userId: In(userIds) } : {}),
+        ...(fromDate ? { createdAt: MoreThan(fromDate) } : {}),
+        ...(toDate ? { createdAt: MoreThan(toDate) } : {}),
         ...restFilters 
       },
       order: {
