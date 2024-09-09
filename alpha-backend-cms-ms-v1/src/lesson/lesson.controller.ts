@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Post, Put, Query, Request } from '@nestjs/common';
+import { Body, Controller, Get, Headers, NotFoundException, Param, Post, Put, Query, Request } from '@nestjs/common';
 import { SortOrderType } from '@launchpadapps-au/alpha-shared';
 import { LessonService } from './lesson.service';
 import { Lesson } from '@launchpadapps-au/alpha-shared';
@@ -70,6 +70,10 @@ export class LessonController {
         @Param('lessonId') lessonId: number
     ) {
         const lesson = await this.lessonService.findLessonById(lessonId);
+        if(!lesson) {
+            throw new NotFoundException(`Lesson with id ${lessonId} not found`);
+        }
+        
         return {
             message: `Lesson ${lesson?.name} fetched successfully`,
             data: lesson,
