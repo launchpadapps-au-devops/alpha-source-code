@@ -97,8 +97,14 @@ export class UserLifeStylePlanController {
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
-    @UserTypes(USER_TYPES.PATIENT)
-    @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiQuery({
+        name: 'userId',
+        type: 'string',
+        required: false,
+        description: 'Only for admin and staff users'
+    })
     @ApiResponse({
        schema: {
             type: 'object',
@@ -126,7 +132,15 @@ export class UserLifeStylePlanController {
     async getUserLifeStylePlanProgress(
         @Request() req,
     ) {
-        return this.userLifeStylePlanService.getUserPlanProgress({ userId: req.user.userId });
+        if(req.user.userType === USER_TYPES.PATIENT) {
+            if(req.user.userId !== req.query.userId) {
+                throw new Error('You are not allowed for this operation');
+            }
+
+            req.query.userId = req.user.userId;
+        };
+
+        return this.userLifeStylePlanService.getUserPlanProgress({ userId: req.query.userId });
     }
 
     @ApiBearerAuth()

@@ -25,11 +25,11 @@ export class AuthController {
       properties: {
         email: {
           type: 'string',
-          example: 'gajanand+pt01@launchpadapps.co',
+          example: 'gajanand+sa01@launchpadapps.co',
         },
         password: {
           type: 'string',
-          example: 'password',
+          example: 'y*pwh5IYd3Wp',
         },
       },
     },
