@@ -6,9 +6,10 @@ import { InputField } from '../../../../input-field/input-field';
 import { AppButton } from '../../../../app-button/app-button';
 import { useState } from 'react';
 import { SaveResetPassword } from '../save-reset-password/save-reset-password';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../../../../app/store';
 import { resetPasswordThunk } from './resetPasswordSlice';
+import { ForgotAuthState } from '../../forgot-password-slice';
 
 export interface ResetPasswordProps {
     className?: string;
@@ -24,11 +25,11 @@ export const ResetPassword = ({ className }: ResetPasswordProps) => {
     const navigate = useNavigate();
     const [password, setPassword] = useState('');
     const location = useLocation();
-
+    const { user } = useSelector((state: { forgotPasswordOtpVerify: ForgotAuthState }) => state.forgotPasswordOtpVerify);
+    console.log( 'user',user);
     const handleSaveModalOpen= async () => {
-        const email = location.state?.email || '';
         const token = location.state?.token || '';
-        await dispatch(resetPasswordThunk({ email, password, token }));
+        await dispatch(resetPasswordThunk({ password, token }));
         setSaveModal(!saveModal);
     }
 

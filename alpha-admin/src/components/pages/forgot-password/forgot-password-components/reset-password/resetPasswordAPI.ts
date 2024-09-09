@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { config } from '../../../../../config/config';
 
-export async function resetPassword(email: string, password: string, token: string): Promise<{ data: any }> {
+export async function resetPassword( password: string, token: string): Promise<{ data: any }> {
     const response = await axios.put(
         `${config.BASE_URL}/gateway/v1/auth/password`,
         { password },

@@ -23,19 +23,18 @@ const initialState: ForgotAuthState = {
 
 export const resetPasswordThunk = createAsyncThunk(
     'auth/forgotPassword',
-    async (data: { email: string; password: string; token: string }, { rejectWithValue }) => {
+    async (data: { password: string; token: string }, { rejectWithValue }) => {
         try {
-            const { email, password, token } = data;
-            const response = await resetPassword(email, password, token);
-            // Make sure the payload matches the ForgotPasswordUser interface
-            return { email, token };
+            const { password, token } = data;
+            const response = await resetPassword( password, token);
+            return { response };
         } catch (error: any) {
             return rejectWithValue(error.message);
         }
     }
 );
 
-export const forgotAuthSlice = createSlice({
+export const resetPasswordSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
@@ -51,7 +50,7 @@ export const forgotAuthSlice = createSlice({
             state.loading = false;
             state.isForgotPassword = true;
             // Ensure the structure here matches the state definition
-            state.user = { email: action.payload.email, token: action.payload.token };
+            // state.user = { email: action.payload.email, token: action.payload.token };
         });
         builder.addCase(resetPasswordThunk.rejected, (state, action) => {
             state.loading = false;
@@ -60,5 +59,5 @@ export const forgotAuthSlice = createSlice({
     },
 });
 
-export const { setloading } = forgotAuthSlice.actions;
-export default forgotAuthSlice.reducer;
+export const { setloading } = resetPasswordSlice.actions;
+export default resetPasswordSlice.reducer;

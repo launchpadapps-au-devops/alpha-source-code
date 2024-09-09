@@ -121,7 +121,7 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
     };
 
     const handleRowClick = (index: number) => {
-        navigate(`/content/lessons/viewlesson/${lessons[index].lessonCode}`, {
+        navigate(`/content/lessons/viewlesson/${lessons[index].id}`, {
             state: { isPublished: lessons[index].isPublished },
         });
     };

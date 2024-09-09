@@ -60,7 +60,7 @@ export const SelectTheme: React.FC<SelectThemeSidebarProps> = ({
         setSelectedThemeData(theme);
         setSelectedTheme(theme);
 
-        setData({ ...data, themeId: theme.themeCode });
+        setData({ ...data, themeId: theme.id });
         setIsAnyLessonSelected(true);
     };
 

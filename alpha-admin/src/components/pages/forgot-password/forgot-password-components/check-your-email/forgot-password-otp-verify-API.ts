@@ -26,5 +26,5 @@ export async function forgotPasswordOtpVerify(data: ForgotPasswordRequest): Prom
             },
         }
     );
-    return response.data;
+    return { data: response.data }; // Wrap response.data inside an object
 }

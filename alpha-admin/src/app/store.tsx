@@ -12,19 +12,20 @@ import lessonsReducer from '../components/pages/content/lessons/lesson-component
 import tipsReducer from '../components/pages/content/dailytips/viewTipsSlice';
 import fileUploadReducer from '../components/fileUpload/fileUploadSlice';
 import patientsSlice from '../components/pages/patient-Management/patientsSlice';
+import resetPasswordReducer from '../components/pages/forgot-password/forgot-password-components/reset-password/resetPasswordSlice';
 
 //Dashboard
 import activePatientReducer from '../components/pages/dashboard/dashboard-components/activePatientsSlice';
 
 //Patient Platform
 import getPatientDataOverviewReducer from '../components/pages/patient-platform/patientDataOverviewSlice';
-import { forgotOtpVerifyAuthSlice } from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
-
+// import { forgotOtpVerifyAuthSlice } from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
+import forgotOtpVerifyAuthSlice from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
 const rootReducer = combineReducers({
     login: authSlice,
     // forgotPassword: forgotAuthSlice,
-    // forgotPasswordOtpVerify: forgotOtpVerifyAuthSlice,
-    // resetPassword: resetPasswordReducer,
+    forgotPasswordOtpVerify: forgotOtpVerifyAuthSlice,
+    resetPassword: resetPasswordReducer,
     staff: staffReducer,
     addNewStaff: addNewStaffReducer,
     removeStaff: removeStaffReducer,

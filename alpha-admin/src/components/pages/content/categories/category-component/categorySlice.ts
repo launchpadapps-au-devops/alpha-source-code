@@ -5,6 +5,7 @@ import {
     addCategory,
     addCategoriesBulk,
     updateCategory,
+    getCategoriesForLesson,
 } from './CategoryAPI';
 
 export interface Category {
@@ -50,6 +51,20 @@ export const fetchCategoriesThunk = createAsyncThunk<CategoriesResponse,any>(
     async (page: any,{ rejectWithValue }) => {
         try {
             const response = await getCategories(page);
+            console.log('Response ', response);
+            return response;
+        } catch (error) {
+            console.log('Response ERROR ', error);
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const fetchCategoriesForLessonsThunk = createAsyncThunk<CategoriesResponse,any>(
+    'categories/getCategories',
+    async (limit: any,{ rejectWithValue }) => {
+        try {
+            const response = await getCategoriesForLesson(limit);
             console.log('Response ', response);
             return response;
         } catch (error) {

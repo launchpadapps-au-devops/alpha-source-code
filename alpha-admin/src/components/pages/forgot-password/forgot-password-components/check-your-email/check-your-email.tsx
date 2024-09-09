@@ -40,9 +40,17 @@ export const CheckYourEmail = ({ className }: CheckYourEmailProps) => {
         };
         try {
             const resultAction = await dispatch(forgotPasswordOtpVerifyThunk(data));
+    
             if (forgotPasswordOtpVerifyThunk.fulfilled.match(resultAction)) {
-                // If OTP verification is successful, navigate to the reset password page
-                navigate('/reset-password');
+                // Access the response payload to get the accessToken
+                const token = resultAction.payload?.accessToken;
+    
+                if (token) {
+                    // Store the token or navigate with it
+                    // localStorage.setItem('Token', token);
+                    navigate('/reset-password', { state: { accessToken: token } });
+                }
+
             } else {
                 // If OTP verification failed, set the error message
                 setError('Invalid OTP. Please try again.');
@@ -51,6 +59,7 @@ export const CheckYourEmail = ({ className }: CheckYourEmailProps) => {
             setError('An error occurred. Please try again later.');
         }
     };
+    
 
     const handleResendOTP = async () => {
         // Resend OTP logic here
