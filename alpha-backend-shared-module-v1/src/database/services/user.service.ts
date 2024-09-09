@@ -93,6 +93,7 @@ class UserService implements IUserService {
         ...restFilters,
         ...(searchText ? { firstName: ILike(`%${searchText}%`) } : {}),
       },
+      relations: UserService.relations,
       order: {
         [sortOptions.sortField]: sortOptions.sortOrder,
       },
