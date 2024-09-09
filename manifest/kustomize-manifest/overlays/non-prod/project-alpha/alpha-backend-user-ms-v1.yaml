@@ -45,4 +45,9 @@ spec:
           - name: RABBITMQ_PASSWORD
             value: "guest"
           - name: RABBITMQ_QUEUE
-            value: "user_queue"
++
+.0
+
+
+
+            value: "apigateway_queue"
