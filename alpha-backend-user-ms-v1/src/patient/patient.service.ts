@@ -50,7 +50,9 @@ export class PatientService {
         page: 1,
         limit: 10,
         searchKey: '',
-        searchValue: ''
+        searchValue: '',
+        sortField: 'createdAt',
+        sortOrder: 'ASC' as 'ASC' | 'DESC',
     }) {
         const {
             data,
@@ -59,7 +61,10 @@ export class PatientService {
             page
         } = await userService.findAllUsers(
             { limit: query.limit, page: query.page },
-            {},
+            {
+                sortField: query.sortField,
+                sortOrder: query.sortOrder
+            },
             {
                 searchKey: query.searchKey,
                 searchValue: query.searchValue,

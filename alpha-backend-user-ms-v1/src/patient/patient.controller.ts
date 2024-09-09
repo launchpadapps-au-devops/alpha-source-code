@@ -30,13 +30,17 @@ export class PatientController {
         @Query('page') page: number = 1,
         @Query('limit') limit: number = 10,
         @Query('searchKey') searchKey: string = '',
-        @Query('searchValue') searchValue: string = ''
+        @Query('searchValue') searchValue: string = '',
+        @Query('sortField') sortField?: string,
+        @Query('sortOrder') sortOrder?: 'ASC' | 'DESC',
     ) {
         const response = await this.patientService.getPatientUserProfiles({
             page: Number(page),
             limit: Number(limit),
             searchKey,
-            searchValue
+            searchValue,
+            sortField: sortField || 'createdAt',
+            sortOrder: sortOrder || 'ASC',
         });
 
         return {
