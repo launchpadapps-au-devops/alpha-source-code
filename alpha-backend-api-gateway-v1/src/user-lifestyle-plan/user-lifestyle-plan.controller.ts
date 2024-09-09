@@ -126,7 +126,7 @@ export class UserLifeStylePlanController {
     async getUserLifeStylePlanProgress(
         @Request() req,
     ) {
-        return this.userLifeStylePlanService.getUserPlanProgress(req.user.userId);
+        return this.userLifeStylePlanService.getUserPlanProgress({ userId: req.user.userId });
     }
 
     @ApiBearerAuth()
