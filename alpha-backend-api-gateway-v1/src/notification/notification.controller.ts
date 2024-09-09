@@ -80,7 +80,7 @@ export class NotificationController {
     ) {
         let { userId, page, limit, sortField, sortOrder } = req.query;
 
-        if(req.user.type === USER_TYPES.PATIENT) {
+        if(req.user.userType === USER_TYPES.PATIENT) {
             if(userId !== req.user.id) {
                 throw new ForbiddenException('You are not allowed for this operation');
             }

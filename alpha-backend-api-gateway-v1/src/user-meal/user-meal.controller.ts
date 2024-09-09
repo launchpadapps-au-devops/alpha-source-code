@@ -200,7 +200,7 @@ export class UserMealController {
     async findAllUserMealLogs(
         @Request() req
     ) {
-        if (req.user.type === USER_TYPES.PATIENT) {
+        if (req.user.userType === USER_TYPES.PATIENT) {
             if (req.query.userId) {
                 throw new ForbiddenException('You are not authorized to perform this action');
             }

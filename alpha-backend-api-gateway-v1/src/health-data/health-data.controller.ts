@@ -217,7 +217,7 @@ export class HealthDataController {
     ): Promise<object> {
         const { limit, page, sortField, sortOrder, source, dataType, loggedAt } = req.query;
         let userId = req.query.userId;
-        if(req.user.type === USER_TYPES.PATIENT) {
+        if(req.user.userType === USER_TYPES.PATIENT) {
             userId = req.user.userId;
         }
             
