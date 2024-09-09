@@ -36,7 +36,9 @@ export class PatientService {
         page: 1,
         limit: 10,
         searchKey: '',
-        searchValue: ''
+        searchValue: '',
+        sortField: 'createdAt',
+        sortOrder: 'ASC' as 'ASC' | 'DESC',
     },
         reqUser = { userId: null }
     ) {

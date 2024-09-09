@@ -57,6 +57,8 @@ export class PatientController {
     @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiQuery({ name: 'page', required: false, type: Number })
     @ApiQuery({ name: 'limit', required: false, type: Number })
+    @ApiQuery({ name: 'sortField', required: false, type: String })
+    @ApiQuery({ name: 'sortOrder', required: false, type: String })
     @ApiQuery({ name: 'searchKey', required: false, type: String })
     @ApiQuery({ name: 'searchValue', required: false, type: String })
     @ApiResponse({
@@ -86,13 +88,17 @@ export class PatientController {
         @Query('page') page: number = 1,
         @Query('limit') limit: number = 10,
         @Query('searchKey') searchKey?: string,
-        @Query('searchValue') searchValue?: string
+        @Query('searchValue') searchValue?: string,
+        @Query('sortField') sortField?: string,
+        @Query('sortOrder') sortOrder?: 'ASC' | 'DESC',
     ): Promise<object> {
         return await this.patientService.getPatientUserProfiles({
             page: isNaN(page) ? 1 : page,
             limit: isNaN(limit) ? 10 : limit,
             searchKey,
-            searchValue
+            searchValue,
+            sortField,
+            sortOrder
         },
             req.user
         );
