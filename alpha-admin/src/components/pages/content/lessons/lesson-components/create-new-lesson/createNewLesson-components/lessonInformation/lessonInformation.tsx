@@ -6,8 +6,7 @@ import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import LessonTags from '../lesson-tags/lessonTag';
 import { useNavigate } from 'react-router-dom';
 import { SelectTheme } from '../add-to-theme/addToTheme';
-import { useAppDispatch, useAppSelector } from '../../../../../../../../app/hooks';
-import { fetchCategoriesForLessonsThunk } from '../../../../../categories/category-component/categorySlice';
+import { useAppSelector } from '../../../../../../../../app/hooks';
 
 type DropdownState = {
     [key: string]: boolean;
@@ -39,19 +38,7 @@ export const LessonInformation = ({
     });
     const navigate = useNavigate();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    // const categories = useAppSelector((state) => state.categories.categories.categories);
-    const [categories,setCategories] = useState([]);
-    const dispatch = useAppDispatch();
-
-    useEffect(() => {
-    dispatch(fetchCategoriesForLessonsThunk(100)).then((response: any) => {
-        if (response.payload) {
-            const activeCategories = response.payload.data.filter((cat: { status: string; })=>cat.status.toLowerCase() === 'active');
-            setCategories(activeCategories);
-        }
-    }
-    );
-    }, [dispatch]);
+    const categories = useAppSelector((state) => state.categories.categories.categories);
 
     const handleDropdownClick = (dropdown: string) => {
         setIsOpen((prevState) => ({
@@ -206,7 +193,7 @@ export const LessonInformation = ({
                     />
                 </div>
             </div>
-            <LessonTags data={data} setData={setData} isEditMode={isEditMode} />
+            <LessonTags data={data} setData={setData} isEditMode={isEditMode}/>
             <SelectTheme
                 isOpen={isSidebarOpen}
                 onClose={handleCloseSidebar}

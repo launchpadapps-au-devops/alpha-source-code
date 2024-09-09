@@ -7,6 +7,7 @@ export interface MetaData {
     limit: number;
     totalRecords: number;
     totalPages: number;
+    sortField: string;
 }
 
 export interface Patient {
@@ -31,6 +32,7 @@ export interface Patient {
     userType: string;
     id: string;
     isPasswordSet: boolean;
+    planName: string;
 }
 
 export interface PatientsResponse {
@@ -40,9 +42,9 @@ export interface PatientsResponse {
     meta: MetaData;
 }
 
-export const getPatients = async (page: number = 1, limit: number = 10): Promise<PatientsResponse> => {
+export const getPatients = async (page: number = 1, limit: number = 10, sortField: string = ''): Promise<PatientsResponse> => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/gateway/v1/patient?page=${page}&limit=${limit}`; // Add limit to API URL
+    const apiURL = `${config.BASE_URL}/gateway/v1/patient?sortField=${sortField}&page=${page}&limit=${limit}`; // Add limit to API URL
 
     try {
         const response = await axios.get(apiURL, {
@@ -56,6 +58,9 @@ export const getPatients = async (page: number = 1, limit: number = 10): Promise
         throw error;
     }
 };
+
+// Update your getPatients function
+
 
 
 export const addPatientAPI = async (patientData: CreatePatientData): Promise<PatientsResponse> => {

@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../../../app/store';
 import { addNewStaffThunk } from './create-care-teamSlice';
-import { BackButton } from '../../../../back-button/backButton';
 
 export interface CreateCareTeamProps {
     className?: string;
@@ -85,13 +84,8 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
         navigate('/careteam');
     };
 
-    const handleBackClick = () => {
-        navigate(-1); // This will navigate to the previous page
-    };
-
     return (
         <>
-        <BackButton onClick={handleBackClick}/>
             <div className={classNames(styles['create-team-wrapper'], className)}>
                 <div>
                     <h2>Create new care team member</h2>
@@ -105,7 +99,6 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="text"
                                 value={formValues.firstName}
                                 onChange={(e) => handleChange('firstName', e.target.value)}
-                                required
                             />
                         </div>
                         <div className={styles['input-wrapper']}>
@@ -117,7 +110,6 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="text"
                                 value={formValues.lastName}
                                 onChange={(e) => handleChange('lastName', e.target.value)}
-                                required
                             />
                         </div>
                         <div className={styles['input-wrapper']}>
@@ -129,7 +121,6 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="text"
                                 value={formValues.phoneNumber}
                                 onChange={(e) => handleChange('phoneNumber', e.target.value)}
-                                required
                             />
                         </div>
                         <div className={styles['input-wrapper']}>
@@ -141,7 +132,6 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="email"
                                 value={formValues.email}
                                 onChange={(e) => handleChange('email', e.target.value)}
-                                required
                             />
                         </div>
                     </div>
@@ -157,7 +147,6 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 MenuProps={MenuProps}
-                                required
                             >
                                 <CoustomMenuItem value="" disabled>
                                     <em>Select role</em>
@@ -185,7 +174,6 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 MenuProps={MenuProps}
-                                required
                             >
                                 <CoustomMenuItem value="" disabled>
                                     <em>Select permission level</em>

@@ -50,6 +50,7 @@ export const SelectTheme: React.FC<SelectThemeSidebarProps> = ({
     const handleTabChange = (newValue: number) => {
         setSelectedTab(newValue);
     };
+    
 
     useEffect(() => {
         const isAnyLessonSelected = localLessons.some((lesson) => lesson.select);
@@ -60,7 +61,7 @@ export const SelectTheme: React.FC<SelectThemeSidebarProps> = ({
         setSelectedThemeData(theme);
         setSelectedTheme(theme);
 
-        setData({ ...data, themeId: theme.id });
+        setData({ ...data, themeId: theme.themeCode });
         setIsAnyLessonSelected(true);
     };
 
@@ -90,13 +91,11 @@ export const SelectTheme: React.FC<SelectThemeSidebarProps> = ({
         <>
             {isOpen && <div className={styles.overlay} onClick={onClose} />}
             <div className={classNames(styles.sidebar, { [styles.open]: isOpen })}>
-                <div className={styles.floatIcon}>
                 {isOpen && (
                     <button onClick={onClose} className={styles.closeButton}>
                         <ChevronRightIcon className={styles.arrowIcon} />
                     </button>
                 )}
-                </div>
                 <div className={styles.header}>
                     <h2>Assign to theme</h2>
                     <div className={styles.rightButtonContainer}>
@@ -111,14 +110,32 @@ export const SelectTheme: React.FC<SelectThemeSidebarProps> = ({
                         />
                     </div>
                 </div>
+                {/* <div className={styles.searchBarContainer}>
+                    <TextField
+                        placeholder="Search lesson title"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        fullWidth
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </div> */}
+                {/* <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} /> */}
                 <table className={styles.lessonsTable}>
                     <thead>
                         <tr>
                             <th>Theme Code</th>
                             <th>Theme title</th>
+                            {/* <th>Date</th> */}
                             <th>Habit</th>
                             <th>Published</th>
-                            <th></th>
+                            {/* <th>Quiz</th> */}
                             <th>Select</th>
                         </tr>
                     </thead>

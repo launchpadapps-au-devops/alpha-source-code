@@ -27,7 +27,7 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
 
     useEffect(() => {
         // Fetch patients for the current page with the limit of 10 per page
-        dispatch(fetchPatients(currentPage));
+        dispatch(fetchPatients({ page: currentPage }));  // Pass object with page property
     }, [dispatch, currentPage]);
 
     const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
@@ -49,7 +49,7 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                         <th>Phone Number</th>
                         <th>Email</th>
                         <th>Date of Birth</th>
-                        <th>Lifestyle Plan</th>
+                        <th>Platform</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,7 +74,7 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                             <td>{patient.phone}</td>
                             <td>{patient.email}</td>
                             <td>{patient.dob}</td>
-                            <td>{patient.platform}</td>
+                            <td>{patient.planName  && patient.planName || 'No Plan Assigned'}</td>
                         </tr>
                     ))}
                 </tbody>

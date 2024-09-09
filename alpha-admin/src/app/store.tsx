@@ -1,7 +1,7 @@
 import { combineReducers, Action, ThunkAction, configureStore } from '@reduxjs/toolkit';
 import authSlice from '../components/pages/login/loginSlice';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import forgotPasswordReducer, { forgotAuthSlice } from '../components/pages/forgot-password/forgot-password-slice';
+// import forgotPasswordReducer from '../components/pages/forgot-password-components/forgot-password-slice';
 // import resetPasswordReducer from '../components/Pages/reset-password/reset-passwordSlice'
 import staffReducer from '../components/pages/care-team/care-team-components/create-care-team/create-care-teamSlice';
 import addNewStaffReducer from '../components/pages/care-team/care-team-components/create-care-team/create-care-teamSlice';
@@ -12,20 +12,17 @@ import lessonsReducer from '../components/pages/content/lessons/lesson-component
 import tipsReducer from '../components/pages/content/dailytips/viewTipsSlice';
 import fileUploadReducer from '../components/fileUpload/fileUploadSlice';
 import patientsSlice from '../components/pages/patient-Management/patientsSlice';
-import resetPasswordReducer from '../components/pages/forgot-password/forgot-password-components/reset-password/resetPasswordSlice';
 
 //Dashboard
 import activePatientReducer from '../components/pages/dashboard/dashboard-components/activePatientsSlice';
 
 //Patient Platform
 import getPatientDataOverviewReducer from '../components/pages/patient-platform/patientDataOverviewSlice';
-// import { forgotOtpVerifyAuthSlice } from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
-import forgotOtpVerifyAuthSlice from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
+
 const rootReducer = combineReducers({
     login: authSlice,
-    // forgotPassword: forgotAuthSlice,
-    forgotPasswordOtpVerify: forgotOtpVerifyAuthSlice,
-    resetPassword: resetPasswordReducer,
+    // forgotPassword: forgotPasswordReducer,
+    // resetPassword: resetPasswordReducer,
     staff: staffReducer,
     addNewStaff: addNewStaffReducer,
     removeStaff: removeStaffReducer,

@@ -21,7 +21,7 @@ interface PlanResponse {
 
 const getPlans = async (page:any): Promise<PlansResponse> => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/gateway/v1/plan?page=${page}&limit=10`;
+    const apiURL = `${config.BASE_URL}/gateway/v1/plan?page=${page}`;
     try {
         const response = await axios.get(apiURL, {
             headers: {

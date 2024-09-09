@@ -18,8 +18,7 @@ import { UnpublishLessonModal } from '../unpublish-lesson-modal/unpublishLessonM
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchLessonsThunk, updateLessonThunk } from '../lessonsSlice';
 import CategoryItem from '../../../categories/category-component/categoryItem/categoryItem';
-// import {TableFooter} from '../../../content-components/table-footer/TableFooter';
-import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
+import TableFooter from '../../../content-components/table-footer/TableFooter';
 
 // Define the Lesson type
 type Lesson = {
@@ -121,7 +120,7 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
     };
 
     const handleRowClick = (index: number) => {
-        navigate(`/content/lessons/viewlesson/${lessons[index].id}`, {
+        navigate(`/content/lessons/viewlesson/${lessons[index].lessonCode}`, {
             state: { isPublished: lessons[index].isPublished },
         });
     };
@@ -177,7 +176,7 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
                 </Table>
             </TableContainer>
             <div className={styles.pagination}>
-                <CustomPagination
+                <TableFooter
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
                     currentPage={currentPage}

@@ -9,7 +9,6 @@ import { useEffect } from 'react';
 import { getStaffRoleThunk, staffThunk } from '../create-care-team/create-care-teamSlice';
 import { Filter } from '@mui/icons-material';
 import React from 'react';
-import { BackButton } from '../../../../back-button/backButton';
 
 export interface CareTeamProfileProps {
     className?: string;
@@ -68,14 +67,9 @@ export const CareTeamProfile = ({ className }: CareTeamProfileProps) => {
     const handleEditClick = (memberId: string) => {
         navigate(`/careteam/editteamcare/${memberId}`);
     };
-
-    const handleBackClick = () => {
-        navigate(-1); // This will navigate to the previous page
-    };
-
     return (
         <>
-            <BackButton onClick={handleBackClick}/>
+            {' '}
             {member && (
                 <div className={classNames(styles['care-team-profile'], className)}>
                     <div className={classNames(styles['top-header-block'])}>

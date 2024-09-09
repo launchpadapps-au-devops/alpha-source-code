@@ -1,17 +1,16 @@
 .table-footer {
-  flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
   border-top: 1px solid #ccc;
-  height: 100vh;
+}
+
+.page-info {
+  font-size: 1rem;
 }
 
 button {
-  display: flex; /* Ensure the button uses flexbox */
-  align-items: center; /* Vertically center the content */
-  justify-content: center; /* Horizontally center the content */
   background: none;
   border: none;
   cursor: pointer;
@@ -35,9 +34,4 @@ button:disabled {
 
 .next-button {
   margin-left: auto;
-}
-
-.page-info {
-  font-size: 1rem;
-  font-weight: bold;
 }

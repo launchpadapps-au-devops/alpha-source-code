@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './themeDetails.module.scss';
 import { useAppDispatch, useAppSelector } from '../../../../../../../../app/hooks';
-import { fetchCategoriesForLessonsThunk, fetchCategoriesThunk } from '../../../../../categories/category-component/categorySlice';
+import { fetchCategoriesThunk } from '../../../../../categories/category-component/categorySlice';
 
 interface ThemeDetailsProps {
     onCategoryChange: (category: string) => void; // Prop to pass selected category
@@ -12,19 +12,8 @@ interface ThemeDetailsProps {
 const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, setData }) => {
     const [category, setCategory] = useState<string>(data.themeData.category?.id || '');
 
-    // const categories = useAppSelector((state) => state.categories.categories.categories);
-    const [categories,setCategories] = useState([]);
+    const categories = useAppSelector((state) => state.categories.categories.categories);
     const dispatch = useAppDispatch();
-
-    useEffect(() => {
-        dispatch(fetchCategoriesForLessonsThunk(100)).then((response: any) => {
-            if (response.payload) {
-                const activeCategories = response.payload.data.filter((cat: { status: string; })=>cat.status.toLowerCase() === 'active');
-                setCategories(activeCategories);
-            }
-        }
-        );
-        }, [dispatch]);
 
     useEffect(() => {
         dispatch(fetchCategoriesThunk(1));
@@ -79,9 +68,9 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                     required
                 >
                     <option value="">Select category</option>
-                    {categories.map((category: any) => (
-                        <option key={category.id} value={category.id}>
-                            {category.name}
+                    {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                            {cat.name}
                         </option>
                     ))}
                 </select>

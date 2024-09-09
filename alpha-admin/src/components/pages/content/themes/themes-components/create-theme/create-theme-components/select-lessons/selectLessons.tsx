@@ -81,7 +81,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
 
             // Extract lessons from the response and set them in the Lessons state
             // const extractedLessons = res.payload.data.Flatmap((lesson: any) =>
-            //     lessons.map((lesson: any) =>
+            //     lessons.map((lesson: any) => 
             // ({
             //         code: lesson.id,
             //         title: lesson.name,
@@ -135,7 +135,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
     };
 
     const filteredLessons = Lessons.filter((lesson: Lesson) =>
-        lesson.name.toLowerCase().includes(searchQuery.toLowerCase())
+        (lesson.name.toLowerCase()).includes(searchQuery.toLowerCase())
     );
 
     const handleCreateNewLesson = () => {
