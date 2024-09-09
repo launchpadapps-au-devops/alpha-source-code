@@ -22,7 +22,7 @@ export class PatientService {
             lastName: patient.lastName,
             nickName: patient.nickName,
             planName: patient.plan?.name,
-            planId: patient.plan?.d,
+            planId: patient.plan?.id,
             startDate: patient.createdAt,
             totalPoint: patient.totalPoint,
             email: patient.email,
@@ -72,8 +72,21 @@ export class PatientService {
             }
         );
 
+        const userPlans = await userPlanService.findUserPlansByUserIds(data.map(patient => patient.id));
+        const patientWithPlanData = [];
+
+        data.forEach(patient => {
+            const userPlan = userPlans.find(userPlan => userPlan.userId === patient.id);
+            patientWithPlanData.push(
+                this.#formatPatientData({
+                    ...userPlan,
+                    ...patient,
+                })
+            );
+        });
+
         return {
-            data: data.map(patient => this.#formatPatientData(patient)),
+            data: patientWithPlanData,
             limit,
             page,
             totalRecords
