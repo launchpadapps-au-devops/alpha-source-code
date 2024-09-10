@@ -12,7 +12,6 @@ import { Checkbox } from '@mui/material';
 import { addNewPatient } from '../patientsSlice';
 import { toast } from 'react-toastify';
 import { AppButton } from '../../../app-button/app-button';
-import Sidebar from '../../content/content-components/sidebar/Sidebar';
 import { SidebarPatient } from '../patient-sidebar/patientSidebar';
 
 export interface CreatePatientProps {
@@ -51,6 +50,19 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
         patientConsent: false,
     });
 
+    const [formErrors, setFormErrors] = useState({
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        email: '',
+        gender: '',
+        dateOfBirth: '',
+        address: '',
+        height: '',
+        weight: '',
+        consent: '',
+    });
+
     const [openModal, setOpenModal] = useState(false);
 
     // Automatically calculate BMI when height or weight changes
@@ -68,14 +80,29 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
 
     const handleChange = (field: string, value: any) => {
         if (field.startsWith('dateOfBirth.')) {
-            const dateField = field.split('.')[1];
+            // Define dateField as 'day' | 'month' | 'year'
+            const dateField = field.split('.')[1] as 'day' | 'month' | 'year';
+
+            // Create a temporary object to hold the updated value
+            const updatedDateOfBirth = {
+                ...formValues.dateOfBirth,
+                [dateField]: value, // Update the correct part of the dateOfBirth
+            };
+
             setFormValues((prevValues) => ({
                 ...prevValues,
-                dateOfBirth: {
-                    ...prevValues.dateOfBirth,
-                    [dateField]: value,
-                },
+                dateOfBirth: updatedDateOfBirth,
             }));
+
+            // Check if all parts of the date of birth are filled
+            const { day, month, year } = updatedDateOfBirth;
+
+            if (day && month && year) {
+                setFormErrors((prevErrors) => ({
+                    ...prevErrors,
+                    dateOfBirth: '', // Clear error when all date fields are filled
+                }));
+            }
         } else {
             setFormValues((prevValues) => ({
                 ...prevValues,
@@ -85,17 +112,100 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
     };
 
     const handleFormSuccessModal = async () => {
-        const { day, month, year } = formValues.dateOfBirth;
+        let hasError = false;
 
-        if (!day || !month || !year) {
-            alert('Please enter a valid date of birth');
-            return;
+        // Validate fields
+        if (!formValues.firstName) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                firstName: 'First name is required',
+            }));
+            hasError = true;
         }
 
-        const formattedDay = day.padStart(2, '0');
-        const formattedMonth = month.padStart(2, '0');
+        if (!formValues.lastName) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                lastName: 'Last name is required',
+            }));
+            hasError = true;
+        }
 
-        const dob = `${year}-${formattedMonth}-${formattedDay}`;
+        if (!formValues.phoneNumber) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                phoneNumber: 'Phone number is required',
+            }));
+            hasError = true;
+        }
+
+        if (!formValues.email) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                email: 'Email is required',
+            }));
+            hasError = true;
+        }
+
+        if (!formValues.gender) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                gender: 'Gender is required',
+            }));
+            hasError = true;
+        }
+
+        if (
+            !formValues.dateOfBirth.day ||
+            !formValues.dateOfBirth.month ||
+            !formValues.dateOfBirth.year
+        ) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                dateOfBirth: 'Date of birth is required',
+            }));
+            hasError = true;
+        }
+
+        if (!formValues.address) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                address: 'Address is required',
+            }));
+            hasError = true;
+        }
+
+        if (!formValues.height) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                height: 'Height is required',
+            }));
+            hasError = true;
+        }
+
+        if (!formValues.weight) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                weight: 'Weight is required',
+            }));
+            hasError = true;
+        }
+
+        if (!formValues.patientConsent) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                consent: 'Patient consent is required',
+            }));
+            hasError = true;
+        }
+
+        if (hasError) {
+            return; // Do not proceed if there are errors
+        }
+
+        const formattedDay = formValues.dateOfBirth.day.padStart(2, '0');
+        const formattedMonth = formValues.dateOfBirth.month.padStart(2, '0');
+        const dob = `${formValues.dateOfBirth.year}-${formattedMonth}-${formattedDay}`;
 
         const patientData: CreatePatientData = {
             firstName: formValues.firstName,
@@ -112,15 +222,48 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
         };
 
         try {
-            console.log('Patient Data:', JSON.stringify(patientData)); // Debugging output
-            await dispatch(addNewPatient(patientData));
-            toast.success('Patient profile created.');
-            navigate('/patient-profile')
-            setOpenModal(true);
-        } catch (error) {
-            console.error('Error adding patient:', error);
-            toast.error('Failed to create patient profile.');
+            const response = await dispatch(addNewPatient(patientData)).unwrap();
+
+            if (response) {
+                toast.success('Patient profile created.');
+                navigate('/patient-profile');
+                setOpenModal(true);
+            }
+        } catch (error: any) {
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                phoneNumber: 'Phone number already exists',
+            }));
         }
+    };
+
+    const handleCancel = () => {
+        setFormValues({
+            firstName: '',
+            lastName: '',
+            email: '',
+            phoneNumber: '',
+            gender: '',
+            dateOfBirth: { day: '', month: '', year: '' },
+            address: '',
+            height: '',
+            weight: '',
+            bmi: '',
+            patientConsent: false,
+        });
+
+        setFormErrors({
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
+            email: '',
+            gender: '',
+            dateOfBirth: '',
+            address: '',
+            height: '',
+            weight: '',
+            consent: '',
+        });
     };
 
     const handleCloseModal = () => {
@@ -130,7 +273,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
 
     return (
         <>
-        <SidebarPatient/>
+            <SidebarPatient />
             <div className={classNames(styles['create-team-wrapper'], className)}>
                 <div>
                     <h2>Create new patient</h2>
@@ -146,9 +289,24 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 placeholder="First name"
                                 type="text"
                                 value={formValues.firstName}
-                                onChange={(e) => handleChange('firstName', e.target.value)}
+                                onChange={(e) => {
+                                    setFormErrors((prevErrors) => ({
+                                        ...prevErrors,
+                                        firstName: '',
+                                    }));
+                                    handleChange('firstName', e.target.value);
+                                }}
+                                className={classNames({
+                                    [styles['error-field']]: formErrors.firstName,
+                                })}
                             />
+                            {formErrors.firstName && (
+                                <div className={styles['error-message']}>
+                                    {formErrors.firstName}
+                                </div>
+                            )}
                         </div>
+
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Last name" />
                             <InputField
@@ -157,9 +315,22 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 placeholder="Last name"
                                 type="text"
                                 value={formValues.lastName}
-                                onChange={(e) => handleChange('lastName', e.target.value)}
+                                onChange={(e) => {
+                                    setFormErrors((prevErrors) => ({
+                                        ...prevErrors,
+                                        lastName: '',
+                                    }));
+                                    handleChange('lastName', e.target.value);
+                                }}
+                                className={classNames({
+                                    [styles['error-field']]: formErrors.lastName,
+                                })}
                             />
+                            {formErrors.lastName && (
+                                <div className={styles['error-message']}>{formErrors.lastName}</div>
+                            )}
                         </div>
+
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Phone number" />
                             <InputField
@@ -168,9 +339,24 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 placeholder="Phone number"
                                 type="text"
                                 value={formValues.phoneNumber}
-                                onChange={(e) => handleChange('phoneNumber', e.target.value)}
+                                onChange={(e) => {
+                                    setFormErrors((prevErrors) => ({
+                                        ...prevErrors,
+                                        phoneNumber: '', // Clear error when user types
+                                    }));
+                                    handleChange('phoneNumber', e.target.value);
+                                }}
+                                className={classNames({
+                                    [styles['error-field']]: formErrors.phoneNumber,
+                                })}
                             />
+                            {formErrors.phoneNumber && (
+                                <div className={styles['error-message']}>
+                                    {formErrors.phoneNumber}
+                                </div>
+                            )}
                         </div>
+
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Email address" />
                             <InputField
@@ -179,22 +365,45 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 placeholder="Email address"
                                 type="email"
                                 value={formValues.email}
-                                onChange={(e) => handleChange('email', e.target.value)}
+                                onChange={(e) => {
+                                    setFormErrors((prevErrors) => ({ ...prevErrors, email: '' }));
+                                    handleChange('email', e.target.value);
+                                }}
+                                className={classNames({
+                                    [styles['error-field']]: formErrors.email,
+                                })}
                             />
+                            {formErrors.email && (
+                                <div className={styles['error-message']}>{formErrors.email}</div>
+                            )}
                         </div>
+
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Gender" />
                             <CustomizedSelects
                                 id="gender"
                                 value={formValues.gender}
                                 displayEmpty
-                                onChange={(e) => handleChange('gender', e.target.value as string)}
-                                MenuProps={MenuProps}
-                                renderValue={(selected) => {
-                                    if (!selected) {
-                                        return <em>Gender</em>;
+                                onChange={(e) => {
+                                    handleChange('gender', e.target.value);
+                                    if (e.target.value) {
+                                        setFormErrors((prevErrors) => ({
+                                            ...prevErrors,
+                                            gender: '',
+                                        })); // Clear error when value is selected
                                     }
-                                    return selected as string;
+                                }}
+                                MenuProps={MenuProps}
+                                className={classNames({
+                                    'Mui-error': !!formErrors.gender, // Apply the error class if there’s an error
+                                })}
+                                renderValue={(selected: unknown) => {
+                                    if (!selected || selected === '') {
+                                        return (
+                                            <span className={styles['placeholder']}>Gender</span>
+                                        ); // Placeholder when no value is selected
+                                    }
+                                    return String(selected); // Display the selected value
                                 }}
                             >
                                 {['Male', 'Female', 'Non-Binary'].map((option) => (
@@ -203,6 +412,10 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                     </CoustomMenuItem>
                                 ))}
                             </CustomizedSelects>
+
+                            {formErrors.gender && ( // Only render the error message once
+                                <div className={styles['error-message']}>{formErrors.gender}</div>
+                            )}
                         </div>
 
                         <div className={styles['input-wrapper']}>
@@ -217,7 +430,9 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                     onChange={(e) =>
                                         handleChange('dateOfBirth.day', e.target.value)
                                     }
-                                    className={styles['dob-input']}
+                                    className={classNames(styles['dob-input'], {
+                                        [styles['error-field']]: formErrors.dateOfBirth, // Highlight error if there’s an error
+                                    })}
                                 />
                                 <InputField
                                     id="dob-month"
@@ -228,7 +443,9 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                     onChange={(e) =>
                                         handleChange('dateOfBirth.month', e.target.value)
                                     }
-                                    className={styles['dob-input']}
+                                    className={classNames(styles['dob-input'], {
+                                        [styles['error-field']]: formErrors.dateOfBirth,
+                                    })}
                                 />
                                 <InputField
                                     id="dob-year"
@@ -239,10 +456,18 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                     onChange={(e) =>
                                         handleChange('dateOfBirth.year', e.target.value)
                                     }
-                                    className={styles['dob-input']}
+                                    className={classNames(styles['dob-input'], {
+                                        [styles['error-field']]: formErrors.dateOfBirth,
+                                    })}
                                 />
                             </div>
+                            {formErrors.dateOfBirth && (
+                                <div className={styles['error-message']}>
+                                    {formErrors.dateOfBirth}
+                                </div>
+                            )}
                         </div>
+
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Address" />
                             <InputField
@@ -251,9 +476,19 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 placeholder="Address"
                                 type="text"
                                 value={formValues.address}
-                                onChange={(e) => handleChange('address', e.target.value)}
+                                onChange={(e) => {
+                                    setFormErrors((prevErrors) => ({ ...prevErrors, address: '' }));
+                                    handleChange('address', e.target.value);
+                                }}
+                                className={classNames({
+                                    [styles['error-field']]: formErrors.address,
+                                })}
                             />
+                            {formErrors.address && (
+                                <div className={styles['error-message']}>{formErrors.address}</div>
+                            )}
                         </div>
+
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Height (cm)" />
                             <InputField
@@ -262,9 +497,19 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 placeholder="Height"
                                 type="text"
                                 value={formValues.height}
-                                onChange={(e) => handleChange('height', e.target.value)}
+                                onChange={(e) => {
+                                    setFormErrors((prevErrors) => ({ ...prevErrors, height: '' }));
+                                    handleChange('height', e.target.value);
+                                }}
+                                className={classNames({
+                                    [styles['error-field']]: formErrors.height,
+                                })}
                             />
+                            {formErrors.height && (
+                                <div className={styles['error-message']}>{formErrors.height}</div>
+                            )}
                         </div>
+
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Weight (kg)" />
                             <InputField
@@ -273,9 +518,19 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 placeholder="Weight"
                                 type="text"
                                 value={formValues.weight}
-                                onChange={(e) => handleChange('weight', e.target.value)}
+                                onChange={(e) => {
+                                    setFormErrors((prevErrors) => ({ ...prevErrors, weight: '' }));
+                                    handleChange('weight', e.target.value);
+                                }}
+                                className={classNames({
+                                    [styles['error-field']]: formErrors.weight,
+                                })}
                             />
+                            {formErrors.weight && (
+                                <div className={styles['error-message']}>{formErrors.weight}</div>
+                            )}
                         </div>
+
                         <div className={classNames(styles['input-wrapper'])}>
                             <InputFieldLabel labelText="BMI (calculated automatically)" />
                             <InputField
@@ -289,36 +544,34 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                         </div>
                     </div>
                 </div>
+
                 <div className={styles['consent-wrapper']}>
                     <Checkbox
                         id="patient-consent"
                         checked={formValues.patientConsent}
-                        onChange={(e) => handleChange('patientConsent', e.target.checked)}
-                        className={styles['circle-checkbox']}
+                        onChange={(e) => {
+                            setFormErrors((prevErrors) => ({ ...prevErrors, consent: '' })); // Clear error
+                            handleChange('patientConsent', e.target.checked);
+                        }}
                         color="primary"
                     />
-
                     <label htmlFor="patient-consent" className={styles['consent-label-djnin']}>
-                        I confirm that I have the patient’s consent to edit their details with
+                        I confirm that I have the patient’s consent to edit their details with Alpha
+                        according to the&nbsp;
                         <span className={styles['nowrap']}>
-                            {' '}
-                            Alpha according to the
                             <a href="#" className={styles['terms-link']}>
-                                {' '}
                                 Terms & Conditions of Alpha.
                             </a>
                         </span>
                     </label>
                 </div>
+
                 <div className={styles['button-action-wrapper']}>
-                    <AppButton
-                        buttonText="Cancel"
-                        onButtonClick={() => navigate('/careteam')}
-                        //className={classNames(AppButton_module['button-no-decoration'])}
-                    />
+                    <AppButton buttonText="Cancel" onButtonClick={handleCancel} />
                     <AppButton buttonText="Save Patient" onButtonClick={handleFormSuccessModal} />
                 </div>
             </div>
+
             {openModal && (
                 <FormSucessModal
                     open={openModal}

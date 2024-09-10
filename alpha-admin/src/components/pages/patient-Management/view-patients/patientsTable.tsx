@@ -49,7 +49,7 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                         <th>Phone Number</th>
                         <th>Email</th>
                         <th>Date of Birth</th>
-                        <th>Platform</th>
+                        <th>Lifestyle Plan</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -1,38 +1,122 @@
-// src/LessonTags.tsx
 import React from 'react';
 import './lessonTag.scss';
 import Dropdown from './dropdown/dropDown';
 
-export interface LessonTagsProps {
+// Define a type for the available tags
+type Tag =
+    | 'Ethnicity'
+    | 'Leisure Preferences'
+    | 'Dietary Restrictions'
+    | 'Physical Limitation'
+    | 'Physical Limitation- Follow up'
+    | 'Unhealthy Eating Habits'
+    | 'Motivation to Change'
+    | 'Goals/Motivators'
+    | 'Young Dependents'
+    | 'Adult Dependents';
+
+interface LessonTagsProps {
     data: any;
     setData: any;
     isEditMode?: boolean;
 }
 
 export const LessonTags = ({ data, setData, isEditMode }: LessonTagsProps) => {
-    const tags = [
-        'Motivation',
-        'Gender',
-        'Cultural background',
-        'Living situation',
-        'Food intolerances',
-        'Lifestyle',
-        'Physical limitation',
+    const tags: Tag[] = [
+        'Ethnicity',
+        'Leisure Preferences',
+        'Dietary Restrictions',
+        'Physical Limitation',
+        'Physical Limitation- Follow up',
+        'Unhealthy Eating Habits',
+        'Motivation to Change',
+        'Goals/Motivators',
+        'Young Dependents',
+        'Adult Dependents',
     ];
 
-    const options = [
-        'All',
-        'Label 1',
-        'Label 2',
-        'Label 3',
-        'Label 4',
-        'Label 5',
-        'Label 6',
-        'Label 7',
-        'Label 8',
-        'Label 9',
-        'Label 10',
-    ];
+    // Simplified optionsMap with string arrays
+    const optionsMap: Record<Tag, string[]> = {
+        Ethnicity: [
+            'Australian',
+            'Aboriginal',
+            'Asian',
+            'British',
+            'Caucasian',
+            'Polynesians',
+            'Middle Eastern',
+            'African',
+            'Latin',
+            'Other',
+            'All'
+        ],
+        'Leisure Preferences': [
+            'Cooking',
+            'Eating',
+            'Socialising',
+            'Family time',
+            'Solitude',
+            'Outdoors',
+            'Indoors',
+            'Other',
+            'All'
+        ],
+        'Dietary Restrictions': [
+            'Gluten-free',
+            'Lactose-free',
+            'Nut free',
+            'Seafood allergy',
+            'Egg allergy',
+            'No allergy',
+            'Other',
+            'All'
+        ],
+        'Physical Limitation': [
+            'None',
+            'Some limitation',
+            'Moderately limited',
+            'Significantly limited',
+            'Completely limited',
+            'All'
+        ],
+        'Physical Limitation- Follow up': [
+            'Head',
+            'Upper limb',
+            'Torso',
+            'Lower back',
+            'Hips',
+            'Knees',
+            'Lower limb',
+            'Other',
+            'All'
+        ],
+        'Unhealthy Eating Habits': ['0', '1', '2', '3', '4', '5+', 'All'],
+        'Motivation to Change': [
+            'Very unmotivated',
+            'Somewhat unmotivated',
+            'Neutral',
+            'Somewhat motivated',
+            'Very motivated',
+            'All'
+        ],
+        'Goals/Motivators': [
+            "Family's advice",
+            "Doctor's advice",
+            'Lose weight',
+            'Want to be healthier',
+            'Want more energy',
+            'Want to live longer',
+            'Pre-diabetic',
+            'Fear of illness',
+            'Fear of illness 2',
+            'Decrease spending',
+            'Other',
+            'All'
+        ],
+        'Young Dependents': ['0 kids', '1 kid', '2 kids', '3 kids', '4 kids+', 'All'],
+        'Adult Dependents': ['0', '1', '2+', 'All'],
+    };
+    
 
     return (
         <div className="lesson-tags-container">
@@ -43,13 +127,17 @@ export const LessonTags = ({ data, setData, isEditMode }: LessonTagsProps) => {
                         <div className="lesson-tag-header">
                             <span>{tag}</span>
                         </div>
-                        <Dropdown
-                            label={tag}
-                            options={options}
-                            setData={setData}
-                            isEditMode={isEditMode}
-                            data={data}
-                        />
+                        {optionsMap[tag] ? (
+                            <Dropdown
+                                label={tag}
+                                options={optionsMap[tag]} // Passing string array options
+                                setData={setData}
+                                isEditMode={isEditMode}
+                                data={data}
+                            />
+                        ) : (
+                            <p>No options available for {tag}</p>
+                        )}
                     </div>
                 ))}
             </div>

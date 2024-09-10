@@ -11,20 +11,25 @@ export const CustomizedSelects = styled(Select)(({ theme }) => ({
     color: 'black',
     letterSpacing: 'normal',
 
+    // Use only MUI's default border styles and avoid adding an extra border
     '.MuiOutlinedInput-notchedOutline': {
-        border: '1px solid #22272B',
+        borderColor: '#22272B', // Default border color
     },
+
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-        border: '1px solid #095BA8',
+        borderColor: '#095BA8', // Focused state border
     },
 
     '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#22272B !important',
+        borderColor: '#22272B !important', // Hover state border
+    },
+
+    '&.Mui-error .MuiOutlinedInput-notchedOutline': {
+        borderColor: 'red', // Error state border color
     },
 
     '.MuiSelect-select': {
         padding: '12px !important',
-        // border: '1px solid #e0e0e0',
         backgroundColor: 'transparent',
         borderRadius: '6px',
         em: {
@@ -32,6 +37,8 @@ export const CustomizedSelects = styled(Select)(({ theme }) => ({
         },
     },
 }));
+
+
 
 export const CoustomMenuItem = styled(MenuItem)(({ theme }) => ({
     fontSize: '14px',
@@ -41,37 +48,6 @@ export const CoustomMenuItem = styled(MenuItem)(({ theme }) => ({
     // padding: '10px 16px !important',
 }));
 
-// export const CoustomMenuCheckMark = styled(MenuItem)(({ theme }) => ({
-//     fontSize: '14px',
-//     lineHeight: '20px',
-//     fontFamily: 'inter',
-//     color: '#333',
-//     padding: '10px 12px !important',
-//     textTransform: 'capitalize',
-//     borderBottom: '1px solid #e0e0e0',
-//     '&:last-child': {
-//         borderBottom: 'none',
-//     },
-//     '&:first-child': {
-//         borderBottom: 'none',
-//         opacity: '0',
-//         height: '0px',
-//         padding: '0px 0px !important',
-//     },
-//     '&.Mui-selected::after': {
-//         content: '""',
-//         width: '20px',
-//         height: '20px',
-//         position: 'absolute',
-//         right: '40px',
-//         backgroundImage: `url(${CheckMarkIcon})`, // Correct way to reference the image
-//         backgroundRepeat: 'no-repeat',
-//         backgroundPosition: 'center', // Adjust the position as needed
-//         backgroundSize: 'contain',
-//         // backgroundSize: '16px 16px',
-//         // background: 'red !important'
-//     },
-// }));
 
 const ITEM_HEIGHT = 40;
 const ITEM_PADDING_TOP = 10;

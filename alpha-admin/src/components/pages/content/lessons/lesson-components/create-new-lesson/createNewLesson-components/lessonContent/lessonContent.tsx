@@ -7,6 +7,10 @@ import { Checkbox, Menu, MenuItem } from '@mui/material';
 import { DeleteButton } from '../../../../../content-components/delete-button/delete-button';
 import { useAppDispatch } from '../../../../../../../../app/hooks';
 import { uploadFile } from '../../../../../../../fileUpload/fileUploadSlice';
+import { EditorState } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import { convertToHTML } from 'draft-convert';
 
 export interface LessonContentProps {
     screenData: any[];
@@ -35,8 +39,13 @@ export const LessonContent = ({
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [isFileUploaded, setIsFileUploaded] = useState(false); // State to track file upload
     const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error messages
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
     const dispatch = useAppDispatch();
+
+    const onEditorStateChange = (newState: any) => {
+        setEditorState(newState);
+    };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const file = event.target.files?.[0];
@@ -197,16 +206,19 @@ export const LessonContent = ({
                     </div>
                     <div className="content input-field">
                         <label>Content</label>
-                        <input
-                            type="text"
-                            placeholder="Enter content"
-                            value={data.screenData[index]?.content || ''}
-                            onChange={(e) => {
+                        <Editor
+                            editorState={editorState}
+                            toolbarClassName="toolbarClassName"
+                            wrapperClassName="wrapperClassName"
+                            editorClassName="custom-editor"
+                            onEditorStateChange={(newState) => {
+                                setEditorState(newState);
                                 const updatedScreenData = [...data.screenData];
-                                updatedScreenData[index].content = e.target.value;
+                                updatedScreenData[index].content = convertToHTML(
+                                    newState.getCurrentContent()
+                                );
                                 setData({ ...data, screenData: updatedScreenData });
                             }}
-                            required
                         />
                     </div>
                 </div>

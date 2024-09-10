@@ -34,6 +34,21 @@ const getCategories = async (page: any): Promise<CategoriesResponse> => {
     }
 };
 
+const getCategoriesForLesson = async (limit: any): Promise<CategoriesResponse> => {
+    const accessToken = localStorage.getItem('accessToken');
+    const apiURL = `${config.BASE_URL}/gateway/v1/category?limit=${limit}`;
+    try {
+        const response = await axios.get(apiURL, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const getCategoryById = async (id: number): Promise<CategoryResponse> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/category/${id}`;
@@ -109,4 +124,4 @@ const updateCategory = async (
     }
 };
 
-export { getCategories, getCategoryById, addCategory, addCategoriesBulk, updateCategory };
+export { getCategories, getCategoriesForLesson, getCategoryById, addCategory, addCategoriesBulk, updateCategory };

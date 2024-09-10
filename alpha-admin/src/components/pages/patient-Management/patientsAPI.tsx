@@ -70,6 +70,9 @@ export const getPatients = async (
     }
 };
 
+// Update your getPatients function
+
+
 
 // Update your getPatients function
 

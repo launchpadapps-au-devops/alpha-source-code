@@ -9,7 +9,8 @@ import { AppDispatch, RootState } from '../../../../../app/store';
 import { useEffect, useState } from 'react';
 import { staffThunk } from '../create-care-team/create-care-teamSlice';
 import { useNavigate } from 'react-router-dom';
-import TableFooter from '../../../content/content-components/table-footer/TableFooter';
+// import {TableFooter} from '../../../content/content-components/table-footer/TableFooter';
+import { CustomPagination } from '../../../content/content-components/custom-pagination/customPagination';
 
 export interface CareTeamTableProps {
     className?: string;
@@ -86,8 +87,10 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
                                     {console.log(member)}
                                 </div>
                             </td>
-                            <td>{member.role.name}</td>
-                            <td>{member.permissions.length > 0 ? member.permissions[0].name : null}</td>
+                            {/* <td>{member.role.name}</td>
+                            <td>{member.permissions.length > 0 ? member.permissions[0].name : null}</td> */}
+                            <td>{member.role}</td>
+                            <td>{member.permissions.length > 0 ? member.permissions[0] : null}</td>
                             <td>
                                 <AppButton icon='edit' className={classNames(AppButton_module['button-no-decoration'], styles['table-icon-button'])} onButtonClick={() => handleEditClick(member.id)} showLeftIcon />
                             </td>
@@ -106,7 +109,7 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
             </tbody> */}
             </table>
             <div className={styles.pagination}>
-                <TableFooter
+                <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
                     currentPage={currentPage}

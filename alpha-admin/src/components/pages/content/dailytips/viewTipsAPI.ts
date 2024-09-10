@@ -22,7 +22,7 @@ interface TipResponse {
 
 const getTips = async (page: any): Promise<TipsResponse> => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/gateway/v1/daily-tip?page=${page}`;
+    const apiURL = `${config.BASE_URL}/gateway/v1/daily-tip?page=${page}&limit=10`;
     try {
         const response = await axios.get(apiURL, {
             headers: {

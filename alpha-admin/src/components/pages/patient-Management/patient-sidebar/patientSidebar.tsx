@@ -95,7 +95,10 @@ export const SidebarPatient = ({ className }: SidebarPatientProps)  => {
 
     const handleItemClick = (item: string, path?: string) => {
         if (item === 'Patient Dashboard') {
+            // Toggle the subcategories for Patient Dashboard
             setExpandedCategory(expandedCategory === item ? null : item);
+            // Navigate to the Patient Dashboard path
+            navigate('/patient-dashboard', { state: { patientId }, replace: true });
         } else {
             setExpandedCategory(null);
             if (item === 'Patient Profile') {
@@ -106,6 +109,7 @@ export const SidebarPatient = ({ className }: SidebarPatientProps)  => {
         }
         setSelectedItem(item);
     };
+    
 
     return (
         <>

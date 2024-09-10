@@ -21,7 +21,7 @@ interface ThemeResponse {
 
 const getThemes = async (page: any): Promise<ThemesResponse> => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/gateway/v1/theme?page=${page}`;
+    const apiURL = `${config.BASE_URL}/gateway/v1/theme?page=${page}&limit=10`;
     try {
         const response = await axios.get(apiURL, {
             headers: {

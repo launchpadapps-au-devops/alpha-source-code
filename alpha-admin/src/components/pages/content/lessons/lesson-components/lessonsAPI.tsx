@@ -21,7 +21,7 @@ interface LessonResponse {
 
 const getLessons = async (page:any): Promise<LessonsResponse> => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/gateway/v1/lesson?page=${page}`;
+    const apiURL = `${config.BASE_URL}/gateway/v1/lesson?page=${page}&limit=10`;
     try {
         const response = await axios.get(apiURL, {
             headers: {

@@ -7,7 +7,8 @@ import { AppButton } from '../../app-button/app-button';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../app/store';
 import { useState } from 'react';
-import { forgotPasswordThunk } from './forgot-password-slice';
+import { sendOTPThunk } from './forgot-password-slice';
+// import { forgotPasswordThunk } from './forgot-password-slice';
 
 
 
@@ -29,7 +30,7 @@ export const ForgotPassword = ({ className }: ForgotPasswordProps) => {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         console.log('Dispatching forgotPassword API');
-        await dispatch(forgotPasswordThunk(email));
+        await dispatch(sendOTPThunk(email));
         navigate('/check-your-email', { state: { email } });
         // Add your submit logic here
     };

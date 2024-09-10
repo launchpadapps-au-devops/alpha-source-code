@@ -12,7 +12,7 @@ interface staff {
 const getStaff = async (page:any): Promise<staff> => {
     const accessToken = localStorage.getItem('accessToken');
     const token = 'token';
-    let apiURL = `${config.BASE_URL}/gateway/v1/staff?page=${page}`;
+    let apiURL = `${config.BASE_URL}/gateway/v1/staff?page=${page}&limit=10`;
     try {
         const response = await axios.get(apiURL, {
             headers: {

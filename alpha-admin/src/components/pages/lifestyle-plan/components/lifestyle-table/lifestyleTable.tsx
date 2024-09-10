@@ -14,7 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import styles from './lifestyleTable.module.scss';
 import { useAppDispatch } from '../../../../../app/hooks';
 import { fetchPlansThunk, updatePlanThunk } from '../lifeStyleSlice';
-import TableFooter from '../../../content/content-components/table-footer/TableFooter';
+// import {TableFooter} from '../../../content/content-components/table-footer/TableFooter';
+import { CustomPagination } from '../../../content/content-components/custom-pagination/customPagination';
 
 const initialLifeStyles = [
     { code: 1, name: 'Heart health', dateCreated: '26/06/2024', published: false },
@@ -69,34 +70,28 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
         setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
     };
 
-    const handleToggle = (theme: any) => {
+    const handleToggle = (plan: any) => {
+        const themeids = plan.themes.map((t: any) => t.id);
         const newTheme = {
             planData: {
-                planCode: parseInt(theme.code, 10),
-                name: theme.name,
-                image: theme.image,
-                description: theme.description,
-                internalNotes: theme.internalNotes,
-                status: theme.status,
-                isPublished: !theme.isPublished,
-                id: parseInt(theme.id, 10),
+                // planCode: parseInt(plan.code, 10),
+                // name: plan.name,
+                // image: plan.image,
+                // description: plan.description,
+                // internalNotes: plan.internalNotes,
+                // status: plan.status,
+                isPublished: !plan.isPublished,
+                // id: parseInt(plan.id, 10),
             },
-            themes: theme.themes.map((t: any) => ({
-                ...t,
-                id: parseInt(t.id, 10),
-                themeCode: parseInt(t.themeCode, 10),
-                categoryId: parseInt(t.categoryId, 10),
-            })),
+            themes: themeids,
         };
-        dispatch(updatePlanThunk({ id: newTheme.planData.id, plan: newTheme })).then(
-            (data: any) => {
-                dispatch(fetchPlansThunk(1)).then((data: any) => {
-                    if (data.payload) {
-                        setPlans(data.payload.data);
-                    }
-                });
-            }
-        );
+        dispatch(updatePlanThunk({ id: plan.id, plan: newTheme })).then((data: any) => {
+            dispatch(fetchPlansThunk(1)).then((data: any) => {
+                if (data.payload) {
+                    setPlans(data.payload.data);
+                }
+            });
+        });
     };
 
     const handlePublish = () => {
@@ -154,18 +149,18 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {activePlans.map((theme: any, index: any) => (
+                        {activePlans.map((plan: any, index: any) => (
                             <TableRow
                                 key={index}
-                                onClick={() => handleRowClick(theme.id)}
+                                onClick={() => handleRowClick(plan.id)}
                                 style={{ cursor: 'pointer' }}
                             >
-                                <TableCell className={styles['code']}>{theme.name}</TableCell>
-                                <TableCell>{theme.createdAt}</TableCell>
+                                <TableCell className={styles['code']}>{plan.name}</TableCell>
+                                <TableCell>{plan.createdAt}</TableCell>
                                 <TableCell onClick={(event) => event.stopPropagation()}>
                                     <Switch
-                                        checked={theme.isPublished}
-                                        onChange={() => handleToggle(theme)}
+                                        checked={plan.isPublished}
+                                        onChange={() => handleToggle(plan)}
                                     />
                                 </TableCell>
                             </TableRow>
@@ -174,7 +169,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                 </Table>
             </TableContainer>
             <div className={styles.pagination}>
-                <TableFooter
+                <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
                     currentPage={currentPage}

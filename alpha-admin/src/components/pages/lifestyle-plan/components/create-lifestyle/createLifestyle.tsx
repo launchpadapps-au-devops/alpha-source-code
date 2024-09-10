@@ -22,6 +22,7 @@ export interface CreateLifestyleProps {
 }
 
 export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
+
     const navigate = useNavigate();
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -127,10 +128,9 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
             },
             themes: selectedThemes,
         };
-            dispatch(updatePlanThunk({ id: id, plan: data })).then(() => {
-                navigate('/lifestyle-plan');
-            });
-        
+        dispatch(updatePlanThunk({ id: id, plan: data })).then(() => {
+            navigate('/lifestyle-plan');
+        });
     };
 
     const handleBackClick = () => {
@@ -148,7 +148,12 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
                                 {isEditMode ? 'Edit Lifestyle Plan' : 'Create new Lifestyle plan'}
                             </h4>
                             <div className={styles.leftButtonContainer}>
-                                {isEditMode && <DeleteButton showLeftIcon onButtonClick={() => handleDelete()}/>}{' '}
+                                {isEditMode && (
+                                    <DeleteButton
+                                        showLeftIcon
+                                        onButtonClick={() => handleDelete()}
+                                    />
+                                )}{' '}
                                 <EditButton
                                     buttonText="Cancel"
                                     onButtonClick={() => navigate('/lifestyle-plan')}

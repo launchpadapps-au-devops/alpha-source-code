@@ -12,7 +12,8 @@ import { DeleteButton } from '../../content-components/delete-button/delete-butt
 import { RootState } from '../../../../../app/store'; // Adjust import path as necessary
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../back-button/backButton';
-import TableFooter from '../../content-components/table-footer/TableFooter';
+// import {TableFooter} from '../../content-components/table-footer/TableFooter';
+import { CustomPagination } from '../../content-components/custom-pagination/customPagination';
 
 export interface ContentProps {
     className?: string;
@@ -310,7 +311,7 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
                     </List>
                 </div>
                 <div className={styles.pagination}>
-                    <TableFooter
+                    <CustomPagination
                         onNextPage={handleNextPage}
                         onPreviousPage={handlePreviousPage}
                         currentPage={currentPage}

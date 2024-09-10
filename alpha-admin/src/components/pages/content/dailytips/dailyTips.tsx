@@ -13,9 +13,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { addTipThunk, fetchTipsThunk } from './viewTipsSlice';
 import { DeleteButton } from '../content-components/delete-button/delete-button';
-import TableFooter from '../content-components/table-footer/TableFooter';
+// import {TableFooter} from '../content-components/table-footer/TableFooter';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../back-button/backButton';
+import { CustomPagination } from '../content-components/custom-pagination/customPagination';
 
 export interface ContentProps {
     className?: string;
@@ -298,7 +299,7 @@ export const DailyTips = ({ className }: ContentProps) => {
                     </List>
                 </div>
                 <div className={styles.pagination}>
-                    <TableFooter
+                    <CustomPagination
                         onNextPage={handleNextPage}
                         onPreviousPage={handlePreviousPage}
                         currentPage={currentPage}

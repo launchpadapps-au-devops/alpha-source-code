@@ -123,15 +123,19 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                 },
             ],
         },
-        lessonData: [],
+        lessonData: [1],
     });
 
     const submitData = () => {
+        const lessonIds = selectedLessons.map((lesson) => lesson.lessonCode);
+        console.log('selectedLessons', lessonIds, typeof lessonIds[0]);
+        data['lessonData'] = lessonIds;
+
         dispatch(addThemeThunk(data))
             .then((res: any) => {
-                if (res.payload.status === 200) {
+                if (res.payload.statusCode === 200) {
                     navigate('/content/themes');
-                } else if (res.payload.status === 201){
+                } else if (res.payload.statusCode === 201) {
                     navigate('/content/themes');
                 }
             })
@@ -174,6 +178,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     useEffect(() => {
         dispatch(fetchLessonsThunk(1)).then((res: any) => {
             setNewLessons(res.payload.data);
+            setSelectedLessons(res.payload.data.lessons);
             console.log(res.payload.data, 'lessons');
         });
     }, []);
@@ -184,78 +189,78 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
 
     return (
         <>
-          <BackButton onClick={handleBackClick}/>
-        <div className={classNames(styles.container, className)}>
-            <Sidebar />
-            <div className={styles.content}>
-                <header className={styles.header}>
-                    <h4>Create a new Theme</h4>
-                    <div className={styles.leftButtonContainer}>
-                        <EditButton
-                            buttonText="Cancel"
-                            onButtonClick={() => navigate('/content/themes')}
-                        />
-                    </div>
-                    <div className={styles.rightButtonContainer}>
-                        <EditButton
-                            buttonText="Save as draft"
-                            onButtonClick={() => navigate('/content/categories')}
-                        />
-                        <AppButton buttonText="Publish" onButtonClick={() => submitData()} />
-                    </div>
-                </header>
-                <div className={styles.themeContainer}>
-                    <div className={styles.leftColumn}>
-                        <ThemeDetails
-                            onCategoryChange={setCategory}
-                            data={data}
-                            setData={setData}
-                        />
-                    </div>
-                    <div className={styles.rightColumn}>
-                        <AddThemeDetails category={category} data={data} setData={setData} />
-                        {!hideLessons && (
-                            <LessonManagement
-                                selectedLessons={selectedLessons}
-                                onRemoveLesson={handleRemoveLessonFromTheme}
-                                onAddLessons={handleOpenSidebar}
-                                newLessons={newLessons}
+            <BackButton onClick={handleBackClick} />
+            <div className={classNames(styles.container, className)}>
+                <Sidebar />
+                <div className={styles.content}>
+                    <header className={styles.header}>
+                        <h4>Create a new Theme</h4>
+                        <div className={styles.leftButtonContainer}>
+                            <EditButton
+                                buttonText="Cancel"
+                                onButtonClick={() => navigate('/content/themes')}
                             />
-                        )}
-                        <div className={styles.section}>
-                            <div className={styles.habitHeader}>
-                                <h3>
-                                    Habit <Vector />
-                                </h3>
-                                {showHabit && (
-                                    <DeleteButton
-                                        showLeftIcon
-                                        buttonText="Remove habit"
-                                        className={styles.removeHabitButton}
-                                        onButtonClick={handleRemoveHabitClick}
+                        </div>
+                        <div className={styles.rightButtonContainer}>
+                            <EditButton
+                                buttonText="Save as draft"
+                                onButtonClick={() => navigate('/content/categories')}
+                            />
+                            <AppButton buttonText="Publish" onButtonClick={() => submitData()} />
+                        </div>
+                    </header>
+                    <div className={styles.themeContainer}>
+                        <div className={styles.leftColumn}>
+                            <ThemeDetails
+                                onCategoryChange={setCategory}
+                                data={data}
+                                setData={setData}
+                            />
+                        </div>
+                        <div className={styles.rightColumn}>
+                            <AddThemeDetails category={category} data={data} setData={setData} />
+                            {!hideLessons && (
+                                <LessonManagement
+                                    selectedLessons={selectedLessons}
+                                    onRemoveLesson={handleRemoveLessonFromTheme}
+                                    onAddLessons={handleOpenSidebar}
+                                    newLessons={newLessons}
+                                />
+                            )}
+                            <div className={styles.section}>
+                                <div className={styles.habitHeader}>
+                                    <h3>
+                                        Habit <Vector />
+                                    </h3>
+                                    {showHabit && (
+                                        <DeleteButton
+                                            showLeftIcon
+                                            buttonText="Remove habit"
+                                            className={styles.removeHabitButton}
+                                            onButtonClick={handleRemoveHabitClick}
+                                        />
+                                    )}
+                                </div>
+                                {showHabit ? (
+                                    <Habit showDeleteButton={false} data={data} setData={setData} />
+                                ) : (
+                                    <EditButton
+                                        buttonText="Add Habit"
+                                        onButtonClick={handleAddHabitClick}
                                     />
                                 )}
                             </div>
-                            {showHabit ? (
-                                <Habit showDeleteButton={false} data={data} setData={setData} />
-                            ) : (
-                                <EditButton
-                                    buttonText="Add Habit"
-                                    onButtonClick={handleAddHabitClick}
-                                />
-                            )}
                         </div>
                     </div>
+                    <SelectLessonSidebar
+                        isOpen={isSidebarOpen}
+                        onClose={handleCloseSidebar}
+                        lessons={lessons}
+                        onUpdateLessons={handleUpdateLessons}
+                        onAddLessonsToTheme={handleAddLessonsToTheme}
+                    />
                 </div>
-                <SelectLessonSidebar
-                    isOpen={isSidebarOpen}
-                    onClose={handleCloseSidebar}
-                    lessons={lessons}
-                    onUpdateLessons={handleUpdateLessons}
-                    onAddLessonsToTheme={handleAddLessonsToTheme}
-                />
             </div>
-        </div>
         </>
     );
 };

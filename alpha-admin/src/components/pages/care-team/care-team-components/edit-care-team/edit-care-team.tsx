@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../../../app/store';
 import { editStaffThunk } from './edit-care-teamSlice';
 import { getStaffRoleThunk } from '../create-care-team/create-care-teamSlice';
+import { BackButton } from '../../../../back-button/backButton';
 
 export const ROLE = {
     Nurse: 'Nurse',
@@ -126,8 +127,13 @@ export const EditCareTeam = ({ className }: EditCareTeamProps) => {
         setOpenModal(false);
     };
 
+    const handleBackClick = () => {
+        navigate(-1); // This will navigate to the previous page
+    };
+
     return (
         <>
+            <BackButton onClick={handleBackClick} />
             <div className={classNames(styles['create-team-wrapper'], className)}>
                 <div>
                     <h2>Edit care team member</h2>
