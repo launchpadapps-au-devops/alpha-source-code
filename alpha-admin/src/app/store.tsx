@@ -21,6 +21,8 @@ import activePatientReducer from '../components/pages/dashboard/dashboard-compon
 import getPatientDataOverviewReducer from '../components/pages/patient-platform/patientDataOverviewSlice';
 // import { forgotOtpVerifyAuthSlice } from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
 // import forgotOtpVerifyAuthSlice from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
+import getUserDataOverviewReducer from '../components/pages/dashboard/dashboard-components/user-data-overvie-store/userDataOverviewSlice';
+
 const rootReducer = combineReducers({
     login: authSlice,
     // forgotPassword: forgotAuthSlice,
@@ -40,6 +42,7 @@ const rootReducer = combineReducers({
 
     // Dashboard
     activePatients: activePatientReducer,
+    userDataOverview: getUserDataOverviewReducer,
 
     //Patient Platform
     patientDataAnalyticsOverview: getPatientDataOverviewReducer,

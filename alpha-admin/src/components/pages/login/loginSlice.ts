@@ -1,7 +1,7 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
-import { login } from "./loginAPI";  // Assuming this is the login function you've implemented to call the login API
-import { config } from "../../../config/config";
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { login } from './loginAPI'; // Assuming this is the login function you've implemented to call the login API
+import { config } from '../../../config/config';
 
 export interface UserDetails {
     accessToken: string;
@@ -19,7 +19,7 @@ export interface LoginSliceState {
     loggedIn: boolean;
     loading: boolean;
     error: string | null;
-    userType: string | null;  // Added userType to the state
+    userType: string | null; // Added userType to the state
 }
 
 const initialState: LoginSliceState = {
@@ -27,16 +27,16 @@ const initialState: LoginSliceState = {
         accessToken: '',
         accessTokenExpiresAt: '',
         refreshToken: '',
-        refreshTokenExpiresAt: ''
+        refreshTokenExpiresAt: '',
     },
     loggedIn: false,
     loading: false,
     error: null,
-    accessToken: "",
-    refreshTokenExpiresAt: "",
-    refreshToken: "",
-    accessTokenExpiresAt: "",
-    userType: null  // Initialize userType as null
+    accessToken: '',
+    refreshTokenExpiresAt: '',
+    refreshToken: '',
+    accessTokenExpiresAt: '',
+    userType: null, // Initialize userType as null
 };
 
 // Thunk for logging in and fetching user profile
@@ -46,7 +46,7 @@ export const loginThunk = createAsyncThunk(
         try {
             // First, call the login API
             const response = await login(userData.userEmail, userData.password);
-            console.log(response.data, "response.data");
+            console.log(response.data, 'response.data');
 
             // Save tokens in local storage
             localStorage.setItem('accessToken', response.data.accessToken);
@@ -58,19 +58,24 @@ export const loginThunk = createAsyncThunk(
             const accessToken = response.data.accessToken;
 
             // Second, call the profile API to fetch user details
-            const profileResponse = await axios.get( `${config.BASE_URL}/gateway/v1/staff/my-profile`, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`, // Pass the access token in the header
-                    'accept': 'application/json',
-                },
-            });
+            const profileResponse = await axios.get(
+                `${config.BASE_URL}/gateway/v1/staff/my-profile`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Pass the access token in the header
+                        accept: 'application/json',
+                    },
+                }
+            );
 
             // Extract userType from profile response
-            const { userType } = profileResponse.data.data;
+            const { id, userType } = profileResponse.data.data;
+
+            // Save loggedUserID (id) in local storage
+            localStorage.setItem('loggedUserID', id);
 
             // Return the combined response data (tokens and userType)
             return { ...response.data, userType };
-
         } catch (error: any) {
             return rejectWithValue(error.message);
         }
@@ -92,7 +97,7 @@ export const authSlice = createSlice({
                     accessToken,
                     accessTokenExpiresAt,
                     refreshToken,
-                    refreshTokenExpiresAt
+                    refreshTokenExpiresAt,
                 };
                 state.loggedIn = true;
             }
@@ -127,15 +132,15 @@ export const authSlice = createSlice({
                 state.loggedIn = true;
                 state.loading = false;
                 state.error = null;
-                state.userType = action.payload.userType; // Save userType to the state
+                state.userType = action.payload.userType;
             })
             .addCase(loginThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });
-    }
+    },
 });
 
 // Export the actions and reducer
-export const { initializeUser, setLoading , setLoggedOut} = authSlice.actions;
+export const { initializeUser, setLoading, setLoggedOut } = authSlice.actions;
 export default authSlice.reducer;

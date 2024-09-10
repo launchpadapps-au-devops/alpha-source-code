@@ -8,7 +8,8 @@ import DashboardBarGarph from './dashboard-components/dashboard-bar-graph/dashbo
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../app/store';
 import { fetchActivePatientsThunk } from './dashboard-components/activePatientsSlice';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { fetchUserDataOverviewThunk } from './dashboard-components/user-data-overvie-store/userDataOverviewSlice';
 
 export const Dashboard: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -16,17 +17,62 @@ export const Dashboard: React.FC = () => {
         (state: RootState) => state.activePatients.activePatients
     );
 
+    const { data: userOverviewData } = useSelector(
+        (state: RootState) => state.userDataOverview.userDataOverview
+    );
+
+    const loggedUserID = localStorage.getItem('loggedUserID');
+
+    useEffect(() => {
+        if (loggedUserID) {
+            dispatch(fetchUserDataOverviewThunk(loggedUserID));
+        }
+    }, [dispatch]);
+
     useEffect(() => {
         dispatch(fetchActivePatientsThunk());
     }, [dispatch]);
 
-    const legendItems = [
-        { label: 'Fats', percentage: '63.2%', color: '#006FF7' },
-        { label: 'Protein', percentage: '36.8%', color: '#FFAC2E' },
-        { label: 'Carbohydrates', percentage: '36.8%', color: '#CA6B6E' },
-    ];
+    // const legendItems = [
+    //     { label: 'Fats', percentage: '63.2%', color: '#006FF7' },
+    //     { label: 'Protein', percentage: '36.8%', color: '#FFAC2E' },
+    //     { label: 'Carbohydrates', percentage: '36.8%', color: '#CA6B6E' },
+    // ];
 
-    console.log(count);
+    // Calculate percentages dynamically based on userOverviewData
+    const legendItems = useMemo(() => {
+        if (userOverviewData?.nutritionData) {
+            const { protien = 0, carbs = 0, fats = 0 } = userOverviewData.nutritionData;
+            // const protien = 50;
+            // const carbs = 0;
+            // const fats = 50;
+
+            const total = protien + carbs + fats;
+
+            if (total === 0) {
+                return [
+                    { label: 'Fats', percentage: '0%', color: '#006FF7' },
+                    { label: 'Protein', percentage: '0%', color: '#FFAC2E' },
+                    { label: 'Carbohydrates', percentage: '0%', color: '#CA6B6E' },
+                ];
+            }
+
+            const fatPercentage = ((fats / total) * 100).toFixed(2);
+            const proteinPercentage = ((protien / total) * 100).toFixed(2);
+            const carbsPercentage = ((carbs / total) * 100).toFixed(2);
+
+            return [
+                { label: 'Fats', percentage: `${fatPercentage}%`, color: '#006FF7' },
+                { label: 'Protein', percentage: `${proteinPercentage}%`, color: '#FFAC2E' },
+                { label: 'Carbohydrates', percentage: `${carbsPercentage}%`, color: '#CA6B6E' },
+            ];
+        }
+        return [
+            { label: 'Fats', percentage: '0%', color: '#006FF7' },
+            { label: 'Protein', percentage: '0%', color: '#FFAC2E' },
+            { label: 'Carbohydrates', percentage: '0%', color: '#CA6B6E' },
+        ];
+    }, [userOverviewData]);
 
     return (
         <main className={classNames(styles['container'], styles['dashboard-block'])}>
@@ -36,7 +82,14 @@ export const Dashboard: React.FC = () => {
                     <label>Food logged</label>
                     <DataCard className={classNames(styles['graph-card'], styles['doughnut-card'])}>
                         <div className={styles['min-height']}>
-                            <DoughnutChart legendItems={legendItems} />
+                            <DoughnutChart
+                                legendItems={legendItems}
+                                emptyDoughnut={{
+                                    color: 'rgba(0, 0, 0, 0.08)',
+                                    width: 1,
+                                    radiusDecrease: 20,
+                                }}
+                            />
                         </div>
 
                         <LegendData data={legendItems} />
