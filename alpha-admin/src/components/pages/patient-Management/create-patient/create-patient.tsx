@@ -13,6 +13,7 @@ import { addNewPatient } from '../patientsSlice';
 import { toast } from 'react-toastify';
 import { AppButton } from '../../../app-button/app-button';
 import { SidebarPatient } from '../patient-sidebar/patientSidebar';
+import { sentInvite } from '../patientsAPI';
 
 export interface CreatePatientProps {
     className?: string;
@@ -220,22 +221,31 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
             bmi: Math.round(Number(formValues.bmi)),
             patientDetailsEditConsent: formValues.patientConsent,
         };
-
+    
         try {
-            const response = await dispatch(addNewPatient(patientData)).unwrap();
-
-            if (response) {
-                toast.success('Patient profile created.');
-                navigate('/patient-profile');
-                setOpenModal(true);
-            }
-        } catch (error: any) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                phoneNumber: 'Phone number already exists',
-            }));
+            console.log('Patient Data:', JSON.stringify(patientData)); // Debugging output
+    
+            // Dispatch the action and unwrap the result
+            const result = await dispatch(addNewPatient(patientData)).unwrap();
+    
+            // Assuming result.data is the patient object with an 'id'
+            const patientId = result.data.id; // Correctly access the 'id'
+    
+            console.log('Result:', result.data.id); // Debugging output
+            console.log('Patient ID:', patientId); // Debugging output
+            // Now, send the invite
+            await sentInvite(patientId);
+    
+            toast.success('Patient profile created and invite sent.');
+    
+            setOpenModal(true);
+            navigate('/patient-profile');
+        } catch (error) {
+            console.error('Error adding patient or sending invite:', error);
+            toast.error('Failed to create patient profile or send invite.');
         }
     };
+     
 
     const handleCancel = () => {
         setFormValues({

@@ -36,9 +36,10 @@ export interface Patient {
 }
 
 export interface PatientsResponse {
+    id: any;
     statusCode: number;
     message: string;
-    data: Patient[];
+    data: Patient[] | any;
     meta: MetaData;
 }
 
@@ -88,7 +89,7 @@ export const addPatientAPI = async (patientData: CreatePatientData): Promise<Pat
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        return response.data as PatientsResponse;
+        return response.data as any;
     } catch (error) {
         throw error;
     }
@@ -109,3 +110,20 @@ export const getPatientProfile = async (id: string): Promise<any> => {
         throw error;
     }
 };
+
+export const sentInvite = async (id: string): Promise<any> => {
+    const accessToken = localStorage.getItem('accessToken');
+    const apiURL = `${config.BASE_URL}/gateway/v1/patient/${id}/invite`;
+
+    try {
+        const response = await axios.post(apiURL,{}, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data as any;
+    } catch (error) {
+        throw error;
+    }
+};
+
