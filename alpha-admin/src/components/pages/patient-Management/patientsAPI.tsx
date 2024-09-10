@@ -111,7 +111,7 @@ export const getPatientProfile = async (id: string): Promise<any> => {
     }
 };
 
-export const sentInvite = async (id: string): Promise<any> => {
+export const sentInvite = async (id: any): Promise<any> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/patient/${id}/invite`;
 

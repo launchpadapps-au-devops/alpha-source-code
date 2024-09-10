@@ -1,0 +1,37 @@
+.notificationBanner {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    //bottom: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%; /* Set a wider width */
+    max-width: 600px; /* Ensure it doesn't exceed this width */
+    z-index: 1000;
+    font-size: 16px;
+  
+    &[data-type="error"] {
+        background-color: #f8d7da; /* Light red background for error */
+        color: #721c24; /* Darker red text for error */
+    }
+  
+    &[data-type="success"] {
+        background-color: #ecfdf3; /* Light green background for success */
+        color: #008000; /* Darker green text for success */
+    }
+  }
+  
+  .notificationBannerIcon {
+    margin-right: 10px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .notificationBannerMessage {
+    flex: 1;
+    margin-left: 10px;
+  }
+  

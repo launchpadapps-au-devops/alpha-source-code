@@ -239,7 +239,6 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
             toast.success('Patient profile created and invite sent.');
     
             setOpenModal(true);
-            navigate('/patient-profile');
         } catch (error) {
             console.error('Error adding patient or sending invite:', error);
             toast.error('Failed to create patient profile or send invite.');
@@ -588,7 +587,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                     descriptionText="Profile has been successfully created and the sign-up link sent to the patient."
                     title="Profile created & link sent"
                     closeModal={handleCloseModal}
-                    handleButton={() => navigate('/careteam/editcareteam')}
+                    handleButton={() =>  navigate('/patient-profile')}
                 />
             )}
         </>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../../app/store';
@@ -7,7 +7,9 @@ import styles from './patient-profile.module.scss';
 import Avatar from '@mui/material/Avatar';
 import { AppButton } from '../../../app-button/app-button';
 import { SidebarPatient } from '../patient-sidebar/patientSidebar';
-import { getPatientProfile } from '../patientsAPI';
+import { getPatientProfile, sentInvite } from '../patientsAPI';
+import { toast } from 'react-toastify';
+import NotificationBanner from '../../notification-banner/notificationBanner';
 
 export interface PatientProfileProps {
   className?: string;
@@ -40,6 +42,12 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
     startDate: '',
   });
 
+  const [notification, setNotification] = useState({
+    isVisible: false,
+    message: '',
+    type: 'success' as 'success' | 'error',
+  });
+
   const calculateAge = (dob: string) => {
     const birthDate = new Date(dob);
     const today = new Date();
@@ -56,6 +64,36 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
 
     return { ageYears, ageMonths };
   };
+
+  const handleResendClick = async () => {
+    try {
+      const result = await sentInvite(patientId);
+      console.log('result', result);
+      
+      if (result?.statusCode === 201) {
+        console.log('Link sent successfully');
+        setNotification({
+          isVisible: true,
+          message: result.message || 'Link sent successfully!',
+          type: 'success',
+        });
+      } else {
+        setNotification({
+          isVisible: true,
+          message: 'Failed to send link',
+          type: 'error',
+        });
+      }
+    } catch (error) {
+      console.error('Error sending link:', error);
+      setNotification({
+        isVisible: true,
+        message: 'An error occurred while sending the link',
+        type: 'error',
+      });
+    }
+  };
+  
 
   const  handleClick = () => {
     navigate('/patient-dashboard/patient-lifestyle-plan')
@@ -105,6 +143,13 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
     <>
       <SidebarPatient />
       <div className={classNames(styles['care-team-profile'], className)}>
+      <NotificationBanner
+          isVisible={notification.isVisible}
+          message={notification.message}
+          onClose={() => setNotification({ ...notification, isVisible: false })}
+          type={notification.type}
+        />
+
         <div className={styles['top-header-block']}>
           <h2>Patient Profile</h2>
           <AppButton
@@ -142,6 +187,7 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
                     <AppButton
                       buttonText="Send link to patient"
                       className={styles['primary-button']}
+                      onButtonClick={handleResendClick}
                     />
                     <AppButton
                       buttonText="Change lifestyle plan"
