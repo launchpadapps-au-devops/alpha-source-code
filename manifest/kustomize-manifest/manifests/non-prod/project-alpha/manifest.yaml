@@ -113,7 +113,7 @@ spec:
         app: alpha-admin-deployment
     spec:
       containers:
-      - image: alphadev.azurecr.io/alpha-admin@sha256:d64c6bcda58d688c693aa84bce97a9914c54051cf28874e27dd448182ff8eb6a
+      - image: alphadev.azurecr.io/alpha-admin@sha256:763573470a1b40e2f523eea06c80c29aa42940091365baead694bd834f665134
         imagePullPolicy: IfNotPresent
         name: alpha-admin-container
         ports:
@@ -574,7 +574,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: apigateway_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:a8f6499446a5a9e83e5c2c7c5ecadab5ed612e884e350d69ef546b95beb4b498
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:1916f813f3c84d89ea8618c8f75b44818b9b8be1020f99e1f883ff189dfd17f8
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
