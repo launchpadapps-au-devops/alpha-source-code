@@ -1,11 +1,12 @@
 import classNames from 'classnames';
 import styles from './assessments.module.scss';
 import TabBar from '../../content/content-components/tab-bar/TabBar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DataCard } from '../../../data-card/data-card';
 import { AssessmentCard } from './assessments-components/assestment-card/assessment-card';
 import { EmptyComponent } from '../../../empty-state-component/empty-component';
 import { SidebarPatient } from '../../patient-Management/patient-sidebar/patientSidebar';
+import { onBoardingAssessment } from './assessmentAPI';
 
 
 export interface AssessmentsProps {
@@ -20,6 +21,20 @@ interface AssessmentData {
 export const Assessments = ({ className }: AssessmentsProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const tabs = ['Onboarding assessment', 'Health check-in responses'];
+
+  const patientId = localStorage.getItem('selectedPatientId');
+
+  useEffect(() => {
+    const fetchOnBoardingAssessment = async () => {
+      const response = await onBoardingAssessment(patientId);
+      console.log(response);
+    };
+  
+    if (patientId) {
+      fetchOnBoardingAssessment();
+    }
+  }, [patientId]);
+  
 
   const handleTabChange = (newValue: number) => {
     setSelectedTab(newValue);
