@@ -25,10 +25,14 @@ const initialState: PatientsState = {
 // Thunk to fetch patients with pagination
 export const fetchPatients = createAsyncThunk(
     'patients/getPatients',
-    async ({ page = 1, sortField = '' }: { page?: number; sortField?: string }, { rejectWithValue }) => {
+    async (
+        { page = 1, sortField = '', searchKey, searchValue }: 
+        { page?: number; sortField?: string; searchKey?: string; searchValue?: string }, 
+        { rejectWithValue }
+    ) => {
         try {
             const limit = 10;
-            const response: PatientsResponse = await getPatients(page, limit, sortField);
+            const response: PatientsResponse = await getPatients(page, limit, sortField, searchKey, searchValue);
             return response;
         } catch (error) {
             console.log('Response ERROR', error);
@@ -36,6 +40,7 @@ export const fetchPatients = createAsyncThunk(
         }
     }
 );
+
 
 // Thunk to add a new patient
 export const addNewPatient = createAsyncThunk(

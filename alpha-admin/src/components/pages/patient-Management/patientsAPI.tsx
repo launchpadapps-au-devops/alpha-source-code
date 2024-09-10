@@ -42,22 +42,34 @@ export interface PatientsResponse {
     meta: MetaData;
 }
 
-export const getPatients = async (page: number = 1, limit: number = 10, sortField: string = ''): Promise<PatientsResponse> => {
+export const getPatients = async (
+    page: number = 1,
+    limit: number = 10,
+    sortField: string = '',
+    searchKey?: string,
+    searchValue?: string
+): Promise<PatientsResponse> => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/gateway/v1/patient?sortField=${sortField}&page=${page}&limit=${limit}`; // Add limit to API URL
+    let apiURL = `${config.BASE_URL}/gateway/v1/patient?page=${page}&limit=${limit}`;
+
+    // Add search parameters if provided
+    if (searchKey && searchValue) {
+        apiURL += `&searchKey=${searchKey}&searchValue=${searchValue}`;
+    }
 
     try {
         const response = await axios.get(apiURL, {
             headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
+                Authorization: `Bearer ${accessToken}`,
+            },
         });
         return response.data as PatientsResponse;
     } catch (error) {
-        console.error('Error fetching patients:', error); // Improved error logging
+        console.error('Error fetching patients:', error);
         throw error;
     }
 };
+
 
 // Update your getPatients function
 

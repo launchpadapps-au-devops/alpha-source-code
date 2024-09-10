@@ -29,6 +29,8 @@ export const Patients = ({ className }: PatientsProps) => {
     const dispatch = useDispatch<AppDispatch>();  // Cast dispatch to AppDispatch type
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [sortField, setSortField] = useState<string>(''); // Add state for sort field
+    const [searchKey, setSearchKey] = useState<string>(''); // State for search key
+    const [searchValue, setSearchValue] = useState<string>(''); // State for search value
 
     useEffect(() => {
         dispatch(fetchPatients({ page: 1, sortField })); // Fetch patients with the sortField
@@ -44,7 +46,15 @@ export const Patients = ({ className }: PatientsProps) => {
 
     const handleSortBy = (field: string) => {
         setSortField(field); // Set the sortField state
+        setSearchKey(field); // Set the searchKey state
         setAnchorEl(null); // Close the menu
+    };
+
+    const handleSearch = () => {
+        // Call the API with the selected searchKey and searchValue
+        if (searchKey && searchValue) {
+            dispatch(fetchPatients({ page: 1, searchKey, searchValue }));
+        }
     };
 
     const open = Boolean(anchorEl);
@@ -64,8 +74,15 @@ export const Patients = ({ className }: PatientsProps) => {
                                 {sortFieldDisplayNames[sortField] || 'Filter'}
                                 <Icon glyph="keyboardArrowDown" width={20} height={20} />
                             </button>
-                            <input type="text" placeholder="Search team member" />
-                            <button className={styles['search-button']}>Search</button>
+                            <input
+                                type="text"
+                                placeholder="Search team member"
+                                value={searchValue}
+                                onChange={(e) => setSearchValue(e.target.value)} // Set searchValue
+                            />
+                            <button className={styles['search-button']} onClick={handleSearch}>
+                                Search
+                            </button>
                         </div>
                         <AppButton
                             className={styles['AppButton']}
