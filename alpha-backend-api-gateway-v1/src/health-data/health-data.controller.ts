@@ -79,9 +79,9 @@ export class HealthDataController {
     @Get('/questionaries')
     async getHealthProfileQuestionaries(
         @Request() req,
-        @Query('userId') userId?: number
+        @Query('userId') userId?: string
     ): Promise<object> {
-        if(req.user.typ === USER_TYPES.PATIENT && userId) {
+        if(req.user.userType === USER_TYPES.PATIENT && userId) {
             if(userId !== req.user.userId) {
                 throw new ForbiddenException('You are not allowed to access this resource');
             }
