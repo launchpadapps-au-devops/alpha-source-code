@@ -126,6 +126,7 @@ export class HealthDataController {
     @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.ADMIN_WEB,USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiQuery({ name: 'userId', required: false, description: 'Only allowed in case of Admin' })
     @ApiQuery({ name: 'surveyType', required: false })
     @ApiQuery({ name: 'page', required: false })
     @ApiQuery({ name: 'limit', required: false })
@@ -151,11 +152,21 @@ export class HealthDataController {
     async getActiveSurveyQuestionAnswer(
         @Request() req
     ): Promise<object> {
-        const { limit, page, sortField, sortOrder, surveyType } = req.query;
+        if(req.user.userType === USER_TYPES.PATIENT) {
+            if(req.query.userId !== req.user.userId) {
+                throw new ForbiddenException('You are not allowed to access this resource');
+            }
+
+            req.query.userId = req.user.userId;
+        }
+
+        const { userId, limit, page, sortField, sortOrder, surveyType } = req.query;
+
+
         return await this.healthDataService.getActiveSurveyQuestionAnswer(
             { limit, page },
             { sortField, sortOrder },
-            { surveyType },
+            { surveyType, userId },
             req.user
         );
     }
