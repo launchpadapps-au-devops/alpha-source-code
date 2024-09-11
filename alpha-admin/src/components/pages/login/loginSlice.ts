@@ -73,6 +73,8 @@ export const loginThunk = createAsyncThunk(
 
             // Save loggedUserID (id) in local storage
             localStorage.setItem('loggedUserID', id);
+            localStorage.setItem('LoggedInUserFirstName', profileResponse.data.data.firstName);
+            console.log(profileResponse.data.data.firstName, 'userType');
 
             // Return the combined response data (tokens and userType)
             return { ...response.data, userType };

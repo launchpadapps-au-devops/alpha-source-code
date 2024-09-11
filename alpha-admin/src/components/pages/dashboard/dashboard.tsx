@@ -22,6 +22,7 @@ export const Dashboard: React.FC = () => {
     );
 
     const loggedUserID = localStorage.getItem('loggedUserID');
+    const FirstName = localStorage.getItem('LoggedInUserFirstName');
 
     useEffect(() => {
         if (loggedUserID) {
@@ -76,7 +77,7 @@ export const Dashboard: React.FC = () => {
 
     return (
         <main className={classNames(styles['container'], styles['dashboard-block'])}>
-            <h1>Hi [insert name]!</h1>
+            <h1>Hi {FirstName}!</h1>
             <section className={styles['dashboard-graph-section']}>
                 <div className={styles['graph-block']}>
                     <label>Food logged</label>
