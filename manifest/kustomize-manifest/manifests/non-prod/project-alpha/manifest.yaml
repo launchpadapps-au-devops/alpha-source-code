@@ -113,7 +113,7 @@ spec:
         app: alpha-admin-deployment
     spec:
       containers:
-      - image: alphadev.azurecr.io/alpha-admin@sha256:490f13e5f74829f08ea2f61d1e0a01984f7e1c7452a5d5033b5e71ffcfa552c9
+      - image: alphadev.azurecr.io/alpha-admin@
         imagePullPolicy: IfNotPresent
         name: alpha-admin-container
         ports:
@@ -390,7 +390,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:7ace6c7a88ef73f56fff1813994050d470bca8aaf1fe096fba0f01f5760810ce
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:2a2e9e9b792b9bc2fdf1537f38834f2841033f5ce8b6ff01dd30d6aa76ca02b1
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
