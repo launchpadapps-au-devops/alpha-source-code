@@ -31,21 +31,15 @@ export const LessonContent = ({
     setData,
     isEditable,
 }: LessonContentProps) => {
-    const [screens, setScreens] = useState([{ subtitle: '', content: '' }]);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [menuWidth, setMenuWidth] = useState<number>(0);
-    const [activeQuizIndex, setActiveQuizIndex] = useState<number | null>(null);
-    const [quizType, setQuizType] = useState<'multiple-choice' | 'free-text' | null>(null);
-    const buttonRef = useRef<HTMLButtonElement>(null);
     const [isFileUploaded, setIsFileUploaded] = useState(false); // State to track file upload
     const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error messages
-    const [editorState, setEditorState] = useState(EditorState.createEmpty());
-
+    const [editorState, setEditorState] = useState(EditorState.createEmpty()); // Rich text editor state
+    const [menuWidth, setMenuWidth] = useState<number>(0);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const [quizType, setQuizType] = useState<'multiple-choice' | 'free-text' | null>(null);
+    const [activeQuizIndex, setActiveQuizIndex] = useState<number | null>(null);
     const dispatch = useAppDispatch();
-
-    const onEditorStateChange = (newState: any) => {
-        setEditorState(newState);
-    };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const file = event.target.files?.[0];
@@ -57,25 +51,22 @@ export const LessonContent = ({
 
             // Validate file type and size
             if (isImage && fileSize <= 2 * 1024 * 1024) {
-                // Image less than or equal to 2MB
                 dispatch(uploadFile(file)).then((response: any) => {
                     const updatedScreenData = [...data.screenData];
                     updatedScreenData[index].media = response.payload.data.data.url;
                     setData({ ...data, screenData: updatedScreenData });
                     setIsFileUploaded(true);
-                    setErrorMessage(null); // Clear any error message
+                    setErrorMessage(null);
                 });
             } else if (isVideo && fileSize <= 100 * 1024 * 1024) {
-                // Video less than or equal to 100MB
                 dispatch(uploadFile(file)).then((response: any) => {
                     const updatedScreenData = [...data.screenData];
                     updatedScreenData[index].media = response.payload.data.data.url;
                     setData({ ...data, screenData: updatedScreenData });
                     setIsFileUploaded(true);
-                    setErrorMessage(null); // Clear any error message
+                    setErrorMessage(null);
                 });
             } else {
-                // Invalid file type or size
                 if (!isImage && !isVideo) {
                     setErrorMessage('Only JPG, PNG images or MP4 videos are allowed.');
                 } else if (isImage && fileSize > 2 * 1024 * 1024) {
@@ -87,6 +78,13 @@ export const LessonContent = ({
         }
     };
 
+    const handleEditorChange = (newState: any, index: number) => {
+        setEditorState(newState);
+        const updatedScreenData = [...data.screenData];
+        updatedScreenData[index].content = convertToHTML(newState.getCurrentContent());
+        setData({ ...data, screenData: updatedScreenData });
+    };
+
     const handleAddScreen = () => {
         const newScreen = {
             id: data.screenData.length + 1,
@@ -96,28 +94,14 @@ export const LessonContent = ({
             type: 'image',
         };
         const updatedScreenData = [...data.screenData, newScreen];
-        setScreens(updatedScreenData);
+        setScreenData(updatedScreenData);
         setData({ ...data, screenData: updatedScreenData });
     };
-
-    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    useEffect(() => {
-        if (buttonRef.current) {
-            setMenuWidth(buttonRef.current.offsetWidth);
-        }
-    }, [buttonRef.current]);
 
     const handleQuizTypeChange = (type: 'multiple-choice' | 'free-text') => {
         setQuizType(type);
         setActiveQuizIndex(null);
-        handleClose();
+        setAnchorEl(null);
     };
 
     const handleAddQuiz = () => {
@@ -134,20 +118,24 @@ export const LessonContent = ({
         setQuizType(null);
     };
 
-    const handleQuizChange = (index: number, key: string, value: any) => {
-        const updatedQuizData = [...data.quizData];
-        updatedQuizData[index][key] = value;
-        setData({ ...data, quizData: updatedQuizData });
-    };
-
     const handleRemoveQuiz = (index: number) => {
         const updatedQuizData = data.quizData.filter((_: any, i: any) => i !== index);
         setData({ ...data, quizData: updatedQuizData });
     };
 
+    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     useEffect(() => {
-        setScreenData(screens);
-    }, [screens]);
+        if (buttonRef.current) {
+            setMenuWidth(buttonRef.current.offsetWidth);
+        }
+    }, [buttonRef.current]);
 
     return (
         <div className="lesson-content">
@@ -157,40 +145,57 @@ export const LessonContent = ({
             {data.screenData.map((screen: any, index: any) => (
                 <div key={index} className="screen">
                     <h3>Screen {index + 1}</h3>
+
+                    {/* Cover Image or Video Section */}
                     <div className="cover-image-section">
                         <label htmlFor="cover-image" className="cover-image-label">
-                            Image or Video <span style={{ color: 'red' }}>*</span>{' '}
-                            {/* Required indicator */}
+                            Image or Video <span style={{ color: 'red' }}>*</span>
                         </label>
                         <div className="cover-image-hint">
                             Image: JPG, PNG, max 2MB; Video: MP4, max 100MB
                         </div>
-                        <UploadButton
-                            showLeftIcon
-                            buttonText="Upload media"
-                            onButtonClick={() => {}}
-                            data={data}
-                            setData={setData}
-                            handleFileChange={(e) => handleFileChange(e, index)}
-                        />
+
+                        {!isFileUploaded ? (
+                            <UploadButton
+                                showLeftIcon
+                                buttonText="Upload media"
+                                onButtonClick={() => {}}
+                                data={data}
+                                setData={setData}
+                                handleFileChange={(e) => handleFileChange(e, index)}
+                            />
+                        ) : (
+                            <div className="uploaded-image-preview">
+                                <img
+                                    src={data.screenData[index].media}
+                                    alt="Uploaded media"
+                                    className="uploaded-image"
+                                />
+                                <div className="edit-image-section">
+                                    <button
+                                        onClick={() => {
+                                            setIsFileUploaded(false); // Allow user to upload again
+                                            const updatedScreenData = [...data.screenData];
+                                            updatedScreenData[index].media = ''; // Clear the image URL
+                                            setData({ ...data, screenData: updatedScreenData });
+                                        }}
+                                        className="remove-uploaded-image-button"
+                                    >
+                                        Edit image
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
                         {errorMessage && (
-                            <div
-                                className="error-message"
-                                style={{ color: 'red', marginTop: '5px' }}
-                            >
+                            <div className="error-message" style={{ color: 'red', marginTop: '5px' }}>
                                 {errorMessage}
                             </div>
                         )}
-                        {!isFileUploaded && (
-                            <div
-                                className="error-message"
-                                style={{ color: 'red', marginTop: '5px' }}
-                            >
-                                Please upload a valid file.
-                            </div>
-                        )}
                     </div>
-                    <div className="subtitle input-field">
+
+                    {/* Subtitle Section */}
+                    <div className="subtitle-section input-field">
                         <label>Subtitle</label>
                         <input
                             type="text"
@@ -204,30 +209,29 @@ export const LessonContent = ({
                             required
                         />
                     </div>
-                    <div className="content input-field">
+
+                    {/* Content Section */}
+                    <div className="content-section input-field">
                         <label>Content</label>
                         <Editor
                             editorState={editorState}
                             toolbarClassName="toolbarClassName"
                             wrapperClassName="wrapperClassName"
                             editorClassName="custom-editor"
-                            onEditorStateChange={(newState) => {
-                                setEditorState(newState);
-                                const updatedScreenData = [...data.screenData];
-                                updatedScreenData[index].content = convertToHTML(
-                                    newState.getCurrentContent()
-                                );
-                                setData({ ...data, screenData: updatedScreenData });
-                            }}
+                            onEditorStateChange={(newState) => handleEditorChange(newState, index)}
                         />
                     </div>
                 </div>
             ))}
+
+            {/* Add another screen button */}
             <EditButton
                 buttonText="Add another screen"
                 onButtonClick={handleAddScreen}
                 className="edit-button"
             />
+
+            {/* Quizzes Section */}
             <h3>
                 Quizzes <Vector />
             </h3>
@@ -235,9 +239,7 @@ export const LessonContent = ({
                 <div key={index} className="quiz-content screen">
                     <div className="quiz-header">
                         <h3>
-                            {quiz.type === 'multiple-choice'
-                                ? 'Multiple choice quiz'
-                                : 'Free text quiz'}
+                            {quiz.type === 'multiple-choice' ? 'Multiple choice quiz' : 'Free text quiz'}
                         </h3>
                         <DeleteButton
                             showLeftIcon
@@ -251,7 +253,11 @@ export const LessonContent = ({
                             type="text"
                             placeholder="Enter quiz name"
                             value={quiz.quizName || ''}
-                            onChange={(e) => handleQuizChange(index, 'quizName', e.target.value)}
+                            onChange={(e) => {
+                                const updatedQuizData = [...data.quizData];
+                                updatedQuizData[index].quizName = e.target.value;
+                                setData({ ...data, quizData: updatedQuizData });
+                            }}
                             required
                         />
                     </div>
@@ -261,7 +267,11 @@ export const LessonContent = ({
                             type="text"
                             placeholder="Enter quiz question"
                             value={quiz.question || ''}
-                            onChange={(e) => handleQuizChange(index, 'question', e.target.value)}
+                            onChange={(e) => {
+                                const updatedQuizData = [...data.quizData];
+                                updatedQuizData[index].question = e.target.value;
+                                setData({ ...data, quizData: updatedQuizData });
+                            }}
                             required
                         />
                     </div>
@@ -271,12 +281,15 @@ export const LessonContent = ({
                             type="text"
                             placeholder="Enter User instruction"
                             value={quiz.userInstructions || ''}
-                            onChange={(e) =>
-                                handleQuizChange(index, 'userInstructions', e.target.value)
-                            }
+                            onChange={(e) => {
+                                const updatedQuizData = [...data.quizData];
+                                updatedQuizData[index].userInstructions = e.target.value;
+                                setData({ ...data, quizData: updatedQuizData });
+                            }}
                             required
                         />
                     </div>
+
                     {quiz.type === 'multiple-choice' && (
                         <div className="multiple-choice input-field-1">
                             {quiz.options?.map((option: string, optionIndex: number) => (
@@ -289,7 +302,9 @@ export const LessonContent = ({
                                             onChange={(e) => {
                                                 const updatedOptions = [...quiz.options];
                                                 updatedOptions[optionIndex] = e.target.value;
-                                                handleQuizChange(index, 'options', updatedOptions);
+                                                const updatedQuizData = [...data.quizData];
+                                                updatedQuizData[index].options = updatedOptions;
+                                                setData({ ...data, quizData: updatedQuizData });
                                             }}
                                             required
                                         />
@@ -297,11 +312,11 @@ export const LessonContent = ({
                                             checked={quiz.answer?.includes(option)}
                                             onChange={() => {
                                                 const updatedAnswers = quiz.answer?.includes(option)
-                                                    ? quiz.answer?.filter(
-                                                          (ans: string) => ans !== option
-                                                      )
+                                                    ? quiz.answer?.filter((ans: string) => ans !== option)
                                                     : [...(quiz.answer || []), option];
-                                                handleQuizChange(index, 'answer', updatedAnswers);
+                                                const updatedQuizData = [...data.quizData];
+                                                updatedQuizData[index].answer = updatedAnswers;
+                                                setData({ ...data, quizData: updatedQuizData });
                                             }}
                                         />
                                     </div>
@@ -311,7 +326,9 @@ export const LessonContent = ({
                                         onButtonClick={() => {
                                             const updatedOptions = [...quiz.options];
                                             updatedOptions.splice(optionIndex, 1);
-                                            handleQuizChange(index, 'options', updatedOptions);
+                                            const updatedQuizData = [...data.quizData];
+                                            updatedQuizData[index].options = updatedOptions;
+                                            setData({ ...data, quizData: updatedQuizData });
                                         }}
                                     />
                                 </div>
@@ -320,13 +337,16 @@ export const LessonContent = ({
                                 buttonText="Add another answer"
                                 onButtonClick={() => {
                                     const updatedOptions = [...quiz.options, ''];
-                                    handleQuizChange(index, 'options', updatedOptions);
+                                    const updatedQuizData = [...data.quizData];
+                                    updatedQuizData[index].options = updatedOptions;
+                                    setData({ ...data, quizData: updatedQuizData });
                                 }}
                             />
                         </div>
                     )}
                 </div>
             ))}
+
             {quizType && (
                 <EditButton
                     buttonText={`Add ${quizType} quiz`}
@@ -334,6 +354,7 @@ export const LessonContent = ({
                     onButtonClick={handleAddQuiz}
                 />
             )}
+
             {!quizType && (
                 <EditButton
                     ref={buttonRef}
@@ -342,6 +363,7 @@ export const LessonContent = ({
                     onButtonClick={handleButtonClick}
                 />
             )}
+
             <Menu
                 id="simple-menu"
                 anchorEl={anchorEl}

@@ -57,60 +57,49 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
         points: 20,
         lessonTags: [
             {
-                motivation: [],
+                Ethnicity: [],
             },
             {
-                gender: [],
+                Leisure_Preferences: [],
             },
             {
-                cultural_background: [],
+                Dietary_Restrictions: [],
             },
             {
-                living_situation: [],
+                Physical_Limitation: [],
             },
             {
-                food_intoletance: [],
+                Physical_Limitation_Follow_up: [],
             },
             {
-                lifeStyle: [],
+                Unhealthy_Eating_Habits: [],
             },
             {
-                physical_limitation: [],
+                Motivation_to_Change: [],
+            },
+            {
+                Goals_Motivators: [],
+            },
+            {
+                Young_Dependents: [],
+            },
+            {
+                Adult_Dependents: [],
             },
         ],
         internalNotes: '',
         coverImage: '',
         name: '',
         description: '',
-        screenData: [
-            // {
-            //     order: 1,
-            //     media: 'https://sample.com/sample.jpg',
-            //     type: 'image',
-            //     subTitle: 'Sub Title',
-            //     content: 'Content',
-            // },
-        ],
+        screenData: [],
         quizData: [
             {
                 quizName: '',
                 userInstructions: '',
                 question: '',
                 type: 'single-choice', //'single-choice',
-                options: [
-                    // {
-                    //     option: 'Option 1',
-                    //     isCorrect: true,
-                    //     id: 1,
-                    // },
-                ],
-                answer: [
-                    // {
-                    //     option: 'Option 1',
-                    //     isCorrect: true,
-                    //     id: 1,
-                    // },
-                ],
+                options: [],
+                answer: [],
             },
         ],
     });
@@ -183,7 +172,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
 
     return (
         <>
-            <BackButton onClick={handleBackClick}/>
+            <BackButton onClick={handleBackClick} />
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>

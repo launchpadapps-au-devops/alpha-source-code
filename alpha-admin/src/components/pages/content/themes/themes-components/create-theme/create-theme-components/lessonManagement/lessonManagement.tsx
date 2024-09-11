@@ -16,7 +16,7 @@ interface LessonManagementProps {
 }
 
 export const LessonManagement: FC<LessonManagementProps> = ({
-    selectedLessons,
+    selectedLessons = [],  // Default to an empty array if undefined
     onRemoveLesson,
     onAddLessons,
     newLessons,

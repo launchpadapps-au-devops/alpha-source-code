@@ -87,10 +87,8 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
                                     {console.log(member)}
                                 </div>
                             </td>
-                            {/* <td>{member.role.name}</td>
-                            <td>{member.permissions.length > 0 ? member.permissions[0].name : null}</td> */}
-                            <td>{member.role}</td>
-                            <td>{member.permissions.length > 0 ? member.permissions[0] : null}</td>
+                            <td>{member.role.name}</td>
+                            <td>{member.permissions.length > 0 ? member.permissions[0].name : null}</td>
                             <td>
                                 <AppButton icon='edit' className={classNames(AppButton_module['button-no-decoration'], styles['table-icon-button'])} onButtonClick={() => handleEditClick(member.id)} showLeftIcon />
                             </td>

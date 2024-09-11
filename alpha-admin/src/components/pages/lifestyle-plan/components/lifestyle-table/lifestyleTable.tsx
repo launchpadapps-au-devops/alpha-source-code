@@ -131,6 +131,13 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
 
     const activePlans = plans.filter((plan: any) => plan.status.toLowerCase() === 'active');
 
+    const formatDate = (data: any) => {
+        const date = new Date(data);
+        return `${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${
+            date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
+        }/${date.getFullYear()}`;
+    };
+
     return (
         <>
             <TableContainer component={Paper}>
@@ -156,7 +163,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                                 style={{ cursor: 'pointer' }}
                             >
                                 <TableCell className={styles['code']}>{plan.name}</TableCell>
-                                <TableCell>{plan.createdAt}</TableCell>
+                                <TableCell>{formatDate(plan.createdAt)}</TableCell>
                                 <TableCell onClick={(event) => event.stopPropagation()}>
                                     <Switch
                                         checked={plan.isPublished}

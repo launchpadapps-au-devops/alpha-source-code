@@ -27,9 +27,10 @@ export const DashboardCardDetails = ({
             console.log('File', file);
 
             dispatch(uploadFile(file)).then((response: any) => {
-                setData({ ...data, coverImage: response.payload.data.data.url });
+                const uploadedImageUrl = response.payload.data.data.url;
+                setData({ ...data, coverImage: uploadedImageUrl });
                 setIsFileUploaded(true); // Set to true once the file is uploaded
-                console.log('File uploaded', response.payload.data.data.url);
+                console.log('File uploaded', uploadedImageUrl);
             });
         }
     };
@@ -39,24 +40,51 @@ export const DashboardCardDetails = ({
             <div className="dashboard-card-header">
                 Dashboard card details <Vector />
             </div>
+
             <div className="cover-image-section">
                 <label htmlFor="cover-image" className="cover-image-label">
                     Cover image <span style={{ color: 'red' }}>*</span> {/* Indicate it's required */}
                 </label>
-                <div className="cover-image-hint"> Image: JPG, PNG, max 2MB; Video: MP4, max 100MB</div>
-                <UploadButton
-                    showLeftIcon
-                    buttonText="Upload media"
-                    data={data}
-                    setData={setData}
-                    handleFileChange={handleFileChange}
-                />
+                <div className="cover-image-hint">
+                    Image: JPG, PNG, max 2MB; Video: MP4, max 100MB
+                </div>
+
+                {!isFileUploaded ? (
+                    <UploadButton
+                        showLeftIcon
+                        buttonText="Upload media"
+                        data={data}
+                        setData={setData}
+                        handleFileChange={handleFileChange}
+                    />
+                ) : (
+                    <div className="uploaded-image-preview">
+                        <img
+                            src={data.coverImage}
+                            alt="Uploaded cover"
+                            className="uploaded-image"
+                        />
+                        <div className="edit-image-section">
+                            <button
+                                onClick={() => {
+                                    setIsFileUploaded(false); // Allow user to upload again
+                                    setData({ ...data, coverImage: '' }); // Clear the image URL
+                                }}
+                                className="remove-uploaded-image-button"
+                            >
+                                Edit image
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {!isFileUploaded && (
                     <div className="error-message" style={{ color: 'red', marginTop: '5px' }}>
                         Please upload a file.
                     </div>
                 )}
             </div>
+
             <div className="lesson-name-section">
                 <label htmlFor="lesson-name" className="lesson-name-label">
                     Lesson name
@@ -78,6 +106,7 @@ export const DashboardCardDetails = ({
                 />
                 <div className="lesson-name-footer">50 characters</div>
             </div>
+
             <div className="lesson-description-section">
                 <label htmlFor="lesson-description" className="lesson-description-label">
                     Lesson description

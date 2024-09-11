@@ -44,3 +44,30 @@
     color: #999;
     text-align: right;
 }
+
+
+.uploaded-image-preview {
+    display: flex;
+    flex-direction: column; // Ensures the image is above the button
+    align-items: center;
+    margin-top: 10px;
+
+    .uploaded-image {
+        max-width: 100%; // Adjust the image size if needed
+        height: auto;
+    }
+
+    .edit-image-section {
+        margin-top: 10px; // Add spacing between the image and text
+        text-align: center; // Center-align the text below the image
+
+        .remove-uploaded-image-button {
+            background: none; // Remove background
+            border: none; // Remove border
+            color: #146CFD; // Apply the custom color
+            cursor: pointer;
+            font-size: 14px;
+            // text-decoration: underline; // Optional: add underline to the text
+        }
+    }
+}

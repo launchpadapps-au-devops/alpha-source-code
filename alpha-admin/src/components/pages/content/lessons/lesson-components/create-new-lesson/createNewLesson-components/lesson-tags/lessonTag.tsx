@@ -37,7 +37,7 @@ export const LessonTags = ({ data, setData, isEditMode }: LessonTagsProps) => {
 
     // Simplified optionsMap with string arrays
     const optionsMap: Record<Tag, string[]> = {
-        Ethnicity: [
+        'Ethnicity': [
             'Australian',
             'Aboriginal',
             'Asian',
