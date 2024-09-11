@@ -11,7 +11,7 @@ export interface ActivityProps {
 }
 
 export const Activity = ({ className }: ActivityProps) => {
-    const [isComingSoon, setIsComingSoon] = useState(false);
+    const [isComingSoon, setIsComingSoon] = useState(true);
 
     const title = isComingSoon ? 'Coming Soon' : 'No activity data available';
     const description = isComingSoon

@@ -45,6 +45,7 @@ import ToastContainer from 'react-bootstrap/esm/ToastContainer';
 
 import 'react-toastify/dist/ReactToastify.css';
 import { PatientLifeStyle } from './components/pages/patient-platform/patient-lifestyle-plan/patient-lifestyle-plan';
+import { EditPatient } from './components/pages/patient-Management/edit-patient/editPatient';
 
 // const router = createBrowserRouter([
 //     { path: '/', element: <Home /> },
@@ -224,7 +225,10 @@ const router = createBrowserRouter([
                 path: '/patient-profile',
                 element: <PatientProfile />,
             },
-            {},
+            {
+                path: '/edit-patient',
+                element: <EditPatient />,
+            },
         ],
     },
     {

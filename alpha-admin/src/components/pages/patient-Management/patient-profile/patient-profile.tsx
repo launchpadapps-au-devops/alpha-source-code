@@ -135,8 +135,8 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
     }
   }, [patientId]);
 
-  const handleEditClick = (memberId: string) => {
-    navigate(`/careteam/editteamcare/${memberId}`);
+  const handleEditClick = () => {
+    navigate(`/edit-patient`);
   };
 
   return (
@@ -157,7 +157,7 @@ export const PatientProfile = ({ className }: PatientProfileProps) => {
             buttonText="Edit profile"
             showLeftIcon
             icon="edit"
-            onButtonClick={() => handleEditClick(member.id)}
+            onButtonClick={() => handleEditClick()}
           />
         </div>
         <div className={styles['profile-detail-wrapper']}>
