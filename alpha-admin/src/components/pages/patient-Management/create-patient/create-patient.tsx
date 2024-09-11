@@ -233,6 +233,8 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
     
             console.log('Result:', result.data.id); // Debugging output
             console.log('Patient ID:', patientId); // Debugging output
+
+            localStorage.setItem('selectedPatientId', patientId);
             // Now, send the invite
             await sentInvite(patientId);
     
