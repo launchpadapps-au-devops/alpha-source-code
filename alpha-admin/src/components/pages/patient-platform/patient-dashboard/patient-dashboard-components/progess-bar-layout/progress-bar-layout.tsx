@@ -3,7 +3,7 @@ import styles from './progress-bar-layout.module.scss';
 
 export interface ProgressBarLayoutProps {
     className?: string;
-    progressPercentage: number;
+    progressPercentage: any;
 }
 
 export const ProgressBarLayout = ({

@@ -23,11 +23,12 @@ interface NutritionData {
 export const Nutrition = ({ className }: NutritionProps) => {
     const patientId = localStorage.getItem('selectedPatientId');
     const [nutritionData, setNutritionData] = useState<NutritionData | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(true); // Add loading state
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchNutritionData = async () => {
+            setLoading(true); // Set loading to true before API call
             try {
                 if (patientId) {
                     const today = format(new Date(), 'dd/MM/yyyy'); // Format today's date as dd/MM/yyyy
@@ -44,16 +45,12 @@ export const Nutrition = ({ className }: NutritionProps) => {
             } catch (error) {
                 setError('Failed to fetch nutrition data');
             } finally {
-                setLoading(false);
+                setLoading(false); // Set loading to false after API call completes
             }
         };
 
         fetchNutritionData();
     }, [patientId]);
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     if (error) {
         return <div>{error}</div>;
@@ -63,8 +60,11 @@ export const Nutrition = ({ className }: NutritionProps) => {
         <>
             <SidebarPatient />
             <div className={classNames(styles['nutrition-wrapper'], className)}>
-                <h1>Nutrition for {nutritionData?.date}</h1>
-                {nutritionData ? (
+                <h1>Nutrition</h1>
+                {loading ? (
+                    // Show loading indicator while fetching data
+                    <div className={styles['loading']}>Loading...</div>
+                ) : nutritionData ? (
                     <div className={styles['grid-layout']}>
                         <DataCard>
                             <span className={styles['label-text']}>Energy</span>
@@ -98,13 +98,6 @@ export const Nutrition = ({ className }: NutritionProps) => {
                             <span className={styles['label-text']}>Carbohydrates</span>
                             <div className={styles['data-value']}>
                                 <span>{nutritionData.carbs} g</span>
-                                <span>/ per day</span>
-                            </div>
-                        </DataCard>
-                        <DataCard>
-                            <span className={styles['label-text']}>Calories</span>
-                            <div className={styles['data-value']}>
-                                <span>{nutritionData.calories}</span>
                                 <span>/ per day</span>
                             </div>
                         </DataCard>

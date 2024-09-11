@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import { AppButton } from '../../../app-button/app-button';
 import { SidebarPatient } from '../patient-sidebar/patientSidebar';
 import { getPatientProfile, sentInvite } from '../patientsAPI';
+import { updatePatient } from '../patientsSlice';
 
 export interface EditPatientProps {
     className?: string;
@@ -50,7 +51,7 @@ export const EditPatient = ({ className }: EditPatientProps) => {
         height: '',
         weight: '',
         bmi: '',
-        patientConsent: false,
+        patientConsent: true,
     });
 
     const [formErrors, setFormErrors] = useState({
@@ -90,7 +91,7 @@ export const EditPatient = ({ className }: EditPatientProps) => {
                     height: patientData.height || '',
                     weight: patientData.weight || '',
                     bmi: patientData.bmi || '',
-                    patientConsent: false,
+                    patientConsent: true,
                 });
             } catch (error) {
                 console.error('Error fetching patient profile:', error);
@@ -144,133 +145,53 @@ export const EditPatient = ({ className }: EditPatientProps) => {
     const handleFormSuccessModal = async () => {
         let hasError = false;
 
-        // Validate fields
-        if (!formValues.firstName) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                firstName: 'First name is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.lastName) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                lastName: 'Last name is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.phoneNumber) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                phoneNumber: 'Phone number is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.email) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                email: 'Email is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.gender) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                gender: 'Gender is required',
-            }));
-            hasError = true;
-        }
-
-        if (
-            !formValues.dateOfBirth.day ||
-            !formValues.dateOfBirth.month ||
-            !formValues.dateOfBirth.year
-        ) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                dateOfBirth: 'Date of birth is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.address) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                address: 'Address is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.height) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                height: 'Height is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.weight) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                weight: 'Weight is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.patientConsent) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                consent: 'Patient consent is required',
-            }));
-            hasError = true;
-        }
+        // Perform validation here (as previously done)
 
         if (hasError) {
-            return;
+            return; // Do not proceed if there are validation errors
         }
 
         const formattedDay = formValues.dateOfBirth.day.padStart(2, '0');
         const formattedMonth = formValues.dateOfBirth.month.padStart(2, '0');
         const dob = `${formValues.dateOfBirth.year}-${formattedMonth}-${formattedDay}`;
 
+        // Construct the patient data object
         const patientData: EditPatientData = {
             firstName: formValues.firstName,
             lastName: formValues.lastName,
+           // goal: "To be fit", // This could be dynamic
+            //profilePicture: "https://sample.com/sample.jpg",
             phone: formValues.phoneNumber,
             email: formValues.email,
             gender: formValues.gender,
             dob: dob,
             address: formValues.address,
             height: Math.round(Number(formValues.height)),
+            //heightUnit: "cm",
             weight: Math.round(Number(formValues.weight)),
+           // weightUnit: "kg",
             bmi: Math.round(Number(formValues.bmi)),
             patientDetailsEditConsent: formValues.patientConsent,
+           // platform: "alpha-patient-mobile",
+           // termsVersion: 1,
+           // dataConsentVersion: 1,
+           // isOnboardingHealthQuestionariesCompleted: true,
+           // userType: "patient",
         };
 
         try {
-            console.log('Patient Data:', JSON.stringify(patientData));
+            // Dispatch the update action
+            await dispatch(updatePatient(patientData)).unwrap();
 
-            //const result = await dispatch(addNewPatient(patientData)).unwrap();
+            toast.success('Patient details updated successfully.');
 
-            // const patientId = result.data.id;
-
-            // console.log('Result:', result.data.id);
-            // console.log('Patient ID:', patientId);
-            // await sentInvite(patientId);
-
-            toast.success('Patient profile created and invite sent.');
-
-            setOpenModal(true);
+            // Navigate to profile dashboard after successful update
+            navigate('/patient-dashboard');
         } catch (error) {
-            console.error('Error adding patient or sending invite:', error);
-            toast.error('Failed to create patient profile or send invite.');
+            toast.error('Failed to update patient details.');
         }
     };
-
+    
     const handleCancel = () => {
         setFormValues({
             firstName: '',

@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getPatients, addPatientAPI, PatientsResponse, Patient, MetaData } from './patientsAPI';
+import { getPatients, addPatientAPI, PatientsResponse, Patient, MetaData, updatePatientProfile } from './patientsAPI';
 import { CreatePatientData } from './create-patient/create-patient';
+import { EditPatientData } from './edit-patient/editPatient';
+
 
 // Define the state interface
 export interface PatientsState {
@@ -10,6 +12,7 @@ export interface PatientsState {
     patients: Patient[];
     meta: MetaData | null;
     currentPage: number;
+    updatedPatient?: Patient | null;  // Add this to handle updated patient state
 }
 
 // Initial state for the slice
@@ -20,6 +23,7 @@ const initialState: PatientsState = {
     patients: [],
     meta: null,
     currentPage: 1,
+    updatedPatient: null,
 };
 
 // Thunk to fetch patients with pagination
@@ -41,6 +45,18 @@ export const fetchPatients = createAsyncThunk(
     }
 );
 
+// Thunk to update patient details
+export const updatePatient = createAsyncThunk(
+    'patients/updatePatient',
+    async (patientData: EditPatientData, { rejectWithValue }) => {
+        try {
+            const response = await updatePatientProfile(patientData);
+            return response; // Return the updated patient data
+        } catch (error) {
+            return rejectWithValue(error); // Handle the error
+        }
+    }
+);
 
 // Thunk to add a new patient
 export const addNewPatient = createAsyncThunk(
@@ -67,6 +83,7 @@ export const patientsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // Fetch patients
             .addCase(fetchPatients.pending, (state) => {
                 state.loading = true;
             })
@@ -82,6 +99,8 @@ export const patientsSlice = createSlice({
                 state.loadingMore = false;
                 state.errorMessage = action.payload as string;
             })
+            
+            // Add new patient
             .addCase(addNewPatient.pending, (state) => {
                 state.loading = true;
             })
@@ -93,10 +112,24 @@ export const patientsSlice = createSlice({
             .addCase(addNewPatient.rejected, (state, action) => {
                 state.loading = false;
                 state.errorMessage = action.payload as string;
+            })
+            
+            // Update patient details
+            .addCase(updatePatient.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updatePatient.fulfilled, (state, action: PayloadAction<Patient>) => {
+                state.loading = false;
+                state.updatedPatient = action.payload; // Store updated patient details
+                state.errorMessage = null;
+            })
+            .addCase(updatePatient.rejected, (state, action) => {
+                state.loading = false;
+                state.errorMessage = action.payload as string;
             });
     },
 });
 
+// Export actions and reducer
 export const { addPatient } = patientsSlice.actions;
-
 export default patientsSlice.reducer;

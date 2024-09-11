@@ -1,6 +1,7 @@
 import axios from "axios";
 import { config } from "../../../config/config";
 import { CreatePatientData } from "./create-patient/create-patient";
+import { EditPatientData } from "./edit-patient/editPatient";
 
 export interface MetaData {
     page: number;
@@ -127,3 +128,19 @@ export const sentInvite = async (id: any): Promise<any> => {
     }
 };
 
+// Function to update patient details
+export const updatePatientProfile = async (patientData: EditPatientData) => {
+    const accessToken = localStorage.getItem('accessToken');
+    const apiURL = `${config.BASE_URL}/gateway/v1/patient`;
+
+    try {
+        const response = await axios.post(apiURL, patientData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

@@ -9,7 +9,7 @@ export interface SleepAnalysisProps {
 }
 
 export const SleepAnalysis = ({ className }: SleepAnalysisProps) => {
-    const [isComingSoon, setIsComingSoon] = useState(false);
+    const [isComingSoon, setIsComingSoon] = useState(true);
 
     const title = isComingSoon ? 'Coming Soon' : 'No sleep analysis data available';
     const description = isComingSoon

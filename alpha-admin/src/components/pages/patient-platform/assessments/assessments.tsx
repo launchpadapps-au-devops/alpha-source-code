@@ -8,7 +8,6 @@ import { EmptyComponent } from '../../../empty-state-component/empty-component';
 import { SidebarPatient } from '../../patient-Management/patient-sidebar/patientSidebar';
 import { onBoardingAssessment } from './assessmentAPI';
 
-
 export interface AssessmentsProps {
   className?: string;
 }
@@ -20,118 +19,100 @@ interface AssessmentData {
 
 export const Assessments = ({ className }: AssessmentsProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const [onboardingData, setOnboardingData] = useState<AssessmentData[]>([]);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
   const tabs = ['Onboarding assessment', 'Health check-in responses'];
 
   const patientId = localStorage.getItem('selectedPatientId');
 
   useEffect(() => {
     const fetchOnBoardingAssessment = async () => {
-      const response = await onBoardingAssessment(patientId);
-      console.log(response);
+      //setIsLoading(true); // Set loading to true before API call
+      try {
+        const response = await onBoardingAssessment(patientId);
+        // Extract the relevant data from the response and map to the required structure
+        const assessmentData = response.data.map((item: any) => ({
+          question: item.question,
+          answers: Array.isArray(item.answer) 
+            ? item.answer.map((ans: any) => ans.tag) // Display answerTags for multiple choice
+            : [item.answerTags] // If the answer is a string or a single value
+        }));
+        setOnboardingData(assessmentData);
+      } catch (error) {
+        console.error('Error fetching onboarding assessment:', error);
+      } finally {
+        setIsLoading(false); // Set loading to false after API call
+      }
     };
-  
+
     if (patientId) {
       fetchOnBoardingAssessment();
     }
   }, [patientId]);
-  
 
   const handleTabChange = (newValue: number) => {
     setSelectedTab(newValue);
   };
 
-  const onboardingData: AssessmentData[] = [
-    {
-      question: 'Preferred name',
-      answers: ['Sunnery'],
-    },
-    {
-      question: 'What is your ethnic background?',
-      answers: ['Chinese'],
-    },
-    {
-      question: 'If you had a spare moment and all the chores are done, what would you be doing?',
-      answers: ['Cooking up a storm', 'Hanging out with my kids', 'Watching TV'],
-    },
-    {
-      question: 'Do you have any dietary restrictions?',
-      answers: ['Dairy intolerant or allergic', 'Egg allergy', 'Vegetarian'],
-    },
-    {
-      question: 'Are you limited by lack of mobility or injury?',
-      answers: ['Moderately'],
-    },
-    {
-      question: 'Select the parts of your body that are affected by injury.',
-      answers: ['Neck', 'Back'],
-    },
-  ];
-
-  const healthCheckIn: AssessmentData[] = [
-    // You can uncomment and add actual health check data here if available
-  ];
-
-  const onboardingIncomplete = onboardingData.length === 0 && healthCheckIn.length === 0;
+  const onboardingIncomplete = onboardingData.length === 0;
 
   return (
     <>
-        <SidebarPatient />
-        <div className={classNames(styles['assessment-wrapper'], className)}>
-          {onboardingIncomplete ? (
-            <DataCard className={classNames(styles['tab-panel'], styles['stretch-box'])}>
-              <h1>Onboarding Assessment</h1>
-              <EmptyComponent
-                title="No assessment data available"
-                description="There is currently no assessment data available. The patient has not completed any assessments yet."
-              />
-            </DataCard>
-          ) : (
-            <>
-              <TabBar
-                className={styles['stretched-tabs']}
-                tabs={tabs}
-                selectedTab={selectedTab}
-                onTabChange={handleTabChange}
-              />
+      <SidebarPatient />
+      <div className={classNames(styles['assessment-wrapper'], className)}>
+        {isLoading ? (
+          // Show a loading indicator while the data is being fetched
+          <DataCard className={classNames(styles['tab-panel'], styles['stretch-box'])}>
+            {/* <h1>Loading...</h1> */}
+          </DataCard>
+        ) : (
+          <>
+            {onboardingIncomplete ? (
+              <DataCard className={classNames(styles['tab-panel'], styles['stretch-box'])}>
+                <h1>Onboarding Assessment</h1>
+                <EmptyComponent
+                  title="No assessment data available"
+                  description="There is currently no assessment data available. The patient has not completed any assessments yet."
+                />
+              </DataCard>
+            ) : (
+              <>
+                <TabBar
+                  className={styles['stretched-tabs']}
+                  tabs={tabs}
+                  selectedTab={selectedTab}
+                  onTabChange={handleTabChange}
+                />
 
-              {selectedTab === 0 && (
-                <DataCard className={styles['tab-panel']}>
-                  <h1>Onboarding assessment</h1>
-                  {onboardingData.length > 0 ? (
-                    <div className={styles['assessment-list']}>
-                      {onboardingData.map((data, index) => (
-                        <AssessmentCard key={index} question={data.question} answers={data.answers} />
-                      ))}
-                    </div>
-                  ) : (
-                    <EmptyComponent
-                      title="Patient onboarding assessment incomplete"
-                      description="The patient has not yet completed the Onboarding Assessment. They can easily complete it through the patient app. Once completed, the assessment results will be available here."
-                    />
-                  )}
-                </DataCard>
-              )}
+                {selectedTab === 0 && (
+                  <DataCard className={styles['tab-panel']}>
+                    <h1>Onboarding assessment</h1>
+                    {onboardingData.length > 0 ? (
+                      <div className={styles['assessment-list']}>
+                        {onboardingData.map((data, index) => (
+                          <AssessmentCard key={index} question={data.question} answers={data.answers} />
+                        ))}
+                      </div>
+                    ) : (
+                      <EmptyComponent
+                        title="Patient onboarding assessment incomplete"
+                        description="The patient has not yet completed the Onboarding Assessment. They can easily complete it through the patient app. Once completed, the assessment results will be available here."
+                      />
+                    )}
+                  </DataCard>
+                )}
 
-              {selectedTab === 1 && (
-                <DataCard className={styles['tab-panel']}>
-                  <h1>Health check-in responses</h1>
-                  {healthCheckIn.length > 0 ? (
-                    <div className={styles['assessment-list']}>
-                      {healthCheckIn.map((data, index) => (
-                        <AssessmentCard key={index} question={data.question} answers={data.answers} />
-                      ))}
-                    </div>
-                  ) : (
-                    <EmptyComponent
-                      title="Health check-in responses incomplete"
-                      description="The patient has not yet completed their Health check-in responses. They can easily complete it through the patient app. Once completed, the assessment results will be available here."
-                    />
-                  )}
-                </DataCard>
-              )}
-            </>
-          )}
-        </div>
+                {selectedTab === 1 && (
+                  <DataCard className={styles['tab-panel']}>
+                    <h1>Health check-in responses</h1>
+                    {/* Add logic for Health check-in responses here */}
+                  </DataCard>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </div>
     </>
   );
 };
