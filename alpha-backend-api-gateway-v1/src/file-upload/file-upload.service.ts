@@ -1,4 +1,3 @@
-// azure-blob.service.ts
 import { Injectable, Logger } from '@nestjs/common';
 import { BlobServiceClient, ContainerClient, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { EnvConfigService } from 'src/common/config/envConfig.service';
@@ -28,6 +27,23 @@ export class FileUploadService {
             );
             this.containerClient = blobServiceClient.getContainerClient(azureConfig.containerName);
             this.isAzureConfigured = true;
+
+            // Check if the container exists and create if it doesn't
+            this.createContainerIfNotExists().catch(error => {
+                this.logger.error('Failed to create container or check its existence', error);
+            });
+        }
+    }
+
+    private async createContainerIfNotExists(): Promise<void> {
+        if (this.containerClient) {
+            const containerExists = await this.containerClient.exists();
+            if (!containerExists) {
+                await this.containerClient.create();
+                this.logger.log(`Container '${this.containerClient.containerName}' created successfully.`);
+            } else {
+                this.logger.log(`Container '${this.containerClient.containerName}' already exists.`);
+            }
         }
     }
 

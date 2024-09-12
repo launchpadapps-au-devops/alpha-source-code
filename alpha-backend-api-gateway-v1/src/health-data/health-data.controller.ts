@@ -46,7 +46,7 @@ export class HealthDataController {
         @Request() req,
         @Body() payload: CreateHealthProfileQuestionariesDto
     ): Promise<object> {
-        return await this.healthDataService.addHealthProfileQuestionaries(payload, req.user);
+        return await this.healthDataService.addHealthProfileQuestionaries(req.body, req.user);
     }
 
     @ApiBearerAuth()
