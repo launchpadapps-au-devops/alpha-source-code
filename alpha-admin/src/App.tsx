@@ -46,6 +46,8 @@ import ToastContainer from 'react-bootstrap/esm/ToastContainer';
 import 'react-toastify/dist/ReactToastify.css';
 import { PatientLifeStyle } from './components/pages/patient-platform/patient-lifestyle-plan/patient-lifestyle-plan';
 import { EditPatient } from './components/pages/patient-Management/edit-patient/editPatient';
+import { HealthCheckinResponse } from './components/pages/patient-platform/assessments/health-checkin/healthCheckIn';
+import { HealthCheckDetail } from './components/pages/patient-platform/assessments/health-checkin/healthCheckinDetail';
 
 // const router = createBrowserRouter([
 //     { path: '/', element: <Home /> },
@@ -243,6 +245,15 @@ const router = createBrowserRouter([
                 path: '/privacy-policy',
                 element: <PrivacyPolicy />,
             },
+            {
+                path:'/Health/Check/In',
+                element:<HealthCheckinResponse/>
+            },
+            {
+                path: '/health-check-detail',
+                element: <HealthCheckDetail />,
+            }
+
         ],
     },
 ]);

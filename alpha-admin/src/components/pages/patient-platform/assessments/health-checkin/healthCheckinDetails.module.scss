@@ -1,0 +1,17 @@
+.detailWrapper {
+    padding: 20px;
+  }
+  
+  .loadingCard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+  }
+  
+  .assessmentList {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column for detailed view */
+    gap: 20px;
+  }
+  

@@ -8,7 +8,7 @@ export interface AssessmentCardProps {
     answers: string[];
 }
 
-export const AssessmentCard = ({ className, question, answers }: AssessmentCardProps) => {
+export const AssessmentCard = ({ className, question, answers  }: AssessmentCardProps) => {
     return (
         <div className={classNames(styles['assessment-card-wrapper'], className)}>
             <div className={styles['question-text']}>{question}</div>

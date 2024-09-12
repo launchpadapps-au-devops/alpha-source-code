@@ -7,6 +7,7 @@ import { AssessmentCard } from './assessments-components/assestment-card/assessm
 import { EmptyComponent } from '../../../empty-state-component/empty-component';
 import { SidebarPatient } from '../../patient-Management/patient-sidebar/patientSidebar';
 import { onBoardingAssessment } from './assessmentAPI';
+import { HealthCheckinResponse } from './health-checkin/healthCheckIn';
 
 export interface AssessmentsProps {
   className?: string;
@@ -105,7 +106,9 @@ export const Assessments = ({ className }: AssessmentsProps) => {
                 {selectedTab === 1 && (
                   <DataCard className={styles['tab-panel']}>
                     <h1>Health check-in responses</h1>
-                    {/* Add logic for Health check-in responses here */}
+                    <br>
+                    </br>
+                   <HealthCheckinResponse/>                 
                   </DataCard>
                 )}
               </>

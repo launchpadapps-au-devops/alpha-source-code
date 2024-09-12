@@ -1,0 +1,32 @@
+.healthCheckinWrapper {
+    display: flex;
+    flex-direction: column;
+    //argin-left: 220px; /* Adjust for the sidebar width */
+  }
+  
+
+  .tabs {
+    margin: 20px 0;
+  }
+  
+  .contentWrapper {
+    padding: 20px;
+  }
+  
+  .cardLayout {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two cards per row */
+    gap: 60px;
+  }
+  
+  .dataCard {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
