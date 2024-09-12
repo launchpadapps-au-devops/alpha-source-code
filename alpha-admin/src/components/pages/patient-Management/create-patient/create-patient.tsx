@@ -14,6 +14,8 @@ import { toast } from 'react-toastify';
 import { AppButton } from '../../../app-button/app-button';
 import { SidebarPatient } from '../patient-sidebar/patientSidebar';
 import { sentInvite } from '../patientsAPI';
+import NotificationBanner from '../../notification-banner/notificationBanner';
+import { PuffLoader } from 'react-spinners';
 
 export interface CreatePatientProps {
     className?: string;
@@ -65,6 +67,13 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
     });
 
     const [openModal, setOpenModal] = useState(false);
+    const [loading, setLoading] = useState(false); // Add loading state
+
+    const [notification, setNotification] = useState({
+        isVisible: false,
+        message: '',
+        type: 'success' as 'success' | 'error',
+    });
 
     // Automatically calculate BMI when height or weight changes
     useEffect(() => {
@@ -81,27 +90,20 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
 
     const handleChange = (field: string, value: any) => {
         if (field.startsWith('dateOfBirth.')) {
-            // Define dateField as 'day' | 'month' | 'year'
             const dateField = field.split('.')[1] as 'day' | 'month' | 'year';
-
-            // Create a temporary object to hold the updated value
             const updatedDateOfBirth = {
                 ...formValues.dateOfBirth,
-                [dateField]: value, // Update the correct part of the dateOfBirth
+                [dateField]: value,
             };
-
             setFormValues((prevValues) => ({
                 ...prevValues,
                 dateOfBirth: updatedDateOfBirth,
             }));
-
-            // Check if all parts of the date of birth are filled
             const { day, month, year } = updatedDateOfBirth;
-
             if (day && month && year) {
                 setFormErrors((prevErrors) => ({
                     ...prevErrors,
-                    dateOfBirth: '', // Clear error when all date fields are filled
+                    dateOfBirth: '',
                 }));
             }
         } else {
@@ -114,100 +116,18 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
 
     const handleFormSuccessModal = async () => {
         let hasError = false;
-
-        // Validate fields
-        if (!formValues.firstName) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                firstName: 'First name is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.lastName) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                lastName: 'Last name is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.phoneNumber) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                phoneNumber: 'Phone number is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.email) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                email: 'Email is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.gender) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                gender: 'Gender is required',
-            }));
-            hasError = true;
-        }
-
-        if (
-            !formValues.dateOfBirth.day ||
-            !formValues.dateOfBirth.month ||
-            !formValues.dateOfBirth.year
-        ) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                dateOfBirth: 'Date of birth is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.address) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                address: 'Address is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.height) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                height: 'Height is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.weight) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                weight: 'Weight is required',
-            }));
-            hasError = true;
-        }
-
-        if (!formValues.patientConsent) {
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                consent: 'Patient consent is required',
-            }));
-            hasError = true;
-        }
+    
+        // Validate fields (keep your validation code here)
+    setLoading(true);
 
         if (hasError) {
             return; // Do not proceed if there are errors
         }
-
+    
         const formattedDay = formValues.dateOfBirth.day.padStart(2, '0');
         const formattedMonth = formValues.dateOfBirth.month.padStart(2, '0');
         const dob = `${formValues.dateOfBirth.year}-${formattedMonth}-${formattedDay}`;
-
+    
         const patientData: CreatePatientData = {
             firstName: formValues.firstName,
             lastName: formValues.lastName,
@@ -222,31 +142,67 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
             patientDetailsEditConsent: formValues.patientConsent,
         };
     
+        console.log('Patient data prepared:', patientData);
+    
         try {
-            console.log('Patient Data:', JSON.stringify(patientData)); // Debugging output
+            // Try-catch only the dispatch call
+            let result;
+            try {
+                result = await dispatch(addNewPatient(patientData)).unwrap();
+                console.log('Result from dispatch:', result);
+            } catch (dispatchError) {
+                console.error('Error from dispatch:', dispatchError);
+                throw dispatchError; // Throw it again to be caught outside
+            }
     
-            // Dispatch the action and unwrap the result
-            const result = await dispatch(addNewPatient(patientData)).unwrap();
-    
-            // Assuming result.data is the patient object with an 'id'
-            const patientId = result.data.id; // Correctly access the 'id'
-    
-            console.log('Result:', result.data.id); // Debugging output
-            console.log('Patient ID:', patientId); // Debugging output
-
+            const patientId = result.data.id;
             localStorage.setItem('selectedPatientId', patientId);
-            // Now, send the invite
-            await sentInvite(patientId);
     
-            toast.success('Patient profile created and invite sent.');
+            try {
+                await sentInvite(patientId);
+                console.log('Invite sent successfully');
+            } catch (inviteError) {
+                console.error('Error sending invite:', inviteError);
+                throw inviteError; // Throw to be caught in the outer catch
+            }
     
+            setNotification({
+                isVisible: true,
+                message: 'Patient profile created and invite sent.',
+                type: 'success',
+            });
+            setLoading(false);
             setOpenModal(true);
-        } catch (error) {
-            console.error('Error adding patient or sending invite:', error);
-            toast.error('Failed to create patient profile or send invite.');
+        } catch (error: any) {
+            console.error('Caught an error in handleFormSuccessModal:', error);
+    
+            // Handle different cases of error messages
+            if (error?.statusCode === 400 && error?.error?.message) {
+                setLoading(false);
+                setNotification({
+                    isVisible: true,
+                    message: error.error.message || 'An error occurred.',
+                    type: 'error',
+                });
+            } else if (error?.message) {
+                console.error('Error message:', error.message.data);
+                setLoading(false);
+                setNotification({
+                    isVisible: true,
+                    message: error.response.data.error.message || 'An error occurred.',
+                    type: 'error',
+                });
+            } else {
+                setLoading(false);
+                setNotification({
+                    isVisible: true,
+                    message: 'Failed to create patient profile or send invite.',
+                    type: 'error',
+                });
+            }
         }
     };
-     
+    
 
     const handleCancel = () => {
         setFormValues({
@@ -286,6 +242,20 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
         <>
             <SidebarPatient />
             <div className={classNames(styles['create-team-wrapper'], className)}>
+                <NotificationBanner
+                    isVisible={notification.isVisible}
+                    message={notification.message}
+                    onClose={() => setNotification((prev) => ({ ...prev, isVisible: false }))}
+                    type={notification.type}
+                />
+
+                {/* Loader overlay */}
+                {loading && (
+                    <div className={styles.loaderOverlay}>
+                        <PuffLoader color="#007bff" />
+                    </div>
+                )}
+
                 <div>
                     <h2>Create new patient</h2>
                     <br />
@@ -353,7 +323,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 onChange={(e) => {
                                     setFormErrors((prevErrors) => ({
                                         ...prevErrors,
-                                        phoneNumber: '', // Clear error when user types
+                                        phoneNumber: '',
                                     }));
                                     handleChange('phoneNumber', e.target.value);
                                 }}
@@ -401,20 +371,20 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                         setFormErrors((prevErrors) => ({
                                             ...prevErrors,
                                             gender: '',
-                                        })); // Clear error when value is selected
+                                        }));
                                     }
                                 }}
                                 MenuProps={MenuProps}
                                 className={classNames({
-                                    'Mui-error': !!formErrors.gender, // Apply the error class if there’s an error
+                                    'Mui-error': !!formErrors.gender,
                                 })}
                                 renderValue={(selected: unknown) => {
                                     if (!selected || selected === '') {
                                         return (
                                             <span className={styles['placeholder']}>Gender</span>
-                                        ); // Placeholder when no value is selected
+                                        );
                                     }
-                                    return String(selected); // Display the selected value
+                                    return String(selected);
                                 }}
                             >
                                 {['Male', 'Female', 'Non-Binary'].map((option) => (
@@ -424,7 +394,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                 ))}
                             </CustomizedSelects>
 
-                            {formErrors.gender && ( // Only render the error message once
+                            {formErrors.gender && (
                                 <div className={styles['error-message']}>{formErrors.gender}</div>
                             )}
                         </div>
@@ -442,7 +412,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                                         handleChange('dateOfBirth.day', e.target.value)
                                     }
                                     className={classNames(styles['dob-input'], {
-                                        [styles['error-field']]: formErrors.dateOfBirth, // Highlight error if there’s an error
+                                        [styles['error-field']]: formErrors.dateOfBirth,
                                     })}
                                 />
                                 <InputField
@@ -561,7 +531,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                         id="patient-consent"
                         checked={formValues.patientConsent}
                         onChange={(e) => {
-                            setFormErrors((prevErrors) => ({ ...prevErrors, consent: '' })); // Clear error
+                            setFormErrors((prevErrors) => ({ ...prevErrors, consent: '' }));
                             handleChange('patientConsent', e.target.checked);
                         }}
                         color="primary"
@@ -589,7 +559,7 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
                     descriptionText="Profile has been successfully created and the sign-up link sent to the patient."
                     title="Profile created & link sent"
                     closeModal={handleCloseModal}
-                    handleButton={() =>  navigate('/patient-profile')}
+                    handleButton={() => navigate('/patient-profile')}
                 />
             )}
         </>

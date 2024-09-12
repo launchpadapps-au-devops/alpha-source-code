@@ -10,6 +10,7 @@ import { getLifestylePlans, assignLifestylePlan } from './patientLifeStyleAPI';
 import { SelectLifeStylePlan } from './patent-lifestyle-components/select-lifestyle-plan-list/select-lifestyle-plan';
 import { SidebarPatient } from '../../patient-Management/patient-sidebar/patientSidebar';
 import { useLocation } from 'react-router-dom';
+import { PuffLoader } from 'react-spinners';
 
 export interface PatientLifeStyle {
     className?: string;
@@ -26,29 +27,29 @@ export const PatientLifeStyle = ({ className }: PatientLifeStyle) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [page, setPage] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
+    const [initialLoading, setInitialLoading] = useState<boolean>(true); // Track initial loading state
+    const [loadingMore, setLoadingMore] = useState<boolean>(false); // Track loading more data
 
     useEffect(() => {
         const fetchPlans = async () => {
-            if (loading || !hasMore) return;
-
-            setLoading(true);
             try {
                 const response = await getLifestylePlans(page);
                 if (response.data.length > 0) {
                     setPlans((prevPlans) => [...prevPlans, ...response.data]);
                     setPage((prevPage) => prevPage + 1);
                 } else {
-                    setHasMore(false);
+                    setHasMore(false); // No more plans to load
                 }
             } catch (error) {
                 console.error('Error fetching plans:', error);
             } finally {
-                setLoading(false);
+                setInitialLoading(false); // Stop initial loader after first fetch
+                setLoadingMore(false); // Stop "loading more" loader
             }
         };
 
         fetchPlans();
-    }, [page, hasMore, loading]);
+    }, [page]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -65,7 +66,8 @@ export const PatientLifeStyle = ({ className }: PatientLifeStyle) => {
     }, []);
 
     const fetchMoreData = () => {
-        if (loading || !hasMore) return;
+        if (loadingMore || !hasMore) return;
+        setLoadingMore(true); // Start "loading more" loader
         setPage((prevPage) => prevPage + 1);
     };
 
@@ -133,8 +135,21 @@ export const PatientLifeStyle = ({ className }: PatientLifeStyle) => {
                         description={plan.description}
                     />
                 ))}
-                {loading && <div>Loading more plans...</div>}
-                {!hasMore && <div>No more plans to load</div>}
+
+                {initialLoading && (
+                    <div className={styles.loaderOverlay}>
+                        <PuffLoader color="#007bff" />
+                    </div>
+                )}
+
+                {/* Loading more spinner for infinite scroll */}
+                {loadingMore && (
+                    <div className={styles.loaderWrapper}>
+                        <PuffLoader color="#007bff" />
+                    </div>
+                )}
+
+
                 <DailogModal
                     open={isAssignModalOpen}
                     closeModal={handleCloseAssignModal}

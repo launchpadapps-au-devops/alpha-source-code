@@ -63,18 +63,18 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                                 <div className={styles['flex-table-column']}>
                                     <Avatar
                                         className={styles['profile-image']}
-                                        alt={`${patient.firstName} ${patient.lastName}`}
+                                        alt={`${patient?.firstName} ${patient?.lastName}`}
                                         src={
-                                            patient.profilePicture || '/static/images/avatar/1.jpg'
+                                            patient?.profilePicture || '/static/images/avatar/1.jpg'
                                         }
                                     />
-                                    {patient.firstName} {patient.lastName}
+                                    {patient?.firstName} {patient?.lastName}
                                 </div>
                             </td>
-                            <td>{patient.phone}</td>
-                            <td>{patient.email}</td>
-                            <td>{patient.dob}</td>
-                            <td>{patient.planName  && patient.planName || 'No Plan Assigned'}</td>
+                            <td>{patient?.phone}</td>
+                            <td>{patient?.email}</td>
+                            <td>{patient?.dob}</td>
+                            <td>{patient?.planName  && patient?.planName || 'No Plan Assigned'}</td>
                         </tr>
                     ))}
                 </tbody>

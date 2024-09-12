@@ -15,6 +15,7 @@ import { getPatientProfile, sentInvite } from '../../patient-Management/patients
 import { AppButton } from '../../../app-button/app-button';
 import NotificationBanner from '../../notification-banner/notificationBanner';
 import { gettingPlanProgress } from './patientDashboardAPI';
+import { PuffLoader } from 'react-spinners';
 
 // Define a type for the keys of motivationsData
 type MotivationLevel =
@@ -58,6 +59,7 @@ export const PatientDashboard = ({ className }: PatientDashboardProps) => {
 
     const location = useLocation(); // Use useLocation to access state
     const patientId =  localStorage.getItem('selectedPatientId');
+    const [isLoading, setIsLoading] = useState(true);
     
     const [selectedMotivation, setSelectedMotivation] = useState<MotivationLevel | null>(
         'Very unmotivated'
@@ -99,41 +101,66 @@ export const PatientDashboard = ({ className }: PatientDashboardProps) => {
     }, []);
 
     useEffect(() => {
-        if (patientId) {
+      if (patientId) {
           const fetchProfile = async () => {
-            try {
-              const response = await getPatientProfile(patientId);
-              const patientData = response.data;
-    
-              const { ageYears, ageMonths } = calculateAge(patientData.dob);
-              setMember({
-                id: patientData.id,
-                email: patientData.email,
-                firstName: patientData.firstName,
-                lastName: patientData.lastName,
-                fullName: `${patientData.firstName} ${patientData.lastName}`,
-                phone: patientData.phone,
-                profilePicture: patientData.profilePicture,
-                gender: patientData.gender,
-                dob: patientData.dob,
-                height: patientData.height,
-                heightUnit: patientData.heightUnit,
-                weight: patientData.weight,
-                weightUnit: patientData.weightUnit,
-                bmi: patientData.bmi,
-                ageYears: ageYears,
-                ageMonths: ageMonths,
-                planName: patientData.planName,
-                startDate: patientData.startDate,
-              });
-            } catch (error) {
-              console.error("Error fetching patient profile:", error);
-            }
+              try {
+                  const response = await getPatientProfile(patientId);
+                  const patientData = response.data;
+                  const { ageYears, ageMonths } = calculateAge(patientData.dob);
+                  setMember({
+                      ...patientData,
+                      fullName: `${patientData.firstName} ${patientData.lastName}`,
+                      ageYears,
+                      ageMonths,
+                  });
+              } catch (error) {
+                  console.error("Error fetching patient profile:", error);
+              } finally {
+                  setIsLoading(false); // Stop loading when done
+              }
           };
-    
+
           fetchProfile();
-        }
-      }, [patientId]);
+      }
+  }, [patientId]);
+
+    // useEffect(() => {
+    //     if (patientId) {
+    //       const fetchProfile = async () => {
+    //         try {
+    //           const response = await getPatientProfile(patientId);
+    //           const patientData = response.data;
+    
+    //           const { ageYears, ageMonths } = calculateAge(patientData.dob);
+    //           setMember({
+    //             id: patientData.id,
+    //             email: patientData.email,
+    //             firstName: patientData.firstName,
+    //             lastName: patientData.lastName,
+    //             fullName: `${patientData.firstName} ${patientData.lastName}`,
+    //             phone: patientData.phone,
+    //             profilePicture: patientData.profilePicture,
+    //             gender: patientData.gender,
+    //             dob: patientData.dob,
+    //             height: patientData.height,
+    //             heightUnit: patientData.heightUnit,
+    //             weight: patientData.weight,
+    //             weightUnit: patientData.weightUnit,
+    //             bmi: patientData.bmi,
+    //             ageYears: ageYears,
+    //             ageMonths: ageMonths,
+    //             planName: patientData.planName,
+    //             startDate: patientData.startDate,
+    //           });
+    //         } catch (error) {
+    //           setIsLoading(false); 
+    //           console.error("Error fetching patient profile:", error);
+    //         }
+    //       };
+    
+    //       fetchProfile();
+    //     }
+    //   }, [patientId]);
     
       const calculateAge = (dob: string) => {
         const birthDate = new Date(dob);
@@ -220,6 +247,12 @@ export const PatientDashboard = ({ className }: PatientDashboardProps) => {
           onClose={() => setNotification({ ...notification, isVisible: false })}
           type={notification.type}
         />
+         {isLoading ? (
+                    <div className={styles.loaderOverlay}>
+                        <PuffLoader color="#007bff" />
+                    </div>
+                ) : (
+                    <>
                 <h1>Patient dashboard</h1>
                 <div className={styles['patient-flex-layout']}>
                 <div className={styles['left-profile-block']}>
@@ -394,6 +427,8 @@ export const PatientDashboard = ({ className }: PatientDashboardProps) => {
                         </div>
                     </DataCard>
                 </div>
+                </>
+              )}
             </div>
         </>
     );

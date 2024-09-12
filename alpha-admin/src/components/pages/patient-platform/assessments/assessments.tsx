@@ -8,6 +8,7 @@ import { EmptyComponent } from '../../../empty-state-component/empty-component';
 import { SidebarPatient } from '../../patient-Management/patient-sidebar/patientSidebar';
 import { onBoardingAssessment } from './assessmentAPI';
 import { HealthCheckinResponse } from './health-checkin/healthCheckIn';
+import { PuffLoader } from 'react-spinners'; // Import PuffLoader
 
 export interface AssessmentsProps {
   className?: string;
@@ -28,7 +29,6 @@ export const Assessments = ({ className }: AssessmentsProps) => {
 
   useEffect(() => {
     const fetchOnBoardingAssessment = async () => {
-      //setIsLoading(true); // Set loading to true before API call
       try {
         const response = await onBoardingAssessment(patientId);
         // Extract the relevant data from the response and map to the required structure
@@ -62,10 +62,10 @@ export const Assessments = ({ className }: AssessmentsProps) => {
       <SidebarPatient />
       <div className={classNames(styles['assessment-wrapper'], className)}>
         {isLoading ? (
-          // Show a loading indicator while the data is being fetched
-          <DataCard className={classNames(styles['tab-panel'], styles['stretch-box'])}>
-            {/* <h1>Loading...</h1> */}
-          </DataCard>
+          // Show a loading spinner while the data is being fetched
+          <div className={styles.loaderOverlay}>
+            <PuffLoader color="#007bff" /> {/* Centered loader */}
+          </div>
         ) : (
           <>
             {onboardingIncomplete ? (
@@ -106,9 +106,8 @@ export const Assessments = ({ className }: AssessmentsProps) => {
                 {selectedTab === 1 && (
                   <DataCard className={styles['tab-panel']}>
                     <h1>Health check-in responses</h1>
-                    <br>
-                    </br>
-                   <HealthCheckinResponse/>                 
+                    <br />
+                    <HealthCheckinResponse />
                   </DataCard>
                 )}
               </>
