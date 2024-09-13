@@ -47,11 +47,11 @@ import { ValidationPipe } from '@nestjs/common';
 
   app.setGlobalPrefix(configService.app.apiPrefix);
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,  // Remove any properties that are not in the DTO
-    //forbidNonWhitelisted: true,  // Throw an error if extra properties are sent
-    transform: true,  // Automatically transform payloads to DTO instances
-  }));
+  // app.useGlobalPipes(new ValidationPipe({
+  //   whitelist: true,  // Remove any properties that are not in the DTO
+  //   //forbidNonWhitelisted: true,  // Throw an error if extra properties are sent
+  //   transform: true,  // Automatically transform payloads to DTO instances
+  // }));
 
   const config = new DocumentBuilder()
     .setTitle('🙋‍♂️⚙️ Alpha Backend API Gateway')
