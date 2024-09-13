@@ -1,4 +1,4 @@
-import { Request, Body, Controller, Get, Post, UseGuards, Query } from '@nestjs/common';
+import { Request, Body, Controller, Get, Post, UseGuards, Query, ForbiddenException } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { UserLifeStylePlanService } from './user-lifestyle-plan.service';
 import { MessagingService } from '../common/messaging.service';
@@ -133,12 +133,12 @@ export class UserLifeStylePlanController {
         @Request() req,
     ) {
         if(req.user.userType === USER_TYPES.PATIENT) {
-            if(req.user.userId !== req.query.userId) {
-                throw new Error('You are not allowed for this operation');
+            if(req.query.userId && (req.query.userId !== req.user.userId)) {
+                throw new ForbiddenException('You are not allowed to access this resource');
             }
 
             req.query.userId = req.user.userId;
-        };
+        }
 
         return this.userLifeStylePlanService.getUserPlanProgress({ userId: req.query.userId });
     }

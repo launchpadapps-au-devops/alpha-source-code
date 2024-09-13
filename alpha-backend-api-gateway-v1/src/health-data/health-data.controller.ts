@@ -79,14 +79,16 @@ export class HealthDataController {
     @Get('/questionaries')
     async getHealthProfileQuestionaries(
         @Request() req,
-        @Query('userId') userId?: string
     ): Promise<object> {
-        if(req.user.userType === USER_TYPES.PATIENT && userId) {
-            if(userId !== req.user.userId) {
+        if(req.user.userType === USER_TYPES.PATIENT) {
+            if(req.query.userId && (req.query.userId !== req.user.userId)) {
                 throw new ForbiddenException('You are not allowed to access this resource');
             }
+
+            req.query.userId = req.user.userId;
         }
 
+        const { userId } = req.query;
         return await this.healthDataService.getHealthProfileQuestionaries(userId, req.user);
     }
 
@@ -153,7 +155,7 @@ export class HealthDataController {
         @Request() req
     ): Promise<object> {
         if(req.user.userType === USER_TYPES.PATIENT) {
-            if(req.query.userId !== req.user.userId) {
+            if(req.query.userId && (req.query.userId !== req.user.userId)) {
                 throw new ForbiddenException('You are not allowed to access this resource');
             }
 
@@ -226,12 +228,16 @@ export class HealthDataController {
     async getUserHealthData(
         @Request() req
     ): Promise<object> {
-        const { limit, page, sortField, sortOrder, source, dataType, loggedAt } = req.query;
-        let userId = req.query.userId;
         if(req.user.userType === USER_TYPES.PATIENT) {
-            userId = req.user.userId;
+            if(req.query.userId && (req.query.userId !== req.user.userId)) {
+                throw new ForbiddenException('You are not allowed to access this resource');
+            }
+
+            req.query.userId = req.user.userId;
         }
             
+        const { limit, page, sortField, sortOrder, source, dataType, loggedAt, userId } = req.query;
+
         return await this.healthDataService.getUserHealthData(
             { limit, page },
             { sortField, sortOrder },
