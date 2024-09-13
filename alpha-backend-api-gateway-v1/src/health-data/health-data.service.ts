@@ -70,9 +70,9 @@ export class HealthDataService {
             'GET',
             {},
             {
-                pagination,
-                sorting,
-                filter
+                ...pagination,
+                ...sorting,
+                ...filter
             },
             {
                 'x-request-userId': reqUser.userId
