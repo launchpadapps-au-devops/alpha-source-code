@@ -387,6 +387,10 @@ export class UserLifeStylePlanService {
         }
 
         const userPlans = await userPlanService.findUserPlansByUserId(userId);
+        if(!userPlans) {
+            throw new BadRequestException('User Plan not found');
+        }
+        
         const userThemes = await userThemeService.findUserThemesByUserLifestylePlanId(userPlans.id);
 
         response.totalThemes = userThemes.length;
