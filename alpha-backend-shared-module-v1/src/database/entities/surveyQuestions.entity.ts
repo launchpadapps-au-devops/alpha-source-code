@@ -29,31 +29,31 @@ export class SurveyQuestions {
   @Column({ type: 'varchar', nullable: true })
   questionVersion: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 5000, nullable: true })
   answerVersion: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 5000, nullable: true })
   answerTags: string;
 
   @Column({ type: 'varchar', enum: ['ACTIVE', 'ARCHIVE'], default: 'ACTIVE' })
   status: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 5000, nullable: true })
   question: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true})
+  @Column({ type: 'varchar', length: 5000, nullable: true})
   questionType: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true})
+  @Column({ type: 'varchar', length: 5000, nullable: true})
   questionTag: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true})
+  @Column({ type: 'varchar', length: 5000, nullable: true})
   questionCategory: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true})
+  @Column({ type: 'varchar', length: 5000, nullable: true})
   questionSubCategory: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true})
+  @Column({ type: 'varchar', length: 5000, nullable: true})
   answerInputType: string;
 
   @Column({ type: 'jsonb', nullable: true})
@@ -62,10 +62,10 @@ export class SurveyQuestions {
   @Column({ type: 'jsonb', nullable: true})
   answer: object;
 
-  @Column({ type: 'varchar', length: 255, nullable: true})
+  @Column({ type: 'varchar', length: 5000, nullable: true})
   answerCategory: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true})
+  @Column({ type: 'varchar', length: 5000, nullable: true})
   answerSubCategory: string;
 
   @CreateDateColumn()
