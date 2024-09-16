@@ -402,7 +402,9 @@ export class UserLifeStylePlanService {
         response.lessonsCompleted = userLessons.filter(lesson => lesson.isCompleted).length;
         response.totalPoints = userLessons.reduce((acc, curr) => acc + curr.pointsEarned, 0);
 
-        response.planProgress = Math.floor((response.lessonsCompleted / response.totalLessons) * 100);
+        response.planProgress = !isNaN(response.totalLessons) && response.totalLessons > 0 
+            ? Math.floor((response.lessonsCompleted / response.totalLessons) * 100)
+            : 0;
 
         return response;
     }
