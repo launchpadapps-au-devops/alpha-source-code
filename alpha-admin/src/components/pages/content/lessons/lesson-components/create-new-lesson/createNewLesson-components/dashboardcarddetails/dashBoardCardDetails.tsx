@@ -10,8 +10,8 @@ export interface DashboardCardDetailsProps {
     setDashboardCardDetails: (dashboardCardDetails: Object) => void;
     data: any;
     setData: any;
-    errors: any; // Accept errors prop for validation
-    setErrors: (errors: any) => void; // Add setter for errors to clear errors
+    errors: any;
+    setErrors: (errors: any) => void;
 }
 
 export const DashboardCardDetails = ({
@@ -20,34 +20,44 @@ export const DashboardCardDetails = ({
     data,
     setData,
     errors,
-    setErrors, // Add setter to clear errors
+    setErrors,
 }: DashboardCardDetailsProps) => {
     const dispatch = useAppDispatch();
-    const [isFileUploaded, setIsFileUploaded] = useState(false); // State to track file upload
+    const [isFileUploaded, setIsFileUploaded] = useState(false);
+    const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(data.coverImage || null); // Start with coverImage if exists
+    const [isUploading, setIsUploading] = useState(false); // Track if the file is being uploaded
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            dispatch(uploadFile(file)).then((response: any) => {
-                const uploadedImageUrl = response.payload.data.data.url;
-                setData({ ...data, coverImage: uploadedImageUrl });
-                setIsFileUploaded(true); // Set to true once the file is uploaded
-            });
+            // Create a local preview URL before uploading
+            const filePreviewUrl = URL.createObjectURL(file);
+            setImagePreviewUrl(filePreviewUrl); // Set the preview URL
+
+            // Start the upload process
+            setIsUploading(true); // Mark as uploading
+            dispatch(uploadFile(file))
+                .then((response: any) => {
+                    const uploadedImageUrl = response.payload.data.data.url;
+                    setData({ ...data, coverImage: uploadedImageUrl });
+                    setIsFileUploaded(true); // Mark upload as complete
+                })
+                .finally(() => {
+                    setIsUploading(false); // Mark upload as done
+                });
         }
     };
 
-    // Handles input changes and clears the specific error
     const handleInputChange = (field: string, value: any) => {
         setData((prevState: any) => ({
             ...prevState,
             [field]: value,
         }));
 
-        // Clear the error for the field being edited
         if (errors[field]) {
             setErrors((prevErrors: any) => ({
                 ...prevErrors,
-                [field]: '', // Clear the error for the current field
+                [field]: '',
             }));
         }
     };
@@ -58,16 +68,41 @@ export const DashboardCardDetails = ({
                 Dashboard card details <Vector />
             </div>
 
-            {/* Cover Image Section */}
             <div className="cover-image-section">
                 <label htmlFor="cover-image" className="cover-image-label">
-                    Cover image <span style={{ color: 'red' }}>*</span> {/* Indicate it's required */}
+                    Cover image <span style={{ color: 'red' }}>*</span>
                 </label>
                 <div className="cover-image-hint">
                     Image: JPG, PNG, max 2MB; Video: MP4, max 100MB
                 </div>
 
-                {!isFileUploaded ? (
+                {/* Show the preview immediately after selecting a file */}
+                {(imagePreviewUrl || data.coverImage) && (
+                    <div className="uploaded-image-preview">
+                        <img
+                            src={imagePreviewUrl || data.coverImage} // Show the preview or uploaded image
+                            alt="Image preview"
+                            className="uploaded-image"
+                        />
+                        {isUploading && <div>Uploading...</div>}
+                        {!isUploading && isFileUploaded && (
+                            <div className="edit-image-section">
+                                <button
+                                    onClick={() => {
+                                        setIsFileUploaded(false); // Allow user to upload again
+                                        setImagePreviewUrl(null); // Clear the local preview
+                                        setData({ ...data, coverImage: '' }); // Clear the uploaded image URL
+                                    }}
+                                    className="remove-uploaded-image-button"
+                                >
+                                    Edit image
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {!isFileUploaded && !isUploading && (
                     <UploadButton
                         showLeftIcon
                         buttonText="Upload media"
@@ -75,25 +110,6 @@ export const DashboardCardDetails = ({
                         setData={setData}
                         handleFileChange={handleFileChange}
                     />
-                ) : (
-                    <div className="uploaded-image-preview">
-                        <img
-                            src={data.coverImage}
-                            alt="Uploaded cover"
-                            className="uploaded-image"
-                        />
-                        <div className="edit-image-section">
-                            <button
-                                onClick={() => {
-                                    setIsFileUploaded(false); // Allow user to upload again
-                                    setData({ ...data, coverImage: '' }); // Clear the image URL
-                                }}
-                                className="remove-uploaded-image-button"
-                            >
-                                Edit image
-                            </button>
-                        </div>
-                    </div>
                 )}
 
                 {!isFileUploaded && errors.coverImage && (
@@ -111,14 +127,14 @@ export const DashboardCardDetails = ({
                 <input
                     type="text"
                     id="lesson-name"
-                    className={`lesson-name-input ${errors.name ? 'error-border' : ''}`} // Apply error border
+                    className={`lesson-name-input ${errors.name ? 'error-border' : ''}`}
                     placeholder="Enter the lesson name"
                     value={data.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)} // Clear error on input change
+                    onChange={(e) => handleInputChange('name', e.target.value)}
                     maxLength={50}
                     required
                 />
-                {errors.name && <div className="error-message">{errors.name}</div>} {/* Error message */}
+                {errors.name && <div className="error-message">{errors.name}</div>}
                 <div className="lesson-name-footer">50 characters</div>
             </div>
 
@@ -130,15 +146,15 @@ export const DashboardCardDetails = ({
                 <input
                     type="text"
                     id="lesson-description"
-                    className={`lesson-description-input ${errors.description ? 'error-border' : ''}`} // Apply error border
+                    className={`lesson-description-input ${errors.description ? 'error-border' : ''}`}
                     placeholder="Enter the lesson description"
                     value={data.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)} // Clear error on input change
+                    onChange={(e) => handleInputChange('description', e.target.value)}
                     maxLength={200}
                     required
                 />
                 {errors.description && (
-                    <div className="error-message">{errors.description}</div> /* Error message */
+                    <div className="error-message">{errors.description}</div>
                 )}
                 <div className="lesson-description-footer">200 characters</div>
             </div>
