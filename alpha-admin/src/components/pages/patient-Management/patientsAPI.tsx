@@ -129,12 +129,12 @@ export const sentInvite = async (id: any): Promise<any> => {
 };
 
 // Function to update patient details
-export const updatePatientProfile = async (patientData: EditPatientData) => {
+export const updatePatientProfile = async (patientData: EditPatientData , id:string) => {
     const accessToken = localStorage.getItem('accessToken');
-    const apiURL = `${config.BASE_URL}/gateway/v1/patient`;
+    const apiURL = `${config.BASE_URL}/gateway/v1/patient/${id}`;
 
     try {
-        const response = await axios.post(apiURL, patientData, {
+        const response = await axios.put(apiURL, patientData, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

@@ -7,7 +7,7 @@ import { Checkbox, Menu, MenuItem } from '@mui/material';
 import { DeleteButton } from '../../../../../content-components/delete-button/delete-button';
 import { useAppDispatch } from '../../../../../../../../app/hooks';
 import { uploadFile } from '../../../../../../../fileUpload/fileUploadSlice';
-import { EditorState } from 'draft-js';
+import { EditorState, ContentState, convertFromHTML } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { convertToHTML } from 'draft-convert';
@@ -20,6 +20,7 @@ export interface LessonContentProps {
     data: any;
     setData: any;
     isEditable?: boolean;
+    errors: any; // Accept errors prop for validation
 }
 
 export const LessonContent = ({
@@ -30,16 +31,37 @@ export const LessonContent = ({
     data,
     setData,
     isEditable,
+    errors, // Accept errors prop for validation
 }: LessonContentProps) => {
-    const [isFileUploaded, setIsFileUploaded] = useState(false); // State to track file upload
+    const [isFileUploaded, setIsFileUploaded] = useState<boolean[]>([]); // State to track file upload for each screen
     const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error messages
-    const [editorState, setEditorState] = useState(EditorState.createEmpty()); // Rich text editor state
+    const [editorStates, setEditorStates] = useState<EditorState[]>([]); // Rich text editor states for each screen
     const [menuWidth, setMenuWidth] = useState<number>(0);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [quizType, setQuizType] = useState<'multiple-choice' | 'free-text' | null>(null);
     const [activeQuizIndex, setActiveQuizIndex] = useState<number | null>(null);
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        // Initialize editor states for existing screens
+        const initialEditorStates = data.screenData.map((screen: any) => {
+            const blocksFromHTML = convertFromHTML(screen.content || '');
+            return EditorState.createWithContent(
+                ContentState.createFromBlockArray(
+                    blocksFromHTML.contentBlocks,
+                    blocksFromHTML.entityMap
+                )
+            );
+        });
+        setEditorStates(initialEditorStates);
+
+        // Initialize isFileUploaded state for existing screens
+        const initialFileUploadStates = data.screenData.map(
+            (screen: any) => !!screen.media
+        );
+        setIsFileUploaded(initialFileUploadStates);
+    }, [data.screenData]);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const file = event.target.files?.[0];
@@ -55,7 +77,9 @@ export const LessonContent = ({
                     const updatedScreenData = [...data.screenData];
                     updatedScreenData[index].media = response.payload.data.data.url;
                     setData({ ...data, screenData: updatedScreenData });
-                    setIsFileUploaded(true);
+                    const updatedIsFileUploaded = [...isFileUploaded];
+                    updatedIsFileUploaded[index] = true;
+                    setIsFileUploaded(updatedIsFileUploaded);
                     setErrorMessage(null);
                 });
             } else if (isVideo && fileSize <= 100 * 1024 * 1024) {
@@ -63,7 +87,9 @@ export const LessonContent = ({
                     const updatedScreenData = [...data.screenData];
                     updatedScreenData[index].media = response.payload.data.data.url;
                     setData({ ...data, screenData: updatedScreenData });
-                    setIsFileUploaded(true);
+                    const updatedIsFileUploaded = [...isFileUploaded];
+                    updatedIsFileUploaded[index] = true;
+                    setIsFileUploaded(updatedIsFileUploaded);
                     setErrorMessage(null);
                 });
             } else {
@@ -79,7 +105,10 @@ export const LessonContent = ({
     };
 
     const handleEditorChange = (newState: any, index: number) => {
-        setEditorState(newState);
+        const updatedEditorStates = [...editorStates];
+        updatedEditorStates[index] = newState;
+        setEditorStates(updatedEditorStates);
+
         const updatedScreenData = [...data.screenData];
         updatedScreenData[index].content = convertToHTML(newState.getCurrentContent());
         setData({ ...data, screenData: updatedScreenData });
@@ -96,6 +125,10 @@ export const LessonContent = ({
         const updatedScreenData = [...data.screenData, newScreen];
         setScreenData(updatedScreenData);
         setData({ ...data, screenData: updatedScreenData });
+
+        // Update editor states and file upload states
+        setEditorStates([...editorStates, EditorState.createEmpty()]);
+        setIsFileUploaded([...isFileUploaded, false]);
     };
 
     const handleQuizTypeChange = (type: 'multiple-choice' | 'free-text') => {
@@ -110,7 +143,7 @@ export const LessonContent = ({
             userInstructions: '',
             question: '',
             type: quizType,
-            options: quizType === 'multiple-choice' ? [] : undefined,
+            options: quizType === 'multiple-choice' ? [''] : undefined,
             answer: quizType === 'multiple-choice' ? [] : undefined,
         };
         const updatedQuizData = [...data.quizData, newQuiz];
@@ -143,7 +176,10 @@ export const LessonContent = ({
                 Lesson content <Vector />
             </h3>
             {data.screenData.map((screen: any, index: any) => (
-                <div key={index} className="screen">
+                <div
+                    key={index}
+                    className={`screen ${errors[`screen-${index}`] ? 'error-border' : ''}`}
+                >
                     <h3>Screen {index + 1}</h3>
 
                     {/* Cover Image or Video Section */}
@@ -155,7 +191,7 @@ export const LessonContent = ({
                             Image: JPG, PNG, max 2MB; Video: MP4, max 100MB
                         </div>
 
-                        {!isFileUploaded ? (
+                        {!isFileUploaded[index] ? (
                             <UploadButton
                                 showLeftIcon
                                 buttonText="Upload media"
@@ -174,7 +210,10 @@ export const LessonContent = ({
                                 <div className="edit-image-section">
                                     <button
                                         onClick={() => {
-                                            setIsFileUploaded(false); // Allow user to upload again
+                                            const updatedIsFileUploaded = [...isFileUploaded];
+                                            updatedIsFileUploaded[index] = false;
+                                            setIsFileUploaded(updatedIsFileUploaded);
+
                                             const updatedScreenData = [...data.screenData];
                                             updatedScreenData[index].media = ''; // Clear the image URL
                                             setData({ ...data, screenData: updatedScreenData });
@@ -187,20 +226,23 @@ export const LessonContent = ({
                             </div>
                         )}
 
-                        {errorMessage && (
+                        {errors[`media-${index}`] && (
                             <div className="error-message" style={{ color: 'red', marginTop: '5px' }}>
-                                {errorMessage}
+                                {errors[`media-${index}`]}
                             </div>
                         )}
                     </div>
 
                     {/* Subtitle Section */}
                     <div className="subtitle-section input-field">
-                        <label>Subtitle</label>
+                        <label>
+                            Subtitle <span style={{ color: 'red' }}>*</span>
+                        </label>
                         <input
                             type="text"
                             placeholder="Enter lesson subtitle"
                             value={data.screenData[index]?.subtitle || ''}
+                            className={`input ${errors[`subtitle-${index}`] ? 'error-border' : ''}`}
                             onChange={(e) => {
                                 const updatedScreenData = [...data.screenData];
                                 updatedScreenData[index].subtitle = e.target.value;
@@ -208,18 +250,28 @@ export const LessonContent = ({
                             }}
                             required
                         />
+                        {errors[`subtitle-${index}`] && (
+                            <div className="error-message">{errors[`subtitle-${index}`]}</div>
+                        )}
                     </div>
 
                     {/* Content Section */}
                     <div className="content-section input-field">
-                        <label>Content</label>
-                        <Editor
-                            editorState={editorState}
-                            toolbarClassName="toolbarClassName"
-                            wrapperClassName="wrapperClassName"
-                            editorClassName="custom-editor"
-                            onEditorStateChange={(newState) => handleEditorChange(newState, index)}
-                        />
+                        <label>
+                            Content <span style={{ color: 'red' }}>*</span>
+                        </label>
+                        <div className={`editor-wrapper ${errors[`content-${index}`] ? 'error-border' : ''}`}>
+                            <Editor
+                                editorState={editorStates[index]}
+                                toolbarClassName="toolbarClassName"
+                                wrapperClassName="wrapperClassName"
+                                editorClassName="custom-editor"
+                                onEditorStateChange={(newState) => handleEditorChange(newState, index)}
+                            />
+                        </div>
+                        {errors[`content-${index}`] && (
+                            <div className="error-message">{errors[`content-${index}`]}</div>
+                        )}
                     </div>
                 </div>
             ))}
@@ -239,7 +291,9 @@ export const LessonContent = ({
                 <div key={index} className="quiz-content screen">
                     <div className="quiz-header">
                         <h3>
-                            {quiz.type === 'multiple-choice' ? 'Multiple choice quiz' : 'Free text quiz'}
+                            {quiz.type === 'multiple-choice'
+                                ? 'Multiple choice quiz'
+                                : 'Free text quiz'}
                         </h3>
                         <DeleteButton
                             showLeftIcon
@@ -248,11 +302,14 @@ export const LessonContent = ({
                         />
                     </div>
                     <div className="quiz-name input-field">
-                        <label>Quiz name</label>
+                        <label>
+                            Quiz name <span style={{ color: 'red' }}>*</span>
+                        </label>
                         <input
                             type="text"
                             placeholder="Enter quiz name"
                             value={quiz.quizName || ''}
+                            className={errors[`quizName-${index}`] ? 'error-border' : ''}
                             onChange={(e) => {
                                 const updatedQuizData = [...data.quizData];
                                 updatedQuizData[index].quizName = e.target.value;
@@ -260,13 +317,19 @@ export const LessonContent = ({
                             }}
                             required
                         />
+                        {errors[`quizName-${index}`] && (
+                            <div className="error-message">{errors[`quizName-${index}`]}</div>
+                        )}
                     </div>
                     <div className="quiz-question input-field">
-                        <label>Quiz question</label>
+                        <label>
+                            Quiz question <span style={{ color: 'red' }}>*</span>
+                        </label>
                         <input
                             type="text"
                             placeholder="Enter quiz question"
                             value={quiz.question || ''}
+                            className={errors[`question-${index}`] ? 'error-border' : ''}
                             onChange={(e) => {
                                 const updatedQuizData = [...data.quizData];
                                 updatedQuizData[index].question = e.target.value;
@@ -274,13 +337,19 @@ export const LessonContent = ({
                             }}
                             required
                         />
+                        {errors[`question-${index}`] && (
+                            <div className="error-message">{errors[`question-${index}`]}</div>
+                        )}
                     </div>
                     <div className="user-instruction input-field">
-                        <label>User instruction</label>
+                        <label>
+                            User instruction <span style={{ color: 'red' }}>*</span>
+                        </label>
                         <input
                             type="text"
                             placeholder="Enter User instruction"
                             value={quiz.userInstructions || ''}
+                            className={errors[`userInstructions-${index}`] ? 'error-border' : ''}
                             onChange={(e) => {
                                 const updatedQuizData = [...data.quizData];
                                 updatedQuizData[index].userInstructions = e.target.value;
@@ -288,6 +357,9 @@ export const LessonContent = ({
                             }}
                             required
                         />
+                        {errors[`userInstructions-${index}`] && (
+                            <div className="error-message">{errors[`userInstructions-${index}`]}</div>
+                        )}
                     </div>
 
                     {quiz.type === 'multiple-choice' && (
@@ -299,6 +371,11 @@ export const LessonContent = ({
                                             type="text"
                                             placeholder={`Answer ${optionIndex + 1}`}
                                             value={option}
+                                            className={
+                                                errors[`option-${index}-${optionIndex}`]
+                                                    ? 'error-border'
+                                                    : ''
+                                            }
                                             onChange={(e) => {
                                                 const updatedOptions = [...quiz.options];
                                                 updatedOptions[optionIndex] = e.target.value;
@@ -312,7 +389,9 @@ export const LessonContent = ({
                                             checked={quiz.answer?.includes(option)}
                                             onChange={() => {
                                                 const updatedAnswers = quiz.answer?.includes(option)
-                                                    ? quiz.answer?.filter((ans: string) => ans !== option)
+                                                    ? quiz.answer?.filter(
+                                                          (ans: string) => ans !== option
+                                                      )
                                                     : [...(quiz.answer || []), option];
                                                 const updatedQuizData = [...data.quizData];
                                                 updatedQuizData[index].answer = updatedAnswers;
@@ -331,6 +410,11 @@ export const LessonContent = ({
                                             setData({ ...data, quizData: updatedQuizData });
                                         }}
                                     />
+                                    {errors[`option-${index}-${optionIndex}`] && (
+                                        <div className="error-message">
+                                            {errors[`option-${index}-${optionIndex}`]}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                             <EditButton
@@ -342,6 +426,9 @@ export const LessonContent = ({
                                     setData({ ...data, quizData: updatedQuizData });
                                 }}
                             />
+                            {errors[`options-${index}`] && (
+                                <div className="error-message">{errors[`options-${index}`]}</div>
+                            )}
                         </div>
                     )}
                 </div>

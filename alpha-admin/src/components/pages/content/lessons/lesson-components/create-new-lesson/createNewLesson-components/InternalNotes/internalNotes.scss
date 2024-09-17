@@ -39,3 +39,13 @@
 }
 
 /* Add additional styles if necessary to match the exact appearance */
+
+.error-border {
+    border: 1px solid red;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}

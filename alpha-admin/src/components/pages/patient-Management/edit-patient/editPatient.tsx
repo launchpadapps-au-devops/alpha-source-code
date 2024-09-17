@@ -36,6 +36,7 @@ export interface EditPatientData {
 export const EditPatient = ({ className }: EditPatientProps) => {
 
     const patientId = localStorage.getItem('selectedPatientId');
+    const id = patientId || '';
     
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -179,13 +180,12 @@ export const EditPatient = ({ className }: EditPatientProps) => {
            // userType: "patient",
         };
 
+       
         try {
-            // Dispatch the update action
-            await dispatch(updatePatient(patientData)).unwrap();
+            // Combine patientData and patientId into a single payload object
+            await dispatch(updatePatient({ patientData, id })).unwrap();
 
             toast.success('Patient details updated successfully.');
-
-            // Navigate to profile dashboard after successful update
             navigate('/patient-dashboard');
         } catch (error) {
             toast.error('Failed to update patient details.');

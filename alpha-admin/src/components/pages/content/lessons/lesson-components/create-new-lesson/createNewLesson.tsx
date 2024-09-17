@@ -45,16 +45,15 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     const location = useLocation();
     const [isEditMode, setIsEditMode] = React.useState(false);
     const params = useParams();
-    // Extract search query from URL
-
-    let [data, setData] = React.useState({
-        lessonCode: 0,
-        categoryId: 0,
-        themeId: 0,
+    const [errors, setErrors] = React.useState<any>({});
+    const [data, setData] = React.useState({
+        lessonCode: '',
+        categoryId: '',
+        themeId: '',
         status: 'ACTIVE',
         isPublished: false,
-        duration: 10,
-        points: 20,
+        duration: '',
+        points: '',
         lessonTags: [
             {
                 Ethnicity: [],
@@ -97,13 +96,12 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                 quizName: '',
                 userInstructions: '',
                 question: '',
-                type: 'single-choice', //'single-choice',
+                type: 'single-choice',
                 options: [],
                 answer: [],
             },
         ],
     });
-    console.log('data', data);
     const [dashboardCardDetails, setDashboardCardDetails] = React.useState<Object>({
         coverImage: 'https://sample.com/sample.jpg',
         lessonName: '',
@@ -139,35 +137,68 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     }, []);
 
     useEffect(() => {
-        console.log('params', location.pathname);
         if (location.pathname.includes('editlesson')) {
             setIsEditMode(true);
-            // Fetch lesson details
             dispatch(fetchLessonByIdThunk(params.id)).then((response: any) => {
                 if (response.payload.data) {
                     setData(response.payload.data);
                 }
             });
         }
-    }, []);
+    }, [dispatch, params.id, location.pathname]);
+
+    const validateFields = () => {
+        let fieldErrors: any = {};
+
+        if (!data.lessonCode) {
+            fieldErrors.lessonCode = 'Lesson Code is required';
+        }
+
+        if (!data.categoryId) {
+            fieldErrors.categoryId = 'Category is required';
+        }
+
+        if (!data.duration) {
+            fieldErrors.duration = 'Duration is required';
+        }
+
+        if (!data.points) {
+            fieldErrors.points = 'Points are required';
+        }
+
+        if (!data.name) {
+            fieldErrors.name = 'Lesson name is required';
+        }
+
+        if (!data.description) {
+            fieldErrors.description = 'Lesson description is required';
+        }
+
+        if (!data.coverImage) {
+            fieldErrors.coverImage = 'Cover image is required';
+        }
+
+        setErrors(fieldErrors);
+
+        return Object.keys(fieldErrors).length === 0;
+    };
 
     const handlePreview = () => {
-        if (isEditMode) {
-            dispatch(updateLessonThunk({ id: params.id, data: data })).then((response: any) => {
-                console.log('Response', response);
-                navigate('/content/lessons/viewlesson/' + response.payload.data.id);
-            });
-        }
-        {
-            dispatch(addLessonThunk(data)).then((response: any) => {
-                console.log('Response', response);
-                navigate('/content/lessons/viewlesson/' + response.payload.data.id);
-            });
+        if (validateFields()) {
+            if (isEditMode) {
+                dispatch(updateLessonThunk({ id: params.id, data: data })).then((response: any) => {
+                    navigate('/content/lessons/viewlesson/' + response.payload.data.id);
+                });
+            } else {
+                dispatch(addLessonThunk(data)).then((response: any) => {
+                    navigate('/content/lessons/viewlesson/' + response.payload.data.id);
+                });
+            }
         }
     };
 
     const handleBackClick = () => {
-        navigate(-1); // This will navigate to the previous page
+        navigate(-1);
     };
 
     return (
@@ -183,15 +214,8 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                             <Typography variant="h5">Create a new lesson</Typography>
                         )}
                         <div className={styles.buttonContainer}>
-                            <EditButton
-                                buttonText="Cancel"
-                                onButtonClick={() => navigate('/content/lessons')}
-                            />
-                            {/* <EditButton
-                            buttonText="Save as draft"
-                            onButtonClick={() => navigate('/careteam/createcontent')}
-                        /> */}
-                            <AppButton buttonText="Preview" onButtonClick={() => handlePreview()} />
+                            <EditButton buttonText="Cancel" onButtonClick={() => navigate('/content/lessons')} />
+                            <AppButton buttonText="Preview" onButtonClick={handlePreview} />
                         </div>
                     </header>
                     <div className={styles.mainContent}>
@@ -203,28 +227,26 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                             setTheme={setTheme}
                             selectedTheme={selectedTheme}
                             setSelectedTheme={setSelectedTheme}
-                        />
+                            errors={errors} 
+                            setErrors={setErrors}                        />
                         <div className={styles.rightContent}>
-                            <InternalNotes
-                                notes={notes}
-                                setNotes={setNotes}
-                                data={data}
-                                setData={setData}
-                            />
+                            <InternalNotes notes={notes} setNotes={setNotes} data={data} setData={setData} errors={errors} />
                             <DashboardCardDetails
                                 dashboardCardDetails={dashboardCardDetails}
                                 setDashboardCardDetails={setDashboardCardDetails}
                                 data={data}
                                 setData={setData}
+                                errors={errors}
+                                setErrors={setErrors}       
                             />
                             <LessonContent
                                 screenData={screenData}
                                 setScreenData={setScreenData}
-                                // isEditMode={isEditMode}
                                 quizData={quizData}
                                 setQuizData={setQuizData}
                                 data={data}
                                 setData={setData}
+                                errors={errors}
                             />
                         </div>
                     </div>

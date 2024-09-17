@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { SelectTheme } from '../add-to-theme/addToTheme';
 import { useAppDispatch, useAppSelector } from '../../../../../../../../app/hooks';
 import { fetchCategoriesForLessonsThunk } from '../../../../../categories/category-component/categorySlice';
+import classNames from 'classnames';
 
 type DropdownState = {
     [key: string]: boolean;
@@ -21,6 +22,8 @@ export interface LessonInformationProps {
     selectedTheme: any;
     setSelectedTheme: any;
     isEditMode?: boolean;
+    errors: any; // Accept errors prop for validation
+    setErrors: (errors: any) => void; // Add setter for errors
 }
 
 export const LessonInformation = ({
@@ -31,6 +34,8 @@ export const LessonInformation = ({
     selectedTheme,
     setSelectedTheme,
     isEditMode,
+    errors, // Accept errors prop
+    setErrors, // Pass a setErrors function to reset the errors
 }: LessonInformationProps) => {
     const [isOpen, setIsOpen] = useState<DropdownState>({
         category: false,
@@ -39,19 +44,25 @@ export const LessonInformation = ({
     });
     const navigate = useNavigate();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    // const categories = useAppSelector((state) => state.categories.categories.categories);
-    const [categories,setCategories] = useState([]);
+    const [categories, setCategories] = useState([]);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-    dispatch(fetchCategoriesForLessonsThunk(100)).then((response: any) => {
-        if (response.payload) {
-            const activeCategories = response.payload.data.filter((cat: { status: string; })=>cat.status.toLowerCase() === 'active');
-            setCategories(activeCategories);
-        }
-    }
-    );
+        dispatch(fetchCategoriesForLessonsThunk(100)).then((response: any) => {
+            if (response.payload) {
+                const activeCategories = response.payload.data.filter(
+                    (cat: { status: string }) => cat.status.toLowerCase() === 'active'
+                );
+                setCategories(activeCategories);
+            }
+        });
     }, [dispatch]);
+
+    useEffect(() => {
+        if (isEditMode) {
+            setSelectedTheme(data.theme);
+        }
+    }, [data.theme, isEditMode, setSelectedTheme]);
 
     const handleDropdownClick = (dropdown: string) => {
         setIsOpen((prevState) => ({
@@ -60,7 +71,7 @@ export const LessonInformation = ({
         }));
     };
 
-    const handleclick = () => {
+    const handleClick = () => {
         setIsSidebarOpen(true);
     };
 
@@ -68,12 +79,19 @@ export const LessonInformation = ({
         setIsSidebarOpen(false);
     };
 
-    useEffect(() => {
-        console.log('isEditMode', isEditMode);
-        if (isEditMode) {
-            setSelectedTheme(data.theme);
+    // Function to reset the error and update state
+    const handleInputChange = (field: string, value: any) => {
+        setData((prevState: any) => ({ ...prevState, [field]: value }));
+
+        // Reset the error for this field when the user starts typing or selecting
+        if (errors[field]) {
+            setErrors((prevErrors: any) => ({
+                ...prevErrors,
+                [field]: '', // Clear the specific error for this field
+            }));
         }
-    }, []);
+    };
+
     return (
         <div className={styles.lessonForm}>
             <h3>Lesson information</h3>
@@ -82,19 +100,17 @@ export const LessonInformation = ({
                 <input
                     type="number"
                     placeholder="Add lesson code"
-                    className={styles.lessonCodeInput}
+                    className={classNames(styles.lessonCodeInput, {
+                        [styles.errorBorder]: errors.lessonCode, // Apply error border if validation fails
+                    })}
                     value={data.lessonCode}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        if (/^[1-9]\d*$/.test(value) || value === '') {
-                            setData({ ...data, lessonCode: value });
-                        }
-                    }}
+                    onChange={(e) => handleInputChange('lessonCode', e.target.value)}
                     required
                 />
+                {errors.lessonCode && <p className={styles.errorText}>{errors.lessonCode}</p>} {/* Display error message */}
             </div>
 
-            <div className={styles.section} onClick={handleclick}>
+            <div className={styles.section} onClick={handleClick}>
                 <label>Assign Theme (optional)</label>
                 <div className={styles.inputWithIcon}>
                     <input
@@ -116,14 +132,11 @@ export const LessonInformation = ({
                     onClick={() => handleDropdownClick('category')}
                 >
                     <select
-                        className={styles.customSelect}
+                        className={classNames(styles.customSelect, {
+                            [styles.errorBorder]: errors.categoryId, // Apply error border if validation fails
+                        })}
                         value={data.categoryId || ''}
-                        onChange={(e) =>
-                            setData({
-                                ...data,
-                                categoryId: parseInt(e.target.value, 10),
-                            })
-                        }
+                        onChange={(e) => handleInputChange('categoryId', parseInt(e.target.value, 10))}
                         required
                     >
                         <option value="" disabled hidden>
@@ -140,6 +153,7 @@ export const LessonInformation = ({
                         className={styles.caretIcon}
                     />
                 </div>
+                {errors.categoryId && <p className={styles.errorText}>{errors.categoryId}</p>} {/* Display error message */}
             </div>
 
             <div className={styles.section}>
@@ -149,14 +163,11 @@ export const LessonInformation = ({
                     onClick={() => handleDropdownClick('duration')}
                 >
                     <select
-                        className={styles.customSelect}
+                        className={classNames(styles.customSelect, {
+                            [styles.errorBorder]: errors.duration, // Apply error border if validation fails
+                        })}
                         value={data.duration || ''}
-                        onChange={(e) =>
-                            setData({
-                                ...data,
-                                duration: parseInt(e.target.value, 10),
-                            })
-                        }
+                        onChange={(e) => handleInputChange('duration', parseInt(e.target.value, 10))}
                         required
                     >
                         <option value="" disabled>
@@ -165,13 +176,13 @@ export const LessonInformation = ({
                         <option value={10}>10 minutes</option>
                         <option value={5}>5 minutes</option>
                         <option value={3}>3 minutes</option>
-                        {/* Add your options here */}
                     </select>
                     <FontAwesomeIcon
                         icon={isOpen.duration ? faCaretUp : faCaretDown}
                         className={styles.caretIcon}
                     />
                 </div>
+                {errors.duration && <p className={styles.errorText}>{errors.duration}</p>} {/* Display error message */}
             </div>
 
             <div className={styles.section}>
@@ -181,31 +192,29 @@ export const LessonInformation = ({
                     onClick={() => handleDropdownClick('points')}
                 >
                     <select
-                        className={styles.customSelect}
+                        className={classNames(styles.customSelect, {
+                            [styles.errorBorder]: errors.points, // Apply error border if validation fails
+                        })}
                         value={data.points || ''}
-                        onChange={(e) =>
-                            setData({
-                                ...data,
-                                points: parseInt(e.target.value),
-                            })
-                        }
+                        onChange={(e) => handleInputChange('points', parseInt(e.target.value))}
                         required
                     >
-                        <option value="" hidden disabled selected>
+                        <option value="" hidden disabled>
                             Select points
                         </option>
                         <option value={200}>200 points</option>
                         <option value={150}>150 points</option>
                         <option value={100}>100 points</option>
                         <option value={50}>50 points</option>
-                        {/* Add your options here */}
                     </select>
                     <FontAwesomeIcon
                         icon={isOpen.points ? faCaretUp : faCaretDown}
                         className={styles.caretIcon}
                     />
                 </div>
+                {errors.points && <p className={styles.errorText}>{errors.points}</p>} {/* Display error message */}
             </div>
+
             <LessonTags data={data} setData={setData} isEditMode={isEditMode} />
             <SelectTheme
                 isOpen={isSidebarOpen}

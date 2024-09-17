@@ -6,9 +6,10 @@ export interface InternalNotesProps {
     setNotes: (notes: string) => void;
     data: any;
     setData: any;
+    errors: any; // Accept errors prop for validation
 }
 
-export const InternalNotes = ({ notes, setNotes, data, setData }: InternalNotesProps) => {
+export const InternalNotes = ({ notes, setNotes, data, setData, errors }: InternalNotesProps) => {
     return (
         <div className="internal-notes-container">
             <div className="internal-notes-header">Internal notes</div>
@@ -26,6 +27,9 @@ export const InternalNotes = ({ notes, setNotes, data, setData }: InternalNotesP
                     onChange={(e) => setData({ ...data, internalNotes: e.target.value })}
                 />
                 <div className="internal-notes-footer">150 characters</div>
+                {errors.internalNotes && (
+                    <p className="error-text">{errors.internalNotes}</p> /* Display error */
+                )}
             </div>
         </div>
     );

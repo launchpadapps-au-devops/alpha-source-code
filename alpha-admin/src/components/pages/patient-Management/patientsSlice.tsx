@@ -48,16 +48,15 @@ export const fetchPatients = createAsyncThunk(
 // Thunk to update patient details
 export const updatePatient = createAsyncThunk(
     'patients/updatePatient',
-    async (patientData: EditPatientData, { rejectWithValue }) => {
+    async ({ patientData, id }: { patientData: EditPatientData; id: string }, { rejectWithValue }) => {
         try {
-            const response = await updatePatientProfile(patientData);
+            const response = await updatePatientProfile(patientData, id);
             return response; // Return the updated patient data
-        } catch (error) {
-            return rejectWithValue(error); // Handle the error
+        } catch (error: any) {
+            return rejectWithValue(error.response?.data || error.message); // Handle the error
         }
     }
 );
-
 // Thunk to add a new patient
 export const addNewPatient = createAsyncThunk(
     'patients/addPatient',

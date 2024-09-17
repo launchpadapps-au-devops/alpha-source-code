@@ -10,6 +10,8 @@ export interface DashboardCardDetailsProps {
     setDashboardCardDetails: (dashboardCardDetails: Object) => void;
     data: any;
     setData: any;
+    errors: any; // Accept errors prop for validation
+    setErrors: (errors: any) => void; // Add setter for errors to clear errors
 }
 
 export const DashboardCardDetails = ({
@@ -17,6 +19,8 @@ export const DashboardCardDetails = ({
     setDashboardCardDetails,
     data,
     setData,
+    errors,
+    setErrors, // Add setter to clear errors
 }: DashboardCardDetailsProps) => {
     const dispatch = useAppDispatch();
     const [isFileUploaded, setIsFileUploaded] = useState(false); // State to track file upload
@@ -24,14 +28,27 @@ export const DashboardCardDetails = ({
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            console.log('File', file);
-
             dispatch(uploadFile(file)).then((response: any) => {
                 const uploadedImageUrl = response.payload.data.data.url;
                 setData({ ...data, coverImage: uploadedImageUrl });
                 setIsFileUploaded(true); // Set to true once the file is uploaded
-                console.log('File uploaded', uploadedImageUrl);
             });
+        }
+    };
+
+    // Handles input changes and clears the specific error
+    const handleInputChange = (field: string, value: any) => {
+        setData((prevState: any) => ({
+            ...prevState,
+            [field]: value,
+        }));
+
+        // Clear the error for the field being edited
+        if (errors[field]) {
+            setErrors((prevErrors: any) => ({
+                ...prevErrors,
+                [field]: '', // Clear the error for the current field
+            }));
         }
     };
 
@@ -41,6 +58,7 @@ export const DashboardCardDetails = ({
                 Dashboard card details <Vector />
             </div>
 
+            {/* Cover Image Section */}
             <div className="cover-image-section">
                 <label htmlFor="cover-image" className="cover-image-label">
                     Cover image <span style={{ color: 'red' }}>*</span> {/* Indicate it's required */}
@@ -78,54 +96,50 @@ export const DashboardCardDetails = ({
                     </div>
                 )}
 
-                {!isFileUploaded && (
+                {!isFileUploaded && errors.coverImage && (
                     <div className="error-message" style={{ color: 'red', marginTop: '5px' }}>
-                        Please upload a file.
+                        {errors.coverImage}
                     </div>
                 )}
             </div>
 
+            {/* Lesson Name Section */}
             <div className="lesson-name-section">
                 <label htmlFor="lesson-name" className="lesson-name-label">
-                    Lesson name
+                    Lesson name <span style={{ color: 'red' }}>*</span>
                 </label>
                 <input
                     type="text"
                     id="lesson-name"
-                    className="lesson-name-input"
+                    className={`lesson-name-input ${errors.name ? 'error-border' : ''}`} // Apply error border
                     placeholder="Enter the lesson name"
                     value={data.name}
-                    onChange={(e) =>
-                        setData({
-                            ...data,
-                            name: e.target.value,
-                        })
-                    }
+                    onChange={(e) => handleInputChange('name', e.target.value)} // Clear error on input change
                     maxLength={50}
                     required
                 />
+                {errors.name && <div className="error-message">{errors.name}</div>} {/* Error message */}
                 <div className="lesson-name-footer">50 characters</div>
             </div>
 
+            {/* Lesson Description Section */}
             <div className="lesson-description-section">
                 <label htmlFor="lesson-description" className="lesson-description-label">
-                    Lesson description
+                    Lesson description <span style={{ color: 'red' }}>*</span>
                 </label>
                 <input
                     type="text"
                     id="lesson-description"
-                    className="lesson-description-input"
+                    className={`lesson-description-input ${errors.description ? 'error-border' : ''}`} // Apply error border
                     placeholder="Enter the lesson description"
                     value={data.description}
-                    onChange={(e) =>
-                        setData({
-                            ...data,
-                            description: e.target.value,
-                        })
-                    }
+                    onChange={(e) => handleInputChange('description', e.target.value)} // Clear error on input change
                     maxLength={200}
                     required
                 />
+                {errors.description && (
+                    <div className="error-message">{errors.description}</div> /* Error message */
+                )}
                 <div className="lesson-description-footer">200 characters</div>
             </div>
         </div>

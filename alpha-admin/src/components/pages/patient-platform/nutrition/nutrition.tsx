@@ -31,7 +31,7 @@ export const Nutrition = ({ className }: NutritionProps) => {
             setLoading(true); // Set loading to true before API call
             try {
                 if (patientId) {
-                    const today = format(new Date(), 'dd/MM/yyyy'); // Format today's date as dd/MM/yyyy
+                    const today = format(new Date(), 'yyyy-MM-dd'); // Format today's date as YYYY-MM-DD
                     const response = await nutritionAPI(patientId, today, today); // Pass the same date for fromDate and toDate
                     setNutritionData({
                         energy: response.data.energy || 0,
