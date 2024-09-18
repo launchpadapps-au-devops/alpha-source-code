@@ -109,7 +109,7 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
         // Construct the updated tip data with all required fields
         const updatedTipData: any = {
             ...updatedTip,
-            content: newDailytipName,
+            content: editContent,
             status: "ACTIVE",
             // Include default or computed values for required fields
             tip: updatedTip.tip || '', // Set a default value if necessary
@@ -119,16 +119,15 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
         console.log('Updated Tip Data:', updatedTipData);
         const newUpdatedValue = {
             
-                content: newDailytipName,
-                day: newDailytipDay,
-                status: "ACTIVE",
+                content: editContent,
+                day: updatedTip.day,
             
         };
         // Dispatch the updated single tip object
         dispatch(addTipThunk(newUpdatedValue));
         dispatch(fetchTipsThunk(1));
 
-        setnewDailyTip(false);
+        setEditTipId(null);
         setEditContent('');
     };
 
@@ -213,7 +212,7 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
                         <EditButton buttonText="Cancel"  onButtonClick={() => navigate('/content/dailytips')}/>
                     </div>
                     <div className={styles.rightButtonContainer}>
-                        <AppButton buttonText="Save" />
+                        <AppButton buttonText="Save"  onButtonClick={() => navigate('/content/dailytips')}/>
                     </div>
                 </header>
 
@@ -281,6 +280,7 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
                                                 <AppButton
                                                     buttonText="Save & add more"
                                                     className={styles.button}
+                                                    onButtonClick={() => handleSaveClick(tip.id)}
                                                 />
                                                 <EditButton
                                                     buttonText="Save"

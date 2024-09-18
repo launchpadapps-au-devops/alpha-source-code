@@ -40,6 +40,7 @@ export const LessonContent = ({
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [quizType, setQuizType] = useState<'multiple-choice' | 'free-text' | null>(null);
+    const [previewUrls, setPreviewUrls] = useState<string[]>([]); // Array to store local preview URLs
     const [activeQuizIndex, setActiveQuizIndex] = useState<number | null>(null);
     const dispatch = useAppDispatch();
 
@@ -73,25 +74,29 @@ export const LessonContent = ({
 
             // Validate file type and size
             if (isImage && fileSize <= 2 * 1024 * 1024) {
-                dispatch(uploadFile(file)).then((response: any) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
                     const updatedScreenData = [...data.screenData];
-                    updatedScreenData[index].media = response.payload.data.data.url;
+                    updatedScreenData[index].media = file.name; // Save the file name for now
                     setData({ ...data, screenData: updatedScreenData });
                     const updatedIsFileUploaded = [...isFileUploaded];
                     updatedIsFileUploaded[index] = true;
                     setIsFileUploaded(updatedIsFileUploaded);
                     setErrorMessage(null);
-                });
+                };
+                reader.readAsDataURL(file);
             } else if (isVideo && fileSize <= 100 * 1024 * 1024) {
-                dispatch(uploadFile(file)).then((response: any) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
                     const updatedScreenData = [...data.screenData];
-                    updatedScreenData[index].media = response.payload.data.data.url;
+                    updatedScreenData[index].media = file.name; // Save the file name for now
                     setData({ ...data, screenData: updatedScreenData });
                     const updatedIsFileUploaded = [...isFileUploaded];
                     updatedIsFileUploaded[index] = true;
                     setIsFileUploaded(updatedIsFileUploaded);
                     setErrorMessage(null);
-                });
+                };
+                reader.readAsDataURL(file);
             } else {
                 if (!isImage && !isVideo) {
                     setErrorMessage('Only JPG, PNG images or MP4 videos are allowed.');
@@ -138,6 +143,8 @@ export const LessonContent = ({
     };
 
     const handleAddQuiz = () => {
+        if (!quizType) return;
+
         const newQuiz = {
             quizName: '',
             userInstructions: '',
@@ -148,11 +155,11 @@ export const LessonContent = ({
         };
         const updatedQuizData = [...data.quizData, newQuiz];
         setData({ ...data, quizData: updatedQuizData });
-        setQuizType(null);
+        setQuizType(null); // Reset quiz type
     };
 
     const handleRemoveQuiz = (index: number) => {
-        const updatedQuizData = data.quizData.filter((_: any, i: any) => i !== index);
+        const updatedQuizData = data.quizData.filter((_: any, i: number) => i !== index);
         setData({ ...data, quizData: updatedQuizData });
     };
 
@@ -202,11 +209,15 @@ export const LessonContent = ({
                             />
                         ) : (
                             <div className="uploaded-image-preview">
-                                <img
-                                    src={data.screenData[index].media}
-                                    alt="Uploaded media"
-                                    className="uploaded-image"
-                                />
+                                {screen.media && (screen.media.endsWith('.mp4') ? (
+                                    <video src={previewUrls[index]} className="uploaded-video" controls />
+                                ) : (
+                                    <img
+                                        src={previewUrls[index]}
+                                        alt="Uploaded media preview"
+                                        className="uploaded-image"
+                                    />
+                                ))}
                                 <div className="edit-image-section">
                                     <button
                                         onClick={() => {
@@ -215,8 +226,13 @@ export const LessonContent = ({
                                             setIsFileUploaded(updatedIsFileUploaded);
 
                                             const updatedScreenData = [...data.screenData];
-                                            updatedScreenData[index].media = ''; // Clear the image URL
+                                            updatedScreenData[index].media = ''; // Clear the media URL
                                             setData({ ...data, screenData: updatedScreenData });
+                                            setPreviewUrls((prevUrls) => {
+                                                const newUrls = [...prevUrls];
+                                                newUrls[index] = ''; // Clear the local preview URL
+                                                return newUrls;
+                                            });
                                         }}
                                         className="remove-uploaded-image-button"
                                     >
@@ -301,6 +317,7 @@ export const LessonContent = ({
                             onButtonClick={() => handleRemoveQuiz(index)}
                         />
                     </div>
+
                     <div className="quiz-name input-field">
                         <label>
                             Quiz name <span style={{ color: 'red' }}>*</span>
@@ -321,6 +338,7 @@ export const LessonContent = ({
                             <div className="error-message">{errors[`quizName-${index}`]}</div>
                         )}
                     </div>
+
                     <div className="quiz-question input-field">
                         <label>
                             Quiz question <span style={{ color: 'red' }}>*</span>
@@ -417,6 +435,7 @@ export const LessonContent = ({
                                     )}
                                 </div>
                             ))}
+
                             <EditButton
                                 buttonText="Add another answer"
                                 onButtonClick={() => {
@@ -466,10 +485,10 @@ export const LessonContent = ({
                 }}
             >
                 <MenuItem onClick={() => handleQuizTypeChange('multiple-choice')}>
-                    Add multiple choice quiz
+                    Add multiple-choice quiz
                 </MenuItem>
                 <MenuItem onClick={() => handleQuizTypeChange('free-text')}>
-                    Add free text quiz
+                    Add free-text quiz
                 </MenuItem>
             </Menu>
         </div>

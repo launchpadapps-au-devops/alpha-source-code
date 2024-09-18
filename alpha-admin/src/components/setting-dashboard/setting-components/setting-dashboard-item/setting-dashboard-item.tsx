@@ -7,7 +7,7 @@ export interface SettingDashboardItemProps {
     className?: string;
     icon?: Glyph;
     navText?: string;
-    linkTo?: string;
+    linkTo?: any;
 }
 
 /**
@@ -17,7 +17,7 @@ export interface SettingDashboardItemProps {
 export const SettingDashboardItem = ({ className, icon, navText, linkTo }: SettingDashboardItemProps) => {
     return (
         <>
-            <NavLink to={'/'} className={({ isActive, isPending }) =>
+            <NavLink to={linkTo} className={({ isActive, isPending }) =>
                 classNames(styles["setting-link-wrapper"], className, {
                     [styles.active]: isActive,
                     pending: isPending,

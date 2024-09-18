@@ -156,9 +156,9 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
 
     const formatDate = (data: any) => {
         const date = new Date(data);
-        return `${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${
+        return `${
             date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-        }/${date.getFullYear()}`;
+        }/${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${date.getFullYear()}`;
     };
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -225,7 +225,7 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
                                     </a>
                                 </TableCell>
                                 {showSelectColumn && (
-                                    <TableCell>
+                                    <TableCell onClick={(event) => event.stopPropagation()}>
                                         <Checkbox
                                             checked={theme.select}
                                             onChange={() => handleCheckboxChange(theme, index)}

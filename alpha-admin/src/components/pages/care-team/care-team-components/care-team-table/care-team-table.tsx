@@ -53,13 +53,6 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
     const handleEditClick = (memberId: string) => {
         navigate(`/careteam/careteamprofile/${memberId}`);
     };
-    // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     setSearchQuery(e.target.value);
-    // }
-
-    // const filteredStaff = staff.filter((member) =>
-    //     member.fullName.toLowerCase().includes(searchQuery.toLowerCase())
-    // );
 
     return (
         <>
@@ -87,24 +80,14 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
                                     {console.log(member)}
                                 </div>
                             </td>
-                            <td>{member.role.name}</td>
-                            <td>{member.permissions.length > 0 ? member.permissions[0].name : null}</td>
+                            <td>{member.role?.name}</td>
+                            <td>{member.permissions?.length > 0 ? member.permissions[0]?.name : null}</td>
                             <td>
                                 <AppButton icon='edit' className={classNames(AppButton_module['button-no-decoration'], styles['table-icon-button'])} onButtonClick={() => handleEditClick(member.id)} showLeftIcon />
                             </td>
                         </tr>
                     ))}
                 </tbody>
-                {/* <tbody>
-                <tr>
-                    <td>Dr. John Doe</td>
-                    <td>General Practitioner</td>
-                    <td>Full access</td>
-                    <td>
-                        <AppButton icon='edit' className={classNames(AppButton_module['button-no-decoration'], styles['table-icon-button'])} showLeftIcon />
-                    </td>
-                </tr>
-            </tbody> */}
             </table>
             <div className={styles.pagination}>
                 <CustomPagination

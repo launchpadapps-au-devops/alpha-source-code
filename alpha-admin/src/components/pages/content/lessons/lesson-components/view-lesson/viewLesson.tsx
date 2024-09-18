@@ -10,28 +10,10 @@ import TagsComponent from '../tags/tags';
 import { PublishButton } from '../../../content-components/publish-button/publishButton';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { useEffect, useState } from 'react';
-import { fetchLessonByIdThunk } from '../lessonsSlice';
+import { fetchLessonByIdThunk, updateLessonThunk } from '../lessonsSlice';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../../back-button/backButton';
 
-const categories = [
-    {
-        title: 'Food tags',
-        tags: ['Gluten free', 'Gluten free', 'Gluten free'],
-    },
-    {
-        title: 'Tag category',
-        tags: ['Gluten free', 'Gluten free'],
-    },
-    {
-        title: 'Tag category',
-        tags: ['Gluten free', 'Gluten free'],
-    },
-    {
-        title: 'Tag category',
-        tags: ['Gluten free', 'Gluten free'],
-    },
-];
 
 export interface ContentProps {
     className?: string;
@@ -45,6 +27,7 @@ export const ViewLessons = ({
     showTags = true,
     showAlternateButtons = false,
 }: ContentProps) => {
+    // const params = useParams();
     const { id } = useParams<{ id: string }>();
     const dispatch = useAppDispatch();
     const [lessonData, setLessonData] = useState({
@@ -54,16 +37,40 @@ export const ViewLessons = ({
         points: '',
         description: '',
         internalNotes: '',
+        isPublished: false,
         theme: { name: '' },
         category: { name: '' },
         lessonTags: [
-            { motivation: [] },
-            { gender: [] },
-            { cultural_background: [] },
-            { living_situation: [] },
-            { food_intolerance: [] },
-            { lifestyle: [] },
-            { physical_limitation: [] },
+            {
+                Ethnicity: [],
+            },
+            {
+                Leisure_Preferences: [],
+            },
+            {
+                Dietary_Restrictions: [],
+            },
+            {
+                Physical_Limitation: [],
+            },
+            {
+                Physical_Limitation_Follow_up: [],
+            },
+            {
+                Unhealthy_Eating_Habits: [],
+            },
+            {
+                Motivation_to_Change: [],
+            },
+            {
+                Goals_Motivators: [],
+            },
+            {
+                Young_Dependents: [],
+            },
+            {
+                Adult_Dependents: [],
+            },
         ],
     });
     const navigate = useNavigate();
@@ -90,6 +97,7 @@ export const ViewLessons = ({
                         theme: fetchedLesson.theme,
                         category: fetchedLesson.category,
                         lessonTags: fetchedLesson.lessonTags,
+                        isPublished: fetchedLesson.isPublished,
                     });
                 })
                 .catch((error: any) => {
@@ -97,6 +105,35 @@ export const ViewLessons = ({
                 });
         }
     }, []);
+
+    const handlePublish = () => {
+        console.log('Publish');
+        const newData = {
+                isPublished: true,
+        };
+        dispatch(updateLessonThunk({ id: id, data: newData }))
+            .then((response: any) => {
+                navigate('/content/lessons');
+            })
+            .catch((error: any) => {
+                console.log('Response ERROR ', error);
+                alert('Error updating theme');
+            });
+    };
+    const handleUnpublish = () => {
+        console.log('Unpublish');
+        const newData = {
+                isPublished: false,
+        };
+        dispatch(updateLessonThunk({ id: id, data: newData }))
+            .then((response: any) => {
+                navigate('/content/lessons');
+            })
+            .catch((error: any) => {
+                console.log('Response ERROR ', error);
+                alert('Error updating theme');
+            });
+    };
 
     const handleBackClick = () => {
         navigate(-1); // This will navigate to the previous page
@@ -140,11 +177,11 @@ export const ViewLessons = ({
                                 />
                                 <EditButton
                                     buttonText="Unpublish & save as draft"
-                                    onButtonClick={() => navigate('/careteam/createcontent')}
+                                    onButtonClick={() => handleUnpublish()}
                                 />
                                 <AppButton
                                     buttonText="Save updates"
-                                    onButtonClick={() => navigate('/careteam/createcontent')}
+                                    onButtonClick={() => navigate('/content/lessons')}
                                 />
                             </>
                         ) : (
@@ -158,11 +195,11 @@ export const ViewLessons = ({
                                 />
                                 <EditButton
                                     buttonText="Save updates"
-                                    onButtonClick={() => navigate('/careteam/createcontent')}
+                                    onButtonClick={() => navigate('/content/lessons')}
                                 />
                                 <AppButton
                                     buttonText="Publish"
-                                    onButtonClick={() => navigate('/careteam/createcontent')}
+                                    onButtonClick={() => handlePublish()}
                                 />
                             </>
                         )}

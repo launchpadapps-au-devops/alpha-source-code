@@ -41,7 +41,27 @@ const getStaffRole = async (staffId: any): Promise<any> => {
     }
 }
 
-export { getStaff, getStaffRole };
+const inviteStaff = async (staffId: string) => {
+    const accessToken = localStorage.getItem('accessToken');
+    let apiURL = `${config.BASE_URL}/gateway/v1/staff/${staffId}/invite`;
+    try {
+      const response = await axios.post(apiURL,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'accept': 'application/json',
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Error sending staff invite');
+    }
+  };
+
+export { getStaff, getStaffRole, inviteStaff };
 
 interface staffFormData {
     userData: {

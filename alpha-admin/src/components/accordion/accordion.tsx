@@ -11,15 +11,11 @@ export interface CustomAccordionProps {
     accordionContent?: string;
     accordionNumber?: string;
     isEditing?: boolean;
-
+    onContentChange?: (key: string, value: string) => void; // Callback for content change
 }
 
-/**
- * This component was created using Codux's Default new component template.
- * To create custom component templates, see https://help.codux.com/kb/en/article/kb16522
- */
-export const Accordion = ({ className, accordionText, accordionContent, accordionNumber, isEditing }: CustomAccordionProps) => {
-    return <>
+export const Accordion = ({ className, accordionText, accordionContent, accordionNumber, isEditing, onContentChange }: CustomAccordionProps) => {
+    return (
         <CustomAccordion>
             <CustomAccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -33,19 +29,27 @@ export const Accordion = ({ className, accordionText, accordionContent, accordio
                         <div className={styles['edit-accordion-wrapper']}>
                             <div className={styles['edit-accordion-header']}>
                                 Heading
-                                <InputField placeholder="Current heading" />
+                                <InputField
+                                    value={accordionText}
+                                    onChange={(e) => onContentChange?.('heading', e.target.value)} // Optional chaining
+                                    placeholder="Current heading"
+                                />
                             </div>
                             <div className={styles['edit-accordion-body']}>
                                 Body
-                                <InputField placeholder='InCurrent body text Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' />
+                                <InputField
+                                    value={accordionContent}
+                                    onChange={(e) => onContentChange?.('body', e.target.value)} // Optional chaining
+                                    placeholder="Current body"
+                                />
                             </div>
                         </div>
                     )}
                 </div>
             </CustomAccordionSummary>
             <CustomAccordionDetails>
-                {accordionContent}
+                {!isEditing && accordionContent}
             </CustomAccordionDetails>
         </CustomAccordion>
-    </>
+    );
 };

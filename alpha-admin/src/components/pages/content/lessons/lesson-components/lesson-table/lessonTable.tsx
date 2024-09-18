@@ -126,6 +126,13 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
         });
     };
 
+    const formatDate = (data: any) => {
+        const date = new Date(data);
+        return `${
+            date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
+        }/${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${date.getFullYear()}`;
+    };
+
     return (
         <>
             <TableContainer
@@ -154,7 +161,7 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
                                     <TableCell className={styles.themecode}>{lesson.lessonCode}</TableCell>
                                     <TableCell className={styles.themename}>{lesson.name}</TableCell>
                                     <TableCell className={styles.themedate}>
-                                        {new Date(lesson.createdAt).toLocaleDateString()}
+                                        {formatDate(lesson.createdAt)}
                                     </TableCell>
                                     <TableCell className={styles.themehabit}>
                                         {lesson.quizData.length > 0 ? (

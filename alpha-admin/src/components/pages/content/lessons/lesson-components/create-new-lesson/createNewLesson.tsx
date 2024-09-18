@@ -30,6 +30,7 @@ import { fetchCategoriesThunk } from '../../../categories/category-component/cat
 import { addLessonThunk, fetchLessonByIdThunk, updateLessonThunk } from '../lessonsSlice';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../../back-button/backButton';
+import { PreviewLessons } from './createNewLesson-components/preview-lesson/previewLesson';
 
 export interface ContentProps {
     className?: string;
@@ -44,6 +45,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     const dispatch = useAppDispatch();
     const location = useLocation();
     const [isEditMode, setIsEditMode] = React.useState(false);
+    const [showPreview, setShowPreview] = React.useState(false); // For handling preview mode
     const params = useParams();
     const [errors, setErrors] = React.useState<any>({});
     const [data, setData] = React.useState({
@@ -51,7 +53,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
         categoryId: '',
         themeId: '',
         status: 'ACTIVE',
-        isPublished: false,
+        isPublished: true,
         duration: '',
         points: '',
         lessonTags: [
@@ -59,31 +61,31 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                 Ethnicity: [],
             },
             {
-                Leisure_Preferences: [],
+                'Leisure Preferences': [],
             },
             {
-                Dietary_Restrictions: [],
+                'Dietary Restrictions': [],
             },
             {
-                Physical_Limitation: [],
+                'Physical Limitation': [],
             },
             {
-                Physical_Limitation_Follow_up: [],
+                'Physical Limitation- Follow up': [],
             },
             {
-                Unhealthy_Eating_Habits: [],
+                'Unhealthy Eating Habits': [],
             },
             {
-                Motivation_to_Change: [],
+                'Motivation to Change': [],
             },
             {
-                Goals_Motivators: [],
+                'Goals/Motivators': [],
             },
             {
-                Young_Dependents: [],
+                'Young Dependents': [],
             },
             {
-                Adult_Dependents: [],
+                'Adult Dependents': [],
             },
         ],
         internalNotes: '',
@@ -99,6 +101,8 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                 type: 'single-choice',
                 options: [],
                 answer: [],
+                min: 1,
+                max: 1,
             },
         ],
     });
@@ -120,6 +124,8 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
             answer: '',
             userInstructions: '',
             options: [{ option: '', isCorrect: false, id: 1 }],
+            min: 1,
+            max: 1,
         },
     ]);
 
@@ -200,6 +206,16 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     const handleBackClick = () => {
         navigate(-1);
     };
+
+    if (showPreview) {
+        return (
+            <PreviewLessons
+                data={data}
+                isEditMode={isEditMode}
+                onBack={handleBackClick} // Function to go back to the Create form
+            />
+        );
+    }
 
     return (
         <>

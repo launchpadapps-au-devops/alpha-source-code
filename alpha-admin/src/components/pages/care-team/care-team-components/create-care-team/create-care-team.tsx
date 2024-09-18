@@ -10,7 +10,7 @@ import { FormSucessModal } from '../../../../form-sucess-modal/form-sucess-modal
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../../../app/store';
-import { addNewStaffThunk } from './create-care-teamSlice';
+import { addNewStaffThunk, inviteStaffThunk } from './create-care-teamSlice';
 import { BackButton } from '../../../../back-button/backButton';
 
 export interface CreateCareTeamProps {
@@ -70,14 +70,32 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
         };
         console.log('Payload data:', data);
     
-        dispatch(addNewStaffThunk(data)).then((response) => {
+        // Dispatch addNewStaffThunk and handle the response to get staffId
+        dispatch(addNewStaffThunk(data)).then((response: any) => {
             if (response.meta.requestStatus === 'fulfilled') {
-                setOpenModal(true);  // Open the modal after the API call is successful
+                const staffId = response.payload.data?.id;
+                console.log('Staff ID:', staffId); // Log the staff ID to ensure it's correct
+    
+                // Ensure staffId is not undefined and convert to string
+                if (staffId) {
+                    // Pass staffId as an object
+                    dispatch(inviteStaffThunk({ staffId: String(staffId) })).then((inviteResponse: any) => {
+                        if (inviteResponse.meta.requestStatus === 'fulfilled') {
+                            setOpenModal(true); // Open the modal after both APIs are successful
+                        } else {
+                            alert('Failed to send the invitation. Please try again.');
+                        }
+                    });
+                } else {
+                    alert('Failed to retrieve staff ID.');
+                }
             } else {
                 alert('Failed to create profile. Please try again.');
             }
         });
     };
+    
+    
     
 
     const handleCloseModal = () => {

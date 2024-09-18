@@ -133,9 +133,9 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
 
     const formatDate = (data: any) => {
         const date = new Date(data);
-        return `${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${
+        return `${
             date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-        }/${date.getFullYear()}`;
+        }/${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${date.getFullYear()}`;
     };
 
     return (

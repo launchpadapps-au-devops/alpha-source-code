@@ -23,6 +23,9 @@ import getPatientDataOverviewReducer from '../components/pages/patient-platform/
 // import forgotOtpVerifyAuthSlice from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
 import getUserDataOverviewReducer from '../components/pages/dashboard/dashboard-components/user-data-overvie-store/userDataOverviewSlice';
 
+// Import the policy slice
+import policyReducer from '../components/pages/terms-and-condition/privacyPolicySlice'; // Adjust the import path accordingly
+
 const rootReducer = combineReducers({
     login: authSlice,
     // forgotPassword: forgotAuthSlice,
@@ -46,6 +49,9 @@ const rootReducer = combineReducers({
 
     //Patient Platform
     patientDataAnalyticsOverview: getPatientDataOverviewReducer,
+
+    // Add the policy slice
+    policy: policyReducer, // Add the policy slice to the root reducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

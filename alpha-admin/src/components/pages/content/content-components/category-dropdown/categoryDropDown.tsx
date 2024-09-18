@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
-import './dropDown.scss';
+import './categoryDropDown.scss';
 
 interface DropdownProps {
     label: string;
     options: string[];
     setData: any;
-    isEditMode?: boolean;
+    // isEditMode?: boolean;
     data?: any;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode, data }) => {
+const CategoryDropdown: React.FC<DropdownProps> = ({ label, options, setData, data }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
@@ -19,17 +19,17 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode
         setIsOpen(!isOpen);
     };
 
-    useEffect(() => {
-        if (isEditMode) {
-            const lessonTags = data.lessonTags.find((tagObj: { [key: string]: string[] }) =>
-                Object.keys(tagObj)[0].includes(label.toLowerCase())
-            );
+    // useEffect(() => {
+    //     if (isEditMode) {
+    //         const lessonTags = data.lessonTags.find((tagObj: { [key: string]: string[] }) =>
+    //             Object.keys(tagObj)[0].includes(label.toLowerCase())
+    //         );
 
-            if (lessonTags) {
-                setSelectedOptions(lessonTags[label]);
-            }
-        }
-    }, []);
+    //         if (lessonTags) {
+    //             setSelectedOptions(lessonTags[label]);
+    //         }
+    //     }
+    // }, []);
 
     const handleOptionChange = (option: string) => {
         setSelectedOptions((prev) =>
@@ -104,4 +104,4 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode
     );
 };
 
-export default Dropdown;
+export default CategoryDropdown;

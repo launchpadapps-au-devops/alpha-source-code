@@ -6,6 +6,7 @@ import styles from './customPagination.module.scss';
 interface CustomPaginationProps {
     onNextPage: () => void;
     onPreviousPage: () => void;
+    // onPageChange: (pageNumber: number) => void; // New prop for page change
     currentPage: number;
     totalPages: number;
 }
@@ -13,9 +14,26 @@ interface CustomPaginationProps {
 export const CustomPagination: React.FC<CustomPaginationProps> = ({
     onNextPage,
     onPreviousPage,
+    // onPageChange,
     currentPage,
     totalPages,
 }) => {
+    const renderPageNumbers = () => {
+        let pageNumbers = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pageNumbers.push(
+                <button
+                    key={i}
+                    // onClick={() => onPageChange(i)}
+                    className={`${styles['page-number']} ${currentPage === i ? styles['active'] : ''}`}
+                >
+                    {i}
+                </button>
+            );
+        }
+        return pageNumbers;
+    };
+
     return (
         <div className={styles['table-footer-wrapper']}>
             <button
@@ -25,7 +43,9 @@ export const CustomPagination: React.FC<CustomPaginationProps> = ({
             >
                 <FontAwesomeIcon icon={faChevronLeft} /> Back
             </button>
-            <span className={styles['page-info']}>{currentPage}</span>
+            <div className={styles['page-numbers']}>
+                {renderPageNumbers()}
+            </div>
             <button
                 className={styles['next-button']}
                 onClick={onNextPage}

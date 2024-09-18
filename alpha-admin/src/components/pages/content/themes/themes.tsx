@@ -16,6 +16,7 @@ import { fetchThemesThunk } from './themes-components/themeSlice';
 import { Lesson } from './themes-components/lessonsidebar/lessonSidebar';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../back-button/backButton';
+import { fetchCategoriesForLessonsThunk } from '../categories/category-component/categorySlice';
 
 export interface ContentProps {
     className?: string;
@@ -31,6 +32,7 @@ export const Themes = ({ className }: ContentProps) => {
     const [totalRecords, setTotalRecords] = useState(0);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const dispatch = useAppDispatch();
+    const [categories,setCategories] = useState([]);
 
     const tabs = ['All themes', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
     const [theme, setTheme] = useState([]);
@@ -70,6 +72,16 @@ export const Themes = ({ className }: ContentProps) => {
     const handleBackClick = () => {
         navigate(-1); // This will navigate to the previous page
     };
+
+    useEffect(() => {
+        dispatch(fetchCategoriesForLessonsThunk(100)).then((response: any) => {
+            if (response.payload) {
+                const activeCategories = response.payload.data.filter((cat: { status: string; })=>cat.status.toLowerCase() === 'active');
+                setCategories(activeCategories);
+            }
+        }
+        );
+        }, [dispatch]);
 
     return (
         <>
@@ -137,7 +149,24 @@ export const Themes = ({ className }: ContentProps) => {
                             </Menu>
                         </div>
                     </header>
-                    <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
+                    {/* <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} /> */}
+                    <div className={styles.section}>
+                        <h3 className={styles.label}>Category</h3>
+                        <select
+                            id="internalNotes"
+                            className={styles.textarea}
+                            value={'data.themeData.internalNotes'}
+                        >
+                                                            <option value="" disabled hidden>
+                                    Select category
+                                </option>
+                                {categories.map((category: any) => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
                     <ThemesTable
                         themes={theme}
                         setThemes={setTheme}

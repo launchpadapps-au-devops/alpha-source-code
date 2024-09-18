@@ -87,7 +87,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [lessons, setLessons] = useState<Lesson[]>(initialLessons);
-    const [newLessons, setNewLessons] = useState([]);
+    const [newLessons, setNewLessons] = useState<Lesson[]>([]);
     const [selectedLessons, setSelectedLessons] = useState<Lesson[]>([]);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [category, setCategory] = useState<string>('');
@@ -97,7 +97,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
         themeData: {
             themeCode: '0',
             categoryId: 1,
-            isPublished: false,
+            isPublished: true,
             internalNotes: '',
             name: '',
             image: 'https://sample.com/sample.jpg',
@@ -111,10 +111,10 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                 {
                     id: 1,
                     order: 1,
-                    name: 'value',
+                    name: '',
                     timeAllocation: 1,
                     pointAllocation: 50,
-                    instructions: 'value',
+                    instructions: '',
                     meta: [
                         {
                             key: 'value',
@@ -126,16 +126,19 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
         lessonData: [1],
     });
 
+    // Submit data to the backend with selected lessons
     const submitData = () => {
         const lessonIds = selectedLessons.map((lesson) => lesson.lessonCode);
-        console.log('selectedLessons', lessonIds, typeof lessonIds[0]);
-        data['lessonData'] = lessonIds;
+        console.log('selectedLessons', lessonIds);
 
-        dispatch(addThemeThunk(data))
+        const updatedData = {
+            ...data,
+            lessonData: lessonIds, // Ensure lessonData is an array of lesson codes
+        };
+
+        dispatch(addThemeThunk(updatedData))
             .then((res: any) => {
-                if (res.payload.statusCode === 200) {
-                    navigate('/content/themes');
-                } else if (res.payload.statusCode === 201) {
+                if (res.payload.statusCode === 200 || res.payload.statusCode === 201) {
                     navigate('/content/themes');
                 }
             })
@@ -145,15 +148,18 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
             });
     };
 
+    // Handle updates to the lessons
     const handleUpdateLessons = (updatedLessons: Lesson[]) => {
         setLessons(updatedLessons);
     };
 
+    // Handle adding lessons to the theme and ensuring prev is always an array
     const handleAddLessonsToTheme = (selected: Lesson[]) => {
-        setSelectedLessons((prev) => [...prev, ...selected]);
+        setSelectedLessons((prev) => (Array.isArray(prev) ? [...prev, ...selected] : [...selected]));
         setIsSidebarOpen(false); // Close sidebar after adding lessons
     };
 
+    // Remove a lesson from the selected lessons
     const handleRemoveLessonFromTheme = (lessonCode: number) => {
         setSelectedLessons((prev) => prev.filter((lesson) => lesson.lessonCode !== lessonCode));
     };
@@ -173,12 +179,19 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     const handleRemoveHabitClick = () => {
         setShowHabit(false);
     };
+
     const hideLessons = location.state?.hideLessons;
 
     useEffect(() => {
+        // Fetch lessons from the API and ensure the lessons list is valid
         dispatch(fetchLessonsThunk(1)).then((res: any) => {
-            setNewLessons(res.payload.data);
-            setSelectedLessons(res.payload.data.lessons);
+            const lessonsFromAPI = res.payload.data.lessons;
+            if (Array.isArray(lessonsFromAPI)) {
+                setNewLessons(lessonsFromAPI); // Populate new lessons from the API response
+                setSelectedLessons(lessonsFromAPI); // Set the initial selected lessons
+            } else {
+                setNewLessons([]); // Handle if lessons is not an array
+            }
             console.log(res.payload.data, 'lessons');
         });
     }, []);
@@ -206,7 +219,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                                 buttonText="Save as draft"
                                 onButtonClick={() => navigate('/content/categories')}
                             />
-                            <AppButton buttonText="Publish" onButtonClick={() => submitData()} />
+                            <AppButton buttonText="Publish" onButtonClick={submitData} />
                         </div>
                     </header>
                     <div className={styles.themeContainer}>

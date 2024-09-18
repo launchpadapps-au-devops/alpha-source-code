@@ -125,13 +125,13 @@ export const EditTheme = ({ className }: EditThemeProps) => {
         lessonData: [],
     });
 
-    const submitData = (id:any) => {
-        dispatch(updateThemeThunk({ id, theme: data.themeData })) 
-        .then((res: any) => {
-            console.log(data.themeData);
+    const submitData = (id: any) => {
+        dispatch(updateThemeThunk({ id, theme: data.themeData }))
+            .then((res: any) => {
+                console.log(data.themeData);
                 if (res.payload.status === 200) {
                     navigate('/content/themes');
-                } else if (res.payload.status === 201){
+                } else if (res.payload.status === 201) {
                     navigate('/content/themes');
                 }
             })
@@ -174,6 +174,7 @@ export const EditTheme = ({ className }: EditThemeProps) => {
     useEffect(() => {
         dispatch(fetchThemeByIdThunk(id)).then((res: any) => {
             setData({ themeData: res.payload.data, lessonData: res.payload.data.lessons });
+            setSelectedLessons(res.payload.data.lessons);
         });
         dispatch(fetchLessonsThunk(1)).then((res: any) => {
             setNewLessons(res.payload.data);
@@ -187,7 +188,7 @@ export const EditTheme = ({ className }: EditThemeProps) => {
 
     return (
         <>
-            <BackButton onClick={handleBackClick}/>
+            <BackButton onClick={handleBackClick} />
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>
@@ -204,10 +205,7 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                                 buttonText="Save as draft"
                                 onButtonClick={() => navigate('/content/themes')}
                             />
-                            <AppButton
-                                buttonText="Publish"
-                                onButtonClick={() => submitData(id)}
-                            />
+                            <AppButton buttonText="Publish" onButtonClick={() => submitData(id)} />
                         </div>
                     </header>
                     <div className={styles.themeContainer}>

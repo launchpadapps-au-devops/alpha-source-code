@@ -1,0 +1,92 @@
+.dropdown-container {
+  width: 100%; /* Ensure the container takes the full width */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #22272B;
+  border-radius: 6px;
+  background: #FFF;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  cursor: pointer;
+  width: 100%; /* Full width of the container */
+  box-sizing: border-box; /* Include padding and border in width */
+}
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  flex: 1;
+  align-items: center;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  background: #e0e0e0;
+  border-radius: 4px;
+  padding: 2px 6px; /* Add padding for content */
+  margin: 2px;
+  box-sizing: border-box;
+}
+
+.remove-icon {
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.add-icon {
+  margin-left: auto;
+  color: #22272B;
+}
+
+.selected-tags input {
+  border: none;
+  box-shadow: none;
+  outline: none;
+  padding: 2px 6px;
+  background: transparent;
+  font-size: 16px;
+  color: #000;
+  flex-grow: 1;
+  min-width: 50px;
+  max-width: 100%; /* Allow the input to grow to the full width */
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #FFF;
+  border: 1px solid #22272B; /* Add border to the dropdown */
+  border-radius: 6px;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05); /* Add shadow for clarity */
+  overflow: hidden;
+  z-index: 1;
+  width: 100%; /* Full width of the container */
+  box-sizing: border-box; /* Include padding and border in width */
+}
+
+.dropdown-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  cursor: pointer;
+  flex-direction: row-reverse;
+}
+
+.dropdown-option label {
+  flex: 1;
+  text-align: left;
+}
+
+.dropdown-option input[type="checkbox"] {
+  margin-left: 8px;
+}

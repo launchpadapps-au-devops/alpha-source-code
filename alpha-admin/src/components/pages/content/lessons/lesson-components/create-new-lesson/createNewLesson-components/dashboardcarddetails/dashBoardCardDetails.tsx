@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import './dashBoardCardDetails.scss';
 import { UploadButton } from '../../../../../content-components/upload-button/uploadButton';
 import { Vector } from '../../../../../../../icon/glyps/vector';
-import { useAppDispatch } from '../../../../../../../../app/hooks';
 import { uploadFile } from '../../../../../../../fileUpload/fileUploadSlice';
+import { useAppDispatch } from '../../../../../../../../app/hooks';
 
 export interface DashboardCardDetailsProps {
     dashboardCardDetails: any;

@@ -68,6 +68,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
             console.log('res', res);
 
             const extractedLessons = res.payload.data.flatMap((lesson: any) => ({
+                // id: lesson.id,
                 lessonCode: lesson.id,
                 name: lesson.name,
                 createdAt: lesson.createdAt,

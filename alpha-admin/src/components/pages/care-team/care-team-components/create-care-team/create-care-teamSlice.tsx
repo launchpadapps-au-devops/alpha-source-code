@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, combineReducers, PayloadAction } from '@reduxjs/toolkit';
-import addNewStaffService, { getStaff } from './create-care-teamAPI';
+import addNewStaffService, { getStaff, inviteStaff } from './create-care-teamAPI';
 import { getStaffRole } from './create-care-teamAPI';
 
 export interface staffState {
@@ -123,6 +123,19 @@ export const getStaffRoleSlice = createSlice({
             });
     },
 });
+
+// Async thunk for inviting a staff member
+export const inviteStaffThunk = createAsyncThunk(
+  'staff/inviteStaff',
+  async ({ staffId}: { staffId: string }, thunkAPI) => {
+    try {
+      const response = await inviteStaff(staffId);
+      return response;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 const rootReducer = combineReducers({
     staff: staffSlice.reducer,
