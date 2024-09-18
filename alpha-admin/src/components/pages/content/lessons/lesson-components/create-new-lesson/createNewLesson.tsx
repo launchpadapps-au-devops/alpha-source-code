@@ -1,18 +1,6 @@
 import classNames from 'classnames';
 import {
-    Box,
     Typography,
-    Button,
-    Switch,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Tabs,
-    Tab,
 } from '@mui/material';
 import styles from './createNewLesson.module.scss';
 import { AppButton } from '../../../../../app-button/app-button';
@@ -180,7 +168,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
             fieldErrors.description = 'Lesson description is required';
         }
 
-        if (!data.coverImage) {
+        if (data.coverImage) {
             fieldErrors.coverImage = 'Cover image is required';
         }
 
@@ -191,17 +179,23 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
 
     const handlePreview = () => {
         if (validateFields()) {
+            console.log('Validation passed');
             if (isEditMode) {
                 dispatch(updateLessonThunk({ id: params.id, data: data })).then((response: any) => {
+                    console.log('Update response:', response);
                     navigate('/content/lessons/viewlesson/' + response.payload.data.id);
                 });
             } else {
                 dispatch(addLessonThunk(data)).then((response: any) => {
+                    console.log('Add response:', response);
                     navigate('/content/lessons/viewlesson/' + response.payload.data.id);
                 });
             }
+        } else {
+            console.log('Validation failed', errors);
         }
     };
+    
 
     const handleBackClick = () => {
         navigate(-1);
@@ -253,8 +247,9 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                                 data={data}
                                 setData={setData}
                                 errors={errors}
-                                setErrors={setErrors}       
+                                setErrors={setErrors}
                             />
+
                             <LessonContent
                                 screenData={screenData}
                                 setScreenData={setScreenData}
