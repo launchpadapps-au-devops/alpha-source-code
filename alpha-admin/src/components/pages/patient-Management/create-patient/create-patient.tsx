@@ -22,19 +22,24 @@ export interface CreatePatientProps {
 }
 
 export interface CreatePatientData {
-    firstName: string;
-    lastName: string;
-    phone: string;
-    email: string;
-    gender: string;
-    dob: string;
-    address: string;
-    height: number;
-    weight: number;
-    bmi: number;
-    patientDetailsEditConsent: boolean;
-}
-
+        firstName: string;
+        lastName: string;
+        phone: string;
+        email: string;
+        gender: string;
+        dob: string;
+        address: string;
+        height: number;
+        weight: number;
+        bmi: number;
+        patientDetailsEditConsent: boolean;
+        platform: string; // New field
+        termsVersion: number; // New field
+        dataConsentVersion: number; // New field
+        isOnboardingHealthQuestionariesCompleted: boolean; // New field
+        userType: string; // New field
+    }
+    
 export const CreatePatient = ({ className }: CreatePatientProps) => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -140,7 +145,13 @@ export const CreatePatient = ({ className }: CreatePatientProps) => {
             weight: Math.round(Number(formValues.weight)),
             bmi: Math.round(Number(formValues.bmi)),
             patientDetailsEditConsent: formValues.patientConsent,
+            platform: 'alpha-patient-mobile', // Add new field
+            termsVersion: 0, // Add new field
+            dataConsentVersion: 0, // Add new field
+            isOnboardingHealthQuestionariesCompleted: false, // Add new field
+            userType: 'patient', // Add new field
         };
+        
     
         console.log('Patient data prepared:', patientData);
     
