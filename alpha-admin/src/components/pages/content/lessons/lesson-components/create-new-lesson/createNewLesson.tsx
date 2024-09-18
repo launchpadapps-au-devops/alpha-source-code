@@ -188,7 +188,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
             } else {
                 dispatch(addLessonThunk(data)).then((response: any) => {
                     console.log('Add response:', response);
-                    navigate('/content/lessons/viewlesson/' + response.payload.data.id);
+                    navigate('/preview-lesson' + response.payload.data.id);
                 });
             }
         } else {

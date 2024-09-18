@@ -48,6 +48,7 @@ import { PatientLifeStyle } from './components/pages/patient-platform/patient-li
 import { EditPatient } from './components/pages/patient-Management/edit-patient/editPatient';
 import { HealthCheckinResponse } from './components/pages/patient-platform/assessments/health-checkin/healthCheckIn';
 import { HealthCheckDetail } from './components/pages/patient-platform/assessments/health-checkin/healthCheckinDetail';
+import { PreviewLessons } from './components/pages/content/lessons/lesson-components/create-new-lesson/createNewLesson-components/preview-lesson/previewLesson';
 
 // const router = createBrowserRouter([
 //     { path: '/', element: <Home /> },
@@ -230,6 +231,12 @@ const router = createBrowserRouter([
             {
                 path: '/edit-patient',
                 element: <EditPatient />,
+            },
+            {
+                path: '/preview-lesson',
+                element: <PreviewLessons data={undefined} isEditMode={false} onBack={function (): void {
+                    throw new Error('Function not implemented.');
+                } } />,
             },
         ],
     },
