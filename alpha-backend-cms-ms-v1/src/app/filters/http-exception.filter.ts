@@ -9,44 +9,65 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest();
 
-    let exceptionData;
+    let exceptionData: any;
     let errorMessage = '';
-    let status;
+    let status: number;
 
+    // Handle common HttpException cases
     if (exception instanceof HttpException) {
       exceptionData = exception.getResponse() as string | object;
-      if (Array.isArray(exceptionData?.message || exceptionData?.error?.message || exceptionData)) {
-        errorMessage = exceptionData.message.join(', ');
+      
+      // Handling different formats of exception messages
+      if (Array.isArray(exceptionData?.message)) {
+        errorMessage = (exceptionData.message as string[]).join(', ');
       } else {
-        errorMessage = exceptionData.message || exceptionData.error.message || exceptionData.error || exceptionData.message || 'Internal service error';
+        errorMessage = exceptionData['message'] 
+          || exceptionData['error']?.message 
+          || exceptionData['error'] 
+          || exceptionData 
+          || 'Internal service error';
       }
+
       status = exception.getStatus();
+    
+    // Handle database errors (like QueryFailedError)
     } else if (exception instanceof Error && exception.name === 'QueryFailedError') {
-      errorMessage = exception.message ?? 'Database error';
+      errorMessage = exception.message || 'Database error';
       status = HttpStatus.BAD_REQUEST;
 
-      // Check if it's a unique constraint violation
-      if ((exception as any).code === '23505') { // PostgreSQL unique violation code
+      // Handle PostgreSQL unique constraint violation error
+      if ((exception as any).code === '23505') { // PostgreSQL unique violation error code
         const detail = (exception as any).detail;
-        const match = detail.match(/\(([^)]+)\)=\(([^)]+)\)/); // Extracts key=value format
+
+        // Extract key and value from the error message
+        const match = detail.match(/\(([^)]+)\)=\(([^)]+)\)/); // Finds "(key)=(value)"
         if (match) {
           const [, key, value] = match;
-          errorMessage = `A record with the ${key}=${value} already exists.`;
+          errorMessage = `A record with the ${key} '${value}' already exists.`;
+        } else {
+          errorMessage = 'Unique constraint violation error';
         }
       }
+    
+    // Handle unknown or unexpected exceptions
     } else if (!exception.response) {
       errorMessage = exception.message || 'Internal service error';
-      status = 500;
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    
+    // Handle custom external services or Axios-based responses
     } else if (exception.response?.data) {
       exceptionData = exception.response.data as IErrorResponse;
       errorMessage = exceptionData.error.message;
       status = exceptionData.statusCode;
+    
+    // Default error handling for other cases
     } else {
       exceptionData = exception.response;
-      errorMessage = exceptionData.message;
-      status = exceptionData.statusCode;
+      errorMessage = exceptionData.message || 'Unexpected error';
+      status = exceptionData.statusCode || HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
+    // Prepare the error response object
     const errorResponse: IErrorResponse = {
       statusCode: status,
       error: {
@@ -54,11 +75,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
         urlPath: request.url,
         timestamp: new Date().toISOString(),
         message: errorMessage,
-        details: exceptionData?.response?.error || [],
-        debug: process.env.NODE_ENV === 'development' ? { stack: exception.stack } : undefined
-      }
+        details: exceptionData?.error || [],
+        debug: process.env.NODE_ENV === 'development' ? { stack: exception.stack } : undefined,
+      },
     };
 
+    // Send the response with the appropriate status and message
     response.status(status).json(errorResponse);
   }
 }
