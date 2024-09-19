@@ -1,10 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, ManyToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, ManyToMany, Unique } from 'typeorm';
 import { Lesson } from './lesson.entity';
 import { User } from './user.entity';
 import { Category } from './category.entity';
 import { Plan } from '../entities';
 
 @Entity('themes')
+@Unique(['themeCode', 'categoryId']) // Composite unique constraint
 export class Theme {
     @PrimaryGeneratedColumn()
     id: number;
