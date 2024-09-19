@@ -1,160 +1,187 @@
 .container {
-    display: flex;
-    height: 100vh;
-    background-color: #f5f5f5;
+  display: flex;
+  height: 100vh;
+  background-color: #ffffff; /* Changed background to white */
 }
 
 // src/components/TagsComponent.scss
 .tags-component {
-    .tag-category {
+  .tag-category {
       margin-bottom: 1rem;
-  
+
       .category-title {
-        font-weight: bold;
-        margin-bottom: 0.5rem;
+          font-weight: bold;
+          margin-bottom: 0.5rem;
+          color: #000; /* Changed to black for better contrast */
       }
-  
+
       .tags {
-        display: flex;
-        gap: 0.5rem;
-  
-        .tag {
-          background-color: #CDD3D6;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          padding: 0.5rem 1rem;
-          font-size: 0.9rem;
-          cursor: pointer;
-          user-select: none;
-        }
+          display: flex;
+          flex-wrap: wrap; /* Allow tags to wrap */
+          gap: 0.5rem;
+
+          .tag {
+              background-color: #f1f1f1; /* Softer background for tags */
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              padding: 0.3rem 0.8rem;
+              font-size: 0.8rem;
+              color: #333; /* Darker text color */
+          }
       }
-    }
   }
-  
+}
 
 .lesson-information {
-    background-color: #002664;
-    padding: 20px;
-    border-radius: 8px;
-    color: #fff;
-    width: 100%;
-    box-sizing: border-box;
-  
-    .lesson-header {
+  background-color: #e9f1fb; /* Light blue background */
+  padding: 20px;
+  border-radius: 8px;
+  color: #333; /* Darker text color */
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 20px; /* Add spacing between sections */
+
+  .lesson-header {
       text-align: left;
       margin-bottom: 20px;
-  
+
       h2 {
-        margin: 0;
-        font-size: 1.5rem;
-        color: #fff;
+          margin: 0;
+          font-size: 1.5rem;
+          color: #333; /* Darker text color */
       }
-    }
-  
-    .lesson-details {
-      .lesson-item {
-        margin-bottom: 15px;
-  
-        &.full-width {
-          grid-column: span 4; /* Span full width for specific items */
-        }
-  
-        label {
-          font-weight: bold;
-          display: block;
-          margin-bottom: 5px;
-          color: #fff;
-        }
-  
-        .lesson-value {
-          padding: 20px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          background-color: #fff;
-          color: #000;
-        }
-      }
-  
-      .lesson-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-  
-        .lesson-item {
-          &:nth-child(1) {
-            grid-column: span 1;
-          }
-          &:nth-child(2) {
-            grid-column: span 1;
-          }
-          &:nth-child(3) {
-            grid-column: span 1;
-          }
-          &:nth-child(4) {
-            grid-column: span 1;
-          }
-        }
-      }
-    }
   }
-  
+
+  .lesson-details {
+      .lesson-item {
+          margin-bottom: 15px;
+
+          &.full-width {
+              grid-column: span 4; /* Span full width for specific items */
+          }
+
+          label {
+              font-weight: bold;
+              display: block;
+              margin-bottom: 5px;
+              color: #555; /* Softer label color */
+          }
+
+          .lesson-value {
+              padding: 15px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              background-color: #fff;
+              color: #000;
+          }
+      }
+
+      .lesson-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+
+          .lesson-item {
+              &:nth-child(1) {
+                  grid-column: span 1;
+              }
+              &:nth-child(2) {
+                  grid-column: span 1;
+              }
+              &:nth-child(3) {
+                  grid-column: span 1;
+              }
+              &:nth-child(4) {
+                  grid-column: span 1;
+              }
+          }
+      }
+  }
+}
 
 .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    background-color: #fff;
-
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #f9f9f9; /* Light gray background */
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px; /* Adjust padding as needed */
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px; /* Adjust padding as needed */
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+  align-items: center;
 }
 
 .buttonContainer {
-    display: flex;
-    gap: 10px; /* Adjust gap as needed */
+  display: flex;
+  gap: 10px; /* Adjust gap as needed */
 }
 
 .leftButtonContainer {
-    display: flex;
-    gap: 10px; /* Adjust gap as needed */
-    align-items: center;
-    // margin-left: 10px; /* Adjust margin as needed to control spacing */
-  }
-  .backbutton {
-    display: flex;
-    align-items: center; /* Aligns the icon and text vertically */
-    width: 1440px;
-    padding: 0px 40px;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--Gray-04, #EBEBEB);
-    background: #F9FAFE;
-    padding: 12px 32px;
-
-    .backButton {
-        display: flex;
-        align-items: center; /* Aligns icon and text inside the button */
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        color: var(--primary-02-main, #146CFD) !important; /* Force the color to apply */
-        font-family: "Public Sans";
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 500;
-        line-height: 20px;
-    }
-
-    .arrowIcon {
-        color: var(--primary-02-main, #146CFD) !important; /* Force the icon color to apply */
-        margin-right: 8px; /* Adds space between the icon and the text */
-    }
+  display: flex;
+  gap: 10px; /* Adjust gap as needed */
+  align-items: center;
 }
 
+.backbutton {
+  display: flex;
+  align-items: center; /* Aligns the icon and text vertically */
+  padding: 0 20px; /* Adjusted padding */
+  justify-content: space-between;
+  border-bottom: 1px solid #EBEBEB;
+  background: #F9FAFE;
+
+  .backButton {
+      display: flex;
+      align-items: center; /* Aligns icon and text inside the button */
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #146CFD; /* Primary color */
+      font-family: "Public Sans";
+      font-size: 14px;
+      font-weight: 500;
+  }
+
+  .arrowIcon {
+      color: #146CFD; /* Icon color */
+      margin-right: 8px; /* Adds space between the icon and the text */
+  }
+}
+
+.cover-image-section {
+  margin-top: 20px; /* Add spacing between sections */
+  img {
+      max-width: 100%;
+      border-radius: 4px; /* Rounded corners for the image */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+  }
+}
+
+.lesson-screens, .lesson-quizzes {
+  margin-top: 20px; /* Add spacing between sections */
+  h3 {
+      font-size: 1.25rem;
+      color: #333; /* Darker heading color */
+      margin-bottom: 15px;
+  }
+
+  .screen-item, .quiz-item {
+      margin-bottom: 15px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+  }
+
+  .subtitle, .content, .quiz-name, .quiz-question, .quiz-instructions {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #666; /* Softer text color */
+  }
+}

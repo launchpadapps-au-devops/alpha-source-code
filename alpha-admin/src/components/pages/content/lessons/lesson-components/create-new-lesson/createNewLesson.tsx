@@ -93,7 +93,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
         ],
     });
     const [dashboardCardDetails, setDashboardCardDetails] = React.useState<Object>({
-        coverImage: 'https://sample.com/sample.jpg',
+        coverImage: '',
         lessonName: '',
         lessonDescription: '',
     });
@@ -184,15 +184,14 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                     navigate('/content/lessons/viewlesson/' + response.payload.data.id);
                 });
             } else {
-                dispatch(addLessonThunk(data)).then((response: any) => {
-                    console.log('Add response:', response);
-                    navigate('/preview-lesson' + response.payload.data.id);
-                });
+                // Instead of adding the lesson and navigating directly, show the preview
+                setShowPreview(true);
             }
         } else {
             console.log('Validation failed', errors);
         }
     };
+    
 
     // Function to handle saving as draft
 const saveAsDraft = () => {
@@ -222,9 +221,13 @@ const saveAsDraft = () => {
     }
 };
 
-    const handleBackClick = () => {
-        navigate(-1);
-    };
+const handleBackClick = () => {
+    if (showPreview) {
+        setShowPreview(false); // Go back to the edit form
+    } else {
+        navigate(-1); // Go back to the previous page
+    }
+};
 
     if (showPreview) {
         return (

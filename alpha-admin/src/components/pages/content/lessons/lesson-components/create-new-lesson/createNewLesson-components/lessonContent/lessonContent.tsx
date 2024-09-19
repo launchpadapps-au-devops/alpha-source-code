@@ -5,9 +5,7 @@ import { EditButton } from '../../../../../content-components/edit-button/edit-b
 import { Vector } from '../../../../../../../icon/glyps/vector';
 import { Checkbox, Menu, MenuItem } from '@mui/material';
 import { DeleteButton } from '../../../../../content-components/delete-button/delete-button';
-import { useAppDispatch } from '../../../../../../../../app/hooks';
-import { uploadFile } from '../../../../../../../fileUpload/fileUploadSlice';
-import { EditorState, ContentState, convertFromHTML } from 'draft-js';
+import { EditorState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { convertToHTML } from 'draft-convert';
@@ -33,7 +31,6 @@ export const LessonContent = ({
     isEditable,
     errors, // Accept errors prop for validation
 }: LessonContentProps) => {
-    const [isFileUploaded, setIsFileUploaded] = useState<boolean[]>([]); // State to track file upload for each screen
     const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error messages
     const [editorStates, setEditorStates] = useState<EditorState[]>([]); // Rich text editor states for each screen
     const [menuWidth, setMenuWidth] = useState<number>(0);
@@ -42,28 +39,7 @@ export const LessonContent = ({
     const [quizType, setQuizType] = useState<'multiple-choice' | 'free-text' | null>(null);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]); // Array to store local preview URLs
     const [activeQuizIndex, setActiveQuizIndex] = useState<number | null>(null);
-    const dispatch = useAppDispatch();
-
-    useEffect(() => {
-        // Initialize editor states for existing screens
-        const initialEditorStates = data.screenData.map((screen: any) => {
-            const blocksFromHTML = convertFromHTML(screen.content || '');
-            return EditorState.createWithContent(
-                ContentState.createFromBlockArray(
-                    blocksFromHTML.contentBlocks,
-                    blocksFromHTML.entityMap
-                )
-            );
-        });
-        setEditorStates(initialEditorStates);
-
-        // Initialize isFileUploaded state for existing screens
-        const initialFileUploadStates = data.screenData.map(
-            (screen: any) => !!screen.media
-        );
-        setIsFileUploaded(initialFileUploadStates);
-    }, [data.screenData]);
-
+    // Handle file changes for media uploads (image/video)
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -79,9 +55,11 @@ export const LessonContent = ({
                     const updatedScreenData = [...data.screenData];
                     updatedScreenData[index].media = file.name; // Save the file name for now
                     setData({ ...data, screenData: updatedScreenData });
-                    const updatedIsFileUploaded = [...isFileUploaded];
-                    updatedIsFileUploaded[index] = true;
-                    setIsFileUploaded(updatedIsFileUploaded);
+                    setPreviewUrls((prevUrls) => {
+                        const newUrls = [...prevUrls];
+                        newUrls[index] = reader.result as string; // Set the local preview URL
+                        return newUrls;
+                    });
                     setErrorMessage(null);
                 };
                 reader.readAsDataURL(file);
@@ -91,9 +69,11 @@ export const LessonContent = ({
                     const updatedScreenData = [...data.screenData];
                     updatedScreenData[index].media = file.name; // Save the file name for now
                     setData({ ...data, screenData: updatedScreenData });
-                    const updatedIsFileUploaded = [...isFileUploaded];
-                    updatedIsFileUploaded[index] = true;
-                    setIsFileUploaded(updatedIsFileUploaded);
+                    setPreviewUrls((prevUrls) => {
+                        const newUrls = [...prevUrls];
+                        newUrls[index] = reader.result as string; // Set the local preview URL
+                        return newUrls;
+                    });
                     setErrorMessage(null);
                 };
                 reader.readAsDataURL(file);
@@ -130,10 +110,7 @@ export const LessonContent = ({
         const updatedScreenData = [...data.screenData, newScreen];
         setScreenData(updatedScreenData);
         setData({ ...data, screenData: updatedScreenData });
-
-        // Update editor states and file upload states
-        setEditorStates([...editorStates, EditorState.createEmpty()]);
-        setIsFileUploaded([...isFileUploaded, false]);
+        setPreviewUrls((prevUrls) => [...prevUrls, '']); // Add a placeholder for the new screen
     };
 
     const handleQuizTypeChange = (type: 'multiple-choice' | 'free-text') => {
@@ -150,8 +127,8 @@ export const LessonContent = ({
             userInstructions: '',
             question: '',
             type: quizType,
-            options: quizType === 'multiple-choice' ? [''] : undefined,
-            answer: quizType === 'multiple-choice' ? [] : undefined,
+            options: quizType === 'multiple-choice' ? [''] : undefined, // Start with one empty option for multiple-choice
+            answer: quizType === 'multiple-choice' ? [] : undefined, // Start with no answers
         };
         const updatedQuizData = [...data.quizData, newQuiz];
         setData({ ...data, quizData: updatedQuizData });
@@ -198,7 +175,7 @@ export const LessonContent = ({
                             Image: JPG, PNG, max 2MB; Video: MP4, max 100MB
                         </div>
 
-                        {!isFileUploaded[index] ? (
+                        {!previewUrls[index] ? (
                             <UploadButton
                                 showLeftIcon
                                 buttonText="Upload media"
@@ -221,10 +198,6 @@ export const LessonContent = ({
                                 <div className="edit-image-section">
                                     <button
                                         onClick={() => {
-                                            const updatedIsFileUploaded = [...isFileUploaded];
-                                            updatedIsFileUploaded[index] = false;
-                                            setIsFileUploaded(updatedIsFileUploaded);
-
                                             const updatedScreenData = [...data.screenData];
                                             updatedScreenData[index].media = ''; // Clear the media URL
                                             setData({ ...data, screenData: updatedScreenData });
@@ -242,9 +215,12 @@ export const LessonContent = ({
                             </div>
                         )}
 
-                        {errors[`media-${index}`] && (
-                            <div className="error-message" style={{ color: 'red', marginTop: '5px' }}>
-                                {errors[`media-${index}`]}
+                        {errorMessage && (
+                            <div
+                                className="error-message"
+                                style={{ color: 'red', marginTop: '5px' }}
+                            >
+                                {errorMessage}
                             </div>
                         )}
                     </div>
@@ -306,11 +282,7 @@ export const LessonContent = ({
             {data.quizData.map((quiz: any, index: number) => (
                 <div key={index} className="quiz-content screen">
                     <div className="quiz-header">
-                        <h3>
-                            {quiz.type === 'multiple-choice'
-                                ? 'Multiple choice quiz'
-                                : 'Free text quiz'}
-                        </h3>
+                        <h4>{quiz.type === 'multiple-choice' ? 'Multiple-choice Quiz' : 'Free-text Quiz'}</h4>
                         <DeleteButton
                             showLeftIcon
                             buttonText="Remove quiz"
@@ -319,9 +291,7 @@ export const LessonContent = ({
                     </div>
 
                     <div className="quiz-name input-field">
-                        <label>
-                            Quiz name <span style={{ color: 'red' }}>*</span>
-                        </label>
+                        <label>Quiz Name</label>
                         <input
                             type="text"
                             placeholder="Enter quiz name"
@@ -340,9 +310,7 @@ export const LessonContent = ({
                     </div>
 
                     <div className="quiz-question input-field">
-                        <label>
-                            Quiz question <span style={{ color: 'red' }}>*</span>
-                        </label>
+                        <label>Quiz Question</label>
                         <input
                             type="text"
                             placeholder="Enter quiz question"
@@ -385,37 +353,35 @@ export const LessonContent = ({
                             {quiz.options?.map((option: string, optionIndex: number) => (
                                 <div key={optionIndex} className="input-with-checkbox">
                                     <div className="input-wrapper">
-                                        <input
-                                            type="text"
-                                            placeholder={`Answer ${optionIndex + 1}`}
-                                            value={option}
-                                            className={
-                                                errors[`option-${index}-${optionIndex}`]
-                                                    ? 'error-border'
-                                                    : ''
-                                            }
-                                            onChange={(e) => {
-                                                const updatedOptions = [...quiz.options];
-                                                updatedOptions[optionIndex] = e.target.value;
-                                                const updatedQuizData = [...data.quizData];
-                                                updatedQuizData[index].options = updatedOptions;
-                                                setData({ ...data, quizData: updatedQuizData });
-                                            }}
-                                            required
-                                        />
-                                        <Checkbox
-                                            checked={quiz.answer?.includes(option)}
-                                            onChange={() => {
-                                                const updatedAnswers = quiz.answer?.includes(option)
-                                                    ? quiz.answer?.filter(
-                                                          (ans: string) => ans !== option
-                                                      )
-                                                    : [...(quiz.answer || []), option];
-                                                const updatedQuizData = [...data.quizData];
-                                                updatedQuizData[index].answer = updatedAnswers;
-                                                setData({ ...data, quizData: updatedQuizData });
-                                            }}
-                                        />
+                                    <input
+                                        type="text"
+                                        placeholder={`Answer ${optionIndex + 1}`}
+                                        value={option}
+                                        onChange={(e) => {
+                                            const updatedOptions = [...quiz.options];
+                                            updatedOptions[optionIndex] = e.target.value;
+                                            const updatedQuizData = [...data.quizData];
+                                            updatedQuizData[index].options = updatedOptions;
+                                            setData({ ...data, quizData: updatedQuizData });
+                                        }}
+                                        required
+                                    />
+                                    <Checkbox
+                                        checked={quiz.answer?.includes(option)}
+                                        onChange={() => {
+                                            const updatedAnswers = quiz.answer?.includes(option)
+                                                ? quiz.answer?.filter((ans: string) => ans !== option)
+                                                : [...(quiz.answer || []), option];
+
+                                            const updatedQuizData = [...data.quizData];
+                                            updatedQuizData[index].answer = updatedAnswers;
+                                                                                            // Update min and max based on the updated number of answers
+                                                                                            const correctAnswersCount = updatedAnswers.length;
+                                                                                            updatedQuizData[index].min = correctAnswersCount;
+                                                                                            updatedQuizData[index].max = correctAnswersCount;
+                                            setData({ ...data, quizData: updatedQuizData });
+                                        }}
+                                    />
                                     </div>
                                     <DeleteButton
                                         showLeftIcon

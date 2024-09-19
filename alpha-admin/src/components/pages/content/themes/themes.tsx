@@ -35,6 +35,8 @@ export const Themes = ({ className }: ContentProps) => {
     const buttonRef = useRef<HTMLButtonElement>(null);
     const dispatch = useAppDispatch();
     const [categories, setCategories] = useState([]);
+
+    const tabs = ['All themes', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
     const [theme, setTheme] = useState([]);
     const [filteredThemes, setFilteredThemes] = useState([]); // Add state for filtered themes
     const [selectedCategory, setSelectedCategory] = useState(''); // State to track selected category
@@ -62,6 +64,7 @@ export const Themes = ({ className }: ContentProps) => {
     useEffect(() => {
         fetchThemes(currentPage); // Fetch themes for the current page
     }, [currentPage]);
+
 
     useEffect(() => {
         if (buttonRef.current) {
