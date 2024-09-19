@@ -8,7 +8,6 @@ import {
     TableRow,
     Paper,
     Switch,
-    Pagination,
     Checkbox,
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -17,10 +16,9 @@ import { useNavigate } from 'react-router-dom';
 import styles from './themes-table.module.scss';
 import { PublishThemesModal } from '../publish-theme-modal/PublisThemeModal';
 import { LessonSidebar, Lesson } from '../lessonsidebar/lessonSidebar';
-import { useAppDispatch } from '../../../../../../app/hooks';
-import { fetchThemesThunk, updateThemeThunk } from '../themeSlice';
-// import {TableFooter} from '../../../content-components/table-footer/TableFooter';
 import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
+import { updateThemeThunk } from '../themeSlice';
+import { useAppDispatch } from '../../../../../../app/hooks';
 
 export interface ThemesTableProps {
     themes: any;
@@ -29,6 +27,8 @@ export interface ThemesTableProps {
     setTotalPages: any;
     totalRecords: number;
     setTotalRecords: any;
+    currentPage: number; // Add currentPage
+    onPageChange: (newPage: number) => void; // Add onPageChange
     onUpdateThemes: (updatedLessons: Lesson[]) => void;
     showSelectColumn?: boolean;
 }
@@ -42,35 +42,27 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
     setTotalPages,
     totalRecords,
     setTotalRecords,
+    currentPage, // Use currentPage from props
+    onPageChange, // Use onPageChange from props
 }) => {
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openModal, setOpenModal] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedLessons, setSelectedLessons] = useState<any>([]);
-    const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-
+    
     const handleNextPage = () => {
-        console.log('currentPage', currentPage);
-        dispatch(fetchThemesThunk(currentPage + 1)).then((res: any) => {
-            console.log('res', res);
-            setThemes(res.payload.data);
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+        if (currentPage < totalPages) {
+            onPageChange(currentPage + 1);
+        }
     };
 
     const handlePreviousPage = () => {
-        // setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-        dispatch(fetchThemesThunk(currentPage - 1)).then((res: any) => {
-            setThemes(res.payload.data);
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
+        if (currentPage > 1) {
+            onPageChange(currentPage - 1);
+        }
     };
 
     const handleToggle = (theme: any, index: number) => {
@@ -160,10 +152,6 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
             date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
         }/${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${date.getFullYear()}`;
     };
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = themes.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
         <>

@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../content-components/sidebar/Sidebar';
 import { useEffect, useRef, useState } from 'react';
 import TabBar from '../content-components/tab-bar/TabBar';
-import { LessonTable } from './lesson-components/lesson-table/lessonTable';
+// import { LessonTable } from './lesson-components/lesson-table/lessonTable';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../back-button/backButton';
 import CategoryDropdown from '../content-components/category-dropdown/categoryDropDown';
@@ -19,6 +19,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { fetchCategoriesForLessonsThunk } from '../categories/category-component/categorySlice';
 import { useAppDispatch } from '../../../../app/hooks';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { fetchLessonsThunk } from './lesson-components/lessonsSlice';
+// lessons.tsx
+import { LessonTable, Lesson } from './lesson-components/lesson-table/lessonTable';
+
 
 export interface LessonsProps {
     className?: string;
@@ -36,7 +40,10 @@ export const Lessons = ({ className }: LessonsProps) => {
     const [menuWidth, setMenuWidth] = useState<number>(0);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const dispatch = useAppDispatch();
-    const [categories,setCategories] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [lessons, setLessons] = useState<Lesson[]>([]); // State to store lessons
+    const [filteredLessons, setFilteredLessons] = useState<Lesson[]>([]); // State to store filtered lessons
+    const [selectedCategory, setSelectedCategory] = useState<string>(''); // State for selected category
     const [isOpen, setIsOpen] = useState<DropdownState>({
         category: false
     });
@@ -44,12 +51,33 @@ export const Lessons = ({ className }: LessonsProps) => {
     useEffect(() => {
         dispatch(fetchCategoriesForLessonsThunk(100)).then((response: any) => {
             if (response.payload) {
-                const activeCategories = response.payload.data.filter((cat: { status: string; })=>cat.status.toLowerCase() === 'active');
+                const activeCategories = response.payload.data.filter((cat: { status: string; }) => cat.status.toLowerCase() === 'active');
                 setCategories(activeCategories);
             }
+        });
+        
+        dispatch(fetchLessonsThunk(1)).then((res: any) => {
+            if (res.payload) {
+                setLessons(res.payload.data); // Store lessons in state
+                setFilteredLessons(res.payload.data); // Initially, show all lessons
+            }
+        });
+    }, [dispatch]);
+
+    const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedId = event.target.value;
+        setSelectedCategory(selectedId);
+    
+        // Filter lessons based on the selected category
+        if (selectedId) {
+            const filtered = lessons.filter(lesson => 
+                lesson.categoryId.toString() === selectedId // Access category.id for filtering
+            );
+            setFilteredLessons(filtered);
+        } else {
+            setFilteredLessons(lessons); // Show all lessons if no category is selected
         }
-        );
-        }, [dispatch]);
+    };
     
     const handleDropdownClick = (dropdown: string) => {
         setIsOpen((prevState) => ({
@@ -57,11 +85,11 @@ export const Lessons = ({ className }: LessonsProps) => {
             [dropdown]: !prevState[dropdown],
         }));
     };
-    const tabs = ['All lessons', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
+    // const tabs = ['All lessons', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
 
-    const handleTabChange = (newValue: number) => {
-        setSelectedTab(newValue);
-    };
+    // const handleTabChange = (newValue: number) => {
+    //     setSelectedTab(newValue);
+    // };
 
     const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -148,59 +176,28 @@ export const Lessons = ({ className }: LessonsProps) => {
                             </Menu>
                         </div>
                     </header>
-                    {/* <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} /> */}
                     <div className={styles.section}>
                         <h3 className={styles.label}>Category</h3>
                         <select
-                            id="internalNotes"
+                            id="categoryDropdown"
                             className={styles.textarea}
-                            value={'data.themeData.internalNotes'}
+                            value={selectedCategory}
+                            onChange={handleCategoryChange} // Add change handler
                         >
-                                                            <option value="" disabled hidden>
-                                    Select category
+                            <option value="" disabled hidden>
+                                Select category
+                            </option>
+                            {categories.map((category: any) => (
+                                <option key={category.id} value={category.id}>
+                                    {category.name}
                                 </option>
-                                {categories.map((category: any) => (
-                                    <option key={category.id} value={category.id}>
-                                        {category.name}
-                                    </option>
-                                ))}
+                            ))}
                         </select>
                     </div>
-                    {/* <div className={styles.section}>
-                        <label>Category</label>
-                        <div
-                            className={styles.customSelectWrapper}
-                            onClick={() => handleDropdownClick('category')}
-                        >
-                            <select
-                                className={styles.customSelect}
-                                // value={data.categoryId || ''}
-                                // onChange={(e) =>
-                                //     setData({
-                                //         ...data,
-                                //         categoryId: parseInt(e.target.value, 10),
-                                //     })
-                                // }
-                                required
-                            >
-                                <option value="" disabled hidden>
-                                    Select category
-                                </option>
-                                {categories.map((category: any) => (
-                                    <option key={category.id} value={category.id}>
-                                        {category.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <FontAwesomeIcon
-                                icon={isOpen.category ? faCaretUp : faCaretDown}
-                                className={styles.caretIcon}
-                            />
-                        </div>
-                    </div> */}
-                    <LessonTable />
+                    <LessonTable lessons={filteredLessons} setLessons={setLessons} />  {/* Pass filtered lessons */}
                 </div>
             </div>
         </>
     );
 };
+

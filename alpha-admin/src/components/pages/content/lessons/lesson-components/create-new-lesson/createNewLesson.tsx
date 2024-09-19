@@ -1,7 +1,5 @@
 import classNames from 'classnames';
-import {
-    Typography,
-} from '@mui/material';
+import { Typography } from '@mui/material';
 import styles from './createNewLesson.module.scss';
 import { AppButton } from '../../../../../app-button/app-button';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -195,7 +193,34 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
             console.log('Validation failed', errors);
         }
     };
-    
+
+    // Function to handle saving as draft
+const saveAsDraft = () => {
+    const draftData = {
+        ...data,
+        status: 'DRAFT', // Set the status to DRAFT
+    };
+
+    if (isEditMode) {
+        dispatch(updateLessonThunk({ id: params.id, data: draftData }))
+            .then((response: any) => {
+                console.log('Draft update response:', response);
+                navigate('/content/lessons');
+            })
+            .catch((error: any) => {
+                console.error('Error updating draft:', error);
+            });
+    } else {
+        dispatch(addLessonThunk(draftData))
+            .then((response: any) => {
+                console.log('Draft add response:', response);
+                navigate('/content/lessons');
+            })
+            .catch((error: any) => {
+                console.error('Error adding draft:', error);
+            });
+    }
+};
 
     const handleBackClick = () => {
         navigate(-1);
@@ -223,8 +248,17 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                         ) : (
                             <Typography variant="h5">Create a new lesson</Typography>
                         )}
-                        <div className={styles.buttonContainer}>
-                            <EditButton buttonText="Cancel" onButtonClick={() => navigate('/content/lessons')} />
+                        <div className={styles.leftButtonContainer}>
+                            <EditButton
+                                buttonText="Cancel"
+                                onButtonClick={() => navigate('/content/lessons')}
+                            />
+                        </div>
+                        <div className={styles.rightButtonContainer}>
+                            <EditButton
+                                buttonText="Save as draft"
+                                onButtonClick={saveAsDraft}
+                            />
                             <AppButton buttonText="Preview" onButtonClick={handlePreview} />
                         </div>
                     </header>
@@ -237,10 +271,17 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
                             setTheme={setTheme}
                             selectedTheme={selectedTheme}
                             setSelectedTheme={setSelectedTheme}
-                            errors={errors} 
-                            setErrors={setErrors}                        />
+                            errors={errors}
+                            setErrors={setErrors}
+                        />
                         <div className={styles.rightContent}>
-                            <InternalNotes notes={notes} setNotes={setNotes} data={data} setData={setData} errors={errors} />
+                            <InternalNotes
+                                notes={notes}
+                                setNotes={setNotes}
+                                data={data}
+                                setData={setData}
+                                errors={errors}
+                            />
                             <DashboardCardDetails
                                 dashboardCardDetails={dashboardCardDetails}
                                 setDashboardCardDetails={setDashboardCardDetails}

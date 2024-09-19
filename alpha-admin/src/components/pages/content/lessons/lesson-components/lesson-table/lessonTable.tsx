@@ -22,25 +22,26 @@ import CategoryItem from '../../../categories/category-component/categoryItem/ca
 import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
 
 // Define the Lesson type
-type Lesson = {
+// lessonTable.tsx
+export type Lesson = {
     id: number;
     lessonCode: string;
     name: string;
     createdAt: string;
     quizData: any[];
     isPublished: boolean;
+    categoryId: number;
     totalPages: number;
     setTotalPages: any;
     totalRecords: number;
     setTotalRecords: any;
 };
 
-export const LessonTable: React.FC<{ className?: string }> = ({ className }) => {
+
+export const LessonTable: React.FC<{ className?: string; lessons: Lesson[]; setLessons: React.Dispatch<React.SetStateAction<Lesson[]>> }> = ({ className, lessons, setLessons }) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [lessons, setLessons] = useState<Lesson[]>([]);
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
-    // const [itemsPerPage] = useState(10);
     const [openPublishModal, setOpenPublishModal] = useState(false);
     const [openUnpublishModal, setOpenUnpublishModal] = useState(false);
     const [totalPages, setTotalPages] = useState(0);
@@ -52,7 +53,6 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
             if (res.payload) {
                 setTotalPages(res.payload.meta.totalPages);
                 setTotalRecords(res.payload.meta.totalRecords);
-                setLessons(res.payload.data);
             }
         });
     }, [dispatch, currentPage]);
@@ -145,41 +145,39 @@ export const LessonTable: React.FC<{ className?: string }> = ({ className }) => 
                             <TableCell className={styles.themecode}>Lesson Code</TableCell>
                             <TableCell className={styles.themename}>Lesson Name</TableCell>
                             <TableCell className={styles.themedate}>Date Created</TableCell>
-                            <TableCell className={styles.themehabit}>Quiz</TableCell>
+                            <TableCell className={styles.themehabit}>Quiz</TableCell>      
                             <TableCell className={styles.themepublished}>Published</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {lessons
-                            // .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                            .map((lesson, index) => (
-                                <TableRow
-                                    key={index}
-                                    onClick={() => handleRowClick(index)}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <TableCell className={styles.themecode}>{lesson.lessonCode}</TableCell>
-                                    <TableCell className={styles.themename}>{lesson.name}</TableCell>
-                                    <TableCell className={styles.themedate}>
-                                        {formatDate(lesson.createdAt)}
-                                    </TableCell>
-                                    <TableCell className={styles.themehabit}>
-                                        {lesson.quizData.length > 0 ? (
-                                            <CheckCircleOutlineIcon />
-                                        ) : (
-                                            ''
-                                        )}
-                                    </TableCell>
-                                    <TableCell className={styles.themepublished} onClick={(event) => event.stopPropagation()}>
-                                        <CategoryItem
-                                            key={index}
-                                            published={lesson.isPublished}
-                                            onToggle={() => handleToggle(lesson, index)}
-                                            name={''} // Placeholder for actual name
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                        {lessons.map((lesson, index) => (
+                            <TableRow
+                                key={index}
+                                onClick={() => handleRowClick(index)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <TableCell className={styles.themecode}>{lesson.lessonCode}</TableCell>
+                                <TableCell className={styles.themename}>{lesson.name}</TableCell>
+                                <TableCell className={styles.themedate}>
+                                    {formatDate(lesson.createdAt)}
+                                </TableCell>
+                                <TableCell className={styles.themehabit}>
+                                    {lesson.quizData.length > 0 ? (
+                                        <CheckCircleOutlineIcon />
+                                    ) : (
+                                        ''
+                                    )}
+                                </TableCell>
+                                <TableCell className={styles.themepublished} onClick={(event) => event.stopPropagation()}>
+                                    <CategoryItem
+                                        key={index}
+                                        published={lesson.isPublished}
+                                        onToggle={() => handleToggle(lesson, index)}
+                                        name={''} // Placeholder for actual name
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>

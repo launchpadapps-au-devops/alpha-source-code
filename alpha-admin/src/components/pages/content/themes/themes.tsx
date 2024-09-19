@@ -9,18 +9,19 @@ import { AppButton } from '../../../app-button/app-button';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../content-components/sidebar/Sidebar';
 import { useEffect, useRef, useState } from 'react';
-import TabBar from '../content-components/tab-bar/TabBar';
 import { ThemesTable } from '../themes/themes-components/themes-table/themes-table';
 import { useAppDispatch } from '../../../../app/hooks';
 import { fetchThemesThunk } from './themes-components/themeSlice';
 import { Lesson } from './themes-components/lessonsidebar/lessonSidebar';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../back-button/backButton';
 import { fetchCategoriesForLessonsThunk } from '../categories/category-component/categorySlice';
 
 export interface ContentProps {
     className?: string;
 }
+
+
+// Import statements...
 
 export const Themes = ({ className }: ContentProps) => {
     const navigate = useNavigate();
@@ -30,17 +31,13 @@ export const Themes = ({ className }: ContentProps) => {
     const [menuWidth, setMenuWidth] = useState<number>(0);
     const [totalPages, setTotalPages] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1); // Track current page
     const buttonRef = useRef<HTMLButtonElement>(null);
     const dispatch = useAppDispatch();
-    const [categories,setCategories] = useState([]);
-
-    const tabs = ['All themes', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
+    const [categories, setCategories] = useState([]);
     const [theme, setTheme] = useState([]);
-
-    const handleTabChange = (newValue: number) => {
-        setSelectedTab(newValue);
-    };
-
+    const [filteredThemes, setFilteredThemes] = useState([]); // Add state for filtered themes
+    const [selectedCategory, setSelectedCategory] = useState(''); // State to track selected category
     const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -53,22 +50,26 @@ export const Themes = ({ className }: ContentProps) => {
         navigate(path);
         handleClose();
     };
-
-    useEffect(() => {
-        dispatch(fetchThemesThunk(1)).then((res: any) => {
-            console.log('res', res);
+    const fetchThemes = (page: number) => {
+        dispatch(fetchThemesThunk(page)).then((res: any) => {
             setTheme(res.payload.data);
+            setFilteredThemes(res.payload.data); // Update filtered themes
             setTotalPages(res.payload.meta.totalPages);
             setTotalRecords(res.payload.meta.totalRecords);
         });
-    }, []);
-    
+    };
+
+    useEffect(() => {
+        fetchThemes(currentPage); // Fetch themes for the current page
+    }, [currentPage]);
+
     useEffect(() => {
         if (buttonRef.current) {
             setMenuWidth(buttonRef.current.offsetWidth);
         }
     }, [buttonRef.current]);
 
+    // Handle back navigation
     const handleBackClick = () => {
         navigate(-1); // This will navigate to the previous page
     };
@@ -76,16 +77,38 @@ export const Themes = ({ className }: ContentProps) => {
     useEffect(() => {
         dispatch(fetchCategoriesForLessonsThunk(100)).then((response: any) => {
             if (response.payload) {
-                const activeCategories = response.payload.data.filter((cat: { status: string; })=>cat.status.toLowerCase() === 'active');
+                const activeCategories = response.payload.data.filter(
+                    (cat: { status: string }) => cat.status.toLowerCase() === 'active'
+                );
                 setCategories(activeCategories);
             }
-        }
-        );
-        }, [dispatch]);
+        });
+    }, [dispatch]);
 
+    // Function to handle category change
+    const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const categoryId = parseInt(event.target.value, 10); // Parse to integer since IDs are numbers
+        setSelectedCategory(event.target.value);
+        
+        if (categoryId) {
+            // Filter themes based on selected category ID
+            const filtered = theme.filter((th: any) => th.category.id === categoryId);
+            setFilteredThemes(filtered);
+        } else {
+            // If no category is selected, show all themes
+            setFilteredThemes(theme);
+        }
+    };
+
+    // Handle page change in pagination
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
+
+    // The rest of the JSX remains unchanged
     return (
         <>
-            <BackButton onClick={handleBackClick}/>
+            <BackButton onClick={handleBackClick} />
             <div
                 className={classNames(styles.container, className, {
                     'blur-effect': isSidebarOpen,
@@ -149,32 +172,34 @@ export const Themes = ({ className }: ContentProps) => {
                             </Menu>
                         </div>
                     </header>
-                    {/* <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} /> */}
                     <div className={styles.section}>
                         <h3 className={styles.label}>Category</h3>
                         <select
                             id="internalNotes"
                             className={styles.textarea}
-                            value={'data.themeData.internalNotes'}
+                            value={selectedCategory}
+                            onChange={handleCategoryChange} // Correctly referenced here
                         >
-                                                            <option value="" disabled hidden>
-                                    Select category
+                            <option value="" disabled hidden>
+                                Select category
+                            </option>
+                            {categories.map((category: any) => (
+                                <option key={category.id} value={category.id}>
+                                    {category.name}
                                 </option>
-                                {categories.map((category: any) => (
-                                    <option key={category.id} value={category.id}>
-                                        {category.name}
-                                    </option>
-                                ))}
+                            ))}
                         </select>
                     </div>
                     <ThemesTable
-                        themes={theme}
+                        themes={filteredThemes} // Pass filtered themes to the table
                         setThemes={setTheme}
                         totalPages={totalPages}
                         totalRecords={totalRecords}
+                        currentPage={currentPage} // Pass currentPage
+                        onPageChange={handlePageChange} // Pass handlePageChange
                         setTotalPages={setTotalPages}
                         setTotalRecords={setTotalRecords}
-                        onUpdateThemes={function (updatedLessons: Lesson[]): void {
+                        onUpdateThemes={(updatedLessons: Lesson[]) => {
                             throw new Error('Function not implemented.');
                         }}
                     />
@@ -183,3 +208,7 @@ export const Themes = ({ className }: ContentProps) => {
         </>
     );
 };
+
+
+
+

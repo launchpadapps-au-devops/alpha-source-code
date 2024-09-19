@@ -98,6 +98,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
             themeCode: '0',
             categoryId: 1,
             isPublished: true,
+            status: 'ACTIVE',
             internalNotes: '',
             name: '',
             image: 'https://sample.com/sample.jpg',
@@ -137,6 +138,31 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
         };
 
         dispatch(addThemeThunk(updatedData))
+            .then((res: any) => {
+                if (res.payload.statusCode === 200 || res.payload.statusCode === 201) {
+                    navigate('/content/themes');
+                }
+            })
+            .catch((err: any) => {
+                console.log(err);
+                alert('Error' + err);
+            });
+    };
+
+    const saveAsDraft = () => {
+        const lessonIds = selectedLessons.map((lesson) => lesson.lessonCode);
+        console.log('selectedLessons', lessonIds);
+    
+        const draftData = {
+            ...data,
+            themeData: {
+                ...data.themeData,
+                status: 'DRAFT', // Set the status to DRAFT
+            },
+            lessonData: lessonIds,
+        };
+    
+        dispatch(addThemeThunk(draftData))
             .then((res: any) => {
                 if (res.payload.statusCode === 200 || res.payload.statusCode === 201) {
                     navigate('/content/themes');
@@ -217,7 +243,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                         <div className={styles.rightButtonContainer}>
                             <EditButton
                                 buttonText="Save as draft"
-                                onButtonClick={() => navigate('/content/categories')}
+                                onButtonClick={saveAsDraft} 
                             />
                             <AppButton buttonText="Publish" onButtonClick={submitData} />
                         </div>
