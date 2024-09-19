@@ -13,6 +13,11 @@ const AssignedThemes = ({ className, plan }: AssignedThemesProps) => {
     const tabs = ['All themes', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
     console.log('plan', plan);
     const [selectedTab, setSelectedTab] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
+
     const handleTabChange = (newValue: number) => {
         setSelectedTab(newValue);
     };
@@ -28,10 +33,12 @@ const AssignedThemes = ({ className, plan }: AssignedThemesProps) => {
                 <ThemesTable
                     themes={plan.themes}
                     setThemes={undefined}
+                    currentPage={1} 
                     totalPages={0}
                     setTotalPages={undefined}
                     totalRecords={0}
                     setTotalRecords={undefined}
+                    onPageChange={handlePageChange} 
                     onUpdateThemes={function (updatedLessons: Lesson[]): void {
                         throw new Error('Function not implemented.');
                     }}

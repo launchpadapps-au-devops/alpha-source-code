@@ -72,6 +72,10 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
         setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
     };
 
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
+
     useEffect(() => {
         dispatch(fetchThemesThunk(1)).then((response: any) => {
             if (response.payload) {
@@ -176,6 +180,8 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
                     setThemes={setThemes}
                     onUpdateThemes={onUpdateThemes}
                     showSelectColumn
+                    currentPage={currentPage} 
+                    onPageChange={handlePageChange}
                     totalPages={totalPages}
                     setTotalPages={setTotalPages}
                     totalRecords={totalRecords}
