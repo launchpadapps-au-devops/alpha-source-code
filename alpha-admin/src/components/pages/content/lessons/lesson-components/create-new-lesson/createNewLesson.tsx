@@ -141,39 +141,81 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
 
     const validateFields = () => {
         let fieldErrors: any = {};
-
+    
+        // Basic validation for other fields (already exists)
         if (!data.lessonCode) {
             fieldErrors.lessonCode = 'Lesson Code is required';
         }
-
         if (!data.categoryId) {
             fieldErrors.categoryId = 'Category is required';
         }
-
         if (!data.duration) {
             fieldErrors.duration = 'Duration is required';
         }
-
         if (!data.points) {
             fieldErrors.points = 'Points are required';
         }
-
         if (!data.name) {
             fieldErrors.name = 'Lesson name is required';
         }
-
         if (!data.description) {
             fieldErrors.description = 'Lesson description is required';
         }
-
-        if (data.coverImage) {
+        if (!data.coverImage) {
             fieldErrors.coverImage = 'Cover image is required';
         }
-
+    
+        // Validation for Lesson Tags
+        data.lessonTags.forEach((tag: any) => {
+            const tagKey = Object.keys(tag)[0]; // Extract the tag key
+            if (!tag[tagKey] || tag[tagKey].length === 0) {
+                fieldErrors[`tag-${tagKey}`] = `${tagKey} is required`;
+            }
+        });
+    
+        // **New Validation for Lesson Content Screens**
+        if (!data.screenData || data.screenData.length === 0) {
+            fieldErrors['screenData'] = 'At least one screen is required';
+        } else {
+            data.screenData.forEach((screen: any, index: number) => {
+                if (!screen.subtitle) {
+                    fieldErrors[`subtitle-${index}`] = 'Subtitle is required for screen ' + (index + 1);
+                }
+                if (!screen.content) {
+                    fieldErrors[`content-${index}`] = 'Content is required for screen ' + (index + 1);
+                }
+                if (!screen.media) {
+                    fieldErrors[`media-${index}`] = 'Media is required for screen ' + (index + 1);
+                }
+            });
+        }
+    
+        // **New Validation for Quizzes**
+        if (!data.quizData || data.quizData.length === 0) {
+            fieldErrors['quizData'] = 'At least one quiz is required';
+        } else {
+            data.quizData.forEach((quiz: any, index: number) => {
+                if (!quiz.quizName) {
+                    fieldErrors[`quizName-${index}`] = 'Quiz name is required for quiz ' + (index + 1);
+                }
+                if (!quiz.question) {
+                    fieldErrors[`question-${index}`] = 'Question is required for quiz ' + (index + 1);
+                }
+                if (!quiz.userInstructions) {
+                    fieldErrors[`userInstructions-${index}`] = 'User instruction is required for quiz ' + (index + 1);
+                }
+                if (quiz.type === 'multiple-choice' && (!quiz.options || quiz.options.length === 0)) {
+                    fieldErrors[`options-${index}`] = 'At least one option is required for multiple-choice quiz ' + (index + 1);
+                }
+            });
+        }
+    
         setErrors(fieldErrors);
-
+    
+        // If there are no errors, return true, otherwise false
         return Object.keys(fieldErrors).length === 0;
     };
+    
 
     const handlePreview = () => {
         if (validateFields()) {
@@ -191,6 +233,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
             console.log('Validation failed', errors);
         }
     };
+    
     
 
     // Function to handle saving as draft
@@ -302,6 +345,7 @@ const handleBackClick = () => {
                                 data={data}
                                 setData={setData}
                                 errors={errors}
+                                setErrors={setErrors}
                             />
                         </div>
                     </div>

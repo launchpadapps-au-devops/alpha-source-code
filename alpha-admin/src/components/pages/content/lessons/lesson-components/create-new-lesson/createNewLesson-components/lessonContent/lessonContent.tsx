@@ -9,6 +9,8 @@ import { EditorState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { convertToHTML } from 'draft-convert';
+import { useAppDispatch } from '../../../../../../../../app/hooks';
+import { uploadFile } from '../../../../../../../fileUpload/fileUploadSlice';
 
 export interface LessonContentProps {
     screenData: any[];
@@ -19,6 +21,7 @@ export interface LessonContentProps {
     setData: any;
     isEditable?: boolean;
     errors: any; // Accept errors prop for validation
+    setErrors:any;
 }
 
 export const LessonContent = ({
@@ -30,7 +33,10 @@ export const LessonContent = ({
     setData,
     isEditable,
     errors, // Accept errors prop for validation
+    setErrors,
 }: LessonContentProps) => {
+
+    const dispatch = useAppDispatch();
     const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error messages
     const [editorStates, setEditorStates] = useState<EditorState[]>([]); // Rich text editor states for each screen
     const [menuWidth, setMenuWidth] = useState<number>(0);
@@ -39,6 +45,7 @@ export const LessonContent = ({
     const [quizType, setQuizType] = useState<'multiple-choice' | 'free-text' | null>(null);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]); // Array to store local preview URLs
     const [activeQuizIndex, setActiveQuizIndex] = useState<number | null>(null);
+    
     // Handle file changes for media uploads (image/video)
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const file = event.target.files?.[0];
@@ -63,6 +70,33 @@ export const LessonContent = ({
                     setErrorMessage(null);
                 };
                 reader.readAsDataURL(file);
+                dispatch(uploadFile(file))
+                
+                .then((response: any) => {
+                    const uploadedImageUrl = response.payload.data.data.url; // Ensure the correct field from the response
+                    
+                    // Update the final uploaded image URL in the state
+                    setData((prevState: any) => ({
+                        ...prevState,
+                        coverImage: uploadedImageUrl
+                    }));
+                    
+                    // Clear any cover image errors
+                    setErrors((prevErrors: any) => ({
+                        ...prevErrors,
+                        coverImage: ''
+                    }));
+                    
+                })
+                .catch(() => {
+                    setErrors((prevErrors: any) => ({
+                        ...prevErrors,
+                        coverImage: 'Upload failed. Please try again.'
+                    }));
+                })
+                .finally(() => {
+                 //   URL.revokeObjectURL(prevUrls); // Clean up after uploading
+                });
             } else if (isVideo && fileSize <= 100 * 1024 * 1024) {
                 const reader = new FileReader();
                 reader.onloadend = () => {
@@ -375,10 +409,6 @@ export const LessonContent = ({
 
                                             const updatedQuizData = [...data.quizData];
                                             updatedQuizData[index].answer = updatedAnswers;
-                                                                                            // Update min and max based on the updated number of answers
-                                                                                            const correctAnswersCount = updatedAnswers.length;
-                                                                                            updatedQuizData[index].min = correctAnswersCount;
-                                                                                            updatedQuizData[index].max = correctAnswersCount;
                                             setData({ ...data, quizData: updatedQuizData });
                                         }}
                                     />

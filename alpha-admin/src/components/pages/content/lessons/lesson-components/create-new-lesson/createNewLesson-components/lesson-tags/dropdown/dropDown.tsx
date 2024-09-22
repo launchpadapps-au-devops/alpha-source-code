@@ -3,15 +3,18 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import './dropDown.scss';
 
+
 interface DropdownProps {
     label: string;
     options: string[];
     setData: any;
     isEditMode?: boolean;
     data?: any;
+    className?: string; // Add className prop to accept custom styles
+    setErrors?: (errors: any) => void; // Add setter for errors
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode, data }) => {
+const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode, data, className ,setErrors }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
@@ -29,7 +32,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode
                 setSelectedOptions(lessonTags[label]);
             }
         }
-    }, []);
+    }, [isEditMode, data, label]);
 
     const handleOptionChange = (option: string) => {
         setSelectedOptions((prev) =>
@@ -39,7 +42,6 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode
             const updatedLessonTags = prev.lessonTags.map((tagObj) => {
                 const [key, value] = Object.entries(tagObj)[0];
 
-                // Make sure 'label' is in the correct format
                 const normalizedLabel = label;
                 if (key === normalizedLabel) {
                     return {
@@ -52,10 +54,16 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode
                 return tagObj;
             });
 
+            setErrors &&setErrors((prevErrors: any) => ({
+                ...prevErrors,
+                [`tag-${label}`]: '', // Clear the specific error for this tag
+            }));
+
             return {
                 ...prev,
                 lessonTags: updatedLessonTags,
             };
+
         });
     };
 
@@ -65,7 +73,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode
 
     return (
         <div className="dropdown-container">
-            <div className="dropdown-header" onClick={toggleDropdown}>
+            <div className={`dropdown-header ${className}`} onClick={toggleDropdown}>
                 <div className="selected-tags">
                     {selectedOptions.map((option) => (
                         <div key={option} className="tag">
@@ -80,7 +88,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode
                         </div>
                     ))}
                     {selectedOptions.length < 1 && (
-                        <input type="text" placeholder={label} readOnly />
+                        <input type="text" placeholder={label} readOnly className={className} />
                     )}
                 </div>
                 <AddIcon className="add-icon" />

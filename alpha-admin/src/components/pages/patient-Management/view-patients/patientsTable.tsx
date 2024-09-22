@@ -11,9 +11,12 @@ import { Patient } from '../patientsAPI';
 
 export interface PatientsTableProps {
     className?: string;
+    searchValue?: string;
+    sortField?: string;
+    searchKey?: string;
 }
 
-export const PatientsTable = ({ className }: PatientsTableProps) => {
+export const PatientsTable = ({ className , searchKey , sortField , searchValue }: PatientsTableProps) => {
     // State to manage pagination
     const [currentPage, setCurrentPage] = useState(1);
     const patientsPerPage = 10; // Number of patients per page
@@ -25,14 +28,21 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        // Fetch patients for the current page with the limit of 10 per page
-        dispatch(fetchPatients({ page: currentPage }));  // Pass object with page property
-    }, [dispatch, currentPage]);
+ 
 
-    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
-        setCurrentPage(page); // Update the current page
+    const handlePageChange = (event: React.ChangeEvent<unknown>, newPage: number) => {
+        // Set the new current page
+        setCurrentPage(newPage);
+    
+        // Dispatch the fetchPatients action with search and pagination params
+        dispatch(fetchPatients({ 
+            page: newPage, 
+            sortField, 
+            searchKey, 
+            searchValue 
+        }));
     };
+    
 
     const handleEditClick = (patientId: string) => {
         navigate('/patient-dashboard', { state: { patientId } });
@@ -80,33 +90,34 @@ export const PatientsTable = ({ className }: PatientsTableProps) => {
                 </tbody>
             </table>
             <Pagination
-                count={Math.ceil(totalPatients / patientsPerPage)} // Calculate the total number of pages
-                page={currentPage} // Controlled pagination component
-                onChange={handlePageChange}
-                showFirstButton
-                showLastButton
-                sx={{
-                    '.MuiPagination-ul': {
-                        display: 'flex',
-                        justifyContent: 'center',
-                        padding: '10px 16px',
-                    },
-                    '.MuiInputBase-root': {
-                        display: 'none',
-                    },
-                    '.MuiTablePagination-selectLabel': {
-                        display: 'none',
-                    },
-                    '.MuiTablePagination-displayedRows': {
-                        fontSize: 14,
-                        fontFamily: 'Inter',
-                        color: '#B0B0B0',
-                        '&:before': {
-                            content: '"Showing "',
-                        },
-                    },
-                }}
-            />
+    count={Math.ceil(totalPatients / patientsPerPage)} // Calculate the total number of pages
+    page={currentPage} // Controlled pagination component
+    onChange={handlePageChange} // Passes both event and page number
+    showFirstButton
+    showLastButton
+    sx={{
+        '.MuiPagination-ul': {
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '10px 16px',
+        },
+        '.MuiInputBase-root': {
+            display: 'none',
+        },
+        '.MuiTablePagination-selectLabel': {
+            display: 'none',
+        },
+        '.MuiTablePagination-displayedRows': {
+            fontSize: 14,
+            fontFamily: 'Inter',
+            color: '#B0B0B0',
+            '&:before': {
+                content: '"Showing "',
+            },
+        },
+    }}
+/>
+
         </>
     );
 };

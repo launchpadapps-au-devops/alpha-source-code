@@ -3,12 +3,12 @@ import styles from './lessonInformation.module.scss';
 import { Add as AddIcon } from '@mui/icons-material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
-import LessonTags from '../lesson-tags/lessonTag';
 import { useNavigate } from 'react-router-dom';
 import { SelectTheme } from '../add-to-theme/addToTheme';
 import { useAppDispatch, useAppSelector } from '../../../../../../../../app/hooks';
 import { fetchCategoriesForLessonsThunk } from '../../../../../categories/category-component/categorySlice';
 import classNames from 'classnames';
+import { LessonTags } from '../lesson-tags/lessonTag';
 
 type DropdownState = {
     [key: string]: boolean;
@@ -215,7 +215,8 @@ export const LessonInformation = ({
                 {errors.points && <p className={styles.errorText}>{errors.points}</p>} {/* Display error message */}
             </div>
 
-            <LessonTags data={data} setData={setData} isEditMode={isEditMode} />
+            <LessonTags data={data} setData={setData} isEditMode={isEditMode}  errors={errors} // Pass errors to LessonTags
+    setErrors={setErrors}  />
             <SelectTheme
                 isOpen={isSidebarOpen}
                 onClose={handleCloseSidebar}

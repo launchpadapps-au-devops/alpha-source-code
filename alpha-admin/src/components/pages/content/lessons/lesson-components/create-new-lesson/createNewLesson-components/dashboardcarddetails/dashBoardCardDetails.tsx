@@ -30,24 +30,27 @@ export const DashboardCardDetails = ({
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            if (imagePreviewUrl) {
-                URL.revokeObjectURL(imagePreviewUrl); // Clean up the previous preview URL
-            }
             const filePreviewUrl = URL.createObjectURL(file);
-            setImagePreviewUrl(filePreviewUrl); // Set the preview URL
-            setIsUploading(true); // Mark as uploading
+            setImagePreviewUrl(filePreviewUrl); // Temporary preview URL
+            setIsUploading(true);
+            
             dispatch(uploadFile(file))
                 .then((response: any) => {
-                    const uploadedImageUrl = response.payload.data.data.url;
+                    const uploadedImageUrl = response.payload.data.data.url; // Ensure the correct field from the response
+                    
+                    // Update the final uploaded image URL in the state
                     setData((prevState: any) => ({
                         ...prevState,
                         coverImage: uploadedImageUrl
                     }));
+                    
+                    // Clear any cover image errors
                     setErrors((prevErrors: any) => ({
                         ...prevErrors,
-                        coverImage: '' // Clear the cover image error
+                        coverImage: ''
                     }));
-                    setIsFileUploaded(true); // Mark upload as complete
+                    
+                    setIsFileUploaded(true);
                 })
                 .catch(() => {
                     setErrors((prevErrors: any) => ({
@@ -56,12 +59,12 @@ export const DashboardCardDetails = ({
                     }));
                 })
                 .finally(() => {
-                    setIsUploading(false); // Mark upload as done
+                    setIsUploading(false);
                     URL.revokeObjectURL(filePreviewUrl); // Clean up after uploading
                 });
         }
     };
-
+    
     const handleInputChange = (field: string, value: any) => {
         setData((prevState: any) => ({
             ...prevState,

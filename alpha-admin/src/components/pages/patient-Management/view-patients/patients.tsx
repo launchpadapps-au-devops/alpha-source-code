@@ -115,7 +115,7 @@ export const Patients = ({ className }: PatientsProps) => {
                         </div>
                     </div>
                 </header>
-                <PatientsTable />
+                <PatientsTable sortField={sortField}  searchKey={searchKey} searchValue={searchValue}/>
             </section>
         </div>
     );

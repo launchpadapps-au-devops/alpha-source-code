@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './lessonTag.scss';
 import Dropdown from './dropdown/dropDown';
 
@@ -19,9 +19,17 @@ interface LessonTagsProps {
     data: any;
     setData: any;
     isEditMode?: boolean;
+    errors?: Record<string, string>; // Optional errors object
+    setErrors?: (errors: any) => void;
 }
 
-export const LessonTags = ({ data, setData, isEditMode }: LessonTagsProps) => {
+export const LessonTags = ({ data, setData, isEditMode, errors = {} , setErrors }: LessonTagsProps) => {
+    
+    useEffect(() => {
+        console.log('Errors state updated:', errors);
+    }, [errors]);
+
+    
     const tags: Tag[] = [
         'Ethnicity',
         'Leisure Preferences',
@@ -116,7 +124,28 @@ export const LessonTags = ({ data, setData, isEditMode }: LessonTagsProps) => {
         'Young Dependents': ['0 kids', '1 kid', '2 kids', '3 kids', '4 kids+', 'All'],
         'Adult Dependents': ['0', '1', '2+', 'All'],
     };
-    
+
+    // Function to validate if all required tags have selections
+    const validateTags = () => {
+        const validationErrors: Record<string, string> = {};
+        tags.forEach((tag) => {
+            const selectedOptions = data.lessonTags.find(
+                (tagObj: { [key: string]: string[] }) => tagObj[tag] && tagObj[tag].length > 0
+            );
+            if (!selectedOptions) {
+                validationErrors[`tag-${tag}`] = `${tag} is required`;
+            }
+        });
+        return validationErrors;
+    };
+
+    // Optional: UseEffect to trigger validation on mount if needed
+    useEffect(() => {
+        const errors = validateTags();
+        if (Object.keys(errors).length > 0) {
+            console.log("Validation failed", errors);
+        }
+    }, [data]);
 
     return (
         <div className="lesson-tags-container">
@@ -128,13 +157,21 @@ export const LessonTags = ({ data, setData, isEditMode }: LessonTagsProps) => {
                             <span>{tag}</span>
                         </div>
                         {optionsMap[tag] ? (
-                            <Dropdown
-                                label={tag}
-                                options={optionsMap[tag]} // Passing string array options
-                                setData={setData}
-                                isEditMode={isEditMode}
-                                data={data}
-                            />
+                            <>
+                                <Dropdown
+                                    label={tag}
+                                    options={optionsMap[tag]} // Passing string array options
+                                    setData={setData}
+                                    isEditMode={isEditMode}
+                                    data={data}
+                                    className={errors[`tag-${tag}`] ? 'error-border' : ''}
+                                    setErrors={setErrors} // Pass the setErrors function
+                                />
+                                {/* Display validation error */}
+                                {errors[`tag-${tag}`] && (
+                                    <div className="error-message">{errors[`tag-${tag}`]} {"errors"}</div>
+                                )}
+                            </>
                         ) : (
                             <p>No options available for {tag}</p>
                         )}
