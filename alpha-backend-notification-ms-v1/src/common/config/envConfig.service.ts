@@ -52,11 +52,10 @@ export class EnvConfigService {
         }
     }
 
-    get sendgrid() {
+    get azure() {
         return {
-            apiKey: this.get('SENDGRID_API_KEY') as string,
-            fromEmail: this.get('SENDGRID_FROM_EMAIL') as string,
-            fromName: this.get('SENDGRID_FROM_NAME') as string
+            emailConnectionString: this.get('AZURE_EMAIL_CONNECTION_STRING') as string,
+            emailSenderAddress: this.get('AZURE_EMAIL_SENDER_ADDRESS') as string,
         }
     }
 

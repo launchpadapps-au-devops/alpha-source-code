@@ -58,18 +58,14 @@ export class EnvironmentVariables {
     @IsString()
     RABBITMQ_QUEUE: string;
 
-    // SEND GRID
+    // Azure
     @IsString()
     @IsOptional()
-    SENDGRID_API_KEY: string;
+    AZURE_EMAIL_CONNECTION_STRING: string;
 
     @IsString()
     @IsOptional()
-    SENDGRID_FROM_EMAIL: string;
-
-    @IsString()
-    @IsOptional()
-    SENDGRID_FROM_NAME: string;
+    AZURE_EMAIL_SENDER_ADDRESS: string;
 
     // Firebase
     @IsString()

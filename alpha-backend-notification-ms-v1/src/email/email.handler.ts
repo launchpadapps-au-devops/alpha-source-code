@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as sgMail from '@sendgrid/mail';
-import { ConfigService } from '@nestjs/config';
+import { EmailClient } from '@azure/communication-email';
 import * as handlebars from 'handlebars';
 import templates from '../common/templates/';;
 
@@ -14,10 +13,12 @@ import { EnvConfigService } from 'src/common/config/envConfig.service';
 
 @Injectable()
 export class EmailHandler {
+    private emailClient: EmailClient;
+
     constructor(
         private readonly envConfigService: EnvConfigService,
     ) {
-        sgMail.setApiKey(this.envConfigService.sendgrid.apiKey);
+        this.emailClient = new EmailClient(this.envConfigService.azure.emailConnectionString);
     }
 
     async handle(notificationData: Notification): Promise<void> {
@@ -120,32 +121,30 @@ export class EmailHandler {
             bcc: bcc.map(user => user.email).join(','),
         };
     }
-
     protected async sendEmail(to: string, subject: string, htmlContent: string, cc: string = '', bcc: string = ''): Promise<void> {
-        const msg = {
-            to,
-            cc,
-            bcc,
-            from: {
-                name: this.envConfigService.sendgrid.fromName,
-                email: this.envConfigService.sendgrid.fromEmail,
+        const emailMessage = {
+            senderAddress: this.envConfigService.azure.emailSenderAddress,
+            content: {
+                subject,
+                html: htmlContent,
             },
-            subject,
-            html: htmlContent,
-            clickTracking: {
-                enable: false,
-            },
+            recipients: {
+                to: to.split(',').map(email => ({ address: email })),
+                cc: cc ? cc.split(',').map(email => ({ address: email })) : [],
+                bcc: bcc ? bcc.split(',').map(email => ({ address: email })) : [],
+            }
         };
 
         try {
-            await sgMail.send(msg);
-            Logger.log('Email sent successfully');
+            const poller = await this.emailClient.beginSend(emailMessage);
+            const result = await poller.pollUntilDone();
+            Logger.log('Email sent successfully', result);
         } catch (error) {
             Logger.error('Error sending email:', error);
             throw new Error('Email sending failed');
         }
     }
-
+    
     protected async updateNotificationStatus(
         notificationId: number,
         processed: boolean = true,
