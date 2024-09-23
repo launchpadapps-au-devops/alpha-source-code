@@ -113,7 +113,7 @@ spec:
         app: alpha-admin-deployment
     spec:
       containers:
-      - image: alphadev.azurecr.io/alpha-admin@sha256:88cf82b479f67e6105411254c153bd38233f611804331d258a491806b587457f
+      - image: alphadev.azurecr.io/alpha-admin@sha256:947da968c4122636550dcc717a250825a361e164f2403cc75bd1b288c6091122
         imagePullPolicy: IfNotPresent
         name: alpha-admin-container
         ports:
@@ -215,7 +215,7 @@ spec:
           value: http://alpha-backend-notification-ms-v1-service:3002
         - name: NOTIFICATION_SERVICE_API_PREFIX
           value: /api/notification-ms/v1
-        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:c99d91bd7723b8e0e2c1e67c3959ce8a0ba8664e953b2ffbde0b750763bf6911
+        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:87b3855b4b390332d622484cc1fd151b9f11a58c974adb8c804a1a17c1737f74
         imagePullPolicy: IfNotPresent
         name: alpha-backend-api-gateway-v1-container
         ports:
@@ -303,7 +303,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: cms_queue
-        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:9f631ac0932e66e3464d5d46bf154eb19b1e34a4fcdcfefbb8840289eefc3e0a
+        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:2c3b56ade3fd4ffd3341e06d42ee7d96a78432d65a5a22e117a60ab0705e2574
         name: alpha-backend-cms-ms-v1-container
         ports:
         - containerPort: 3003
@@ -390,7 +390,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:162db7259cc634d26d9ab9b51a6c9975697a858e11dfb193e898c3dd38c09657
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:f2962ee01b2e30c308f56ed33d00c699c8640dd499cd9811f4672c1692f1b984
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
@@ -486,7 +486,11 @@ spec:
           value: admin@astercircular.co
         - name: FIREBASE_SERVER_KEY
           value: ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAiYWxwaGEtbGF1bmNocGFkIiwKICAicHJpdmF0ZV9rZXlfaWQiOiAiMGU4NDI5NTFlOWM2YTcyY2JhOTQ2NzJkNmRlMmY1OTc0NWIzYTIzOCIsCiAgInByaXZhdGVfa2V5IjogIi0tLS0tQkVHSU4gUFJJVkFURSBLRVktLS0tLVxuTUlJRXZRSUJBREFOQmdrcWhraUc5dzBCQVFFRkFBU0NCS2N3Z2dTakFnRUFBb0lCQVFDdEg0VVMwVEdCQ1hzSlxuQm1wN09tUU9US1ZyakZ3RmRDM2Z2VFZpWFQrdTh4SEFZRVRSYUNqRkpvV09kVHpaYXB2TXFNZTZGY0FqZ0kzclxuSDVMcHVIdVdLZVpNT2QxRGhOMUttdlg3WEpqVWlVaU15Vk9XWWNpeHBwNFNhSWlrNW1FSW5XYVpNZEIwVzE1Y1xuZjY5UlZwTmVsZzFpUUdrZWdOOFA5L1VLcUpnRGxkbkMrWXFUbzVGS0VDcUNXMFNkOTQ2NDV1YTRiWDlQcjkxdVxuL0lFWWhsZ1hTT0N2bTRnZE5Sd214Q2J6WXVQMk1iOHkvTWJEQUc3dUhHc2N0cllSWkMrWmw5MStCL29YTjFLT1xuZDJWaGFRZmY2bFA5Z3dnWnltZTR3Qkk5eVlVRWhvbVBtQlRvdnVGQmZIa1hLbUxjRHoyeVkyajhUTUtURlNZT1xucmhqMDR6a1ZBZ01CQUFFQ2dmOXhuRDI0RzVCaEhkZWdGSlhNU0lWZzNPdXhxR3E3S1lMeFVUbTNVM3AzVlF4UlxuTXR2MmtHUXcvUmFvWmtlSVptM1g0T3N4TXhUa04zanEwODJWazN1SEQvZ1NEZWNtYUFyUTZ1Q0NGRUkzTitCa1xuZzdwVzlkUyt3Smo3ZTU0d21QOFVxRGFzVWdSNlYzdVZPRFhWS3Z1TEZ1MnhqSk52Y1NMeFY4ZDNOeXlMTExkcFxuaU5VZnVwOGltVFpoT0k1TTlvNVhxS1NDaWhrcTZOLzJwMk1hNVNXSTgyNWZ3RlE5S2dEaGJQYjJicW1TZWpvL1xuaVVwSTZtaFJ5a2tkeU9xNjNHb0ZOalpDU08wVk9oMGVHa2dYRkFJVHltQ2VvMWpvdWRmQ1lid2t4S3J2bHdRZlxueElIN0xCK3dMaUJOcGlXM0t4bjdNclBrNUVHQVNOS256WGtsalFFQ2dZRUExRHBTcC8ybmxydGxsQk51aDBRd1xubHUvZDJ5MlBBU1c2Z0hVSWJVbFNFQ1cya0xKYS9GOW5Tby9YVUVaSW1aN3B3YlFqRDIwV0M2a2VveVhiakFJdlxuR2t5UXUxOExteXE0bHl1dnZUTzhaQUVuOWZ0b0FBcFVDTmFZVmFlYitIYnJKR2lQNTc3dklpMGRoWUF5SXpnaFxuVHlzZERiMFFaUmZpN1ZqckluUWo1TGtDZ1lFQTBOUjF3QThJanBMbkFxZ3JVRjJPemkxSGkwa1JZQ0pUeGxBQlxuUWVRYmhEMmRCK0FGa2RvQlFraU9tU0hVeEQwcDBia2RkNXV5ZWNTd3F5ZUN1NCtMdUllQXJ4NDZrS1lxbjI2a1xuQUVQN3VuMkswVEZSOEY2V3Y2cjBzcVNtTjZ1d3pUVVRaM054SEQ2VEN6dmlPb055eURTSVhLRmd0VU9FQTNmYlxuSmRGNUFUMENnWUVBc0Yzem1OWE1NeEJ5M3ZhekVNaFRWT3ZyeEJ4OVRpZkxjTHRSa0hpeE1PZ1dhdk05ZDZQVlxuRS9xcnBYTnpHKzhiTmJWOHVYSWZNdnVOa1dtQnBUMmZaVXlocm9UVEFWVWtaOFNQWEQybFhyb3pPbEYrWVNJMFxuS2RBa2NuSkN4TjRXbFlBcnJ4eFdZR0Y3dWhrS0VZaXc3YmpYZ1RaUWJLTElIQlNiKzFybkJVa0NnWUVBdEEyYlxuZ1A3MVI4aU5lWkw1MVk3MUkvdVNaaHVYNmFWdlNkdU5XZnlOWlJXaW9UbWNVOGI5c3VMUVlHUDFDVVliR29KYlxuVDlka3FPelh6cHFBYzZzdXN1blNJQ3NXSDhYRmxqVlZIZzEvcTZtMjJPdUhWSktaczZSNDJ0WnZvaXhjZ25JeVxueXMyVVJ1QUU5SGlyYy93R0tXeHg3andPSC91WWhVMEFITGxoZFprQ2dZRUFqemFlQ1JBemI4Yko1NVNUOHk2R1xuaWdoWlk4ZkdrWGdGcmtadU9rZndvRFA4UHVRbWJmRXhmM1pqSkpUazBKR2lxTFRwS1lBZkszbEpTTVozYmNlSFxuSkVrWkpVQ01PalFMQS96MTNYeVBwNVc1emlBaXFkWmdTZ0EwY20zV1cwWmNaQ1l5alVuSW1xTkJuekFqTUE5QlxueE1HaEVzeVl3Z3IzdXhwSzJPRkZlZDA9XG4tLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tXG4iLAogICJjbGllbnRfZW1haWwiOiAiZmlyZWJhc2UtYWRtaW5zZGstbGMzZDRAYWxwaGEtbGF1bmNocGFkLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwKICAiY2xpZW50X2lkIjogIjEwNjEzNTc2ODk3MjY0NDQ0Njk3NCIsCiAgImF1dGhfdXJpIjogImh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwKICAidG9rZW5fdXJpIjogImh0dHBzOi8vb2F1dGgyLmdvb2dsZWFwaXMuY29tL3Rva2VuIiwKICAiYXV0aF9wcm92aWRlcl94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92MS9jZXJ0cyIsCiAgImNsaWVudF94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL3JvYm90L3YxL21ldGFkYXRhL3g1MDkvZmlyZWJhc2UtYWRtaW5zZGstbGMzZDQlNDBhbHBoYS1sYXVuY2hwYWQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLAogICJ1bml2ZXJzZV9kb21haW4iOiAiZ29vZ2xlYXBpcy5jb20iCn0K
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:1cac529fd2494c9b42685c83c6993be9e07f9c22e39118aefdd1aeff4f5e3d82
+        - name: AZURE_EMAIL_CONNECTION_STRING
+          value: endpoint=https://alpha-dev-smtp.australia.communication.azure.com/;accesskey=BaLmwP5PlwER7J4N3vT5DWNCYJRVZBj98B2jUQxhNeL44KDF2tUcJQQJ99AIACULyCp9erg1AAAAAZCSfEWg
+        - name: AZURE_EMAIL_SENDER_ADDRESS
+          value: DoNotReply@d9c1761e-ec35-4cf3-ab3e-84c6becdf67a.azurecomm.net
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:6c678118151a2bd0a6c6c28644b2598fa2bcd6a2d674858d25c06197d9d22e90
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -574,7 +578,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: apigateway_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:27b36b2af1b646dd74d4f52614fe1a6d5388e949422d6d537daf0e02a16e4d65
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:b8a6b54a6a35ba266fd0a96d8fd7760c0eb3128e2d188a72c13da9dbb49edae2
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
