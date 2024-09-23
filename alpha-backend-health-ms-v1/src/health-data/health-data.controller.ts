@@ -80,7 +80,13 @@ export class HealthDataController {
 
         return {
             message: 'Survey questions fetched successfully',
-            data: data
+            data: data.data,
+            meta: {
+                page: data.page,
+                limit: data.limit,
+                totalRecords: data.totalRecords,
+                totalPages: Math.ceil(data.totalRecords / data.limit)
+            }
         };
     }
 
