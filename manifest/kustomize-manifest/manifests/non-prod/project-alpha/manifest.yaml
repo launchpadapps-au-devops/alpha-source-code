@@ -113,7 +113,7 @@ spec:
         app: alpha-admin-deployment
     spec:
       containers:
-      - image: alphadev.azurecr.io/alpha-admin@
+      - image: alphadev.azurecr.io/alpha-admin@sha256:eefbf6a40d47715bc6095a6131f03e4998ce7538c32e7099f0550e234a22aa1d
         imagePullPolicy: IfNotPresent
         name: alpha-admin-container
         ports:
@@ -215,7 +215,7 @@ spec:
           value: http://alpha-backend-notification-ms-v1-service:3002
         - name: NOTIFICATION_SERVICE_API_PREFIX
           value: /api/notification-ms/v1
-        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:c79040dd63d81113fc9a656080c2963b1454c1a11cdc3ceb68b0b6535e4e8f88
+        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:cf50a950d422ce66de4c4d868977a63fb6d8f8f1964cb149c7a7b36927c978e5
         imagePullPolicy: IfNotPresent
         name: alpha-backend-api-gateway-v1-container
         ports:
@@ -303,7 +303,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: cms_queue
-        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:3f68fbbd3f3d86728d4a3f24e9f00dd61562775a5c4648d6f4feecbb02c799d3
+        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:14d137cf6eddabe4baa1acb32e2d4b039f6aa641edacca6771ea1cc8813df3c6
         name: alpha-backend-cms-ms-v1-container
         ports:
         - containerPort: 3003
@@ -390,7 +390,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:8f3b71e72cc54d55e2c3994c5c83696a3aa8498ffab0513bfba0a244c3ad6c5c
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:21ea314cb8c4b810cb0667c48cbe7d082737727e3f32dc555d07ffc019e6a9fb
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
@@ -486,7 +486,7 @@ spec:
           value: admin@astercircular.co
         - name: FIREBASE_SERVER_KEY
           value: ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAiYWxwaGEtbGF1bmNocGFkIiwKICAicHJpdmF0ZV9rZXlfaWQiOiAiMGU4NDI5NTFlOWM2YTcyY2JhOTQ2NzJkNmRlMmY1OTc0NWIzYTIzOCIsCiAgInByaXZhdGVfa2V5IjogIi0tLS0tQkVHSU4gUFJJVkFURSBLRVktLS0tLVxuTUlJRXZRSUJBREFOQmdrcWhraUc5dzBCQVFFRkFBU0NCS2N3Z2dTakFnRUFBb0lCQVFDdEg0VVMwVEdCQ1hzSlxuQm1wN09tUU9US1ZyakZ3RmRDM2Z2VFZpWFQrdTh4SEFZRVRSYUNqRkpvV09kVHpaYXB2TXFNZTZGY0FqZ0kzclxuSDVMcHVIdVdLZVpNT2QxRGhOMUttdlg3WEpqVWlVaU15Vk9XWWNpeHBwNFNhSWlrNW1FSW5XYVpNZEIwVzE1Y1xuZjY5UlZwTmVsZzFpUUdrZWdOOFA5L1VLcUpnRGxkbkMrWXFUbzVGS0VDcUNXMFNkOTQ2NDV1YTRiWDlQcjkxdVxuL0lFWWhsZ1hTT0N2bTRnZE5Sd214Q2J6WXVQMk1iOHkvTWJEQUc3dUhHc2N0cllSWkMrWmw5MStCL29YTjFLT1xuZDJWaGFRZmY2bFA5Z3dnWnltZTR3Qkk5eVlVRWhvbVBtQlRvdnVGQmZIa1hLbUxjRHoyeVkyajhUTUtURlNZT1xucmhqMDR6a1ZBZ01CQUFFQ2dmOXhuRDI0RzVCaEhkZWdGSlhNU0lWZzNPdXhxR3E3S1lMeFVUbTNVM3AzVlF4UlxuTXR2MmtHUXcvUmFvWmtlSVptM1g0T3N4TXhUa04zanEwODJWazN1SEQvZ1NEZWNtYUFyUTZ1Q0NGRUkzTitCa1xuZzdwVzlkUyt3Smo3ZTU0d21QOFVxRGFzVWdSNlYzdVZPRFhWS3Z1TEZ1MnhqSk52Y1NMeFY4ZDNOeXlMTExkcFxuaU5VZnVwOGltVFpoT0k1TTlvNVhxS1NDaWhrcTZOLzJwMk1hNVNXSTgyNWZ3RlE5S2dEaGJQYjJicW1TZWpvL1xuaVVwSTZtaFJ5a2tkeU9xNjNHb0ZOalpDU08wVk9oMGVHa2dYRkFJVHltQ2VvMWpvdWRmQ1lid2t4S3J2bHdRZlxueElIN0xCK3dMaUJOcGlXM0t4bjdNclBrNUVHQVNOS256WGtsalFFQ2dZRUExRHBTcC8ybmxydGxsQk51aDBRd1xubHUvZDJ5MlBBU1c2Z0hVSWJVbFNFQ1cya0xKYS9GOW5Tby9YVUVaSW1aN3B3YlFqRDIwV0M2a2VveVhiakFJdlxuR2t5UXUxOExteXE0bHl1dnZUTzhaQUVuOWZ0b0FBcFVDTmFZVmFlYitIYnJKR2lQNTc3dklpMGRoWUF5SXpnaFxuVHlzZERiMFFaUmZpN1ZqckluUWo1TGtDZ1lFQTBOUjF3QThJanBMbkFxZ3JVRjJPemkxSGkwa1JZQ0pUeGxBQlxuUWVRYmhEMmRCK0FGa2RvQlFraU9tU0hVeEQwcDBia2RkNXV5ZWNTd3F5ZUN1NCtMdUllQXJ4NDZrS1lxbjI2a1xuQUVQN3VuMkswVEZSOEY2V3Y2cjBzcVNtTjZ1d3pUVVRaM054SEQ2VEN6dmlPb055eURTSVhLRmd0VU9FQTNmYlxuSmRGNUFUMENnWUVBc0Yzem1OWE1NeEJ5M3ZhekVNaFRWT3ZyeEJ4OVRpZkxjTHRSa0hpeE1PZ1dhdk05ZDZQVlxuRS9xcnBYTnpHKzhiTmJWOHVYSWZNdnVOa1dtQnBUMmZaVXlocm9UVEFWVWtaOFNQWEQybFhyb3pPbEYrWVNJMFxuS2RBa2NuSkN4TjRXbFlBcnJ4eFdZR0Y3dWhrS0VZaXc3YmpYZ1RaUWJLTElIQlNiKzFybkJVa0NnWUVBdEEyYlxuZ1A3MVI4aU5lWkw1MVk3MUkvdVNaaHVYNmFWdlNkdU5XZnlOWlJXaW9UbWNVOGI5c3VMUVlHUDFDVVliR29KYlxuVDlka3FPelh6cHFBYzZzdXN1blNJQ3NXSDhYRmxqVlZIZzEvcTZtMjJPdUhWSktaczZSNDJ0WnZvaXhjZ25JeVxueXMyVVJ1QUU5SGlyYy93R0tXeHg3andPSC91WWhVMEFITGxoZFprQ2dZRUFqemFlQ1JBemI4Yko1NVNUOHk2R1xuaWdoWlk4ZkdrWGdGcmtadU9rZndvRFA4UHVRbWJmRXhmM1pqSkpUazBKR2lxTFRwS1lBZkszbEpTTVozYmNlSFxuSkVrWkpVQ01PalFMQS96MTNYeVBwNVc1emlBaXFkWmdTZ0EwY20zV1cwWmNaQ1l5alVuSW1xTkJuekFqTUE5QlxueE1HaEVzeVl3Z3IzdXhwSzJPRkZlZDA9XG4tLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tXG4iLAogICJjbGllbnRfZW1haWwiOiAiZmlyZWJhc2UtYWRtaW5zZGstbGMzZDRAYWxwaGEtbGF1bmNocGFkLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwKICAiY2xpZW50X2lkIjogIjEwNjEzNTc2ODk3MjY0NDQ0Njk3NCIsCiAgImF1dGhfdXJpIjogImh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwKICAidG9rZW5fdXJpIjogImh0dHBzOi8vb2F1dGgyLmdvb2dsZWFwaXMuY29tL3Rva2VuIiwKICAiYXV0aF9wcm92aWRlcl94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92MS9jZXJ0cyIsCiAgImNsaWVudF94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL3JvYm90L3YxL21ldGFkYXRhL3g1MDkvZmlyZWJhc2UtYWRtaW5zZGstbGMzZDQlNDBhbHBoYS1sYXVuY2hwYWQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLAogICJ1bml2ZXJzZV9kb21haW4iOiAiZ29vZ2xlYXBpcy5jb20iCn0K
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:f2d366b38a897ce5b4f6a3a77c82c769365ce81254be5d2824c74e271155f481
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:ed52f64bcde20884aafb5ceb9997bdc6af079f4ed5254338db24a1d9723843aa
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -574,7 +574,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: apigateway_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:af73ddec83d382d81b405c3c0529cc0e2bd0e04e63372ccad5987186e6e0781d
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:4e65513d8da18cfa0b5cfebd13fd682c5e84c1b59cb704238762e3fc5a78df50
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
