@@ -156,14 +156,17 @@ export class NotificationController {
             type: 'object',
             properties: {
                 statusCode: { type: 'number', example: 200 },
-                message: { type: 'string', example: 'Notification fetched sucessfully' },
-                data: { $ref: getSchemaPath(NotificationResponseDto) },
+                message: { type: 'string', example: 'Notification Preference fetched sucessfully' },
+                data: { 
+                    type: 'array',
+                    items: { $ref: getSchemaPath(NotificationPreferenceResponseDto) }
+                },
                 meta: { type: 'object' },
             },
             required: ['statusCode', 'data'],
         },
     })
-    @Get('/:userId')
+    @Get('/preference/:userId')
     async getUserNotificationPreference(
         @Request() req,
         @Param('id') userId: string
@@ -201,7 +204,7 @@ export class NotificationController {
             required: ['statusCode', 'data'],
         },
     })
-    @Put('/:id')
+    @Put('/preference/:id')
     async updateNotificationPreference(
         @Request() req,
         @Param('id') id: string,
