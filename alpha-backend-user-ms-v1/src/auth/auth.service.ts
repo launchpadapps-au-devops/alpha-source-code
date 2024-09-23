@@ -175,7 +175,7 @@ export class AuthService {
             throw new UnauthorizedException('Invalid user');
         }
 
-        if (!user.validatePassword(payload.password)) return false; 
+        if (!(await user.validatePassword(payload.password))) return false; 
         return true;
     }
 
