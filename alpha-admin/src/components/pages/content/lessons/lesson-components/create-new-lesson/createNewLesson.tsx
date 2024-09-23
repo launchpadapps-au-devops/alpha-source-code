@@ -161,9 +161,9 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
         if (!data.description) {
             fieldErrors.description = 'Lesson description is required';
         }
-        if (!data.coverImage) {
-            fieldErrors.coverImage = 'Cover image is required';
-        }
+        // if (!data.coverImage) {
+        //     fieldErrors.coverImage = 'Cover image is required';
+        // }
     
         // Validation for Lesson Tags
         data.lessonTags.forEach((tag: any) => {
