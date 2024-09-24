@@ -117,6 +117,10 @@ class NotificationService implements INotificationService {
     return notificationPreference;
   }
 
+  async updateNotificationPreferenceBulk(data: Partial<NotificationPreference[]>) {
+    return NotificationService.notificationPreferenceRepository.save(data);
+  };
+
   async getNotificationPreferenceByUserId(userId: string, type = 'push' as NotificationType) {
     return NotificationService.notificationPreferenceRepository.find({
       where: { userId, type, status: In(['ACTIVE', 'INACTIVE']) }
