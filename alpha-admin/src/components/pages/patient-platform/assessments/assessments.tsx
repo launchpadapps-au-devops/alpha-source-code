@@ -68,49 +68,38 @@ export const Assessments = ({ className }: AssessmentsProps) => {
           </div>
         ) : (
           <>
-            {onboardingIncomplete ? (
-              <DataCard className={classNames(styles['tab-panel'], styles['stretch-box'])}>
-                <h1>Onboarding Assessment</h1>
-                <EmptyComponent
-                  title="No assessment data available"
-                  description="There is currently no assessment data available. The patient has not completed any assessments yet."
-                />
+            {/* Move TabBar outside the conditional block so it's always displayed */}
+            <TabBar
+              className={styles['stretched-tabs']}
+              tabs={tabs}
+              selectedTab={selectedTab}
+              onTabChange={handleTabChange}
+            />
+
+            {selectedTab === 0 && (
+              <DataCard className={styles['tab-panel']}>
+                <h1>Onboarding assessment</h1>
+                {onboardingIncomplete ? (
+                  <EmptyComponent
+                    title="Patient onboarding assessment incomplete"
+                    description="The patient has not yet completed the Onboarding Assessment. They can easily complete it through the patient app. Once completed, the assessment results will be available here."
+                  />
+                ) : (
+                  <div className={styles['assessment-list']}>
+                    {onboardingData.map((data, index) => (
+                      <AssessmentCard key={index} question={data.question} answers={data.answers} />
+                    ))}
+                  </div>
+                )}
               </DataCard>
-            ) : (
-              <>
-                <TabBar
-                  className={styles['stretched-tabs']}
-                  tabs={tabs}
-                  selectedTab={selectedTab}
-                  onTabChange={handleTabChange}
-                />
+            )}
 
-                {selectedTab === 0 && (
-                  <DataCard className={styles['tab-panel']}>
-                    <h1>Onboarding assessment</h1>
-                    {onboardingData.length > 0 ? (
-                      <div className={styles['assessment-list']}>
-                        {onboardingData.map((data, index) => (
-                          <AssessmentCard key={index} question={data.question} answers={data.answers} />
-                        ))}
-                      </div>
-                    ) : (
-                      <EmptyComponent
-                        title="Patient onboarding assessment incomplete"
-                        description="The patient has not yet completed the Onboarding Assessment. They can easily complete it through the patient app. Once completed, the assessment results will be available here."
-                      />
-                    )}
-                  </DataCard>
-                )}
-
-                {selectedTab === 1 && (
-                  <DataCard className={styles['tab-panel']}>
-                    <h1>Health check-in responses</h1>
-                    <br />
-                    <HealthCheckinResponse />
-                  </DataCard>
-                )}
-              </>
+            {selectedTab === 1 && (
+              <DataCard className={styles['tab-panel']}>
+                <h1>Health check-in responses</h1>
+                <br />
+                <HealthCheckinResponse />
+              </DataCard>
             )}
           </>
         )}
@@ -118,3 +107,4 @@ export const Assessments = ({ className }: AssessmentsProps) => {
     </>
   );
 };
+

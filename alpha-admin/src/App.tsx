@@ -46,14 +46,8 @@ import ToastContainer from 'react-bootstrap/esm/ToastContainer';
 import 'react-toastify/dist/ReactToastify.css';
 import { PatientLifeStyle } from './components/pages/patient-platform/patient-lifestyle-plan/patient-lifestyle-plan';
 import { EditPatient } from './components/pages/patient-Management/edit-patient/editPatient';
-import { HealthCheckinResponse } from './components/pages/patient-platform/assessments/health-checkin/healthCheckIn';
-import { HealthCheckDetail } from './components/pages/patient-platform/assessments/health-checkin/healthCheckinDetail';
 import { PreviewLessons } from './components/pages/content/lessons/lesson-components/create-new-lesson/createNewLesson-components/preview-lesson/previewLesson';
-
-// const router = createBrowserRouter([
-//     { path: '/', element: <Home /> },
-//     {}
-// ]);
+import { HealthCheckinResponse } from './components/pages/patient-platform/assessments/health-checkin/healthCheckIn';
 
 const router = createBrowserRouter([
     {
@@ -256,10 +250,6 @@ const router = createBrowserRouter([
                 path:'/Health/Check/In',
                 element:<HealthCheckinResponse/>
             },
-            {
-                path: '/health-check-detail',
-                element: <HealthCheckDetail />,
-            }
 
         ],
     },

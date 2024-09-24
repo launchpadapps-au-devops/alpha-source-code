@@ -1,32 +1,59 @@
-.healthCheckinWrapper {
-    display: flex;
-    flex-direction: column;
-    //argin-left: 220px; /* Adjust for the sidebar width */
-  }
-  
+@import '../../../../../styles/global.scss';
 
-  .tabs {
-    margin: 20px 0;
-  }
-  
+.healthCheckinWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+  background: #fff;
+  color: $color-medium-black;
+}
+
+.contentWrapper {
+  width: 80%; // Adjust this if necessary to control card width
+  max-width: 960px; // Limits the max width
+  margin-top: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+.healthCheckinCardLayout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); // Adjust the min and max width per card
+  gap: 60px; // Space between the cards
+  width: 100%; // Ensures layout uses all available width of its parent
+}
+
+.dataCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  cursor: pointer;
+}
+
+.loaderOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+@media (max-width: 768px) {
   .contentWrapper {
-    padding: 20px;
+    width: 95%;
   }
-  
-  .cardLayout {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two cards per row */
-    gap: 60px;
-  }
-  
-  .dataCard {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
+}
