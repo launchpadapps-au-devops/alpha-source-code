@@ -36,7 +36,7 @@ const initialState: LoginSliceState = {
     refreshTokenExpiresAt: '',
     refreshToken: '',
     accessTokenExpiresAt: '',
-    userType: null, // Initialize userType as null
+    userType: '', // Initialize userType as null
 };
 
 // Thunk for logging in and fetching user profile
@@ -74,7 +74,8 @@ export const loginThunk = createAsyncThunk(
             // Save loggedUserID (id) in local storage
             localStorage.setItem('loggedUserID', id);
             localStorage.setItem('LoggedInUserFirstName', profileResponse.data.data.firstName);
-            console.log(profileResponse.data.data.firstName, 'userType');
+            localStorage.setItem('userType', profileResponse.data.data.userType);
+            console.log(profileResponse.data.data.userType, 'userType');
 
             // Return the combined response data (tokens and userType)
             return { ...response.data, userType };
@@ -94,13 +95,16 @@ export const authSlice = createSlice({
             const accessTokenExpiresAt = localStorage.getItem('accessTokenExpiresAt');
             const refreshToken = localStorage.getItem('refreshToken');
             const refreshTokenExpiresAt = localStorage.getItem('refreshTokenExpiresAt');
-            if (accessToken && accessTokenExpiresAt && refreshToken && refreshTokenExpiresAt) {
+            const userType = localStorage.getItem('userType'); // Retrieve userType from localStorage
+        
+            if (accessToken && accessTokenExpiresAt && refreshToken && refreshTokenExpiresAt && userType) {
                 state.userDetails = {
                     accessToken,
                     accessTokenExpiresAt,
                     refreshToken,
                     refreshTokenExpiresAt,
                 };
+                state.userType = userType; // Rehydrate userType
                 state.loggedIn = true;
             }
         },

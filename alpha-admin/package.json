@@ -35,7 +35,8 @@
     "react-router": "^6.26.2",
     "react-router-dom": "^6.24.0",
     "react-spinners": "^0.14.1",
-    "react-toastify": "^10.0.5"
+    "react-toastify": "^10.0.5",
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@types/draft-convert": "^2.1.8",

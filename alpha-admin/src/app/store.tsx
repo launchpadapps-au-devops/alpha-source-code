@@ -1,8 +1,6 @@
 import { combineReducers, Action, ThunkAction, configureStore } from '@reduxjs/toolkit';
 import authSlice from '../components/pages/login/loginSlice';
 import { setupListeners } from '@reduxjs/toolkit/query';
-// import forgotPasswordReducer, { forgotAuthSlice } from '../components/pages/forgot-password/forgot-password-slice';
-// import resetPasswordReducer from '../components/Pages/reset-password/reset-passwordSlice'
 import staffReducer from '../components/pages/care-team/care-team-components/create-care-team/create-care-teamSlice';
 import addNewStaffReducer from '../components/pages/care-team/care-team-components/create-care-team/create-care-teamSlice';
 import removeStaffReducer from '../components/pages/care-team/care-team-components/create-care-team/create-care-teamSlice';
@@ -12,54 +10,54 @@ import lessonsReducer from '../components/pages/content/lessons/lesson-component
 import tipsReducer from '../components/pages/content/dailytips/viewTipsSlice';
 import fileUploadReducer from '../components/fileUpload/fileUploadSlice';
 import patientsSlice from '../components/pages/patient-Management/patientsSlice';
-// import resetPasswordReducer from '../components/pages/forgot-password/forgot-password-components/reset-password/resetPasswordSlice';
 import passwordResetReducer from '../components/pages/forgot-password/forgot-password-slice';
-//Dashboard
 import activePatientReducer from '../components/pages/dashboard/dashboard-components/activePatientsSlice';
-
-//Patient Platform
 import getPatientDataOverviewReducer from '../components/pages/patient-platform/patientDataOverviewSlice';
-// import { forgotOtpVerifyAuthSlice } from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
-// import forgotOtpVerifyAuthSlice from '../components/pages/forgot-password/forgot-password-components/check-your-email/forgot-password-otp-verify-Slice';
 import getUserDataOverviewReducer from '../components/pages/dashboard/dashboard-components/user-data-overvie-store/userDataOverviewSlice';
+import policyReducer from '../components/pages/terms-and-condition/privacyPolicySlice';
+import storage from 'redux-persist/lib/storage';
+import { persistReducer, persistStore } from 'redux-persist';
 
-// Import the policy slice
-import policyReducer from '../components/pages/terms-and-condition/privacyPolicySlice'; // Adjust the import path accordingly
-
+// Combine all your reducers into a root reducer
 const rootReducer = combineReducers({
     login: authSlice,
-    // forgotPassword: forgotAuthSlice,
-    // forgotPasswordOtpVerify: forgotOtpVerifyAuthSlice,
-    // resetPassword: resetPasswordReducer,
     passwordReset: passwordResetReducer,
     staff: staffReducer,
     addNewStaff: addNewStaffReducer,
     removeStaff: removeStaffReducer,
-    // resetPassword: resetPasswordReducer,
     editStaff: editStaffReducer,
     categories: categoriesReducer,
     lessons: lessonsReducer,
     tips: tipsReducer,
     fileUpload: fileUploadReducer,
     patients: patientsSlice,
-
-    // Dashboard
     activePatients: activePatientReducer,
     userDataOverview: getUserDataOverviewReducer,
-
-    //Patient Platform
     patientDataAnalyticsOverview: getPatientDataOverviewReducer,
-
-    // Add the policy slice
-    policy: policyReducer, // Add the policy slice to the root reducer
+    policy: policyReducer,
 });
+
+// Configuration for redux-persist
+const persistConfig = {
+    key: 'root',
+    storage,
+    whitelist: ['login'], // Only persist the 'login' slice
+};
+
+// Apply the persistReducer to the root reducer
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export type RootState = ReturnType<typeof rootReducer>;
 
-export const makeStore = (preloadedState?: Partial<RootState>) => {
+// Create a function to configure the store
+export const makeStore = (preloadedState?: any) => {
     const store = configureStore({
-        reducer: rootReducer,
-        middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+        reducer: persistedReducer, // Use persisted reducer here
+        middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'], // Ignore persist actions
+            },
+        }),
         preloadedState,
     });
 
@@ -67,10 +65,12 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
     return store;
 };
 
+// Create the store
 export const store = makeStore();
 
+// Create the persistor object for managing persisting and rehydrating
+export const persistor = persistStore(store);
+
 export type AppStore = typeof store;
-
 export type AppDispatch = AppStore['dispatch'];
-
 export type AppThunk<ThunReturnType = void> = ThunkAction<void, RootState, unknown, Action<string>>;
