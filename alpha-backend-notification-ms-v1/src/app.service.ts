@@ -52,15 +52,55 @@ export class AppService {
       await notificationService.createNotificationPreference(newNotificationPreference as Partial<NotificationPreference []>)
       return this.getNotificationPreference(userId);
     }
+    
+    return notificationPreference.reduce((acc, preference) => {
+      const { categoryId, subcategoryId } = preference;
+      const existingPreference = acc.find(({ categoryId: id }) => id === categoryId);
 
-    return notificationPreference;
+      if(!existingPreference) {
+        acc.push({
+          ...preference,
+          subCategory: [subcategoryId]
+        });
+      } else {
+        existingPreference.subCategory.push(subcategoryId);
+      }
+
+      return acc;
+    }, [] as any);
   }
 
   async updateNotificationPreference(notificatoinPreferenceId: string, data: Partial<NotificationPreference>, reqUser = { userId: null }) {
-    return notificationService.updateNotificationPreference(notificatoinPreferenceId, {
-      ...data,
-      createdBy: reqUser.userId,
-      updatedBy: reqUser.userId
-    });
+    const notificationPreferences = await notificationService.getNotificationPreferenceByUserId(reqUser.userId);
+    const currentPreference = notificationPreferences.find(({ id }) => id === notificatoinPreferenceId);
+
+    if(!currentPreference) {
+      throw new Error('Notification preference not found');
+    }
+
+    await notificationService.updateNotificationPreference(
+      notificatoinPreferenceId,
+      {
+        ...data,
+        updatedBy: reqUser.userId
+      }
+    );
+
+    if(data.status) {
+      const categoryPreferences = notificationPreferences.filter(({ categoryId }) => categoryId === currentPreference.categoryId);
+
+      const prefereceToUpdate = [] as any;
+      for(const preference of categoryPreferences) {
+        prefereceToUpdate.push({
+          id: preference.id,
+          status: data.status,
+          updatedBy: reqUser.userId
+        });
+      }
+
+      await notificationService.updateNotificationPreferenceBulk(prefereceToUpdate);
+    }
+
+    return currentPreference;
   }
 }
