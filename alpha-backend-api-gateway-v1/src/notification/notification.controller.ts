@@ -181,8 +181,8 @@ export class NotificationController {
     @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({
         name: 'id',
-        description: 'Lesson ID',
-        type: 'number',
+        description: 'Preference ID',
+        type: 'uuid',
         required: true
     })
     @ApiBody({ type: UpdateNotificationPreferenceDto })

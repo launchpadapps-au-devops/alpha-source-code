@@ -35,16 +35,37 @@ export class CreateNotificationPreferenceDto {
     status?: string = 'ACTIVE';
 }
 
-export class UpdateNotificationPreferenceDto extends CreateNotificationPreferenceDto {
+export class UpdateNotificationPreferenceDto {
     @ApiProperty({ example: 'uuid' })
     @IsUUID()
     id: string;
+
+    @ApiProperty({ example: 'INACTIVE', enum: ['ACTIVE', 'ARCHIVE', 'INACTIVE'], required: true })
+    @IsString()
+    status: string;
 }
 
 export class NotificationPreferenceResponseDto extends CreateNotificationPreferenceDto {
     @ApiProperty({ example: 'uuid' })
     @IsUUID()
     id: string;
+
+    @ApiProperty({ example: 'uuid' })
+    @IsUUID()
+    userId: string;
+
+    @ApiProperty({ example: 'ACTIVE', enum: ['ACTIVE', 'ARCHIVE', 'INACTIVE'] })
+    @IsString()
+    status: string;
+
+    @ApiProperty({ example: 1 })
+    @IsNumber()
+    categoryId: number;
+
+    @ApiProperty({ example: [1, 2] })
+    @IsArray()
+    @IsNumber({}, { each: true })
+    subCategory: number[];
 
     @ApiProperty({ example: '2021-01-01T00:00:00.000Z' })
     @IsDateString()
