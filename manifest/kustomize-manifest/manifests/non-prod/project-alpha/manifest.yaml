@@ -215,7 +215,7 @@ spec:
           value: http://alpha-backend-notification-ms-v1-service:3002
         - name: NOTIFICATION_SERVICE_API_PREFIX
           value: /api/notification-ms/v1
-        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:b28f2814706eb9e9828c6aded9e91d3f958756b61750c5071ff883e622d724d2
+        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:870a281a87c8f8836ea1b4b09c66ce4ae790631c24f91ad0d9d5d2dacc8d0466
         imagePullPolicy: IfNotPresent
         name: alpha-backend-api-gateway-v1-container
         ports:
@@ -390,7 +390,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:436a538a3198bd9f5c081f8642491cd644fa67168f9ce1049499a2f3effe100c
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:9c12d3c8556e634fb33ab16c9f6fae521c72613f69653c48f081f49540866abf
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
@@ -490,7 +490,7 @@ spec:
           value: endpoint=https://alpha-dev-smtp.australia.communication.azure.com/;accesskey=BaLmwP5PlwER7J4N3vT5DWNCYJRVZBj98B2jUQxhNeL44KDF2tUcJQQJ99AIACULyCp9erg1AAAAAZCSfEWg
         - name: AZURE_EMAIL_SENDER_ADDRESS
           value: DoNotReply@d9c1761e-ec35-4cf3-ab3e-84c6becdf67a.azurecomm.net
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:1187e7835272dfb5d76a2190df347403e11228e6b2dcab547fcad21d1ecbe9f2
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:ec8a4796b75142c5558693755c0f5e244621db6e8d14ebf3dbb6fbb3fc465a1b
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -578,7 +578,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: apigateway_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:24a89694fdbc4db5b081bf3d2aab5e8142e06dd51635666749b2d62127c930df
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:d3c5c62b2db7f271744aeddd56b08b80f9a5657a94734c607e85a76b51b11bef
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
