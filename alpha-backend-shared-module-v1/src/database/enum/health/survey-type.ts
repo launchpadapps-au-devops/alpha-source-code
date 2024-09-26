@@ -10,6 +10,7 @@ export enum SurveyTypes {
     HEART_RISK = 'heart_risk',
     DIABETES = 'diabetes',
     WHO5 = 'who5',
+    ONBOARDING = 'onboarding',
 }
 
 export type SurveyType = typeof SURVEY_TYPE[keyof typeof SURVEY_TYPE];
