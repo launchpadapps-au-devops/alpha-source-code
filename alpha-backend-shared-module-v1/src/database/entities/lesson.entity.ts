@@ -59,6 +59,9 @@ export class Lesson {
     @Column({ type: 'jsonb', nullable: true })
     quizData: object;
 
+    @Column({ type: 'jsonb', nullable: true })
+    freeTextQuiz: object;
+
     @CreateDateColumn()
     createdAt: Date;
 

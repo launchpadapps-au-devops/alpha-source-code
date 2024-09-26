@@ -78,6 +78,7 @@ class LessonService implements ILessonService {
         description: true,
         screenData: [],
         quizData: [],
+        freeTextQuiz: [],
         createdAt: true,
         updatedAt: true,
         createdBy: {
@@ -128,6 +129,7 @@ class LessonService implements ILessonService {
         description: true,
         screenData: [],
         quizData: [],
+        freeTextQuiz: [],
         createdAt: true,
         updatedAt: true,
         createdBy: {
@@ -212,6 +214,7 @@ class LessonService implements ILessonService {
         description: true,
         screenData: [],
         quizData: [],
+        freeTextQuiz: [],
         createdAt: true,
         updatedAt: true,
         createdBy: {
