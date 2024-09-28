@@ -100,3 +100,13 @@
   border: 1px solid var(--Red, #eb5757);
   background: var(--Shades-White, #fff);
 }
+
+.errorBorder {
+  border: 1px solid red !important;
+}
+
+.errorText {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}

@@ -3,6 +3,72 @@
     max-width: 1246px;
     margin-left: 20px;
     font-family: Arial, sans-serif;
+      
+
+    .content {
+        width: 80%; /* Adjust width as needed */
+        color: var(--Gray-01, #22272b); /* Apply specified color */
+        font-family: 'Public Sans'; /* Apply specified font family */
+        font-size: 16px; /* Apply specified font size */
+        font-style: normal; /* Apply specified font style */
+        font-weight: 500; /* Apply specified font weight */
+        line-height: 22px; /* Apply specified line height */
+    }
+
+    .errorBorder {
+        border: 1px solid red !important;
+      }
+      
+      .errorText {
+        color: red;
+        font-size: 12px;
+        margin-top: 5px;
+      }
+
+    .categoryCell {
+        flex:1;
+        display: flex;
+        // flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 140%;
+        gap: 20px; /* Adjust gap as needed */
+      
+        .contentInput1 {
+          /* Apply shared styles to all input elements within the container */
+          // flex: 1;
+          // flex-direction: column;
+          border: 1px solid var(--primary-500-main, #00acee);
+          border-radius: 6px;
+          box-shadow: 0px 0px 0px 2px #e6f7fd;
+          padding: 4px;
+          color: var(--Gray-01, #22272b);
+          font-family: 'Public Sans';
+          font-size: 16px;
+          font-weight: 500;
+          // line-height: 22px;
+          width: 3%;
+          background: var(--Shades-White, #fff);
+        }
+        
+        input {
+            /* Apply shared styles to all input elements within the container */
+            // flex: 1;
+            // flex-direction: column;
+            border: 1px solid var(--primary-500-main, #00acee);
+            border-radius: 6px;
+            box-shadow: 0px 0px 0px 2px #e6f7fd;
+            padding: 4px;
+            color: var(--Gray-01, #22272b);
+            font-family: 'Public Sans';
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 22px;
+            width: 62%;
+            background: var(--Shades-White, #fff);
+          }
+      }
+      
 
     .table {
         width: 100%;
@@ -43,6 +109,7 @@
         width: 100%;
         border-bottom: 1px solid var(--Neutral-200, #E5E5E5);
         background: var(--Shades-White, #FFF);
+        
     }
 
     .editContainer {

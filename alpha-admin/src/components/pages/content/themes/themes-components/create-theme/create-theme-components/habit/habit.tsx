@@ -1,27 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './habit.module.scss';
-
-interface HabitFormState {
-    habitName: string;
-    timeAllocation: string;
-    pointsAllocation: string;
-    habitInstruction: string;
-}
 
 interface HabitProps {
     showDeleteButton: boolean;
     data: any;
     setData: any;
+    errors: any;
+    setErrors: (errors: any) => void;
 }
 
-const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData }) => {
-    console.log(data, 'data');
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-    ) => {};
+const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData, errors, setErrors }) => {
+    const habitIndex = 0; // Assuming we're only dealing with the first habit for now
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setData({
+            ...data,
+            themeData: {
+                ...data.themeData,
+                habits: data.themeData.habits.map((habit: any, index: number) =>
+                    index === habitIndex ? { ...habit, [name]: value } : habit
+                ),
+            },
+        });
     };
 
     return (
@@ -31,114 +32,73 @@ const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData }) => {
                 <input
                     type="text"
                     id="habitName"
-                    name="habitName"
-                    value={data.themeData.habits[0].name}
-                    onChange={(e) =>
-                        setData({
-                            ...data,
-                            themeData: {
-                                ...data.themeData,
-                                habits: [{ ...data.themeData.habits[0], name: e.target.value }],
-                            },
-                        })
-                    }
+                    name="name"
+                    value={data.themeData.habits[habitIndex].name}
+                    onChange={handleInputChange}
                     maxLength={150}
-                    className={styles.habitNameInput}
+                    className={`${styles.habitNameInput} ${errors.name ? styles.errorBorder : ''}`}
                     placeholder="Enter the habit name"
                     required
                 />
+                {errors?.name && <span className={styles.errorText}>{errors.name}</span>}
             </div>
+
             <div className={styles.sideBySide}>
                 <div className={styles.inputGroup}>
                     <label htmlFor="timeAllocation">Time allocation</label>
                     <select
                         id="timeAllocation"
                         name="timeAllocation"
-                        value={data.themeData.habits[0].timeAllocation}
-                        onChange={(e) => {
-                            setData({
-                                ...data,
-                                themeData: {
-                                    ...data.themeData,
-                                    habits: [
-                                        {
-                                            ...data.themeData.habits[0],
-                                            timeAllocation: e.target.value,
-                                        },
-                                    ],
-                                },
-                            });
-                        }}
-                        className={styles.timeAllocationSelect}
+                        value={data.themeData.habits[habitIndex].timeAllocation}
+                        onChange={handleInputChange}
+                        className={`${styles.timeAllocationSelect} ${errors.timeAllocation ? styles.errorBorder : ''}`}
                         required
                     >
-                        <option hidden disabled selected>
-                            Select duration
-                        </option>
-                        <option value={1}>1 weeks</option>
-                        <option value={2}>2 weeks</option>
-                        <option value={3}>3 weeks</option>
-                        <option value={4}>4 weeks</option>
-                        <option value={5}>5 weeks</option>
+                        <option value="">Select time allocation</option>
+                        <option value="1">1 week</option>
+                        <option value="2">2 weeks</option>
+                        <option value="3">3 weeks</option>
+                        <option value="4">4 weeks</option>
+                        <option value="5">5 weeks</option>
                     </select>
+                    {errors?.timeAllocation && <span className={styles.errorText}>{errors.timeAllocation}</span>}
                 </div>
+
                 <div className={styles.inputGroup}>
                     <label htmlFor="pointsAllocation">Points allocation</label>
                     <select
                         id="pointsAllocation"
-                        name="pointsAllocation"
-                        value={data.themeData.habits[0].pointAllocation}
-                        onChange={(e) => {
-                            setData({
-                                ...data,
-                                themeData: {
-                                    ...data.themeData,
-                                habits: [
-                                    {
-                                        ...data.themeData.habits[0],
-                                        pointAllocation: e.target.value,
-                                    },
-                                ],
-                            },
-                            });
-                        }}
-                        className={styles.timeAllocationSelect}
+                        name="pointAllocation"
+                        value={data.themeData.habits[habitIndex].pointAllocation}
+                        onChange={handleInputChange}
+                        className={`${styles.pointsAllocationSelect} ${errors.pointAllocation ? styles.errorBorder : ''}`}
                         required
                     >
-                        <option hidden disabled selected>
-                            Select points
-                        </option>
-                        <option value={50}>50 points</option>
-                        <option value={100}>100 points</option>
-                        <option value={150}>150 points</option>
-                        <option value={200}>200 points</option>
-                        <option value={250}>250 points</option>
+                        <option value="">Select points allocation</option>
+                        <option value="50">50 points</option>
+                        <option value="100">100 points</option>
+                        <option value="150">150 points</option>
+                        <option value="200">200 points</option>
+                        <option value="250">250 points</option>
                     </select>
+                    {errors?.pointAllocation && <span className={styles.errorText}>{errors.pointAllocation}</span>}
                 </div>
             </div>
+
             <div className={styles.inputGroup}>
                 <label htmlFor="habitInstruction">Habit instruction</label>
                 <input
                     id="habitInstruction"
-                    name="habitInstruction"
+                    name="instruction"
                     type="text"
-                    value={data.themeData.habits[0].instruction}
-                    onChange={(e) =>
-                        setData({
-                            ...data,
-                            themeData: {
-                                ...data.themeData,
-                                habits: [
-                                    { ...data.themeData.habits[0], instruction: e.target.value },
-                                ],
-                            },
-                        })
-                    }
+                    value={data.themeData.habits[habitIndex].instruction}
+                    onChange={handleInputChange}
                     maxLength={200}
-                    className={styles.textarea}
+                    className={`${styles.textarea} ${errors.instructions ? styles.errorBorder : ''}`}
                     placeholder="Enter the habit instruction"
                     required
                 />
+                {errors?.instructions && <span className={styles.errorText}>{errors.instructions}</span>}
             </div>
         </>
     );

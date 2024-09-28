@@ -46,13 +46,23 @@ import ToastContainer from 'react-bootstrap/esm/ToastContainer';
 import 'react-toastify/dist/ReactToastify.css';
 import { PatientLifeStyle } from './components/pages/patient-platform/patient-lifestyle-plan/patient-lifestyle-plan';
 import { EditPatient } from './components/pages/patient-Management/edit-patient/editPatient';
-import { PreviewLessons } from './components/pages/content/lessons/lesson-components/create-new-lesson/createNewLesson-components/preview-lesson/previewLesson';
 import { HealthCheckinResponse } from './components/pages/patient-platform/assessments/health-checkin/healthCheckIn';
+import { HealthCheckDetail } from './components/pages/patient-platform/assessments/health-checkin/healthCheckinDetail';
+import { ManagePassword } from './_codux/boards/manage-password/managePassword';
+import RouteChangeAlert from './components/pages/content/content-components/unsaved-changes-alert/RouteChangeAlert';
+
+// const router = createBrowserRouter([
+//     { path: '/', element: <Home /> },
+//     {}
+// ]);
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <RootLayout />,
+        element:             <>
+        <RouteChangeAlert /> {/* Include RouteChangeAlert here */}
+        <RootLayout />
+    </>,
         children: [
             {
                 path: '/',
@@ -86,7 +96,10 @@ const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <MainLayout />,
+        element:             <>
+        <RouteChangeAlert /> {/* Include RouteChangeAlert here */}
+        <MainLayout />
+    </>,
         children: [
             {
                 path: '/dashboard',
@@ -226,17 +239,14 @@ const router = createBrowserRouter([
                 path: '/edit-patient',
                 element: <EditPatient />,
             },
-            {
-                path: '/preview-lesson',
-                element: <PreviewLessons data={undefined} isEditMode={false} onBack={function (): void {
-                    throw new Error('Function not implemented.');
-                } } />,
-            },
         ],
     },
     {
         path: '/',
-        element: <SettingLayout />,
+        element:             <>
+        <RouteChangeAlert /> {/* Include RouteChangeAlert here */}
+        <SettingLayout />
+    </>,
         children: [
             {
                 path: '/terms-and-condition',
@@ -251,6 +261,15 @@ const router = createBrowserRouter([
                 element:<HealthCheckinResponse/>
             },
 
+            {
+                path: '/health-check-detail',
+                element: <HealthCheckDetail />,
+            },
+            {
+                path: '/manage-password',
+                element: <ManagePassword />,
+            }
+            
         ],
     },
 ]);

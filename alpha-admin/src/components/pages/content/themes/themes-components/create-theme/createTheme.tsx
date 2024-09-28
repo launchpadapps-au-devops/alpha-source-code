@@ -21,6 +21,7 @@ import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchLessonsThunk } from '../../../lessons/lesson-components/lessonsSlice';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../../back-button/backButton';
+import React from 'react';
 
 export interface CreateThemeProps {
     className?: string;
@@ -35,6 +36,7 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: true,
         select: false,
+        status: '',
     },
     {
         lessonCode: 2,
@@ -44,6 +46,7 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: false,
         select: false,
+        status: '',
     },
     {
         lessonCode: 3,
@@ -53,6 +56,7 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: false,
         select: false,
+        status: '',
     },
     {
         lessonCode: 4,
@@ -62,6 +66,7 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: true,
         select: false,
+        status: '',
     },
     {
         lessonCode: 5,
@@ -71,6 +76,7 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: false,
         select: false,
+        status: '',
     },
     {
         lessonCode: 6,
@@ -80,6 +86,7 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: true,
         select: false,
+        status: '',
     },
 ];
 
@@ -92,12 +99,14 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [category, setCategory] = useState<string>('');
     const [showHabit, setShowHabit] = useState(false);
+    const [errors, setErrors] = React.useState<any>({});
     const dispatch = useAppDispatch();
+
     const [data, setData] = useState({
         themeData: {
-            themeCode: '0',
+            themeCode: 1,
             categoryId: 1,
-            isPublished: true,
+            isPublished: false,
             status: 'ACTIVE',
             internalNotes: '',
             name: '',
@@ -127,51 +136,83 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
         lessonData: [1],
     });
 
-    // Submit data to the backend with selected lessons
-    const submitData = () => {
+    const validateFields = () => {
+        let fieldErrors: any = {};
+        if (!data.themeData.themeCode) {
+            fieldErrors.themeCode = 'Theme Code is required';
+        }
+        if (!data.themeData.name) {
+            fieldErrors.name = 'Name is required';
+        }
+        if (!data.themeData.description) {
+            fieldErrors.description = 'Description is required';
+        }
+
+        if (!data.themeData.categoryId) {
+            fieldErrors.categoryId = 'Category is required';
+        }
+        if (selectedLessons.length === 0) {
+            fieldErrors.lessonData = 'At least one lesson is required';
+        }
+
+       // Validate habits
+    if (data.themeData.habits.length > 0) {
+        data.themeData.habits.forEach((habit, index) => {
+            let habitErrors: any = {};
+
+            if (!habit.name) {
+                habitErrors.name = 'Habit name is required';
+            }
+            if (!habit.timeAllocation) {
+                habitErrors.timeAllocation = 'Time allocation is required';
+            }
+            if (!habit.pointAllocation) {
+                habitErrors.pointAllocation = 'Point allocation is required';
+            }
+            if (!habit.instructions) {
+                habitErrors.instructions = 'Instructions are required';
+            }
+
+            if (Object.keys(habitErrors).length > 0) {
+                fieldErrors[`habits_${index}`] = habitErrors; // Store errors for each habit
+            }
+        });
+    } else {
+        fieldErrors.habits = 'At least one habit is required';
+    }
+
+        setErrors(fieldErrors);
+
+        return Object.keys(fieldErrors).length === 0;
+    };
+    // Submit data to the backend with selected lessons and status
+    const submitData = (status: string) => {
         const lessonIds = selectedLessons.map((lesson) => lesson.lessonCode);
         console.log('selectedLessons', lessonIds);
 
         const updatedData = {
             ...data,
+            themeData: {
+                ...data.themeData,
+                status, // Update status based on the passed argument
+            },
             lessonData: lessonIds, // Ensure lessonData is an array of lesson codes
         };
 
-        dispatch(addThemeThunk(updatedData))
-            .then((res: any) => {
-                if (res.payload.statusCode === 200 || res.payload.statusCode === 201) {
-                    navigate('/content/themes');
-                }
-            })
-            .catch((err: any) => {
-                console.log(err);
-                alert('Error' + err);
-            });
-    };
-
-    const saveAsDraft = () => {
-        const lessonIds = selectedLessons.map((lesson) => lesson.lessonCode);
-        console.log('selectedLessons', lessonIds);
-    
-        const draftData = {
-            ...data,
-            themeData: {
-                ...data.themeData,
-                status: 'DRAFT', // Set the status to DRAFT
-            },
-            lessonData: lessonIds,
-        };
-    
-        dispatch(addThemeThunk(draftData))
-            .then((res: any) => {
-                if (res.payload.statusCode === 200 || res.payload.statusCode === 201) {
-                    navigate('/content/themes');
-                }
-            })
-            .catch((err: any) => {
-                console.log(err);
-                alert('Error' + err);
-            });
+        if (!validateFields()) {
+            dispatch(addThemeThunk(updatedData))
+                .then((res: any) => {
+                    if (res.payload.statusCode === 200 || res.payload.statusCode === 201) {
+                        navigate('/content/themes');
+                    }
+                })
+                .catch((err: any) => {
+                    console.log(err);
+                    alert('Error' + err);
+                });
+        } else {
+            console.log('Validation failed', errors);
+        }
     };
 
     // Handle updates to the lessons
@@ -181,7 +222,9 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
 
     // Handle adding lessons to the theme and ensuring prev is always an array
     const handleAddLessonsToTheme = (selected: Lesson[]) => {
-        setSelectedLessons((prev) => (Array.isArray(prev) ? [...prev, ...selected] : [...selected]));
+        setSelectedLessons((prev) =>
+            Array.isArray(prev) ? [...prev, ...selected] : [...selected]
+        );
         setIsSidebarOpen(false); // Close sidebar after adding lessons
     };
 
@@ -243,9 +286,12 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                         <div className={styles.rightButtonContainer}>
                             <EditButton
                                 buttonText="Save as draft"
-                                onButtonClick={saveAsDraft} 
+                                onButtonClick={() => submitData('DRAFT')}
                             />
-                            <AppButton buttonText="Publish" onButtonClick={submitData} />
+                            <AppButton
+                                buttonText="Publish"
+                                onButtonClick={() => submitData('ACTIVE')}
+                            />
                         </div>
                     </header>
                     <div className={styles.themeContainer}>
@@ -254,16 +300,26 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                                 onCategoryChange={setCategory}
                                 data={data}
                                 setData={setData}
+                                errors={errors}
+                                setErrors={setErrors}
                             />
                         </div>
                         <div className={styles.rightColumn}>
-                            <AddThemeDetails category={category} data={data} setData={setData} />
+                            <AddThemeDetails
+                                category={category}
+                                data={data}
+                                setData={setData}
+                                errors={errors}
+                                setErrors={setErrors}
+                            />
                             {!hideLessons && (
                                 <LessonManagement
                                     selectedLessons={selectedLessons}
                                     onRemoveLesson={handleRemoveLessonFromTheme}
                                     onAddLessons={handleOpenSidebar}
                                     newLessons={newLessons}
+                                    errors={errors}
+                                    setErrors={setErrors}
                                 />
                             )}
                             <div className={styles.section}>
@@ -281,7 +337,13 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                                     )}
                                 </div>
                                 {showHabit ? (
-                                    <Habit showDeleteButton={false} data={data} setData={setData} />
+                                    <Habit
+                                        showDeleteButton={false}
+                                        data={data}
+                                        setData={setData}
+                                        errors={errors}
+                                        setErrors={setErrors}
+                                    />
                                 ) : (
                                     <EditButton
                                         buttonText="Add Habit"

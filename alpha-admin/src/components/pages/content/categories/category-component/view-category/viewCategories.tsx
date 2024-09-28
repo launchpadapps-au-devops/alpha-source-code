@@ -43,21 +43,38 @@ export const ViewCategories: React.FC = () => {
         });
     }, [dispatch]);
 
-    const handleNextPage = () => {
-        dispatch(fetchCategoriesThunk(currentPage + 1)).then((res: any) => {
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
+    const fetchStaffData = (page: number) => {
+        dispatch(fetchCategoriesThunk(page)).then((res: any) => {
+            if (res.payload) {
+                setTotalPages(res.payload.meta.totalPages);
+                setTotalRecords(res.payload.meta.totalRecords);
+            }
         });
-        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+            fetchStaffData(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            fetchStaffData(currentPage - 1);
+        }
     };
     
-    const handlePreviousPage = () => {
-        dispatch(fetchCategoriesThunk(currentPage - 1)).then((res: any) => {
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        fetchStaffData(pageNumber);
     };
+
+    useEffect(() => {
+        fetchStaffData(1);
+    }, [dispatch]);
 
     const handleToggle = (category: Category, index: number) => {
         const newCategory = {
@@ -125,6 +142,7 @@ export const ViewCategories: React.FC = () => {
                 <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
+                    onPageChange={handlePageChange}
                     currentPage={currentPage}
                     totalPages={totalPages}
                 />

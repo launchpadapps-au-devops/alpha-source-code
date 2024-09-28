@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../../../app/store';
 import { addNewStaffThunk, inviteStaffThunk } from './create-care-teamSlice';
 import { BackButton } from '../../../../back-button/backButton';
+import React from 'react';
 
 export interface CreateCareTeamProps {
     className?: string;
@@ -29,6 +30,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
         { id: 2, name: 'Care Team Member' }]);
 
     const [openModal, setOpenModal] = useState(false);
+    const [errors, setErrors] = React.useState<any>({});
 
     const [formValues, setFormValues] = useState({
         firstName: '',
@@ -39,6 +41,11 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
         permission: '',
     });
 
+    const roleId = formValues.role ? parseInt(formValues.role, 10) : null;
+    const permissionId = formValues.permission ? parseInt(formValues.permission, 10) : null;
+
+    console.log(`Role ID: ${roleId}, Permission ID: ${permissionId}`);
+
     const handleChange = (field: string, value: string) => {
         console.log(`Field: ${field}, Value: ${value}`);
         setFormValues((prevValues) => ({
@@ -47,14 +54,44 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
         }));
     };
 
+    const validateFields = () => {
+        let fieldErrors: any = {};
+
+        if (!formValues.firstName) {
+            fieldErrors = { ...fieldErrors, firstName: 'First name is required' };
+        }
+        if (!formValues.lastName) {
+            fieldErrors = { ...fieldErrors, lastName: 'Last name is required' };
+        }
+        if (!formValues.email) {
+            fieldErrors = { ...fieldErrors, email: 'Email is required' };
+        }
+        if (!formValues.phoneNumber) {
+            fieldErrors = { ...fieldErrors, phoneNumber: 'Phone number is required' };
+        }
+        if (!roleId) {
+            fieldErrors = { ...fieldErrors, role: 'Role is required' };
+        }
+        if (!permissionId) {
+            fieldErrors = { ...fieldErrors, permission: 'Permission is required' };
+        }
+        setErrors(fieldErrors);
+
+        return Object.keys(fieldErrors).length === 0;
+    }
+
     const handleFormSuccessModal = () => {
-        const roleId = formValues.role ? parseInt(formValues.role, 10) : null;
-        const permissionId = formValues.permission ? parseInt(formValues.permission, 10) : null;
-    
-        console.log(`Role ID: ${roleId}, Permission ID: ${permissionId}`);
+            // Validate fields before submitting
+    if (!validateFields()) {
+        // Validation failed, show errors
+        console.log('Validation failed', errors);
+        return; // Prevent submission if validation fails
+    }
+
+
     
         if (roleId === null || permissionId === null) {
-            alert('Please select a valid role and permission');
+            // alert('Please select a valid role and permission');
             return;
         }
     
@@ -69,7 +106,10 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
             permissions: [permissionId],
         };
         console.log('Payload data:', data);
-    
+
+
+        // Validate fields before submitting
+        if (!validateFields()) {
         // Dispatch addNewStaffThunk and handle the response to get staffId
         dispatch(addNewStaffThunk(data)).then((response: any) => {
             if (response.meta.requestStatus === 'fulfilled') {
@@ -93,6 +133,10 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                 alert('Failed to create profile. Please try again.');
             }
         });
+        } else {
+            // Validation failed, show errors
+            console.log('Validation failed', errors);
+        }
     };
     
     
@@ -123,8 +167,10 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="text"
                                 value={formValues.firstName}
                                 onChange={(e) => handleChange('firstName', e.target.value)}
+                                className={errors.firstName ? styles.errorBorder : ''}
                                 required
                             />
+                            {errors.firstName && <span className={styles.errorText}>{errors.firstName}</span>}
                         </div>
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Last name" />
@@ -135,8 +181,10 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="text"
                                 value={formValues.lastName}
                                 onChange={(e) => handleChange('lastName', e.target.value)}
+                                className={errors.lastName ? styles.errorBorder : ''}
                                 required
                             />
+                            {errors.lastName && <span className={styles.errorText}>{errors.lastName}</span>}
                         </div>
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Phone number" />
@@ -147,8 +195,10 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="text"
                                 value={formValues.phoneNumber}
                                 onChange={(e) => handleChange('phoneNumber', e.target.value)}
+                                className={errors.phoneNumber ? styles.errorBorder : ''}
                                 required
                             />
+                            {errors.phoneNumber && <span className={styles.errorText}>{errors.phoneNumber}</span>}
                         </div>
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Email address" />
@@ -159,8 +209,10 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 type="email"
                                 value={formValues.email}
                                 onChange={(e) => handleChange('email', e.target.value)}
+                                className={errors.email ? styles.errorBorder : ''}
                                 required
                             />
+                            {errors.email && <span className={styles.errorText}>{errors.email}</span>}
                         </div>
                     </div>
                 </div>
@@ -175,8 +227,10 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 MenuProps={MenuProps}
+                                className={errors.role ? styles.error : ''}
                                 required
                             >
+                                
                                 <CoustomMenuItem value="" disabled>
                                     <em>Select role</em>
                                 </CoustomMenuItem>
@@ -192,6 +246,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 ))}
 
                             </CustomizedSelects>
+                            {errors.role && <span className={styles.errorText}>{errors.role}</span>}
                         </div>
                         <div className={styles['input-wrapper']}>
                             <InputFieldLabel labelText="Permissions" />
@@ -203,8 +258,10 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 MenuProps={MenuProps}
+                                className={errors.permission ? styles.error : ''}
                                 required
                             >
+                                
                                 <CoustomMenuItem value="" disabled>
                                     <em>Select permission level</em>
                                 </CoustomMenuItem>
@@ -219,6 +276,7 @@ export const CreateCareTeam = ({ className }: CreateCareTeamProps) => {
                                     </CoustomMenuItem>
                                 ))}
                             </CustomizedSelects>
+                            {errors.permission && <span className={styles.errorText}>{errors.permission}</span>}
                         </div>
                     </div>
                 </div>

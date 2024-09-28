@@ -52,7 +52,7 @@ export const EditCategories = ({ className }: EditContentProps) => {
                     <header className={styles.header}>
                         <Typography variant="h5">Edit categories</Typography>
                         <div className={styles.leftButtonContainer}>
-                            <DeleteButton showLeftIcon onButtonClick={handleDeleteModal} />
+                            {/* <DeleteButton showLeftIcon onButtonClick={handleDeleteModal} /> */}
                             <EditButton
                                 buttonText="Cancel"
                                 onButtonClick={() => navigate('/content/categories')}

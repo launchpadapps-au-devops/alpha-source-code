@@ -67,23 +67,38 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const handleNextPage = () => {
-        console.log('currentPage', currentPage);
-        dispatch(fetchTipsThunk(currentPage + 1)).then((res: any) => {
-            console.log('res', res);
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
+    const fetchStaffData = (page: number) => {
+        dispatch(fetchTipsThunk(page)).then((res: any) => {
+            if (res.payload) {
+                setTotalPages(res.payload.meta.totalPages);
+                setTotalRecords(res.payload.meta.totalRecords);
+            }
         });
-        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-    };
-    const handlePreviousPage = () => {
-        dispatch(fetchTipsThunk(currentPage - 1)).then((res: any) => {
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
     };
 
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+            fetchStaffData(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            fetchStaffData(currentPage - 1);
+        }
+    };
+    
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        fetchStaffData(pageNumber);
+    };
+
+    useEffect(() => {
+        fetchStaffData(1);
+    }, [dispatch]);
 
     const handleEditClick = (tipId: number, content: string) => {
         setIsEditable(true);
@@ -110,7 +125,7 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
         const updatedTipData: any = {
             ...updatedTip,
             content: editContent,
-            status: "ACTIVE",
+            status: 'ACTIVE',
             // Include default or computed values for required fields
             tip: updatedTip.tip || '', // Set a default value if necessary
             date: updatedTip.date || new Date().toISOString(), // Set the current date or another appropriate value
@@ -118,10 +133,8 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
 
         console.log('Updated Tip Data:', updatedTipData);
         const newUpdatedValue = {
-            
-                content: editContent,
-                day: updatedTip.day,
-            
+            content: editContent,
+            day: updatedTip.day,
         };
         // Dispatch the updated single tip object
         dispatch(addTipThunk(newUpdatedValue));
@@ -130,7 +143,6 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
         setEditTipId(null);
         setEditContent('');
     };
-
 
     const handleDeleteClick = (tipId: number) => {
         // Dispatch an action to delete the tip by its id
@@ -168,14 +180,12 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
             setTotalRecords(res.payload.meta.totalRecords);
         });
     }, [dispatch]);
-    
+
     const handleNewDailyTip = () => {
         const newUpdatedValue = {
-            
-                content: newDailytipName,
-                day: newDailytipDay,
-                status: "ACTIVE",
-            
+            content: newDailytipName,
+            day: newDailytipDay,
+            status: 'ACTIVE',
         };
         // Dispatch the updated single tip object
         dispatch(addTipThunk(newUpdatedValue));
@@ -194,132 +204,150 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
         throw new Error('Function not implemented.');
     }
 
+    const handleCancel = () => {
+        navigate('/content/dailytips');
+    };
+
     const handleBackClick = () => {
         navigate(-1); // This will navigate to the previous page
     };
 
     return (
         <>
-         <BackButton onClick={handleBackClick}/>
-        <div className={classNames(styles.container, className)}>
-            <Sidebar />
-            <div className={styles.content}>
-                <header className={styles.header}>
-                    <Typography variant="h5">Create Daily tips</Typography>
+            <BackButton onClick={handleBackClick} />
+            <div className={classNames(styles.container, className)}>
+                <Sidebar />
+                <div className={styles.content}>
+                    <header className={styles.header}>
+                        <Typography variant="h5">Create Daily tips</Typography>
 
-                    <div className={styles.leftButtonContainer}>
-                        <DeleteButton showLeftIcon />
-                        <EditButton buttonText="Cancel"  onButtonClick={() => navigate('/content/dailytips')}/>
-                    </div>
-                    <div className={styles.rightButtonContainer}>
-                        <AppButton buttonText="Save"  onButtonClick={() => navigate('/content/dailytips')}/>
-                    </div>
-                </header>
+                        <div className={styles.leftButtonContainer}>
+                            <DeleteButton showLeftIcon />
+                            <EditButton buttonText="Cancel" onButtonClick={handleCancel} />
+                        </div>
+                        <div className={styles.rightButtonContainer}>
+                            <AppButton
+                                buttonText="Save"
+                                onButtonClick={() => navigate('/content/dailytips')}
+                            />
+                        </div>
+                    </header>
 
-                <div className={styles.categories}>
-                    <div className={styles.tableheader}>
-                        <span className={styles.headerText}>Day</span>
-                        <span className={styles.headerText}>Daily tips</span>
-                    </div>
-                       
-                    <List>
-                    {newDailyTip && (
-                            <tr>
-                                <td>
-                                    <div className={styles.categoryCell}>
-                                        <input
-                                            type="text"
-                                            className={styles.contentInput1}
-                                            value={newDailytipDay}
-                                            onChange={(e: { target: { value: SetStateAction<string>; }; }) => setNewDailytipDay(e.target.value)}
-                                            required
-                                        />
-                                        <input
-                                            type="text"
-                                            className={styles.contentInput}
-                                            value={newDailytipName}
-                                            onChange={(e) => setNewDailytipName(e.target.value)}
-                                            required
-                                        />
+                    <div className={styles.categories}>
+                        <div className={styles.tableheader}>
+                            <span className={styles.headerText}>Day</span>
+                            <span className={styles.headerText}>Daily tips</span>
+                        </div>
 
-                                        <AppButton
-                                        buttonText="Save & add more"
-                                        className={styles.button}
-                                        onButtonClick={() => handleSaveAndAddMoreClick(tips)}
-                                    />
-                                        <EditButton
-                                            buttonText="Save"
-                                            className={styles.button}
-                                            onButtonClick={handleNewDailyTip}
-                                        />
-                                        <DeleteButton
-                                            buttonText="Delete"
-                                            className={styles.button}
-                                            onButtonClick={() => setnewDailyTip(false)}
-                                        />
-                                    </div>
-                                </td>
-                            </tr>
-                        )}
-                    
-                        {tips &&
-                            tips.length > 0 &&
-                            tips
-                                .filter((tip: Tip) => tip.status.toLowerCase() === 'active')
-                                .map((tip: Tip) => (
-                                    <div className={styles.listItem} key={tip.id}>
-                                        {editTipId === tip.id ? (
-                                            <>
-                                                <div className={styles.dayInput}>{tip.day}</div>
-                                                <input
-                                                    className={styles.contentInput}
-                                                    type="text"
-                                                    value={editContent}
-                                                    onChange={handleInputChange}
-                                                />
-                                                <AppButton
-                                                    buttonText="Save & add more"
-                                                    className={styles.button}
-                                                    onButtonClick={() => handleSaveClick(tip.id)}
-                                                />
-                                                <EditButton
-                                                    buttonText="Save"
-                                                    className={styles.button}
-                                                    onButtonClick={() => handleSaveClick(tip.id)}
-                                                />
-                                                <DeleteButton
-                                                    buttonText="Delete"
-                                                    className={styles.button}
-                                                    onButtonClick={() => handleDeleteClick(tip.id)}
-                                                />
-                                            </>
-                                        ) : (
-                                            <>
-                                                <div className={styles.day}>{tip.day}</div>
-                                                <div className={styles.content}>{tip.content}</div>
-                                                <EditButton
-                                                    buttonText="Edit"
-                                                    className={styles.editButton}
-                                                    onButtonClick={() =>
-                                                        handleEditClick(tip.id, tip.content)
-                                                    }
-                                                />
-                                            </>
-                                        )}
-                                    </div>
-                                ))}
-                    </List>
-                </div>
-                <div className={styles.pagination}>
-                    <CustomPagination
-                        onNextPage={handleNextPage}
-                        onPreviousPage={handlePreviousPage}
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                    />
+                        <List>
+                            {newDailyTip && (
+                                <tr>
+                                    <td>
+                                        <div className={styles.categoryCell}>
+                                            <input
+                                                type="text"
+                                                className={styles.contentInput1}
+                                                value={newDailytipDay}
+                                                onChange={(e: {
+                                                    target: { value: SetStateAction<string> };
+                                                }) => setNewDailytipDay(e.target.value)}
+                                                required
+                                            />
+                                            <input
+                                                type="text"
+                                                className={styles.contentInput}
+                                                value={newDailytipName}
+                                                onChange={(e) => setNewDailytipName(e.target.value)}
+                                                required
+                                            />
+
+                                            <AppButton
+                                                buttonText="Save & add more"
+                                                className={styles.button}
+                                                onButtonClick={() =>
+                                                    handleSaveAndAddMoreClick(tips)
+                                                }
+                                            />
+                                            <EditButton
+                                                buttonText="Save"
+                                                className={styles.button}
+                                                onButtonClick={handleNewDailyTip}
+                                            />
+                                            <DeleteButton
+                                                buttonText="Delete"
+                                                className={styles.button}
+                                                onButtonClick={() => setnewDailyTip(false)}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+
+                            {tips &&
+                                tips.length > 0 &&
+                                tips
+                                    .filter((tip: Tip) => tip.status.toLowerCase() === 'active')
+                                    .map((tip: Tip) => (
+                                        <div className={styles.listItem} key={tip.id}>
+                                            {editTipId === tip.id ? (
+                                                <>
+                                                    <div className={styles.dayInput}>{tip.day}</div>
+                                                    <input
+                                                        className={styles.contentInput}
+                                                        type="text"
+                                                        value={editContent}
+                                                        onChange={handleInputChange}
+                                                    />
+                                                    <AppButton
+                                                        buttonText="Save & add more"
+                                                        className={styles.button}
+                                                        onButtonClick={handleSaveClick(tip.id)}
+                                                    />
+                                                    <EditButton
+                                                        buttonText="Save"
+                                                        className={styles.button}
+                                                        onButtonClick={() =>
+                                                            handleSaveClick(tip.id)
+                                                        }
+                                                    />
+                                                    <DeleteButton
+                                                        buttonText="Delete"
+                                                        className={styles.button}
+                                                        onButtonClick={() =>
+                                                            handleDeleteClick(tip.id)
+                                                        }
+                                                    />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className={styles.day}>{tip.day}</div>
+                                                    <div className={styles.content}>
+                                                        {tip.content}
+                                                    </div>
+                                                    <EditButton
+                                                        buttonText="Edit"
+                                                        className={styles.editButton}
+                                                        onButtonClick={() =>
+                                                            handleEditClick(tip.id, tip.content)
+                                                        }
+                                                    />
+                                                </>
+                                            )}
+                                        </div>
+                                    ))}
+                        </List>
+                    </div>
+                    <div className={styles.pagination}>
+                        <CustomPagination
+                            onNextPage={handleNextPage}
+                            onPreviousPage={handlePreviousPage}
+                            onPageChange={handlePageChange}
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
         </>
     );
 };

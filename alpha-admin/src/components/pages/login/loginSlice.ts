@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { login } from './loginAPI'; // Assuming this is the login function you've implemented to call the login API
 import { config } from '../../../config/config';
+import { l } from 'vite/dist/node/types.d-aGj9QkWt';
 
 export interface UserDetails {
     accessToken: string;
@@ -76,6 +77,13 @@ export const loginThunk = createAsyncThunk(
             localStorage.setItem('LoggedInUserFirstName', profileResponse.data.data.firstName);
             localStorage.setItem('userType', profileResponse.data.data.userType);
             console.log(profileResponse.data.data.userType, 'userType');
+            localStorage.setItem('LoggedInUserLastName', profileResponse.data.data.lastName);
+            localStorage.setItem('LoggedInUserEmail', profileResponse.data.data.email);
+            localStorage.setItem('LoggedInUserType', userType);
+            localStorage.setItem('LoggedInUserPhone', profileResponse.data.data.phone);
+            localStorage.setItem('LoggedInUserRole', profileResponse.data.data.role.name);
+            
+            console.log(profileResponse.data.data.firstName, 'userType');
 
             // Return the combined response data (tokens and userType)
             return { ...response.data, userType };

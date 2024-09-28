@@ -15,6 +15,8 @@ export interface NewLifestyleProps {
     setPlanName: any;
     planDescription: string;
     setPlanDescription: any;
+    errors: any;
+    setErrors: (errors: any) => void;
 }
 
 export const NewLifestyle = ({
@@ -25,6 +27,8 @@ export const NewLifestyle = ({
     setPlanName,
     planDescription,
     setPlanDescription,
+    errors,
+    setErrors,
 }: NewLifestyleProps) => {
     return (
         <div className={styles.container}>
@@ -38,13 +42,14 @@ export const NewLifestyle = ({
                     </label>
                     <input
                         id="themeName"
-                        className={styles.input}
+                        className= {`${styles.input} ${errors.planName ? styles.errorBorder : ''}`}
                         type="text"
                         value={planName}
                         onChange={(e) => setPlanName(e.target.value)}
                         placeholder="Enter the plan name"
                         required
                     />
+                    {errors.planName && <span className={styles.errorText}>{errors.planName}</span>}
                 </div>
                 <div className={styles.section}>
                     <label className={styles.label} htmlFor="themeDescription">
@@ -53,12 +58,14 @@ export const NewLifestyle = ({
                     <input
                         id="themeDescription"
                         type="text"
-                        className={styles.textarea}
+                        className={`${styles.textarea} ${errors.planDescription ? styles.errorBorder : ''}`}
                         value={planDescription}
                         onChange={(e) => setPlanDescription(e.target.value)}
                         placeholder="Enter the Plan description "
                         required
                     />
+                    {errors.planDescription && 
+                        <span className={styles.errorText}>{errors.planDescription}</span>}
                 </div>
             </div>
             <div className={styles.section}>
@@ -71,12 +78,14 @@ export const NewLifestyle = ({
                 <input
                     id="internalNotes"
                     type="text"
-                    className={styles.textarea}
+                    className={`${styles.textarea} ${errors.internalNotes ? styles.errorBorder : ''}`}
                     value={internalNotes}
                     onChange={(e) => setInternalNotes(e.target.value)}
                     placeholder="This lesson will be great for anyone on the heart health plan."
                     required
                 />
+                {errors.internalNotes && 
+                    <span className={styles.errorText}>{errors.internalNotes}</span>}
             </div>
         </div>
     );

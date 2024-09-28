@@ -6,7 +6,7 @@ import styles from './customPagination.module.scss';
 interface CustomPaginationProps {
     onNextPage: () => void;
     onPreviousPage: () => void;
-    // onPageChange: (pageNumber: number) => void; // New prop for page change
+    onPageChange: (pageNumber: number) => void; // Now active to handle page change
     currentPage: number;
     totalPages: number;
 }
@@ -14,7 +14,7 @@ interface CustomPaginationProps {
 export const CustomPagination: React.FC<CustomPaginationProps> = ({
     onNextPage,
     onPreviousPage,
-    // onPageChange,
+    onPageChange, // Receiving the function prop
     currentPage,
     totalPages,
 }) => {
@@ -24,7 +24,7 @@ export const CustomPagination: React.FC<CustomPaginationProps> = ({
             pageNumbers.push(
                 <button
                     key={i}
-                    // onClick={() => onPageChange(i)}
+                    onClick={() => onPageChange(i)} // This will trigger the page change
                     className={`${styles['page-number']} ${currentPage === i ? styles['active'] : ''}`}
                 >
                     {i}

@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { Typography, Button } from '@mui/material';
 import styles from './previewLesson.module.scss';
+import './previewLessonStyles.scss';
 import { AppButton } from '../../../../../../../app-button/app-button';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../../../../content-components/sidebar/Sidebar';
@@ -9,6 +10,7 @@ import { PublishButton } from '../../../../../content-components/publish-button/
 import { useAppDispatch } from '../../../../../../../../app/hooks';
 import { addLessonThunk } from '../../../lessonsSlice';
 import { BackButton } from '../../../../../../../back-button/backButton';
+import { useEffect } from 'react';
 
 interface TagProps {
     label: string;
@@ -40,6 +42,9 @@ export const PreviewLessons = ({
     const handleBackClick = () => {
         onBack(); // Use the onBack function passed from CreateNewLesson to go back to the form
     };
+    useEffect(() => {
+        console.log('cccccd', data);
+    }, [data]);
 
     return (
         <>
@@ -59,7 +64,10 @@ export const PreviewLessons = ({
                                 // onButtonClick={() => navigate(`/content/lessons/editlesson`)}
                             />
                             <EditButton buttonText="Save as draft" />
-                            <AppButton buttonText="Publish" onButtonClick={() => handlePublishClick()} />
+                            <AppButton
+                                buttonText="Publish"
+                                onButtonClick={() => handlePublishClick()}
+                            />
                         </div>
                     </header>
 
@@ -101,13 +109,16 @@ export const PreviewLessons = ({
                     {/* Tags */}
                     <div className="tags-component">
                         {data.lessonTags.map(
-                            (category: { [s: string]: unknown } | ArrayLike<unknown>, index: number) => (
+                            (
+                                category: { [s: string]: unknown } | ArrayLike<unknown>,
+                                index: number
+                            ) => (
                                 <div key={index} className="tag-category">
                                     {Object.entries(category).map(([title, tags], idx) => (
                                         <div key={idx}>
                                             <div className="category-title">{title}</div>
                                             <div className="tags">
-                                                {(tags as string[] || []).map(
+                                                {((tags as string[]) || []).map(
                                                     (tag: string, tagIdx: number) => (
                                                         <Tag key={tagIdx} label={tag} />
                                                     )
@@ -128,6 +139,14 @@ export const PreviewLessons = ({
                         )}
                     </div>
 
+                    {/* Lesson name, lesson description */}
+                    <div className="lesson-name">
+                        <h3>Lesson Name</h3>
+                        <div className="lesson-name-content">{data.name}</div>
+                        <h3>Lesson Description</h3>
+                        <div className="lesson-description">{data.description}</div>
+                    </div>
+
                     {/* Screens */}
                     <div className="lesson-screens">
                         <h3>Screens</h3>
@@ -135,10 +154,16 @@ export const PreviewLessons = ({
                             <div key={index} className="screen-item">
                                 <h4>Screen {index + 1}</h4>
                                 {screen.media && (
-                                    <img src={screen.media} alt={`Screen ${index + 1}`} style={{ maxWidth: '100%' }} />
+                                    <img
+                                        src={screen.media}
+                                        alt={`Screen ${index + 1}`}
+                                        style={{ maxWidth: '100%' }}
+                                    />
                                 )}
-                                <div className="subtitle">Subtitle: {screen.subtitle}</div>
-                                <div className="content">Content: {screen.content}</div>
+                                <h3>Subtitle</h3>
+                                <div className="subtitle">{screen.subtitle}</div>
+                                <h3>Content</h3>
+                                <div className="content">{screen.content}</div>
                             </div>
                         ))}
                     </div>
@@ -149,21 +174,24 @@ export const PreviewLessons = ({
                         {data.quizData.map((quiz: any, index: number) => (
                             <div key={index} className="quiz-item">
                                 <h4>Quiz {index + 1}</h4>
-                                <div className="quiz-name">Quiz Name: {quiz.quizName}</div>
-                                <div className="quiz-question">Question: {quiz.question}</div>
-                                <div className="quiz-instructions">Instructions: {quiz.userInstructions}</div>
+                                <h3>Quiz Name</h3>
+                                <div className="quiz-name">{quiz.quizName}</div>
+                                <h3>Quiz information</h3>
+                                <div className="quiz-question">{quiz.question}</div>
+                                <h3>Quiz Instructions</h3>
+                                <div className="quiz-instructions">{quiz.userInstructions}</div>
                                 {quiz.type === 'multiple-choice' && (
                                     <div className="quiz-options">
-                                        <h5>Options:</h5>
-                                        <ul>
-                                            {quiz.options.map((option: string, optIndex: number) => (
-                                                <li key={optIndex}>{option}</li>
+                                        <h5>Options</h5>
+                                        <ol>
+                                            {quiz.options.map((option: any, optIndex: number) => (
+                                                <li key={optIndex}>{option.option}</li>
                                             ))}
-                                        </ul>
-                                        <h5>Correct Answers:</h5>
+                                        </ol>
+                                        <h5>Correct Answers</h5>
                                         <ul>
-                                            {quiz.answer.map((answer: string, ansIndex: number) => (
-                                                <li key={ansIndex}>{answer}</li>
+                                            {quiz.answer.map((answer: any, ansIndex: number) => (
+                                                <li key={ansIndex}>{answer.option}</li>
                                             ))}
                                         </ul>
                                     </div>

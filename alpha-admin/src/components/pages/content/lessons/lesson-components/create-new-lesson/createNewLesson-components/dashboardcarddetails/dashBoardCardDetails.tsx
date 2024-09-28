@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import './dashBoardCardDetails.scss';
 import { UploadButton } from '../../../../../content-components/upload-button/uploadButton';
 import { Vector } from '../../../../../../../icon/glyps/vector';
@@ -6,10 +6,18 @@ import { uploadFile } from '../../../../../../../fileUpload/fileUploadSlice';
 import { useAppDispatch } from '../../../../../../../../app/hooks';
 
 export interface DashboardCardDetailsProps {
-    dashboardCardDetails: any;
-    setDashboardCardDetails: (dashboardCardDetails: Object) => void;
+    dashboardCardDetails: {
+        coverImage: string;
+        lessonName: string;
+        lessonDescription: string;
+    };
+    setDashboardCardDetails: Dispatch<SetStateAction<{
+        coverImage: string;
+        lessonName: string;
+        lessonDescription: string;
+    }>>;
     data: any;
-    setData: any;
+    setData: (data: any) => void;
     errors: any;
     setErrors: (errors: any) => void;
 }

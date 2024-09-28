@@ -11,6 +11,7 @@ import Sidebar from '../content-components/sidebar/Sidebar';
 import { useEffect, useRef, useState } from 'react';
 import TabBar from '../content-components/tab-bar/TabBar';
 // import { LessonTable } from './lesson-components/lesson-table/lessonTable';
+// import { LessonTable } from './lesson-components/lesson-table/lessonTable';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../back-button/backButton';
 import CategoryDropdown from '../content-components/category-dropdown/categoryDropDown';
@@ -22,7 +23,6 @@ import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { fetchLessonsThunk } from './lesson-components/lessonsSlice';
 // lessons.tsx
 import { LessonTable, Lesson } from './lesson-components/lesson-table/lessonTable';
-
 
 export interface LessonsProps {
     className?: string;
@@ -40,56 +40,54 @@ export const Lessons = ({ className }: LessonsProps) => {
     const [menuWidth, setMenuWidth] = useState<number>(0);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const dispatch = useAppDispatch();
-    const [categories, setCategories] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [categories, setCategories] = useState([]); // State for categories
     const [lessons, setLessons] = useState<Lesson[]>([]); // State to store lessons
     const [filteredLessons, setFilteredLessons] = useState<Lesson[]>([]); // State to store filtered lessons
     const [selectedCategory, setSelectedCategory] = useState<string>(''); // State for selected category
     const [isOpen, setIsOpen] = useState<DropdownState>({
-        category: false
+        category: false,
     });
 
     useEffect(() => {
         dispatch(fetchCategoriesForLessonsThunk(100)).then((response: any) => {
             if (response.payload) {
-                const activeCategories = response.payload.data.filter((cat: { status: string; }) => cat.status.toLowerCase() === 'active');
+                const activeCategories = response.payload.data.filter(
+                    (cat: { status: string }) => cat.status.toLowerCase() === 'active'
+                );
                 setCategories(activeCategories);
             }
         });
-        
-        dispatch(fetchLessonsThunk(1)).then((res: any) => {
+
+        dispatch(fetchLessonsThunk(currentPage)).then((res: any) => {
             if (res.payload) {
                 setLessons(res.payload.data); // Store lessons in state
                 setFilteredLessons(res.payload.data); // Initially, show all lessons
             }
         });
-    }, [dispatch]);
+    }, [dispatch, currentPage]);
 
     const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedId = event.target.value;
         setSelectedCategory(selectedId);
-    
+
         // Filter lessons based on the selected category
         if (selectedId) {
-            const filtered = lessons.filter(lesson => 
-                lesson.categoryId.toString() === selectedId // Access category.id for filtering
+            const filtered = lessons.filter(
+                (lesson) => lesson.categoryId.toString() === selectedId // Access category.id for filtering
             );
             setFilteredLessons(filtered);
         } else {
             setFilteredLessons(lessons); // Show all lessons if no category is selected
         }
     };
-    
+
     const handleDropdownClick = (dropdown: string) => {
         setIsOpen((prevState) => ({
             ...prevState,
             [dropdown]: !prevState[dropdown],
         }));
     };
-    // const tabs = ['All lessons', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
-
-    // const handleTabChange = (newValue: number) => {
-    //     setSelectedTab(newValue);
-    // };
 
     const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -104,14 +102,18 @@ export const Lessons = ({ className }: LessonsProps) => {
         handleClose();
     };
 
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
+
     useEffect(() => {
         if (buttonRef.current) {
             setMenuWidth(buttonRef.current.offsetWidth);
         }
-    }, [buttonRef.current]);
+    }, [buttonRef]);
 
     const handleBackClick = () => {
-        navigate(-1); // This will navigate to the previous page
+        navigate(-1); // Navigate to the previous page
     };
 
     return (
@@ -192,9 +194,24 @@ export const Lessons = ({ className }: LessonsProps) => {
                                     {category.name}
                                 </option>
                             ))}
+                            <option value="" disabled hidden>
+                                Select category
+                            </option>
+                            {categories.map((category: any) => (
+                                <option key={category.id} value={category.id}>
+                                    {category.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
-                    <LessonTable lessons={filteredLessons} setLessons={setLessons} />  {/* Pass filtered lessons */}
+                    <LessonTable
+                        lessons={lessons}  // Pass lessons state
+                        setLessons={setLessons}  // Pass setLessons
+                        filteredLessons={filteredLessons}  // Pass filteredLessons state
+                        setFilteredLessons={setFilteredLessons}  // Pass setFilteredLessons
+                        currentPage={currentPage}  // Pass currentPage state
+                        onPageChange={handlePageChange}  // Pass handlePageChange
+                    />
                 </div>
             </div>
         </>

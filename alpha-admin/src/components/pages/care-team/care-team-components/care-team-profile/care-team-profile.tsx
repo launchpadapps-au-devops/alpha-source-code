@@ -102,7 +102,7 @@ export const CareTeamProfile = ({ className }: CareTeamProfileProps) => {
                                 <span className={styles['profile-role']}>{member.role.name}</span>
                             </div>
                             <div className={styles['profile-info']}>
-                                <span className={styles['profile-workplace']}>Healthicare</span>
+                                <span className={styles['profile-workplace']}>Healthcare</span>
                                 <span className={styles['profile-status']}>
                                     {member.permissions.length > 0
                                         ? member.permissions[0].name

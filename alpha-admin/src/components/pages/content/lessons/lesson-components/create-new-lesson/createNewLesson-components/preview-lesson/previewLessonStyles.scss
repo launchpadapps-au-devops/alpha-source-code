@@ -1,0 +1,78 @@
+
+    .lesson-name {
+      .lesson-name-content {
+        display: flex;
+        padding: 12px;
+        align-items: center;
+        gap: 12px;
+        align-self: stretch;
+        border-radius: 6px;
+        border: 1px solid var(--Gray-03, #CDD3D6);
+        background: var(--Shades-White, #FFF);
+      }
+      .lesson-description {
+        display: flex;
+        padding: 12px;
+        align-items: center;
+        gap: 12px;
+        align-self: stretch;
+        border-radius: 6px;
+        border: 1px solid var(--Gray-03, #CDD3D6);
+        background: var(--Shades-White, #FFF);
+      }
+    }
+  
+  
+  .cover-image-section {
+    margin-top: 20px; /* Add spacing between sections */
+  
+    img {
+      width: 87px; /* Fixed width */
+      height: 75px; /* Fixed height */
+      flex-shrink: 0;
+      // background: url('/path-to-your-image/image.png') lightgray -66.048px -18.105px / 247.468% 191.454% no-repeat; /* Image positioning and scaling */
+      border-radius: 4px; /* Optional: rounded corners */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: light shadow */
+      background-size: cover; /* Ensures image covers the container */
+      background-position: center; /* Centers the image */
+    }
+  }
+  
+  .lesson-screens,
+  .lesson-quizzes {
+    margin-top: 20px; /* Add spacing between sections */
+  
+    h3 {
+      font-size: 1.25rem;
+      color: #333; /* Darker heading color */
+      // margin-bottom: 15px;
+    }
+  
+    .screen-item,
+    .quiz-item {
+      // margin-bottom: 15px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+    }
+  
+    .subtitle,
+    .content,
+    .quiz-name,
+    .quiz-question,
+    .quiz-instructions {
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      display: flex;
+      padding: 12px;
+      align-items: center;
+      gap: 12px;
+      align-self: stretch;
+      border-radius: 6px;
+      border: 1px solid var(--Gray-03, #CDD3D6);
+      background: var(--Shades-White, #FFF);
+    }
+  }
+  

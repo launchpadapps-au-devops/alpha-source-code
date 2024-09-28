@@ -34,6 +34,7 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: true,
         select: false,
+        status: '',
     },
     {
         lessonCode: 2,
@@ -43,6 +44,8 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: false,
         select: false,
+        status: '',
+
     },
     {
         lessonCode: 3,
@@ -52,6 +55,8 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: false,
         select: false,
+        status: '',
+
     },
     {
         lessonCode: 4,
@@ -61,6 +66,7 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: true,
         select: false,
+        status: '',
     },
     {
         lessonCode: 5,
@@ -70,6 +76,7 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: false,
         select: false,
+        status: '',
     },
     {
         lessonCode: 6,
@@ -79,6 +86,7 @@ const initialLessons: Lesson[] = [
         category: 'Nutrition',
         quizData: true,
         select: false,
+        status: '',
     },
 ];
 
@@ -214,16 +222,21 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                                 onCategoryChange={setCategory}
                                 data={data}
                                 setData={setData}
+                                errors={{}}
+                                setErrors={() => {}}
                             />
                         </div>
                         <div className={styles.rightColumn}>
-                            <AddThemeDetails category={category} data={data} setData={setData} />
+                            <AddThemeDetails category={category} data={data} setData={setData}  errors={{}}
+                                setErrors={() => {}}/>
                             {!hideLessons && (
                                 <LessonManagement
                                     selectedLessons={selectedLessons}
                                     onRemoveLesson={handleRemoveLessonFromTheme}
                                     onAddLessons={handleOpenSidebar}
                                     newLessons={newLessons}
+                                    errors={{}}
+                                    setErrors={() => {}}
                                 />
                             )}
                             <div className={styles.section}>
@@ -241,7 +254,8 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                                     )}
                                 </div>
                                 {showHabit ? (
-                                    <Habit showDeleteButton={false} data={data} setData={setData} />
+                                    <Habit showDeleteButton={false} data={data} setData={setData}  errors={{}}
+                                    setErrors={() => {}}/>
                                 ) : (
                                     <EditButton
                                         buttonText="Add Habit"

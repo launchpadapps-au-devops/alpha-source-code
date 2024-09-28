@@ -20,6 +20,7 @@ export interface Lesson {
     category: string;
     quizData: boolean;
     select: boolean;
+    status: string;
 }
 
 export interface SelectLessonSidebarProps {
@@ -43,9 +44,9 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        dispatch(fetchThemesThunk(1)).then((res: any) => {
-            console.log('res', res);
+    // useEffect(() => {
+    //     dispatch(fetchThemesThunk(1)).then((res: any) => {
+    //         console.log('res', res);
 
             // Extract lessons from the response and set them in the Lessons state
             // const extractedLessons = res.payload.data.flatMap((theme: any) =>
@@ -61,8 +62,9 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
             // );
 
             // setLessons(extractedLessons);
-        });
-    }, []);
+    //     });
+    // }, []);
+
     useEffect(() => {
         dispatch(fetchLessonsThunk(1)).then((res: any) => {
             console.log('res', res);
@@ -76,6 +78,7 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
                 category: lesson.category.name,
                 quizData: false,
                 select: false,
+                status: lesson.status,
             }));
 
             setLessons(extractedLessons);
@@ -135,10 +138,12 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
         setSearchQuery(event.target.value);
     };
 
-    const filteredLessons = Lessons.filter((lesson: Lesson) =>
-        lesson.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredLessons = Lessons.filter(
+        (lesson: Lesson) =>
+            lesson.name?.toLowerCase().includes(searchQuery.toLowerCase()) && 
+            (lesson.status?.toLowerCase() === 'active' || lesson.status?.toLowerCase() === 'draft') // Check for 'active' or 'draft'
     );
-
+    
     const handleCreateNewLesson = () => {
         navigate('/content/lessons/createlesson');
     };

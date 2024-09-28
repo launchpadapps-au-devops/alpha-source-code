@@ -10,9 +10,17 @@ interface AddThemeDetailsProps {
     category: string;
     data: any;
     setData: any;
+    errors: any;
+    setErrors: (errors: any) => void;
 }
 
-export const AddThemeDetails: FC<AddThemeDetailsProps> = ({ category, data, setData }) => {
+export const AddThemeDetails: FC<AddThemeDetailsProps> = ({
+    category,
+    data,
+    setData,
+    errors,
+    setErrors,
+}) => {
     return (
         <div className={styles.container}>
             <div className={styles.section}>
@@ -45,7 +53,7 @@ export const AddThemeDetails: FC<AddThemeDetailsProps> = ({ category, data, setD
                 </label>
                 <input
                     id="themeName"
-                    className={styles.input}
+                    className={`${styles.input} ${errors.name ? styles.errorBorder : ''}`} // Apply error class if there's an error
                     type="text"
                     value={data.themeData.name}
                     onChange={(e) => {
@@ -57,6 +65,7 @@ export const AddThemeDetails: FC<AddThemeDetailsProps> = ({ category, data, setD
                     placeholder="Enter the theme name"
                     required
                 />
+                {errors.name && <p className={styles.errorText}>{errors.name}</p>}
             </div>
             <div className={styles.section}>
                 <label className={styles.label} htmlFor="themeDescription">
@@ -65,7 +74,7 @@ export const AddThemeDetails: FC<AddThemeDetailsProps> = ({ category, data, setD
                 <input
                     id="themeDescription"
                     type="text"
-                    className={styles.textarea}
+                    className={`${styles.input} ${errors.description ? styles.errorBorder : ''}`}
                     value={data.themeData.description}
                     onChange={(e) => {
                         setData({
@@ -76,6 +85,7 @@ export const AddThemeDetails: FC<AddThemeDetailsProps> = ({ category, data, setD
                     placeholder="Enter the theme description"
                     required
                 />
+                {errors.description && <p className={styles.errorText}>{errors.description}</p>}
             </div>
         </div>
     );

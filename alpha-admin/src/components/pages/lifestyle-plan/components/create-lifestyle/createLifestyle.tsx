@@ -16,13 +16,13 @@ import { fetchThemesThunk } from '../../../content/themes/themes-components/them
 import { AddThemes } from '../add-themes/addThemes';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../back-button/backButton';
+import React from 'react';
 
 export interface CreateLifestyleProps {
     className?: string;
 }
 
 export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
-
     const navigate = useNavigate();
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -54,6 +54,7 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
     const dispatch = useAppDispatch();
     const [themes, setThemes] = useState([]);
     const [selectedThemes, setSelectedThemes] = useState<any>([]);
+    const [errors, setErrors] = React.useState<any>({});
     console.log('selectedThemes', selectedThemes);
 
     const onUpdateThemes = (theme: any) => {
@@ -90,6 +91,26 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
         });
     }, []);
 
+    const validateFields = () => {
+        let fieldErrors: any = {};
+        if (!planName) {
+            fieldErrors.planName = 'Please enter the plan name';
+        }
+        if (!planDescription) {
+            fieldErrors.planDescription = 'Please enter the plan description';
+        }
+        if (!internalNotes) {
+            fieldErrors.internalNotes = 'Please enter the internal notes';
+        }
+        if (selectedThemes.length === 0) {
+            fieldErrors.selectedThemes = 'Please select at least one theme';
+        }
+
+        setErrors(fieldErrors);
+
+        return Object.keys(fieldErrors).length === 0;
+    };
+
     const handleSubmit = () => {
         const data = {
             planData: {
@@ -103,17 +124,54 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
             },
             themes: selectedThemes,
         };
-
-        if (isEditMode) {
-            dispatch(updatePlanThunk({ id: id, plan: data })).then(() => {
-                navigate('/lifestyle-plan');
-            });
+    
+        // Run validation first
+        if (!validateFields()) {
+            if (isEditMode) {
+                // Call updatePlanThunk and handle promise result
+                dispatch(updatePlanThunk({ id: id, plan: data }))
+                    .then((response: any) => {
+                        if (response.meta.requestStatus === "fulfilled") {
+                            navigate('/lifestyle-plan'); // Navigate only on success
+                        } else if (response.meta.requestStatus === "rejected") {
+                            handleAPIError(response.error); // Only handle error if rejected
+                        }
+                    })
+                    .catch((err: any) => {
+                        console.log('Error during update:', err);
+                    });
+            } else {
+                // Call addPlanThunk and handle promise result
+                dispatch(addPlanThunk(data))
+                    .then((response: any) => {
+                        if (response.meta.requestStatus === "fulfilled") {
+                            navigate('/lifestyle-plan'); // Navigate only on success
+                        } else if (response.meta.requestStatus === "rejected") {
+                            handleAPIError(response.error); // Only handle error if rejected
+                        }
+                    })
+                    .catch((err: any) => {
+                        console.log('Error during add plan:', err);
+                    });
+            }
         } else {
-            dispatch(addPlanThunk(data)).then(() => {
-                navigate('/lifestyle-plan');
-            });
+            // Validation failed, show errors
+            console.log('Validation failed', errors);
         }
     };
+    
+    const handleAPIError = (error: any) => {
+        if (error?.code === 400 && error.message === "Unique constraint violation error") {
+            // Handle specific unique constraint violation error
+            console.error("Unique constraint violation:", error.message);
+            alert("A plan with the same unique field (e.g., planCode or name) already exists.");
+        } else {
+            console.error("API error:", error?.message);
+        }
+    };
+    
+    
+    
 
     const handleDelete = () => {
         const data = {
@@ -179,6 +237,8 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
                                     setPlanName={setPlanName}
                                     planDescription={planDescription}
                                     setPlanDescription={setPlanDescription}
+                                    errors={errors}
+                                    setErrors={setErrors}
                                 />
                                 <div className={styles.ButtonContainer}>
                                     <EditButton
@@ -195,6 +255,8 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
                     themes={themes}
                     onUpdateThemes={onUpdateThemes}
                     setThemeView={setThemeView}
+                    errors={errors}
+                    setErrors={setErrors}
                 />
             )}
         </>

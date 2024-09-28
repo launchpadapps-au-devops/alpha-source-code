@@ -54,23 +54,38 @@ export const DailyTips = ({ className }: ContentProps) => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const handleNextPage = () => {
-        console.log('currentPage', currentPage);
-        dispatch(fetchTipsThunk(currentPage + 1)).then((res: any) => {
-            console.log('res', res);
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
+    const fetchStaffData = (page: number) => {
+        dispatch(fetchTipsThunk(page)).then((res: any) => {
+            if (res.payload) {
+                setTotalPages(res.payload.meta.totalPages);
+                setTotalRecords(res.payload.meta.totalRecords);
+            }
         });
-        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-    };
-    const handlePreviousPage = () => {
-        dispatch(fetchTipsThunk(currentPage - 1)).then((res: any) => {
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
     };
 
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+            fetchStaffData(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            fetchStaffData(currentPage - 1);
+        }
+    };
+    
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        fetchStaffData(pageNumber);
+    };
+
+    useEffect(() => {
+        fetchStaffData(1);
+    }, [dispatch]);
     const handleEditClick = (tipId: number, content: string) => {
         setIsEditable(true);
         setEditTipId(tipId);
@@ -265,6 +280,7 @@ export const DailyTips = ({ className }: ContentProps) => {
                                                 <AppButton
                                                     buttonText="Save & add more"
                                                     className={styles.button}
+                                                    onButtonClick={() => handleSaveClick(tip.id)}
                                                 />
                                                 <EditButton
                                                     buttonText="Save"
@@ -302,6 +318,7 @@ export const DailyTips = ({ className }: ContentProps) => {
                     <CustomPagination
                         onNextPage={handleNextPage}
                         onPreviousPage={handlePreviousPage}
+                        onPageChange={handlePageChange}
                         currentPage={currentPage}
                         totalPages={totalPages}
                     />

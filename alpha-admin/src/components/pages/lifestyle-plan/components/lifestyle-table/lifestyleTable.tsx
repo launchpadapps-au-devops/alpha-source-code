@@ -16,6 +16,8 @@ import { useAppDispatch } from '../../../../../app/hooks';
 import { fetchPlansThunk, updatePlanThunk } from '../lifeStyleSlice';
 // import {TableFooter} from '../../../content/content-components/table-footer/TableFooter';
 import { CustomPagination } from '../../../content/content-components/custom-pagination/customPagination';
+import { PublishLessonModal } from '../../../content/lessons/lesson-components/publish-lesson-modal/publishLessonModal';
+import { UnpublishLessonModal } from '../../../content/lessons/lesson-components/unpublish-lesson-modal/unpublishLessonModal';
 
 const initialLifeStyles = [
     { code: 1, name: 'Heart health', dateCreated: '26/06/2024', published: false },
@@ -102,7 +104,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                 )
             );
         }
-        setOpenPublishModal(false);
+        setOpenPublishModal(true);
     };
 
     const handleUnpublish = () => {
@@ -113,7 +115,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                 )
             );
         }
-        setOpenUnpublishModal(false);
+        setOpenUnpublishModal(true);
     };
 
     const handleCloseModal = () => {
@@ -121,9 +123,11 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
         setOpenUnpublishModal(false);
     };
 
-    const handleRowClick = (id: any) => {
+    const handleRowClick = (id: any, index: number) => {
+        setSelectedThemeIndex(index);  // Ensure index is set correctly
         navigate(`/lifestyle-plan/view/${id}`);
     };
+    
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -159,7 +163,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                         {activePlans.map((plan: any, index: any) => (
                             <TableRow
                                 key={index}
-                                onClick={() => handleRowClick(plan.id)}
+                                onClick={() => handleRowClick(plan.id, index)}
                                 style={{ cursor: 'pointer' }}
                             >
                                 <TableCell className={styles['code']}>{plan.name}</TableCell>
@@ -179,11 +183,12 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                 <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
+                    onPageChange={setCurrentPage}
                     currentPage={currentPage}
                     totalPages={totalPages}
                 />
             </div>
-            {/* {openPublishModal && selectedThemeIndex !== null && (
+            {openPublishModal && selectedThemeIndex !== null && (
                 <PublishLessonModal
                     open={openPublishModal}
                     descriptionText={
@@ -197,8 +202,8 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                     closeModal={handleCloseModal}
                     handlePublish={handlePublish}
                 />
-            )} */}
-            {/* {openUnpublishModal && selectedThemeIndex !== null && (
+            )} 
+            {openUnpublishModal && selectedThemeIndex !== null && (
                 <UnpublishLessonModal
                     open={openUnpublishModal}
                     descriptionText={
@@ -215,7 +220,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                     closeModal={handleCloseModal}
                     handleunpublish={handleUnpublish}
                 />
-            )} */}
+            )}
         </>
     );
 };

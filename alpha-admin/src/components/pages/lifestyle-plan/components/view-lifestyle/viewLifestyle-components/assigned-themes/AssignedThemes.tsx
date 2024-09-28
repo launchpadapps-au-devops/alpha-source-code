@@ -14,6 +14,8 @@ const AssignedThemes = ({ className, plan }: AssignedThemesProps) => {
     console.log('plan', plan);
     const [selectedTab, setSelectedTab] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+
+    // Handle page change in pagination
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
     };
@@ -33,12 +35,14 @@ const AssignedThemes = ({ className, plan }: AssignedThemesProps) => {
                 <ThemesTable
                     themes={plan.themes}
                     setThemes={undefined}
-                    currentPage={1} 
+                    currentPage={currentPage} 
                     totalPages={0}
                     setTotalPages={undefined}
+                    // currentPage={currentPage} // Pass currentPage
+                    onPageChange={handlePageChange} // Pass handlePageChange
                     totalRecords={0}
                     setTotalRecords={undefined}
-                    onPageChange={handlePageChange} 
+                    // onPageChange={handlePageChange} 
                     onUpdateThemes={function (updatedLessons: Lesson[]): void {
                         throw new Error('Function not implemented.');
                     }}

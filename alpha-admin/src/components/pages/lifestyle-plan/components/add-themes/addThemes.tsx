@@ -32,6 +32,7 @@ import { CheckBox } from '@mui/icons-material';
 import { Check } from '../../../../icon/glyps/check';
 // import {TableFooter} from '../../../content/content-components/table-footer/TableFooter';
 import { ThemesTable } from '../../../content/themes/themes-components/themes-table/themes-table';
+import { fetchCategoriesForLessonsThunk } from '../../../content/categories/category-component/categorySlice';
 
 // const initialLessons: Lesson[] = [
 //     { code: 1, title: 'Lesson 1', quiz: true, published: true },
@@ -45,9 +46,11 @@ export interface ThemesTableProps {
     onUpdateThemes: (updatedLessons: Lesson[]) => void;
     setThemeView: any;
     // onAddThemesToPlan: (selected: Lesson[]) => void;
+    errors: any;
+    setErrors: (errors: any) => void;
 }
 
-export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, setThemeView }) => {
+export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, setThemeView, errors, setErrors }) => {
     // const [themes, setThemes] = useState(initialThemes);
     var [themes, setThemes] = useState<any>([]);
     const [theme, setTheme] = useState([]);
@@ -61,7 +64,11 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
     const tabs = ['All themes', 'Mental wellbeing', 'Nutrition', 'Physical activity'];
     const [totalPages, setTotalPages] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
+    // const [currentPage, setCurrentPage] = useState(1);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(''); // State to track selected category
+    const [filteredThemes, setFilteredThemes] = useState([]); // Add state for filtered themes
+    const [currentPage, setCurrentPage] = useState(1); // Track current page
     // const totalPages = 10;
 
     const handleNextPage = () => {
@@ -72,8 +79,19 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
         setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
     };
 
-    const handlePageChange = (newPage: number) => {
-        setCurrentPage(newPage);
+    // Function to handle category change
+    const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const categoryId = parseInt(event.target.value, 10); // Parse to integer since IDs are numbers
+        setSelectedCategory(event.target.value);
+
+        if (categoryId) {
+            // Filter themes based on selected category ID
+            const filtered = theme.filter((th: any) => th.category.id === categoryId);
+            setFilteredThemes(filtered);
+        } else {
+            // If no category is selected, show all themes
+            setFilteredThemes(theme);
+        }
     };
 
     useEffect(() => {
@@ -92,7 +110,6 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
     };
 
     const handleToggle = (theme: any, index: number) => {
-
         // Create a new copy of the theme object
         const newTheme = { ...theme, isPublished: !theme.isPublished };
 
@@ -161,6 +178,34 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
         );
     };
 
+    const fetchThemes = (page: number) => {
+        dispatch(fetchThemesThunk(page)).then((res: any) => {
+            setTheme(res.payload.data);
+            setFilteredThemes(res.payload.data); // Update filtered themes
+            setTotalPages(res.payload.meta.totalPages);
+            setTotalRecords(res.payload.meta.totalRecords);
+        });
+    };
+
+    useEffect(() => {
+        dispatch(fetchCategoriesForLessonsThunk(100)).then((response: any) => {
+            if (response.payload) {
+                const activeCategories = response.payload.data.filter(
+                    (cat: { status: string }) => cat.status.toLowerCase() === 'active'
+                );
+                setCategories(activeCategories);
+            }
+        });
+    }, [dispatch]);
+
+    // Handle page change in pagination
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
+    useEffect(() => {
+        fetchThemes(currentPage); // Fetch themes for the current page
+    }, [currentPage]);
+
     return (
         <>
             <TableContainer component={Paper}>
@@ -174,9 +219,27 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
                         />
                     </div>
                 </header>
-                <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
+                {/* <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} /> */}
+                <div className={styles.section}>
+                    <h3 className={styles.label}>Category</h3>
+                    <select
+                        id="internalNotes"
+                        className={styles.textarea}
+                        value={selectedCategory}
+                        onChange={handleCategoryChange} // Correctly referenced here
+                    >
+                        <option value="" disabled hidden>
+                            Select category
+                        </option>
+                        {categories.map((category: any) => (
+                            <option key={category.id} value={category.id}>
+                                {category.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
                 <ThemesTable
-                    themes={themes}
+                    themes={filteredThemes}
                     setThemes={setThemes}
                     onUpdateThemes={onUpdateThemes}
                     showSelectColumn
@@ -186,6 +249,8 @@ export const AddThemes: React.FC<ThemesTableProps> = ({ themes, onUpdateThemes, 
                     setTotalPages={setTotalPages}
                     totalRecords={totalRecords}
                     setTotalRecords={setTotalRecords}
+                    // currentPage={currentPage} // Pass currentPage
+                    // onPageChange={handlePageChange} // Pass handlePageChange
                 />
             </TableContainer>
         </>

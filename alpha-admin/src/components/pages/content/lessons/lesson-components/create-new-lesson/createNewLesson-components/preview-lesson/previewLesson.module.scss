@@ -127,6 +127,8 @@
   align-items: center;
 }
 
+
+
 .backbutton {
   display: flex;
   align-items: center; /* Aligns the icon and text vertically */
@@ -153,35 +155,5 @@
   }
 }
 
-.cover-image-section {
-  margin-top: 20px; /* Add spacing between sections */
-  img {
-      max-width: 100%;
-      border-radius: 4px; /* Rounded corners for the image */
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
-  }
-}
 
-.lesson-screens, .lesson-quizzes {
-  margin-top: 20px; /* Add spacing between sections */
-  h3 {
-      font-size: 1.25rem;
-      color: #333; /* Darker heading color */
-      margin-bottom: 15px;
-  }
 
-  .screen-item, .quiz-item {
-      margin-bottom: 15px;
-      padding: 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background-color: #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
-  }
-
-  .subtitle, .content, .quiz-name, .quiz-question, .quiz-instructions {
-      margin-top: 10px;
-      font-size: 0.9rem;
-      color: #666; /* Softer text color */
-  }
-}

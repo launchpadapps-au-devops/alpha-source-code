@@ -53,7 +53,7 @@ export const CreateCategories = ({ className }: CreateContentProps) => {
                     <header className={styles.header}>
                         <Typography variant="h5">Create category</Typography>
                         <div className={styles.leftButtonContainer}>
-                            <DeleteButton showLeftIcon onButtonClick={handleDeleteModal} />
+                            {/* <DeleteButton showLeftIcon onButtonClick={handleDeleteModal} /> */}
                             <EditButton
                                 buttonText="Cancel"
                                 onButtonClick={() => navigate('/content')}

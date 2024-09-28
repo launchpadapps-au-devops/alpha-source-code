@@ -1,45 +1,118 @@
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useAppDispatch } from '../../../../../../app/hooks';
 import classNames from 'classnames';
 import { Typography } from '@mui/material';
-import styles from './createNewLesson.module.scss';
-import { AppButton } from '../../../../../app-button/app-button';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../../../content-components/sidebar/Sidebar';
-import { EditButton } from '../../../content-components/edit-button/edit-button';
+import { BackButton } from '../../../../../back-button/backButton';
+import { PreviewLessons } from './createNewLesson-components/preview-lesson/previewLesson';
 import { LessonInformation } from './createNewLesson-components/lessonInformation/lessonInformation';
 import { InternalNotes } from './createNewLesson-components/InternalNotes/internalNotes';
 import { DashboardCardDetails } from './createNewLesson-components/dashboardcarddetails/dashBoardCardDetails';
 import { LessonContent } from './createNewLesson-components/lessonContent/lessonContent';
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch } from '../../../../../../app/hooks';
+import styles from './createNewLesson.module.scss';
+import { AppButton } from '../../../../../app-button/app-button';
+import { EditButton } from '../../../content-components/edit-button/edit-button';
 import { fetchThemesThunk } from '../../../themes/themes-components/themeSlice';
 import { fetchCategoriesThunk } from '../../../categories/category-component/categorySlice';
 import { addLessonThunk, fetchLessonByIdThunk, updateLessonThunk } from '../lessonsSlice';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import { BackButton } from '../../../../../back-button/backButton';
-import { PreviewLessons } from './createNewLesson-components/preview-lesson/previewLesson';
 
-export interface ContentProps {
-    className?: string;
+interface LessonTag {
+    Ethnicity?: string[]; // Optional property of type string array
+    'Leisure Preferences'?: string[]; // Optional property with spaces, needs to be in quotes
+    'Dietary Restrictions'?: string[];
+    'Physical Limitation'?: string[];
+    'Physical Limitation- Follow up'?: string[];
+    'Unhealthy Eating Habits'?: string[];
+    'Motivation to Change'?: string[];
+    'Goals/Motivators'?: string[];
+    'Young Dependents'?: string[];
+    'Adult Dependents'?: string[];
 }
 
-export const CreateNewLesson = ({ className }: ContentProps) => {
+interface ScreenData {
+    type: string;
+    media: string;
+    order: number;
+    content: string;
+    subTitle: string;
+}
+
+interface FreeTextQuiz {
+    id: number;
+    type: string;
+    answer: string;
+    question: string;
+    quizName: string;
+    userInstructions: string;
+}
+
+interface QuizOption {
+    id: number;
+    option: string;
+    isCorrect: boolean;
+}
+
+interface Quiz {
+    id: number;
+    min: number;
+    max: number;
+    type: string;
+    answer: QuizOption[];
+    options: QuizOption[];
+    question: string;
+    quizName: string;
+    userInstructions: string;
+}
+
+interface LessonData {
+    lessonCode: number | string;
+    categoryId: number | string;
+    status: string;
+    isPublished: boolean;
+    duration: number | string;
+    points: number | string;
+    lessonTags: LessonTag[];
+    internalNotes: string;
+    coverImage: string;
+    name: string;
+    description: string;
+    screenData: ScreenData[];
+    freeTextQuiz: FreeTextQuiz[];
+    quizData: any[];
+    message: string;
+    meta: object;
+    statusCode: number;
+}
+
+export const CreateNewLesson = ({ className }: { className?: string }) => {
     const navigate = useNavigate();
-    const [notes, setNotes] = React.useState<string>('');
-    const [theme, setTheme] = React.useState([]);
-    const [selectedTheme, setSelectedTheme] = React.useState([]);
-    const [categories, setCategories] = React.useState([]);
+    const [notes, setNotes] = useState<string>('');
+    const [theme, setTheme] = useState<any[]>([]);
+    const [selectedTheme, setSelectedTheme] = useState<any[]>([]);
+    const [categories, setCategories] = useState<any[]>([]);
     const dispatch = useAppDispatch();
     const location = useLocation();
-    const [isEditMode, setIsEditMode] = React.useState(false);
-    const [showPreview, setShowPreview] = React.useState(false); // For handling preview mode
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
     const params = useParams();
-    const [errors, setErrors] = React.useState<any>({});
-    const [data, setData] = React.useState({
+    const [errors, setErrors] = useState<any>({});
+    const [dashboardCardDetails, setDashboardCardDetails] = useState<{
+        coverImage: string;
+        lessonName: string;
+        lessonDescription: string;
+    }>({
+        coverImage: '',
+        lessonName: '',
+        lessonDescription: '',
+    });
+
+    // Updated type for data state
+    const [data, setData] = useState<LessonData>({
         lessonCode: '',
         categoryId: '',
-        themeId: '',
         status: 'ACTIVE',
-        isPublished: true,
+        isPublished: false,
         duration: '',
         points: '',
         lessonTags: [
@@ -78,42 +151,60 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
         coverImage: '',
         name: '',
         description: '',
-        screenData: [],
-        quizData: [
+        screenData: [
             {
-                quizName: '',
-                userInstructions: '',
-                question: '',
-                type: 'single-choice',
-                options: [],
-                answer: [],
-                min: 1,
-                max: 1,
+                type: '',
+                media: '',
+                order: 1,
+                content: '',
+                subTitle: '',
             },
         ],
+        freeTextQuiz: [
+            // {
+            //     id: 1,
+            //     type: 'free-text',
+            //     answer: '',
+            //     question:
+            //         'Think of a recent event where you felt disappointed in yourself - perhaps a goal you didn’t meet or a time you didn’t uphold a commitment to yourself.',
+            //     quizName: 'Identify the Scenario',
+            //     userInstructions: 'Please write down a scenario that comes to your mind below.',
+            // },
+            // {
+            //     id: 2,
+            //     type: 'free-text',
+            //     answer: '',
+            //     question:
+            //         'Think of another event where you felt disappointed in yourself - perhaps a goal you didn’t meet or a time you didn’t uphold a commitment to yourself.',
+            //     quizName: 'Identify the Scenario 2',
+            //     userInstructions: 'Please write down a scenario that comes to your mind below.',
+            // },
+        ],
+        quizData: [
+            {
+                id: 1,
+                type: 'single-choice',
+                answer: '',
+                question: '',
+                quizName: '',
+                userInstructions: '',
+            },
+            // {
+            //     id: 1,
+            //     min: 2,
+            //     max: 2,
+            //     type: 'single-choice',
+            //     answer: [{ id: 1, option: '', isCorrect: false }],
+            //     options: [{ id: 1, option: '', isCorrect: false }],
+            //     question: '',
+            //     quizName: '',
+            //     userInstructions: '',
+            // },
+        ],
+        message: 'User daily lesson fetched successfully',
+        meta: {},
+        statusCode: 200,
     });
-    const [dashboardCardDetails, setDashboardCardDetails] = React.useState<Object>({
-        coverImage: '',
-        lessonName: '',
-        lessonDescription: '',
-    });
-    const [screenData, setScreenData] = React.useState([
-        {
-            subtitle: '',
-            content: '',
-        },
-    ]);
-    const [quizData, setQuizData] = React.useState([
-        {
-            quizName: '',
-            question: '',
-            answer: '',
-            userInstructions: '',
-            options: [{ option: '', isCorrect: false, id: 1 }],
-            min: 1,
-            max: 1,
-        },
-    ]);
 
     useEffect(() => {
         dispatch(fetchThemesThunk(1)).then((response: any) => {
@@ -126,7 +217,7 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
             .catch((error: any) => {
                 alert(error);
             });
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
         if (location.pathname.includes('editlesson')) {
@@ -217,65 +308,147 @@ export const CreateNewLesson = ({ className }: ContentProps) => {
     };
     
 
-    const handlePreview = () => {
-        if (validateFields()) {
-            console.log('Validation passed');
-            if (isEditMode) {
-                dispatch(updateLessonThunk({ id: params.id, data: data })).then((response: any) => {
-                    console.log('Update response:', response);
-                    navigate('/content/lessons/viewlesson/' + response.payload.data.id);
-                });
+    const formatData = (dataVal: any) => {
+        console.log('DataVal:', dataVal);
+        return {
+            ...dataVal,
+            lessonCode: Number(dataVal?.lessonCode),
+            categoryId: Number(dataVal?.categoryId),
+            duration: Number(dataVal?.duration),
+            points: Number(dataVal?.points),
+            lessonTags: dataVal?.lessonTags.map((tag: { Prop: any[] }) => ({
+                Prop: tag.Prop.filter(Boolean), // Ensure non-empty tags
+            })),
+            screenData: dataVal.screenData.map((screen: { order: any }) => ({
+                ...screen,
+                order: Number(screen.order),
+            })),
+            freeTextQuiz: dataVal.freeTextQuiz.map(
+                (quiz: {
+                    id: any;
+                    type: any;
+                    answer: any;
+                    question: any;
+                    quizName: any;
+                    userInstructions: any;
+                }) => ({
+                    id: quiz.id,
+                    type: quiz.type,
+                    answer: quiz.answer || '',
+                    question: quiz.question,
+                    quizName: quiz.quizName,
+                    userInstructions: quiz.userInstructions,
+                })
+            ),
+            quizData: dataVal.quizData.map(
+                (quiz: { id: any; min: any; max: any; options: any[]; answer: any[] }) => ({
+                    ...quiz,
+                    id: Number(quiz.id),
+                    min: Number(quiz.min),
+                    max: Number(quiz.max),
+                    options: quiz.options?.map(
+                        (option: { id: any; option: any; isCorrect: any }, index: number) => ({
+                            id: option.id || index + 1,
+                            option: option.option || '',
+                            isCorrect: option.isCorrect || false,
+                        })
+                    ),
+                    answer: Array.isArray(quiz.answer)
+                        ? quiz.answer.map(
+                              (ans: { id: any; option: any; isCorrect: any }, index: number) => ({
+                                  id: ans.id || index + 1,
+                                  option: ans.option || '',
+                                  isCorrect: ans.isCorrect || false,
+                              })
+                          )
+                        : [], // Default to an empty array if not an array
+                })
+            ),
+        };
+    };
+
+    function updateQuizData(data: any) {
+        const newQuizData: any[] = [];
+        const newFreeTextQuiz: FreeTextQuiz[] = data.freeTextQuiz.slice(); // Clone existing freeTextQuiz
+
+        data.quizData.forEach((quiz: FreeTextQuiz | Quiz) => {
+            if (quiz.type === 'single-choice') {
+                // Assuming you need to convert the answer format
+                newFreeTextQuiz.push({
+                    ...quiz,
+                } as FreeTextQuiz); // Cast as FreeTextQuiz
             } else {
                 // Instead of adding the lesson and navigating directly, show the preview
                 setShowPreview(true);
+                newQuizData.push(quiz);
             }
+        });
+
+        return {
+            ...data,
+            quizData: newQuizData,
+            freeTextQuiz: newFreeTextQuiz,
+        };
+    }
+
+    const handlePreview = () => {
+        const updatedData = updateQuizData(data);
+        if (validateFields()) {
+        setData(updatedData);
+        console.log('Data:', updatedData);
+        const formattedData = formatData(updatedData);
+        console.log('Formatted data:', formattedData);
+
+        if (isEditMode) {
+            dispatch(updateLessonThunk({ id: params.id, data: formattedData })).then(
+                (response: any) => {
+                    navigate('/content/lessons/viewlesson/' + response.payload.data.id);
+                }
+            );
+        } else {
+            setShowPreview(true); // Show preview before submission
+        }
         } else {
             console.log('Validation failed', errors);
         }
     };
-    
-    
 
-    // Function to handle saving as draft
-const saveAsDraft = () => {
-    const draftData = {
-        ...data,
-        status: 'DRAFT', // Set the status to DRAFT
+    const saveAsDraft = () => {
+        const updatedData = updateQuizData(data);
+        console.log('Data:', updatedData);
+        setData(updatedData);
+
+        if (isEditMode) {
+            dispatch(updateLessonThunk({ id: params.id, data: updatedData }))
+                .then((response: any) => {
+                    navigate('/content/lessons');
+                })
+                .catch((error: any) => {
+                    console.error('Error updating draft:', error);
+                });
+        } else {
+            dispatch(addLessonThunk(updatedData))
+                .then((response: any) => {
+                    navigate('/content/lessons');
+                })
+                .catch((error: any) => {
+                    console.error('Error adding draft:', error);
+                });
+        }
     };
 
-    if (isEditMode) {
-        dispatch(updateLessonThunk({ id: params.id, data: draftData }))
-            .then((response: any) => {
-                console.log('Draft update response:', response);
-                navigate('/content/lessons');
-            })
-            .catch((error: any) => {
-                console.error('Error updating draft:', error);
-            });
-    } else {
-        dispatch(addLessonThunk(draftData))
-            .then((response: any) => {
-                console.log('Draft add response:', response);
-                navigate('/content/lessons');
-            })
-            .catch((error: any) => {
-                console.error('Error adding draft:', error);
-            });
-    }
-};
-
-const handleBackClick = () => {
-    if (showPreview) {
-        setShowPreview(false); // Go back to the edit form
-    } else {
-        navigate(-1); // Go back to the previous page
-    }
-};
+    const handleBackClick = () => {
+        if (showPreview) {
+            setShowPreview(false); // Go back to the edit form
+        } else {
+            navigate(-1); // Go back to the previous page
+        }
+    };
 
     if (showPreview) {
         return (
             <PreviewLessons
-                data={data}
+                data={data} // Pass correctly formatted data
                 isEditMode={isEditMode}
                 onBack={handleBackClick} // Function to go back to the Create form
             />
@@ -301,10 +474,7 @@ const handleBackClick = () => {
                             />
                         </div>
                         <div className={styles.rightButtonContainer}>
-                            <EditButton
-                                buttonText="Save as draft"
-                                onButtonClick={saveAsDraft}
-                            />
+                            <EditButton buttonText="Save as draft" onButtonClick={saveAsDraft} />
                             <AppButton buttonText="Preview" onButtonClick={handlePreview} />
                         </div>
                     </header>
@@ -338,10 +508,14 @@ const handleBackClick = () => {
                             />
 
                             <LessonContent
-                                screenData={screenData}
-                                setScreenData={setScreenData}
-                                quizData={quizData}
-                                setQuizData={setQuizData}
+                                screenData={data.screenData}
+                                setScreenData={(newScreenData) =>
+                                    setData((prev) => ({ ...prev, screenData: newScreenData }))
+                                }
+                                quizData={data.quizData}
+                                setQuizData={(newQuizData) =>
+                                    setData((prev) => ({ ...prev, quizData: newQuizData }))
+                                }
                                 data={data}
                                 setData={setData}
                                 errors={errors}

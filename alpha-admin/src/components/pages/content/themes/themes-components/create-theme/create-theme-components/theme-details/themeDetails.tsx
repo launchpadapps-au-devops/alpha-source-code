@@ -1,30 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import styles from './themeDetails.module.scss';
-import { useAppDispatch, useAppSelector } from '../../../../../../../../app/hooks';
+import { useAppDispatch } from '../../../../../../../../app/hooks';
 import { fetchCategoriesForLessonsThunk, fetchCategoriesThunk } from '../../../../../categories/category-component/categorySlice';
 
 interface ThemeDetailsProps {
-    onCategoryChange: (category: string) => void; // Prop to pass selected category
+    onCategoryChange: (category: string) => void;
     data: any;
     setData: any;
+    errors: any;
+    setErrors: (errors: any) => void;
 }
 
-const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, setData }) => {
+const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, setData, errors, setErrors }) => {
     const [category, setCategory] = useState<string>(data.themeData.category?.id || '');
 
-    // const categories = useAppSelector((state) => state.categories.categories.categories);
-    const [categories,setCategories] = useState([]);
+    const [categories, setCategories] = useState([]);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         dispatch(fetchCategoriesForLessonsThunk(100)).then((response: any) => {
             if (response.payload) {
-                const activeCategories = response.payload.data.filter((cat: { status: string; })=>cat.status.toLowerCase() === 'active');
+                const activeCategories = response.payload.data.filter(
+                    (cat: { status: string }) => cat.status.toLowerCase() === 'active'
+                );
                 setCategories(activeCategories);
             }
-        }
-        );
-        }, [dispatch]);
+        });
+    }, [dispatch]);
 
     useEffect(() => {
         dispatch(fetchCategoriesThunk(1));
@@ -35,7 +37,6 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
     }, [category, onCategoryChange]);
 
     useEffect(() => {
-        // Sync local state with data prop
         setCategory(data.themeData.category?.id || '');
     }, [data.themeData.category]);
 
@@ -47,6 +48,7 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                 <input
                     type="number"
                     id="themeCode"
+                    placeholder='Enter theme code'
                     value={data.themeData.themeCode}
                     onChange={(e) => {
                         setData({
@@ -57,8 +59,10 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                             },
                         });
                     }}
+                    className={errors.themeCode ? styles.errorBorder : ''}
                     required
                 />
+                {errors.themeCode && <span className={styles.errorText}>{errors.themeCode}</span>}
             </div>
             <div className={styles.formGroup}>
                 <label htmlFor="category">Category</label>
@@ -72,10 +76,11 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                             ...data,
                             themeData: {
                                 ...data.themeData,
-                                category: { id: parseInt(selectedCategoryId, 10) }, // assuming category is an object with id and other properties
+                                category: { id: parseInt(selectedCategoryId, 10) }, 
                             },
                         });
                     }}
+                    className={errors.categoryId ? styles.errorBorder : ''}
                     required
                 >
                     <option value="">Select category</option>
@@ -85,6 +90,8 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                         </option>
                     ))}
                 </select>
+                {/* {errors.categoryId && <span className={styles.errorText}>{errors.category}</span>} */}
+                {errors.categoryId && <span className={styles.errorText}>{errors.categoryId}</span>}
             </div>
         </div>
     );

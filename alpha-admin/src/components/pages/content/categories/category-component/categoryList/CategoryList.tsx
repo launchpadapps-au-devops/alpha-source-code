@@ -16,6 +16,7 @@ import { useLocation } from 'react-router-dom';
 import { DeleteCategoryModal } from '../../../content-components/delete-category-modal/DeleteCategoryModal';
 import { PublishCategoryModal } from '../publish-category-modal/PublishCategoryModal';
 import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
+import { AppDispatch } from '../../../../../../app/store';
 
 interface Category {
     id: number;
@@ -31,7 +32,7 @@ const CategoryList: React.FC = () => {
     const categories = useAppSelector((state: any) => state.categories.categories.categories); // Directly access categories
     const [newCategory, setNewCategory] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
-    const dispatch = useAppDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const location = useLocation();
     const [openModal, setOpenModal] = useState(false);
@@ -42,6 +43,7 @@ const CategoryList: React.FC = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [publishModalOpen, setPublishModalOpen] = useState(false);
+    const [errors, setErrors] = React.useState<any>({});
 
     useEffect(() => {
         // Fetch categories
@@ -54,40 +56,74 @@ const CategoryList: React.FC = () => {
         });
     }, [dispatch, location.pathname]);
 
+    const fetchStaffData = (page: number) => {
+        dispatch(fetchCategoriesThunk(page)).then((res: any) => {
+            if (res.payload) {
+                setTotalPages(res.payload.meta.totalPages);
+                setTotalRecords(res.payload.meta.totalRecords);
+            }
+        });
+    };
+
     const handleNextPage = () => {
-        console.log('currentPage', currentPage);
-        dispatch(fetchCategoriesThunk(currentPage + 1)).then((res: any) => {
-            console.log('res', res);
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+            fetchStaffData(currentPage + 1);
+        }
     };
+
     const handlePreviousPage = () => {
-        dispatch(fetchCategoriesThunk(currentPage - 1)).then((res: any) => {
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            fetchStaffData(currentPage - 1);
+        }
     };
+    
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        fetchStaffData(pageNumber);
+    };
+
+    useEffect(() => {
+        fetchStaffData(1);
+    }, [dispatch]);
 
     const handleEditClick = (category: Category) => {
         setEditId(category.id);
         setEditName(category.name);
     };
 
+    const validateFields = (isNew: boolean) => {
+        let fieldErrors: any = {};
+        if (isNew && !newCategoryName) {
+            fieldErrors.newCategoryName = 'Name is required';
+        }
+        if (!isNew && !editName) {
+            fieldErrors.editName = 'Name is required';
+        }
+        setErrors(fieldErrors);
+        return Object.keys(fieldErrors).length === 0;
+    };
+    
     const handleSaveClick = (category: Category) => {
-        const updatedCategory = { ...category, name: editName }; // Create a shallow copy and update the name
-        dispatch(updateCategoryThunk({ id: updatedCategory.id, data: updatedCategory }));
-        setEditId(null);
-        setEditName('');
+        if (validateFields(false)) {
+            const updatedCategory = { ...category, name: editName };
+            dispatch(updateCategoryThunk({ id: updatedCategory.id, data: updatedCategory }));
+            setEditId(null);
+            setEditName('');
+        }
     };
-
+    
     const handleNewCategory = () => {
-        dispatch(addCategoryThunk(newCategoryName));
-        setNewCategory(false);
-        setNewCategoryName('');
+        if (validateFields(true)) {
+            dispatch(addCategoryThunk(newCategoryName));
+            setNewCategory(false);
+            setNewCategoryName('');
+        }
     };
+    
+    
 
     const handleDeleteClick = (id: number | null) => {
         if (id !== null) {
@@ -110,6 +146,10 @@ const CategoryList: React.FC = () => {
         setPublishModalOpen(false);
     };
 
+    function handleSaveAndAddMoreClick(tips: any): void {
+        throw new Error('Function not implemented.');
+    }
+
     const activeCategories = categories.filter(
         (category: Category) => category.status.toLowerCase() === 'active'
     );
@@ -130,12 +170,27 @@ const CategoryList: React.FC = () => {
                                 <div className={styles.categoryCell}>
                                     <input
                                         type="text"
-                                        className={styles.editInput}
+                                        className={`${styles.contentInput} ${errors.newCategoryName ? styles.errorBorder : ''}`}
                                         value={newCategoryName}
                                         onChange={(e) => setNewCategoryName(e.target.value)}
                                         required
                                     />
-                                    <AppButton buttonText="Add" onButtonClick={handleNewCategory} />
+                                    {errors.newCategoryName && <span className={styles.errorText}>{errors.newCategoryName}</span>}
+                                    <AppButton
+                                        buttonText="Save & add more"
+                                        className={styles.button}
+                                        onButtonClick={handleNewCategory}
+                                    />
+                                    <EditButton
+                                        buttonText="Save"
+                                        className={styles.button}
+                                        onButtonClick={handleNewCategory}
+                                    />
+                                    <DeleteButton
+                                        buttonText="Delete"
+                                        className={styles.button}
+                                        onButtonClick={() => setNewCategory(false)}
+                                    />
                                 </div>
                             </td>
                         </tr>
@@ -146,13 +201,19 @@ const CategoryList: React.FC = () => {
                                 {editId === category.id ? (
                                     <div className={styles.editContainer}>
                                         <input
-                                            className={styles.editInput}
+                                            className= {`${styles.contentInput} ${errors.editName ? styles.errorBorder : ''}`}
                                             type="text"
                                             value={editName}
                                             onChange={handleNameChange}
                                             required
                                         />
+                                        {errors.editName && <span className={styles.errorText}>{errors.editName}</span>}
                                         <div className={styles.buttonContainer}>
+                                            <AppButton
+                                                buttonText="Save & add more"
+                                                className={styles.button}
+                                                onButtonClick={() => handleSaveClick(category)}
+                                            />
                                             <EditButton
                                                 className={styles.smallButton}
                                                 buttonText="Save"
@@ -184,6 +245,7 @@ const CategoryList: React.FC = () => {
                 <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
+                    onPageChange={handlePageChange} 
                     currentPage={currentPage}
                     totalPages={totalPages}
                 />

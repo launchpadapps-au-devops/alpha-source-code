@@ -2,14 +2,12 @@ import classNames from 'classnames';
 import styles from './care-team-table.module.scss';
 import { AppButton } from '../../../../app-button/app-button';
 import AppButton_module from '../../../../app-button/app-button.module.scss';
-import Pagination from '@mui/material/Pagination';
 import Avatar from '@mui/material/Avatar';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../../../app/store';
 import { useEffect, useState } from 'react';
 import { staffThunk } from '../create-care-team/create-care-teamSlice';
 import { useNavigate } from 'react-router-dom';
-// import {TableFooter} from '../../../content/content-components/table-footer/TableFooter';
 import { CustomPagination } from '../../../content/content-components/custom-pagination/customPagination';
 
 export interface CareTeamTableProps {
@@ -24,30 +22,36 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const handleNextPage = () => {
-        console.log('currentPage', currentPage);
-        dispatch(staffThunk(currentPage + 1)).then((res: any) => {
-            console.log('res', res);
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
+    const fetchStaffData = (page: number) => {
+        dispatch(staffThunk(page)).then((res: any) => {
+            if (res.payload) {
+                setTotalPages(res.payload.meta.totalPages);
+                setTotalRecords(res.payload.meta.totalRecords);
+            }
         });
-        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+            fetchStaffData(currentPage + 1);
+        }
+    };
+
     const handlePreviousPage = () => {
-        dispatch(staffThunk(currentPage - 1)).then((res: any) => {
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            fetchStaffData(currentPage - 1);
+        }
+    };
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        fetchStaffData(pageNumber);
     };
 
     useEffect(() => {
-        dispatch(staffThunk(1)).then((response: any) => {
-            if (response.payload) {
-                setTotalPages(response.payload.meta.totalPages);
-                setTotalRecords(response.payload.meta.totalRecords);
-            }
-        });
+        fetchStaffData(1);
     }, [dispatch]);
 
     const handleEditClick = (memberId: string) => {
@@ -56,7 +60,6 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
 
     return (
         <>
-
             <table className={classNames(styles['key-contacts-table'])}>
                 <thead>
                     <tr>
@@ -69,21 +72,24 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
                 <tbody>
                     {staff.map((member, index) => (
                         <tr key={index}>
-                            <td >
+                            <td>
                                 <div className={styles['flex-table-column']}>
                                     <Avatar
                                         className={styles['profile-image']}
-                                        // alt="Remy Sharp"
                                         src="/static/images/avatar/1.jpg"
                                     />
                                     {member.firstName} {member.lastName}
-                                    {console.log(member)}
                                 </div>
                             </td>
                             <td>{member.role?.name}</td>
                             <td>{member.permissions?.length > 0 ? member.permissions[0]?.name : null}</td>
                             <td>
-                                <AppButton icon='edit' className={classNames(AppButton_module['button-no-decoration'], styles['table-icon-button'])} onButtonClick={() => handleEditClick(member.id)} showLeftIcon />
+                                <AppButton
+                                    icon='edit'
+                                    className={classNames(AppButton_module['button-no-decoration'], styles['table-icon-button'])}
+                                    onButtonClick={() => handleEditClick(member.id)}
+                                    showLeftIcon
+                                />
                             </td>
                         </tr>
                     ))}
@@ -93,6 +99,7 @@ export const CareTeamTable = ({ className }: CareTeamTableProps) => {
                 <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
+                    onPageChange={handlePageChange} // Now handles page number click
                     currentPage={currentPage}
                     totalPages={totalPages}
                 />

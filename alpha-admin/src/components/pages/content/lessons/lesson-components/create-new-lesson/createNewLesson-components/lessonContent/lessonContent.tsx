@@ -32,12 +32,13 @@ export const LessonContent = ({
     data,
     setData,
     isEditable,
-    errors, // Accept errors prop for validation
-    setErrors,
+    errors,
+    setErrors
 }: LessonContentProps) => {
 
     const dispatch = useAppDispatch();
-    const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error messages
+
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [editorStates, setEditorStates] = useState<EditorState[]>([]); // Rich text editor states for each screen
     const [menuWidth, setMenuWidth] = useState<number>(0);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -45,7 +46,17 @@ export const LessonContent = ({
     const [quizType, setQuizType] = useState<'multiple-choice' | 'free-text' | null>(null);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]); // Array to store local preview URLs
     const [activeQuizIndex, setActiveQuizIndex] = useState<number | null>(null);
-    
+
+    const handleFreeTextQuizChange = (
+        quizIndex: number,
+        field: 'question' | 'answer' | 'userInstructions',
+        value: string
+    ) => {
+        const updatedFreeTextQuiz = [...data.freeTextQuiz];
+        updatedFreeTextQuiz[quizIndex][field] = value;
+        setData({ ...data, freeTextQuiz: updatedFreeTextQuiz });
+    };
+
     // Handle file changes for media uploads (image/video)
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const file = event.target.files?.[0];
@@ -123,6 +134,7 @@ export const LessonContent = ({
         }
     };
 
+    // Handle Editor Changes for rich text content
     const handleEditorChange = (newState: any, index: number) => {
         const updatedEditorStates = [...editorStates];
         updatedEditorStates[index] = newState;
@@ -133,6 +145,7 @@ export const LessonContent = ({
         setData({ ...data, screenData: updatedScreenData });
     };
 
+    // Add a new screen to the lesson content
     const handleAddScreen = () => {
         const newScreen = {
             id: data.screenData.length + 1,
@@ -147,37 +160,110 @@ export const LessonContent = ({
         setPreviewUrls((prevUrls) => [...prevUrls, '']); // Add a placeholder for the new screen
     };
 
+    // Handle Quiz Type change (Multiple Choice or Free Text)
     const handleQuizTypeChange = (type: 'multiple-choice' | 'free-text') => {
         setQuizType(type);
         setActiveQuizIndex(null);
         setAnchorEl(null);
+        // setData({ ...data, quizData: [...data.quizData] });
     };
 
     const handleAddQuiz = () => {
         if (!quizType) return;
 
-        const newQuiz = {
-            quizName: '',
-            userInstructions: '',
-            question: '',
-            type: quizType,
-            options: quizType === 'multiple-choice' ? [''] : undefined, // Start with one empty option for multiple-choice
-            answer: quizType === 'multiple-choice' ? [] : undefined, // Start with no answers
-        };
-        const updatedQuizData = [...data.quizData, newQuiz];
-        setData({ ...data, quizData: updatedQuizData });
-        setQuizType(null); // Reset quiz type
+        if (quizType === 'free-text') {
+            const newQuiz = {
+                id: data.quizData.length + 1,
+                type: 'single-choice',
+                answer: '',
+                question: '',
+                quizName: 'Identify the Scenario',
+                userInstructions: 'Please write down a scenario that comes to your mind below.',
+            };
+
+            const updatedFreeTextQuiz = [...data.quizData, newQuiz];
+            setData({ ...data, quizData: updatedFreeTextQuiz });
+        } else {
+            const newQuiz = {
+                id: data.quizData.length + 1, // Ensure this generates a valid number
+                quizName: '',
+                userInstructions: '',
+                question: '',
+                type: quizType,
+                options:
+                    quizType === 'multiple-choice'
+                        ? [{ id: 1, option: '', isCorrect: false }]
+                        : undefined,
+                answer: [],
+                min: 1, // Ensure min is initialized to a valid number (e.g., 1)
+                max: 1, // Ensure max is initialized to a valid number
+            };
+
+            const updatedQuizData = [...data.quizData, newQuiz];
+            setData({ ...data, quizData: updatedQuizData });
+        }
+
+        setQuizType(null);
     };
 
+    // Remove a quiz from the lesson
     const handleRemoveQuiz = (index: number) => {
         const updatedQuizData = data.quizData.filter((_: any, i: number) => i !== index);
         setData({ ...data, quizData: updatedQuizData });
     };
 
+    const handleCheckboxChange = (quizIndex: number, optionIndex: number) => {
+        const updatedQuizData = [...data.quizData];
+
+        // Toggle the isCorrect field for the selected option
+        updatedQuizData[quizIndex].options = updatedQuizData[quizIndex].options.map(
+            (option: { isCorrect: any }, idx: number) =>
+                idx === optionIndex ? { ...option, isCorrect: !option.isCorrect } : option
+        );
+
+        // Update the answer array with the selected correct options
+        updatedQuizData[quizIndex].answer = updatedQuizData[quizIndex].options.filter(
+            (option: { isCorrect: any }) => option.isCorrect
+        );
+
+        // Update max based on the number of correct options, defaulting to 0 if NaN
+        updatedQuizData[quizIndex].max = updatedQuizData[quizIndex].answer.length || 0;
+        updatedQuizData[quizIndex].min = updatedQuizData[quizIndex].answer.length || 0;
+
+        setQuizData(updatedQuizData);
+        setData({ ...data, quizData: updatedQuizData });
+    };
+
+    // Add new option to the quiz
+    const handleAddOption = (quizIndex: number) => {
+        const updatedQuizData = [...data.quizData];
+
+        // Find the highest id in the existing options and increment it for the new option
+        const currentMaxId = updatedQuizData[quizIndex].options.reduce(
+            (maxId: number, option: any) => (option.id > maxId ? option.id : maxId),
+            0
+        );
+
+        const newOptionId = currentMaxId + 1;
+
+        // Add new option to the current quiz's options
+        updatedQuizData[quizIndex].options.push({
+            id: newOptionId,
+            option: '',
+            isCorrect: false,
+        });
+
+        // Update the state with the new quizData
+        setQuizData(updatedQuizData);
+        setData({ ...data, quizData: updatedQuizData });
+    };
+
+    // Handle click to open the quiz type selection menu
     const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
+    // Close the quiz type selection menu
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -220,15 +306,20 @@ export const LessonContent = ({
                             />
                         ) : (
                             <div className="uploaded-image-preview">
-                                {screen.media && (screen.media.endsWith('.mp4') ? (
-                                    <video src={previewUrls[index]} className="uploaded-video" controls />
-                                ) : (
-                                    <img
-                                        src={previewUrls[index]}
-                                        alt="Uploaded media preview"
-                                        className="uploaded-image"
-                                    />
-                                ))}
+                                {screen.media &&
+                                    (screen.media.endsWith('.mp4') ? (
+                                        <video
+                                            src={previewUrls[index]}
+                                            className="uploaded-video"
+                                            controls
+                                        />
+                                    ) : (
+                                        <img
+                                            src={previewUrls[index]}
+                                            alt="Uploaded media preview"
+                                            className="uploaded-image"
+                                        />
+                                    ))}
                                 <div className="edit-image-section">
                                     <button
                                         onClick={() => {
@@ -286,13 +377,19 @@ export const LessonContent = ({
                         <label>
                             Content <span style={{ color: 'red' }}>*</span>
                         </label>
-                        <div className={`editor-wrapper ${errors[`content-${index}`] ? 'error-border' : ''}`}>
+                        <div
+                            className={`editor-wrapper ${
+                                errors[`content-${index}`] ? 'error-border' : ''
+                            }`}
+                        >
                             <Editor
                                 editorState={editorStates[index]}
                                 toolbarClassName="toolbarClassName"
                                 wrapperClassName="wrapperClassName"
                                 editorClassName="custom-editor"
-                                onEditorStateChange={(newState) => handleEditorChange(newState, index)}
+                                onEditorStateChange={(newState) =>
+                                    handleEditorChange(newState, index)
+                                }
                             />
                         </div>
                         {errors[`content-${index}`] && (
@@ -313,14 +410,18 @@ export const LessonContent = ({
             <h3>
                 Quizzes <Vector />
             </h3>
-            {data.quizData.map((quiz: any, index: number) => (
-                <div key={index} className="quiz-content screen">
+            {data.quizData.map((quiz: any, quizIndex: number) => (
+                <div key={quizIndex} className="quiz-content screen">
                     <div className="quiz-header">
-                        <h4>{quiz.type === 'multiple-choice' ? 'Multiple-choice Quiz' : 'Free-text Quiz'}</h4>
+                        <h4>
+                            {quiz.type === 'multiple-choice'
+                                ? 'Multiple-choice Quiz'
+                                : 'Free-text Quiz'}
+                        </h4>
                         <DeleteButton
                             showLeftIcon
                             buttonText="Remove quiz"
-                            onButtonClick={() => handleRemoveQuiz(index)}
+                            onButtonClick={() => handleRemoveQuiz(quizIndex)}
                         />
                     </div>
 
@@ -330,16 +431,16 @@ export const LessonContent = ({
                             type="text"
                             placeholder="Enter quiz name"
                             value={quiz.quizName || ''}
-                            className={errors[`quizName-${index}`] ? 'error-border' : ''}
+                            className={errors[`quizName-${quizIndex}`] ? 'error-border' : ''}
                             onChange={(e) => {
                                 const updatedQuizData = [...data.quizData];
-                                updatedQuizData[index].quizName = e.target.value;
+                                updatedQuizData[quizIndex].quizName = e.target.value;
                                 setData({ ...data, quizData: updatedQuizData });
                             }}
                             required
                         />
-                        {errors[`quizName-${index}`] && (
-                            <div className="error-message">{errors[`quizName-${index}`]}</div>
+                        {errors[`quizName-${quizIndex}`] && (
+                            <div className="error-message">{errors[`quizName-${quizIndex}`]}</div>
                         )}
                     </div>
 
@@ -349,16 +450,16 @@ export const LessonContent = ({
                             type="text"
                             placeholder="Enter quiz question"
                             value={quiz.question || ''}
-                            className={errors[`question-${index}`] ? 'error-border' : ''}
+                            className={errors[`question-${quizIndex}`] ? 'error-border' : ''}
                             onChange={(e) => {
                                 const updatedQuizData = [...data.quizData];
-                                updatedQuizData[index].question = e.target.value;
+                                updatedQuizData[quizIndex].question = e.target.value;
                                 setData({ ...data, quizData: updatedQuizData });
                             }}
                             required
                         />
-                        {errors[`question-${index}`] && (
-                            <div className="error-message">{errors[`question-${index}`]}</div>
+                        {errors[`question-${quizIndex}`] && (
+                            <div className="error-message">{errors[`question-${quizIndex}`]}</div>
                         )}
                     </div>
                     <div className="user-instruction input-field">
@@ -369,49 +470,47 @@ export const LessonContent = ({
                             type="text"
                             placeholder="Enter User instruction"
                             value={quiz.userInstructions || ''}
-                            className={errors[`userInstructions-${index}`] ? 'error-border' : ''}
+                            className={
+                                errors[`userInstructions-${quizIndex}`] ? 'error-border' : ''
+                            }
                             onChange={(e) => {
                                 const updatedQuizData = [...data.quizData];
-                                updatedQuizData[index].userInstructions = e.target.value;
+                                updatedQuizData[quizIndex].userInstructions = e.target.value;
                                 setData({ ...data, quizData: updatedQuizData });
                             }}
                             required
                         />
-                        {errors[`userInstructions-${index}`] && (
-                            <div className="error-message">{errors[`userInstructions-${index}`]}</div>
+                        {errors[`userInstructions-${quizIndex}`] && (
+                            <div className="error-message">
+                                {errors[`userInstructions-${quizIndex}`]}
+                            </div>
                         )}
                     </div>
 
                     {quiz.type === 'multiple-choice' && (
                         <div className="multiple-choice input-field-1">
-                            {quiz.options?.map((option: string, optionIndex: number) => (
+                            {quiz.options?.map((option: any, optionIndex: number) => (
                                 <div key={optionIndex} className="input-with-checkbox">
                                     <div className="input-wrapper">
-                                    <input
-                                        type="text"
-                                        placeholder={`Answer ${optionIndex + 1}`}
-                                        value={option}
-                                        onChange={(e) => {
-                                            const updatedOptions = [...quiz.options];
-                                            updatedOptions[optionIndex] = e.target.value;
-                                            const updatedQuizData = [...data.quizData];
-                                            updatedQuizData[index].options = updatedOptions;
-                                            setData({ ...data, quizData: updatedQuizData });
-                                        }}
-                                        required
-                                    />
-                                    <Checkbox
-                                        checked={quiz.answer?.includes(option)}
-                                        onChange={() => {
-                                            const updatedAnswers = quiz.answer?.includes(option)
-                                                ? quiz.answer?.filter((ans: string) => ans !== option)
-                                                : [...(quiz.answer || []), option];
-
-                                            const updatedQuizData = [...data.quizData];
-                                            updatedQuizData[index].answer = updatedAnswers;
-                                            setData({ ...data, quizData: updatedQuizData });
-                                        }}
-                                    />
+                                        <input
+                                            type="text"
+                                            placeholder={`Answer ${optionIndex + 1}`}
+                                            value={option.option}
+                                            onChange={(e) => {
+                                                const updatedOptions = [...quiz.options];
+                                                updatedOptions[optionIndex].option = e.target.value;
+                                                const updatedQuizData = [...data.quizData];
+                                                updatedQuizData[quizIndex].options = updatedOptions;
+                                                setData({ ...data, quizData: updatedQuizData });
+                                            }}
+                                            required
+                                        />
+                                        <Checkbox
+                                            checked={option.isCorrect}
+                                            onChange={() =>
+                                                handleCheckboxChange(quizIndex, optionIndex)
+                                            }
+                                        />
                                     </div>
                                     <DeleteButton
                                         showLeftIcon
@@ -420,13 +519,13 @@ export const LessonContent = ({
                                             const updatedOptions = [...quiz.options];
                                             updatedOptions.splice(optionIndex, 1);
                                             const updatedQuizData = [...data.quizData];
-                                            updatedQuizData[index].options = updatedOptions;
+                                            updatedQuizData[quizIndex].options = updatedOptions;
                                             setData({ ...data, quizData: updatedQuizData });
                                         }}
                                     />
-                                    {errors[`option-${index}-${optionIndex}`] && (
+                                    {errors[`option-${quizIndex}-${optionIndex}`] && (
                                         <div className="error-message">
-                                            {errors[`option-${index}-${optionIndex}`]}
+                                            {errors[`option-${quizIndex}-${optionIndex}`]}
                                         </div>
                                     )}
                                 </div>
@@ -434,15 +533,12 @@ export const LessonContent = ({
 
                             <EditButton
                                 buttonText="Add another answer"
-                                onButtonClick={() => {
-                                    const updatedOptions = [...quiz.options, ''];
-                                    const updatedQuizData = [...data.quizData];
-                                    updatedQuizData[index].options = updatedOptions;
-                                    setData({ ...data, quizData: updatedQuizData });
-                                }}
+                                onButtonClick={() => handleAddOption(quizIndex)}
                             />
-                            {errors[`options-${index}`] && (
-                                <div className="error-message">{errors[`options-${index}`]}</div>
+                            {errors[`options-${quizIndex}`] && (
+                                <div className="error-message">
+                                    {errors[`options-${quizIndex}`]}
+                                </div>
                             )}
                         </div>
                     )}

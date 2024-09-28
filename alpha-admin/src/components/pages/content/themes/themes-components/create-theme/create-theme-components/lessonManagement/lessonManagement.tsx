@@ -13,13 +13,17 @@ interface LessonManagementProps {
     onRemoveLesson: (lessonCode: number) => void;
     onAddLessons: () => void;
     newLessons?: any;
+    errors: any;
+    setErrors: (errors: any) => void;
 }
 
 export const LessonManagement: FC<LessonManagementProps> = ({
-    selectedLessons = [],  // Default to an empty array if undefined
+    selectedLessons = [], // Default to an empty array if undefined
     onRemoveLesson,
     onAddLessons,
     newLessons,
+    errors,
+    setErrors,
 }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [menuWidth, setMenuWidth] = useState<number>(0);
@@ -81,7 +85,7 @@ export const LessonManagement: FC<LessonManagementProps> = ({
                     </tbody>
                 </table>
             )}
-            <EditButton ref={buttonRef} buttonText="Add Lesson" onButtonClick={handleButtonClick} />
+            <EditButton ref={buttonRef} buttonText="Add Lesson" onButtonClick={handleButtonClick} className={`${styles.editButton} ${errors.lessonData && selectedLessons.length === 0 ? styles.errorBorder : ''}`}/>
             <Menu
                 id="simple-menu"
                 anchorEl={anchorEl}
@@ -99,6 +103,7 @@ export const LessonManagement: FC<LessonManagementProps> = ({
                 <MenuItem onClick={handleAddExistingLesson}>Add existing lesson</MenuItem>
                 <MenuItem onClick={handleCreateNewLesson}>Create new lesson</MenuItem>
             </Menu>
+            {errors.lessonData && <p className={styles.errorText}>{errors.lessonData}</p>}
         </div>
     );
 };

@@ -17,8 +17,8 @@ import styles from './themes-table.module.scss';
 import { PublishThemesModal } from '../publish-theme-modal/PublisThemeModal';
 import { LessonSidebar, Lesson } from '../lessonsidebar/lessonSidebar';
 import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
-import { updateThemeThunk } from '../themeSlice';
 import { useAppDispatch } from '../../../../../../app/hooks';
+import { updateThemeThunk } from '../themeSlice';
 
 export interface ThemesTableProps {
     themes: any;
@@ -27,6 +27,8 @@ export interface ThemesTableProps {
     setTotalPages: any;
     totalRecords: number;
     setTotalRecords: any;
+    // currentPage: number; // Add currentPage
+    // onPageChange: (newPage: number) => void; // Add onPageChange
     currentPage: number; // Add currentPage
     onPageChange: (newPage: number) => void; // Add onPageChange
     onUpdateThemes: (updatedLessons: Lesson[]) => void;
@@ -42,6 +44,8 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
     setTotalPages,
     totalRecords,
     setTotalRecords,
+    // currentPage, // Use currentPage from props
+    // onPageChange, // Use onPageChange from props
     currentPage, // Use currentPage from props
     onPageChange, // Use onPageChange from props
 }) => {
@@ -57,9 +61,15 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
         if (currentPage < totalPages) {
             onPageChange(currentPage + 1);
         }
+        if (currentPage < totalPages) {
+            onPageChange(currentPage + 1);
+        }
     };
 
     const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            onPageChange(currentPage - 1);
+        }
         if (currentPage > 1) {
             onPageChange(currentPage - 1);
         }
@@ -67,12 +77,22 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
 
     const handleToggle = (theme: any, index: number) => {
         const isCurrentlyPublished = theme.isPublished;
-        const themeHasUnpublishedLessons = theme.lessons?.some((lesson: any) => !lesson.published);
-
+        const themeHasUnpublishedLessons = theme.lessons?.some((lesson: any) => !lesson.isPublished);
+    
         if (!isCurrentlyPublished) {
+            // Set selected theme index
             setSelectedThemeIndex(index);
-            setOpenModal(true);
+            
+            // Show modal for publishing based on lesson status
+            if (themeHasUnpublishedLessons) {
+                // Show "unpublished lessons" modal
+                setOpenModal(true);
+            } else {
+                // Show confirmation to publish
+                setOpenModal(true);
+            }
         } else {
+            // If theme is already published, toggle the published state
             const newTheme = { ...theme, isPublished: !theme.isPublished };
             setThemes((prevThemes: any) => {
                 const newThemes = [...prevThemes];
@@ -87,6 +107,7 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
             dispatch(updateThemeThunk({ id: theme.id, theme: newData }));
         }
     };
+    
 
     const handlePublish = () => {
         if (selectedThemeIndex !== null) {
@@ -143,7 +164,7 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
 
     const selectedThemeHasLessons = () => {
         const selectedTheme = selectedThemeIndex !== null ? themes[selectedThemeIndex] : null;
-        return selectedTheme && selectedTheme.lessons?.every((lesson: any) => lesson.published);
+        return selectedTheme && selectedTheme.lessons?.every((lesson: any) => lesson.isPublished);
     };
 
     const formatDate = (data: any) => {
@@ -229,6 +250,7 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
                 <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
+                    onPageChange={onPageChange}
                     currentPage={currentPage}
                     totalPages={totalPages}
                 />

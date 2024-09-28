@@ -13,6 +13,17 @@
   -moz-border-radius: $spacing-1;
   -ms-border-radius: $spacing-1;
   -o-border-radius: $spacing-1;
+
+  .errorBorder {
+    border: 1px solid red !important;
+  }
+  
+  .errorText {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+
   h2 {
     font: $type-heading-regular;
     font-weight: 500;
@@ -37,12 +48,6 @@
       display: flex;
       flex-direction: column;
       gap: $spacing-1; //8px
-
-      //   .error {
-      //     color: $color-error;
-      //     font: $type-text-micro;
-      //     font-family: $-font-family-inter;
-      //   }
     }
   }
   .button-action-wrapper {

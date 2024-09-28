@@ -12,6 +12,33 @@
   gap: 900px;
 }
 
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%; /* Ensure full width for section */
+}
+
+.label {
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 30px;
+  margin-top: 20px;
+  // margin-bottom: 10px;
+}
+
+.input,
+.textarea {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--Gray-02, #495054);
+  background: var(--Shades-White, #FFF);
+  width: 90%; /* Ensure full width for input and textarea */
+  margin-left: 30px;
+  margin-right: 0px;
+  margin-bottom: 20px;
+}
+
 .buttonContainer {
   display: flex;
   gap: 10px; /* Adjust gap as needed */

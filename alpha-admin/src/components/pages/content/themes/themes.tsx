@@ -40,6 +40,11 @@ export const Themes = ({ className }: ContentProps) => {
     const [theme, setTheme] = useState([]);
     const [filteredThemes, setFilteredThemes] = useState([]); // Add state for filtered themes
     const [selectedCategory, setSelectedCategory] = useState(''); // State to track selected category
+
+    const handleTabChange = (newValue: number) => {
+        setSelectedTab(newValue);
+    };
+
     const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -52,14 +57,31 @@ export const Themes = ({ className }: ContentProps) => {
         navigate(path);
         handleClose();
     };
+
     const fetchThemes = (page: number) => {
         dispatch(fetchThemesThunk(page)).then((res: any) => {
             setTheme(res.payload.data);
+            setFilteredThemes(res.payload.data); // Update filtered themes
             setFilteredThemes(res.payload.data); // Update filtered themes
             setTotalPages(res.payload.meta.totalPages);
             setTotalRecords(res.payload.meta.totalRecords);
         });
     };
+
+        // Function to handle category change
+        const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+            const categoryId = parseInt(event.target.value, 10); // Parse to integer since IDs are numbers
+            setSelectedCategory(event.target.value);
+            
+            if (categoryId) {
+                // Filter themes based on selected category ID
+                const filtered = theme.filter((th: any) => th.category.id === categoryId);
+                setFilteredThemes(filtered);
+            } else {
+                // If no category is selected, show all themes
+                setFilteredThemes(theme);
+            }
+        };
 
     useEffect(() => {
         fetchThemes(currentPage); // Fetch themes for the current page
@@ -88,29 +110,14 @@ export const Themes = ({ className }: ContentProps) => {
         });
     }, [dispatch]);
 
-    // Function to handle category change
-    const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const categoryId = parseInt(event.target.value, 10); // Parse to integer since IDs are numbers
-        setSelectedCategory(event.target.value);
-        
-        if (categoryId) {
-            // Filter themes based on selected category ID
-            const filtered = theme.filter((th: any) => th.category.id === categoryId);
-            setFilteredThemes(filtered);
-        } else {
-            // If no category is selected, show all themes
-            setFilteredThemes(theme);
-        }
-    };
+        // Handle page change in pagination
+        const handlePageChange = (newPage: number) => {
+            setCurrentPage(newPage);
+        };
 
-    // Handle page change in pagination
-    const handlePageChange = (newPage: number) => {
-        setCurrentPage(newPage);
-    };
-
-    // The rest of the JSX remains unchanged
     return (
         <>
+            <BackButton onClick={handleBackClick} />
             <BackButton onClick={handleBackClick} />
             <div
                 className={classNames(styles.container, className, {
