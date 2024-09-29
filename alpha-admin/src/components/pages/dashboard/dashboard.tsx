@@ -8,11 +8,15 @@ import DashboardBarGarph from './dashboard-components/dashboard-bar-graph/dashbo
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../app/store';
 import { fetchActivePatientsThunk } from './dashboard-components/activePatientsSlice';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { fetchUserDataOverviewThunk } from './dashboard-components/user-data-overvie-store/userDataOverviewSlice';
+import { DropdownPatientAnalytics } from './dashboard-components/dashboard-dropdown-patient-analytics/patient-analytics-dashboard';
 
 export const Dashboard: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const demographicOptions = ["All", "Male", "Female", "Other"];
+    const [selectedDemographic, setSelectedDemographic] = useState<string>("All");
+    
     const { users, loading, errorMessage, count } = useSelector(
         (state: RootState) => state.activePatients.activePatients
     );
@@ -34,19 +38,14 @@ export const Dashboard: React.FC = () => {
         dispatch(fetchActivePatientsThunk());
     }, [dispatch]);
 
-    // const legendItems = [
-    //     { label: 'Fats', percentage: '63.2%', color: '#006FF7' },
-    //     { label: 'Protein', percentage: '36.8%', color: '#FFAC2E' },
-    //     { label: 'Carbohydrates', percentage: '36.8%', color: '#CA6B6E' },
-    // ];
+    const demographicChangeHandler = (option: string) => {
+        setSelectedDemographic(option);
+    };
 
     // Calculate percentages dynamically based on userOverviewData
     const legendItems = useMemo(() => {
         if (userOverviewData?.nutritionData) {
             const { protien = 0, carbs = 0, fats = 0 } = userOverviewData.nutritionData;
-            // const protien = 50;
-            // const carbs = 0;
-            // const fats = 50;
 
             const total = protien + carbs + fats;
 
@@ -109,26 +108,50 @@ export const Dashboard: React.FC = () => {
                 <label>Patient analytics</label>
                 <div className={styles['analytics-wrapper']}>
                     <DataCard className={styles['analytics-item']}>
-                        <span className={styles['analytics-label']}>Average steps per day</span>
+                        <div className={styles['label-with-dropdown']}>
+                            <span className={styles['analytics-label']}>Average steps per day</span>
+                            <DropdownPatientAnalytics
+                                options={["20-29", "30-39", "40-49", "50+"]}
+                                onSelect={demographicChangeHandler}
+                                label="Select Age Group"
+                            />
+                        </div>
                         <span className={styles['analytics-count']}>2933</span>
                         <span className={styles['assigned-by']}>by demographic</span>
                     </DataCard>
+
                     <div className={styles['divider']}>
                         <div className={styles['line']}></div>
                     </div>
 
                     <DataCard className={styles['analytics-item']}>
-                        <span className={styles['analytics-label']}>Total enrolled patients</span>
+                        <div className={styles['label-with-dropdown']}>
+                            <span className={styles['analytics-label']}>Total enrolled patients</span>
+                            <DropdownPatientAnalytics
+                                options={["Male", "Female", "Non-binary"]}
+                                onSelect={demographicChangeHandler}
+                                label="Select Gender"
+                            />
+                        </div>
                         <span className={styles['analytics-count']}>336</span>
                         <span className={styles['assigned-by']}>by demographic</span>
                     </DataCard>
+
                     <div className={styles['divider']}>
                         <div className={styles['line']}></div>
                     </div>
+
                     <DataCard className={styles['analytics-item']}>
-                        <span className={styles['analytics-label']}>
-                            Patients per lifestyle plan
-                        </span>
+                        <div className={styles['label-with-dropdown']}>
+                            <span className={styles['analytics-label']}>
+                                Patients per lifestyle plan
+                            </span>
+                            <DropdownPatientAnalytics
+                                options={["Heart Health", "Wealth", "Weight Health"]}
+                                onSelect={demographicChangeHandler}
+                                label="Select Lifestyle Plan"
+                            />
+                        </div>
                         <span className={styles['analytics-count']}>234</span>
                         <span className={styles['assigned-by']}>by demographic</span>
                     </DataCard>

@@ -1,0 +1,48 @@
+@import '../../../../../styles/type';
+@import '../../../../../styles/color';
+
+.dropdown-container {
+    position: relative;
+    font-family: 'Arial', sans-serif;
+    width: 150px; // Adjust width for smaller dropdown
+}
+
+.dropdown-header {
+    font: $type-text-medium; // 18/22
+    font-weight: 500;
+    color: $color-medium-black; //#22
+    padding: 8px 8px; // Adjust padding to make the header smaller
+    background-color: #fff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    font-size: 12px; // Reduce font size for smaller text
+  
+    .dropdown-arrow {
+      font-size: 10px; // Adjust the size of the arrow
+      padding-left: 4px; // Reduce space between text and arrow
+    }
+}
+
+.dropdown-list {
+    position: absolute;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 4px;
+    margin-top: 2px;
+    list-style-type: none; // Remove bullet points
+
+    .dropdown-item {
+        padding: 4px 8px; // Reduce padding to make items smaller
+        font-size: 12px;  // Smaller font size for items
+        cursor: pointer;
+        &:hover {
+            background-color: #f1f1f1;
+        }
+    }
+}

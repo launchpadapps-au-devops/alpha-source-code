@@ -44,7 +44,7 @@ export const TopNavigation = ({ className, showLeftWrapper = true, showRightWrap
                             <NavigationLink icon='like' navText='Care team' linkTo='/careteam' />
                             <NavigationLink icon='file' navText='Content' linkTo='/content' />
                             <NavigationLink icon='notePad' navText='Lifestyle plans' linkTo='/lifestyle-plan' />
-                            <NavigationLink icon='graph' navText='Analytics' linkTo='/analytics' />
+                            <NavigationLink icon='graph' navText='Analytics' linkTo='/dashboard' />
                             {/* <NavigationLink icon='dashboard' navText='Dashboard' linkTo='dashboard' />
                             <NavigationLink icon='user' navText='Patient' linkTo='/patient' /> */}
                         </div>
