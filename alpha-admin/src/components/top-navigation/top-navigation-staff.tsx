@@ -5,6 +5,7 @@ import Nsw from '../../assets/NSW.svg';
 import Wwest from '../../assets/ww-west.svg';
 import { NavigationLink } from './navigation-component/navigation-link/navigation-link';
 import { ProfileMenu } from './navigation-component/profile-menu/profile-menu';
+import { useUnsavedChanges } from '../pages/content/lessons/lesson-components/unchanged-warning-hook-context';
 
 export interface TopNavigationProps {
     className?: string;
@@ -14,8 +15,15 @@ export interface TopNavigationProps {
     showAlphaLogoOnly?: boolean;
 }
 
+export const TopNavigationStaff = ({
+    className,
+    showLeftWrapper = true,
+    showRightWrapper = true,
+    showLogosWrapperOnly = false,
+    showAlphaLogoOnly = false,
+}: TopNavigationProps) => {
+    const { dirty } = useUnsavedChanges(); // Use the dirty state from the context
 
-export const TopNavigationStaff = ({ className, showLeftWrapper = true, showRightWrapper = true, showLogosWrapperOnly = false, showAlphaLogoOnly = false }: TopNavigationProps) => {
     return (
         <>
             <div className={styles['top-navigation-main-wrapper']}>
@@ -41,12 +49,8 @@ export const TopNavigationStaff = ({ className, showLeftWrapper = true, showRigh
                 {showRightWrapper && (
                     <div className={styles['top-navigation-right-wrapper']}>
                         <div className={styles['navlink-menu-wrapper']}>
-                            {/* <NavigationLink icon='like' navText='Care team' linkTo='/careteam' />
-                            <NavigationLink icon='file' navText='Content' linkTo='/content' />
-                            <NavigationLink icon='notePad' navText='Lifestyle plans' linkTo='/lifestyle-plan' />
-                            <NavigationLink icon='graph' navText='Analytics' linkTo='/analytics' /> */}
-                            <NavigationLink icon='dashboard' navText='Dashboard' linkTo='dashboard' />
-                            <NavigationLink icon='user' navText='Patient' linkTo='/patients' />
+                            <NavigationLink icon="dashboard" navText="Dashboard" linkTo="/dashboard" />
+                            <NavigationLink icon="user" navText="Patient" linkTo="/patients" />
                         </div>
                         <div className={styles['profile-wrapper']}>
                             <ProfileMenu />

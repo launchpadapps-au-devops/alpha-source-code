@@ -128,7 +128,9 @@ export const authSlice = createSlice({
             };
             state.loggedIn = false;
             state.userType = null;
+            localStorage.clear();
         },
+
     },
     extraReducers: (builder) => {
         builder

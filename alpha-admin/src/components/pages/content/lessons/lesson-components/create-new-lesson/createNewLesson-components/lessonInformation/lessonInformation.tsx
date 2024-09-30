@@ -24,6 +24,7 @@ export interface LessonInformationProps {
     isEditMode?: boolean;
     errors: any; // Accept errors prop for validation
     setErrors: (errors: any) => void; // Add setter for errors
+    setDirty?: any;
 }
 
 export const LessonInformation = ({
@@ -36,6 +37,7 @@ export const LessonInformation = ({
     isEditMode,
     errors, // Accept errors prop
     setErrors, // Pass a setErrors function to reset the errors
+    setDirty,
 }: LessonInformationProps) => {
     const [isOpen, setIsOpen] = useState<DropdownState>({
         category: false,
@@ -82,7 +84,7 @@ export const LessonInformation = ({
     // Function to reset the error and update state
     const handleInputChange = (field: string, value: any) => {
         setData((prevState: any) => ({ ...prevState, [field]: value }));
-
+        setDirty(true); // Set the dirty flag to true
         // Reset the error for this field when the user starts typing or selecting
         if (errors[field]) {
             setErrors((prevErrors: any) => ({

@@ -15,7 +15,10 @@ import { AppButton } from '../../../../../app-button/app-button';
 import { EditButton } from '../../../content-components/edit-button/edit-button';
 import { fetchThemesThunk } from '../../../themes/themes-components/themeSlice';
 import { fetchCategoriesThunk } from '../../../categories/category-component/categorySlice';
-import { addLessonThunk, fetchLessonByIdThunk, updateLessonThunk } from '../lessonsSlice';
+import { addLessonThunk, fetchLessonByIdThunk, updateLessonThunk } from '../lessonsSlice';   
+import { UnsavedChangesModal } from '../../../content-components/unsaved-changes-alert/unsavedChanges';
+import { useUnsavedChanges } from '../unchanged-warning-hook-context';
+import { useBeforeUnload, useBlockBackButton, usePrompt } from './createNewLesson-components/unchanged-warning-hook';
 
 interface LessonTag {
     Ethnicity?: string[]; // Optional property of type string array
@@ -97,6 +100,11 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
     const [showPreview, setShowPreview] = useState(false);
     const params = useParams();
     const [errors, setErrors] = useState<any>({});
+    const [showPrompt, setShowPrompt] = useState(false); 
+    // const [dirty, setDirty] = useState(false); 
+    const { setDirty, dirty } = useUnsavedChanges();  // Use context state
+
+
     const [dashboardCardDetails, setDashboardCardDetails] = useState<{
         coverImage: string;
         lessonName: string;
@@ -106,6 +114,12 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
         lessonName: '',
         lessonDescription: '',
     });
+
+
+    usePrompt('You have unsaved changes. Do you want to leave without saving?', dirty);
+    
+    useBeforeUnload(dirty); // Hook to manage page refresh/close
+    useBlockBackButton(dirty); // Hook to block back button
 
     // Updated type for data state
     const [data, setData] = useState<LessonData>({
@@ -430,6 +444,8 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
             dispatch(addLessonThunk(updatedData))
                 .then((response: any) => {
                     navigate('/content/lessons');
+                    setDirty(false); // Reset dirty state after saving
+                    setShowPrompt(false); 
                 })
                 .catch((error: any) => {
                     console.error('Error adding draft:', error);
@@ -455,11 +471,50 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
         );
     }
 
+    const handleInputChange = () => {
+        setDirty(true); // Mark the form as having unsaved changes when an input changes
+      };
+
+      const handleDiscardChanges = () => {
+        setDirty(false); // Reset dirty state
+        // Navigate away or allow navigation
+      };
+
+      const handleCancelNavigation = () => {
+        setShowPrompt(false); // Close the prompt
+        // Keep the user on the current page
+      };
+
+      const handleNavigation = () => {
+        // This function will be triggered when user tries to navigate away
+        if (dirty) {
+          setShowPrompt(true); // Show the prompt asking the user what to do
+        } else {
+          // Allow navigation if no unsaved changes
+          navigate(-1);
+        }
+      };
+
     return (
         <>
-            <BackButton onClick={handleBackClick} />
+            <BackButton onClick={handleNavigation} />
             <div className={classNames(styles.container, className)}>
-                <Sidebar />
+            <Sidebar
+    setDirty={setDirty}
+    dirty={dirty}
+    saveAsDraft={saveAsDraft}
+    discardChanges={handleDiscardChanges}
+    cancelNavigation={handleCancelNavigation}
+/>
+                {showPrompt && (
+        <UnsavedChangesModal
+        open={showPrompt}
+        handleSaveAsDraft={saveAsDraft}
+        handleCancel={handleDiscardChanges}
+        closeModal={handleCancelNavigation}
+        descriptionText="You have unsaved changes. Do you want to save them before leaving?"
+        />
+      )}
                 <div className={styles.content}>
                     <header className={styles.header}>
                         {isEditMode ? (
@@ -480,6 +535,7 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
                     </header>
                     <div className={styles.mainContent}>
                         <LessonInformation
+                            setDirty={setDirty}
                             data={data}
                             setData={setData}
                             isEditMode={isEditMode}
@@ -492,6 +548,7 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
                         />
                         <div className={styles.rightContent}>
                             <InternalNotes
+                                setDirty={setDirty}
                                 notes={notes}
                                 setNotes={setNotes}
                                 data={data}
@@ -499,6 +556,7 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
                                 errors={errors}
                             />
                             <DashboardCardDetails
+                                setDirty={setDirty}
                                 dashboardCardDetails={dashboardCardDetails}
                                 setDashboardCardDetails={setDashboardCardDetails}
                                 data={data}
@@ -508,6 +566,7 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
                             />
 
                             <LessonContent
+                                setDirty={setDirty}
                                 screenData={data.screenData}
                                 setScreenData={(newScreenData) =>
                                     setData((prev) => ({ ...prev, screenData: newScreenData }))

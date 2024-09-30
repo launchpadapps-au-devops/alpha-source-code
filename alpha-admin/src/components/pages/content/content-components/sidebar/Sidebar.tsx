@@ -9,6 +9,8 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import './sidebar.module.scss';
+import { UnsavedChangesModal } from '../unsaved-changes-alert/unsavedChanges';
+
 
 const SidebarContainer = styled('div')<{ collapsed: boolean }>(({ collapsed }) => ({
     width: collapsed ? '85px' : '250px',
@@ -44,9 +46,11 @@ const StyledListItemButton = styled(ListItemButton)<{ selected: boolean }>(({ se
     },
 }));
 
-const Sidebar: React.FC = () => {
+// Add dirty and handlers for blocking navigation
+const Sidebar: React.FC<{ dirty: boolean, setDirty: any ,  saveAsDraft: () => void, discardChanges: () => void, cancelNavigation: () => void }> = ({ dirty, saveAsDraft, discardChanges, cancelNavigation }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [selectedItem, setSelectedItem] = useState('');
+    const [showPrompt, setShowPrompt] = useState(false); // Track if the unsaved changes modal is shown
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -57,10 +61,7 @@ const Sidebar: React.FC = () => {
             '/content/lessons': 'Lessons',
             '/content/dailytips': 'Daily tips',
         };
-        // Fallback to 'Categories' if the path does not match any of the keys
-        setSelectedItem(
-            pathMap[location.pathname.split('/').slice(0, 3).join('/')] || 'Categories'
-        );
+        setSelectedItem(pathMap[location.pathname.split('/').slice(0, 3).join('/')] || 'Categories');
     }, [location.pathname]);
 
     const toggleSidebar = () => {
@@ -68,58 +69,89 @@ const Sidebar: React.FC = () => {
     };
 
     const handleItemClick = (item: string, path: string) => {
-        setSelectedItem(item);
+        if (dirty) {
+            setShowPrompt(true); // Show prompt when form is dirty
+        } else {
+            setSelectedItem(item);
+            navigate(path, { replace: true });
+        }
+    };
+
+    const handleConfirmNavigation = (path: string) => {
+        setSelectedItem(path);
         navigate(path, { replace: true });
+        setShowPrompt(false); // Close the prompt
+    };
+
+    const handleNavigation = () => {
+        if (dirty) {
+            setShowPrompt(true);  // Show the unsaved changes modal
+        } else {
+            navigate( '/');  // No unsaved changes, proceed with navigation
+        }
+    };
+
+    // Handle modal actions
+    const handleSaveAsDraft = () => {
+        discardChanges();  // Discard unsaved changes
+        setShowPrompt(false);  // Close the modal
+        navigate('/');  // Navigate after saving or discarding
+    };
+
+    const handleDiscardChanges = () => {
+        discardChanges();  // Reset unsaved changes
+        setShowPrompt(false);  // Close the modal
+        navigate( '/');  // Proceed with navigation
+    };
+
+    const handleCancelNavigation = () => {
+        setShowPrompt(false);  // Close the modal, stay on the current page
     };
 
     return (
-        <SidebarContainer collapsed={collapsed}>
-            <ArrowButton onClick={toggleSidebar}>
-                {collapsed ? (
-                    <KeyboardArrowRightIcon color="primary" />
-                ) : (
-                    <KeyboardArrowLeftIcon color="primary" />
-                )}
-            </ArrowButton>
-            <List component="nav">
-                <StyledListItemButton
-                    selected={selectedItem === 'Categories'}
-                    onClick={() => handleItemClick('Categories', '/content/categories')}
-                >
-                    <ListItemIcon>
-                        <CategoryIcon />
-                    </ListItemIcon>
-                    {!collapsed && <ListItemText primary="Categories" />}
-                </StyledListItemButton>
-                <StyledListItemButton
-                    selected={selectedItem === 'Themes'}
-                    onClick={() => handleItemClick('Themes', '/content/themes')}
-                >
-                    <ListItemIcon>
-                        <BookIcon />
-                    </ListItemIcon>
-                    {!collapsed && <ListItemText primary="Themes" />}
-                </StyledListItemButton>
-                <StyledListItemButton
-                    selected={selectedItem === 'Lessons'}
-                    onClick={() => handleItemClick('Lessons', '/content/lessons')}
-                >
-                    <ListItemIcon>
-                        <LightbulbIcon />
-                    </ListItemIcon>
-                    {!collapsed && <ListItemText primary="Lessons" />}
-                </StyledListItemButton>
-                <StyledListItemButton
-                    selected={selectedItem === 'Daily tips'}
-                    onClick={() => handleItemClick('Daily tips', '/content/dailytips')}
-                >
-                    <ListItemIcon>
-                        <CalendarTodayIcon />
-                    </ListItemIcon>
-                    {!collapsed && <ListItemText primary="Daily tips" />}
-                </StyledListItemButton>
-            </List>
-        </SidebarContainer>
+        <>
+            <SidebarContainer collapsed={collapsed}>
+                <ArrowButton onClick={toggleSidebar}>
+                    {collapsed ? <KeyboardArrowRightIcon color="primary" /> : <KeyboardArrowLeftIcon color="primary" />}
+                </ArrowButton>
+                <List component="nav">
+                    <StyledListItemButton selected={selectedItem === 'Categories'} onClick={() => handleItemClick('Categories', '/content/categories')}>
+                        <ListItemIcon>
+                            <CategoryIcon />
+                        </ListItemIcon>
+                        {!collapsed && <ListItemText primary="Categories" />}
+                    </StyledListItemButton>
+                    <StyledListItemButton selected={selectedItem === 'Themes'} onClick={() => handleItemClick('Themes', '/content/themes')}>
+                        <ListItemIcon>
+                            <BookIcon />
+                        </ListItemIcon>
+                        {!collapsed && <ListItemText primary="Themes" />}
+                    </StyledListItemButton>
+                    <StyledListItemButton selected={selectedItem === 'Lessons'} onClick={() => handleItemClick('Lessons', '/content/lessons')}>
+                        <ListItemIcon>
+                            <LightbulbIcon />
+                        </ListItemIcon>
+                        {!collapsed && <ListItemText primary="Lessons" />}
+                    </StyledListItemButton>
+                    <StyledListItemButton selected={selectedItem === 'Daily tips'} onClick={() => handleItemClick('Daily tips', '/content/dailytips')}>
+                        <ListItemIcon>
+                            <CalendarTodayIcon />
+                        </ListItemIcon>
+                        {!collapsed && <ListItemText primary="Daily tips" />}
+                    </StyledListItemButton>
+                </List>
+            </SidebarContainer>
+
+            {showPrompt && (
+                <UnsavedChangesModal
+                    open={showPrompt}
+                    handleSaveAsDraft={handleSaveAsDraft}
+                    handleCancel={handleDiscardChanges}
+                    closeModal={handleCancelNavigation}
+                    descriptionText="You have unsaved changes. Do you want to save them before leaving?"
+                />
+            )}
+        </>
     );
 };
 

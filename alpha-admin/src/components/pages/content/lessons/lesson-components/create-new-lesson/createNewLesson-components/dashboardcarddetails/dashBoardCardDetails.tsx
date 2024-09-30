@@ -20,6 +20,7 @@ export interface DashboardCardDetailsProps {
     setData: (data: any) => void;
     errors: any;
     setErrors: (errors: any) => void;
+    setDirty?: any;
 }
 
 export const DashboardCardDetails = ({
@@ -29,6 +30,7 @@ export const DashboardCardDetails = ({
     setData,
     errors,
     setErrors,
+    setDirty
 }: DashboardCardDetailsProps) => {
     const dispatch = useAppDispatch();
     const [isFileUploaded, setIsFileUploaded] = useState(false);
@@ -51,7 +53,7 @@ export const DashboardCardDetails = ({
                         ...prevState,
                         coverImage: uploadedImageUrl
                     }));
-                    
+                    setDirty(true);
                     // Clear any cover image errors
                     setErrors((prevErrors: any) => ({
                         ...prevErrors,
@@ -78,6 +80,7 @@ export const DashboardCardDetails = ({
             ...prevState,
             [field]: value,
         }));
+        setDirty(true);
 
         if (errors[field]) {
             setErrors((prevErrors: any) => ({

@@ -7,9 +7,10 @@ export interface InternalNotesProps {
     data: any;
     setData: any;
     errors: any; // Accept errors prop for validation
+    setDirty?: any;
 }
 
-export const InternalNotes = ({ notes, setNotes, data, setData, errors }: InternalNotesProps) => {
+export const InternalNotes = ({ notes, setNotes, data, setData, errors , setDirty }: InternalNotesProps) => {
     return (
         <div className="internal-notes-container">
             <div className="internal-notes-header">Internal notes</div>
@@ -24,7 +25,10 @@ export const InternalNotes = ({ notes, setNotes, data, setData, errors }: Intern
                     placeholder="Add internal notes (these won’t be seen by the patient)"
                     maxLength={150}
                     value={data.internalNotes}
-                    onChange={(e) => setData({ ...data, internalNotes: e.target.value })}
+                    onChange={(e) => {
+                        setData({ ...data, internalNotes: e.target.value });
+                        setDirty(true);
+                      }}                      
                 />
                 <div className="internal-notes-footer">150 characters</div>
                 {errors.internalNotes && (

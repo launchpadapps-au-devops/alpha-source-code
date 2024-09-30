@@ -22,6 +22,7 @@ export interface LessonContentProps {
     isEditable?: boolean;
     errors: any; // Accept errors prop for validation
     setErrors:any;
+    setDirty?: any;
 }
 
 export const LessonContent = ({
@@ -33,7 +34,8 @@ export const LessonContent = ({
     setData,
     isEditable,
     errors,
-    setErrors
+    setErrors,
+    setDirty
 }: LessonContentProps) => {
 
     const dispatch = useAppDispatch();
@@ -73,6 +75,7 @@ export const LessonContent = ({
                     const updatedScreenData = [...data.screenData];
                     updatedScreenData[index].media = file.name; // Save the file name for now
                     setData({ ...data, screenData: updatedScreenData });
+                    setDirty(true);
                     setPreviewUrls((prevUrls) => {
                         const newUrls = [...prevUrls];
                         newUrls[index] = reader.result as string; // Set the local preview URL
@@ -91,6 +94,8 @@ export const LessonContent = ({
                         ...prevState,
                         coverImage: uploadedImageUrl
                     }));
+
+                    setDirty(true);
                     
                     // Clear any cover image errors
                     setErrors((prevErrors: any) => ({
@@ -158,6 +163,7 @@ export const LessonContent = ({
         setScreenData(updatedScreenData);
         setData({ ...data, screenData: updatedScreenData });
         setPreviewUrls((prevUrls) => [...prevUrls, '']); // Add a placeholder for the new screen
+        setDirty(true);
     };
 
     // Handle Quiz Type change (Multiple Choice or Free Text)
