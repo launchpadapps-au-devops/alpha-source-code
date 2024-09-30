@@ -215,7 +215,7 @@ spec:
           value: http://alpha-backend-notification-ms-v1-service:3002
         - name: NOTIFICATION_SERVICE_API_PREFIX
           value: /api/notification-ms/v1
-        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:ec5e3ec4e8afc03caa291a0b224dbe02c684f36a09fbd25f27403f1b5724ccbe
+        image: alphadev.azurecr.io/alpha-backend-api-gateway-v1@sha256:2d573ea80b05fc648e5fee7361c78632cc65d32d9ded19e55b3164cd6306e29a
         imagePullPolicy: IfNotPresent
         name: alpha-backend-api-gateway-v1-container
         ports:
@@ -303,7 +303,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: cms_queue
-        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:6811f1a37b822cbec19f4da0fa4835d7f70e6e31d88bd6872c5f77f7089d4354
+        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:2b71faf5322bcd7709fd4bba311e1b14f12c96395df62472d48bec5dd903da12
         name: alpha-backend-cms-ms-v1-container
         ports:
         - containerPort: 3003
@@ -390,7 +390,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:f5b7cc832c89d3120ff63a97a1e1984bab3b1e847ccee4b69166bcb2b690889b
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:ef508d1444f85c672ceddd9e3c990a645e6ec981ca719c60decac84fc4e28706
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
@@ -490,7 +490,7 @@ spec:
           value: endpoint=https://alpha-dev-smtp.australia.communication.azure.com/;accesskey=BaLmwP5PlwER7J4N3vT5DWNCYJRVZBj98B2jUQxhNeL44KDF2tUcJQQJ99AIACULyCp9erg1AAAAAZCSfEWg
         - name: AZURE_EMAIL_SENDER_ADDRESS
           value: DoNotReply@d9c1761e-ec35-4cf3-ab3e-84c6becdf67a.azurecomm.net
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:6e6bcc998ee2cfe34776cae9ce394a35d30a909e445b324bbb83e74ce0dca2eb
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:472508325c02d94f6b8217194b3400f7751bd4bcb09f307c833e12390d377e86
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -578,7 +578,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: apigateway_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:147d05480d9c808eac7a5ad6263b2acd176a7cfd16a5e3768904a19f780a7f7a
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:7648a4c0bf91e7ccdb26e903f12b0f4d432aa60134d42a4c17b0ac7cc3658bd3
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
