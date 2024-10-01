@@ -1,0 +1,3 @@
+themeCode,internalNotes,name,image,description,status,isPublished,hb_1_name,hb_1_timeAllocation,hb_1_pointAllocation,hb_1_instruction,hb_1_order,hb_1_description,hb_2_name,hb_2_timeAllocation,hb_2_pointAllocation,hb_2_instruction,hb_2_order,hb_2_description
+101,"Internal note 1","Theme 1","https://example.com/image1.jpg","Theme description 1","ACTIVE",true,"Habit 1",20,50,"Instruction for habit 1",1,"Description for habit 1","Habit 2",30,40,"Instruction for habit 2",2,"Description for habit 2"
+102,"Internal note 2","Theme 2","https://example.com/image2.jpg","Theme description 2","DRAFT",false,"Habit 1",15,60,"Instruction for habit 1",1,"Description for habit 1"

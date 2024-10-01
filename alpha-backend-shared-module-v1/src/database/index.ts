@@ -24,7 +24,7 @@ export class DatabaseModule {
       synchronize: true, // Caution in production!,
     });
 
-    this.dataSource.initialize()
+    return this.dataSource.initialize()
       .then(() => {
         console.log("Data Source has been initialized!")
         console.log("Running migrations...");

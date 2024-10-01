@@ -54,13 +54,13 @@ export class Lesson {
     description: string;
 
     @Column({ type: 'jsonb', nullable: true })
-    screenData: object;
+    screenData: object [];
 
     @Column({ type: 'jsonb', nullable: true })
-    quizData: object;
+    quizData: object [];
 
     @Column({ type: 'jsonb', nullable: true })
-    freeTextQuiz: object;
+    freeTextQuiz: object [];
 
     @CreateDateColumn()
     createdAt: Date;

@@ -12,7 +12,7 @@
       "baseUrl": "./",
       "incremental": true
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts", "src/scripts/upload-content.ts"],
     "exclude": ["node_modules", "dist/**/*"]
   }
   

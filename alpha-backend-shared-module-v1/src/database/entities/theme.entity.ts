@@ -10,7 +10,7 @@ export class Theme {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'int', nullable: true, unique: true})
+    @Column({ type: 'float', nullable: true, unique: true})
     themeCode: number;
 
     @Column({ type: 'int', nullable: true })

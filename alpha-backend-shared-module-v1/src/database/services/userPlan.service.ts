@@ -1,4 +1,4 @@
-import { Repository, In, FindManyOptions, ILike } from "typeorm";
+import { Repository, In, FindManyOptions, ILike, Raw } from "typeorm";
 import { DatabaseModule } from "../index";
 import { IUserPlanService } from "../interfaces/IUserPlan.interface";
 import { UserPlan } from "../entities/userPlan.entity";
@@ -67,26 +67,30 @@ class UserPlanService implements IUserPlanService {
     totalRecords: number;
     limit: number;
     page: number;
-  }> {
-    const { searchText, ...restFilters } = filters;
-
+  }> {  
+    const { searchText, fromDate, toDate, ...restFilters } = filters;
+  
     const where: any = {
+      ...(fromDate ? { 'createdAt': Raw(alias => `${alias} >= :fromDate`, { fromDate }) } : {}),
+      ...(toDate ? { 'createdAt': Raw(alias => `${alias} <= :toDate`, { toDate }) } : {}),      
       ...(searchText ? { name: ILike(`%${searchText}%`) } : {}),
       ...restFilters,
     };
-
+  
     const findOptions: FindManyOptions<UserPlan> = {
       where,
       relations: ['user', 'plan', 'userThemes'],
       order: {
         [sorting.sortField]: sorting.sortOrder,
       },
-      skip: (pagination.page - 1) * pagination.limit,
-      take: pagination.limit,
+      ...(
+        pagination.page && pagination.limit
+        ? { skip: (pagination.page - 1) * pagination.limit, take: pagination.limit } 
+        : {})
     };
-
+  
     const [data, totalRecords] = await UserPlanService.UserPlanRepository.findAndCount(findOptions);
-
+  
     return {
       data,
       totalRecords,
@@ -94,6 +98,7 @@ class UserPlanService implements IUserPlanService {
       page: pagination.page,
     };
   }
+  
 }
 
 export const userPlanService = new UserPlanService();

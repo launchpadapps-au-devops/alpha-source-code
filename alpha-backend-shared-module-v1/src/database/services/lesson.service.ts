@@ -37,7 +37,7 @@ class LessonService implements ILessonService {
     });
 
     for(const l of data) {
-      const lesson = lessons.find(lesson => lesson.id === l.id);
+      const lesson = lessons.length && lessons.find(lesson => lesson.id === l.id);
       if(lesson.themeId && (lesson.themeId !== l.themeId)) {
         throw new BadRequestException('Lesson is already associated with a theme');
       }

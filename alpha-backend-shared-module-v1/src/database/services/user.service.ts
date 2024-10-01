@@ -65,7 +65,7 @@ class UserService implements IUserService {
     limit?: number,
     page?: number
   }> {
-    const { searchText, searchKey, searchValue, ...restFilters } = filters;
+    const { searchText, searchKey, searchValue, fromAgeDate, toAgeDate, ...restFilters } = filters;
 
     const userEntityMetadata = UserService.userRepository.metadata;
     const searchColumn = searchKey ? userEntityMetadata.findColumnWithPropertyPath(searchKey) : null;
@@ -90,6 +90,8 @@ class UserService implements IUserService {
               : { [searchKey]: searchValue } // Direct comparison for numbers and other types
           : {}
         ),
+        ...(fromAgeDate ? { dob: Raw(alias => `${alias} <= :fromAgeDate`, { fromAgeDate }) } : {}),
+        ...(toAgeDate ? { dob: Raw(alias => `${alias} >= :toAgeDate`, { toAgeDate }) } : {}),
         ...restFilters,
         ...(searchText ? { firstName: ILike(`%${searchText}%`) } : {}),
       },
@@ -170,6 +172,7 @@ class UserService implements IUserService {
   async getRecentEnrollements(
     fromDate: Date = new Date(new Date().setDate(new Date().getDate() - 5)),
     toDate: Date = new Date(),
+    filters: GenericFilterDto = {},
   ): Promise<{
     users: Partial<User>[],
     count: number
@@ -177,7 +180,8 @@ class UserService implements IUserService {
     const [users, count] = await UserService.userRepository.findAndCount({
       where: {
         userType: 'patient',
-        onboardingCompletedAt: Between(fromDate, toDate)
+        onboardingCompletedAt: Between(fromDate, toDate),
+        ...filters,
       },
     });
 
