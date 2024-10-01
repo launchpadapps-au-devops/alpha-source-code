@@ -51,9 +51,10 @@ export class DataAnalyticController {
     @Get('enrollements')
     async getRecentEnrollements(
         @Query('fromDate') fromDate: Date,
-        @Query('toDate') toDate: Date
+        @Query('toDate') toDate: Date,
+        @Query('gender') gender: 'Male' | 'Female' | 'Non Binary' | null = null,
     ) {
-        const data = await this.dataAnalyticService.getRecentEnrollements(fromDate, toDate);
+        const data = await this.dataAnalyticService.getRecentEnrollements(fromDate, toDate, gender);
         return {
             data,
             message: 'Recent enrollements fetched successfully',
@@ -97,6 +98,33 @@ export class DataAnalyticController {
                 negativePercentage: data.negativePercentage,
             },
             message: 'Lesson feedbacks fetched successfully',
+        }
+    }
+
+    @Get('steps')
+    async getAverageSteps(
+        @Query('fromAge') fromAge: number,
+        @Query('toAge') toAge: number,
+        @Query('fromDate') fromDate: Date,
+        @Query('toDate') toDate: Date
+    ) {
+        const data = await this.dataAnalyticService.averageStepsPerDay(fromAge, toAge, fromDate, toDate);
+        return {
+            data,
+            message: 'Average steps fetched successfully',
+        }
+    }
+
+    @Get('life-style-plan')
+    async getLifeStylePlan(
+        @Query('planId') planId: number,
+        @Query('fromDate') fromDate: Date,
+        @Query('toDate') toDate: Date
+    ) {
+        const data = await this.dataAnalyticService.patientPerlifestylePlan(planId, fromDate, toDate);
+        return {
+            data,
+            message: 'Life style plan fetched successfully',
         }
     }
 }

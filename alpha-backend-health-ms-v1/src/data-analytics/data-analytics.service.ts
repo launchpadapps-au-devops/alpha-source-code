@@ -6,6 +6,7 @@ import {
     sessionService,
     DATA_TYPES,
     userMealLogService,
+    userPlanService,
 } from '@launchpadapps-au/alpha-shared';
 
 @Injectable()
@@ -142,33 +143,6 @@ export class DataAnalyticService {
         }
     }
 
-    async getRecentEnrollements(
-        fromDate?: Date,
-        toDate?: Date,
-    ): Promise<{
-        users: {
-            id: string,
-            email: string,
-            firstName: string,
-            lastName: string,
-            dob: Date,
-            gender: string,
-            age: number,
-            onboardingCompletedAt: Date
-        }[],
-        count: number
-    }> {
-        const data = await userService.getRecentEnrollements(fromDate, toDate);
-
-        return {
-            count: data.count,
-            users: data.users
-                .map(({ id, email, firstName, lastName, dob, gender, onboardingCompletedAt }) => ({
-                    id, email, firstName, lastName, dob, gender, onboardingCompletedAt, age: calculateAge(dob)
-                })),
-        }
-    }
-
     async getLessonFeedbacks(
         userId?: string,
         categoryId?: string,
@@ -182,6 +156,124 @@ export class DataAnalyticService {
             positivePercentage: userLessonsFeedback.filter((feedback) => feedback.isPositiveFeedback).length / userLessonsFeedback.length,
             negativePercentage: userLessonsFeedback.filter((feedback) => !feedback.isPositiveFeedback).length / userLessonsFeedback.length,
         };
+    }
+
+    async averageStepsPerDay(
+        fromAge: number,
+        toAge: number,
+        fromDate: Date = new Date(new Date().setDate(1)),
+        toDate: Date = new Date(new Date().setDate(new Date().getDate() - 2)),
+    ) : Promise<{
+        totalStepsInDate: number,
+        averageStepsInDate: number,
+    }> {
+        const fromAgeDate = new Date(new Date().setFullYear(new Date().getFullYear() - fromAge));
+        const toAgeDate = new Date(new Date().setFullYear(new Date().getFullYear() - toAge));
+
+        const { data: users } = await userService.findAllUsers(
+            { page: null, limit: null },
+            {},
+            {
+                fromAgeDate, toAgeDate
+            },
+        );
+
+        const { data: userHealthData } = await userHealthDataService.findAllUserHealthData(
+            { page: null, limit: null },
+            {},
+            {
+                userId: users.map(({ id }) => id),
+                dataType: DATA_TYPES.STEP_COUNT,
+                fromDate,
+                toDate
+            },
+        );
+
+        const totalStepsInDate = userHealthData.reduce((acc, { value }) => acc + value, 0);
+        const averageStepsInDate = totalStepsInDate / userHealthData.length;
+
+
+        return {
+            totalStepsInDate,
+            averageStepsInDate,
+        };
+    }
+
+    async getRecentEnrollements(
+        fromDate: Date = new Date('01-01-1970'),
+        toDate: Date = new Date(),
+        gender: 'Male' | 'Female' | 'Non Binary' | null = null,
+    ): Promise<{
+        users: {
+            id: string,
+            email: string,
+            firstName: string,
+            lastName: string,
+            dob: Date,
+            gender: string,
+            age: number,
+            onboardingCompletedAt: Date
+        }[],
+        count: number
+    }> {
+        const filters = {} as any;
+        if(gender) {
+            filters.gender = gender;
+        }
+
+        const data = await userService.getRecentEnrollements(
+            fromDate,
+            toDate,
+            filters,
+        );
+
+        return {
+            count: data.count,
+            users: data.users
+                .map(({ id, email, firstName, lastName, dob, gender, onboardingCompletedAt }) => ({
+                    id, email, firstName, lastName, dob, gender, onboardingCompletedAt, age: calculateAge(dob)
+                })),
+        }
+    }
+
+    async patientPerlifestylePlan(
+        planId: number,
+        fromDate: Date = new Date('01-01-1970'),
+        toDate: Date = new Date(),
+    ): Promise<{
+        count: number,
+        users: Array<{
+            id: string,
+            email: string,
+            firstName: string,
+            lastName: string,
+            dob: Date,
+            gender: string,
+            age: number,
+        }>
+    }> {
+        const data = await userPlanService.findAllUserPlans(
+            { page: 1, limit: 1000 },
+            {},
+            {
+                planId,
+                fromDate,
+                toDate
+            },
+        );
+    
+        return {
+            count: data.totalRecords,
+            users: data.data.map(({ user }) => ({
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                dob: user.dob,
+                gender: user.gender,
+                age: calculateAge(user.dob),
+            })),
+        }
     }
 }
 
