@@ -28,7 +28,7 @@ const LessonInformation: React.FC<LessonProps> = ({ lessonData, setLessonData })
             <div className="lesson-details">
                 <div className="lesson-item full-width">
                     <label>Lesson name</label>
-                    <div className="lesson-value">{lessonData.name}</div>
+                    <div className="lesson-value">{lessonData?.name}</div>
                 </div>
                 <div className="lesson-grid">
                     <div className="lesson-item">
@@ -41,7 +41,7 @@ const LessonInformation: React.FC<LessonProps> = ({ lessonData, setLessonData })
                     </div>
                     <div className="lesson-item">
                         <label>Lesson category</label>
-                        <div className="lesson-value">{lessonData.category.name}</div>
+                        <div className="lesson-value">{lessonData.category?.name}</div>
                     </div>
                     <div className="lesson-item">
                         <label>Points allocation</label>

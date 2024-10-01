@@ -1,6 +1,6 @@
 .container {
     display: flex;
-    height: 100vh;
+    // height: 100vh;
     background-color: #F9FAFE;
 }
 
@@ -12,18 +12,27 @@
 
 .header {
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
     padding: 20px; /* Adjust padding as needed */
+    gap: 20px; /* Adjust gap as needed */
     background-color: #F9FAFE;
     // border-bottom: 1px solid #ddd;
     align-items: center;
 }
 
+.combinedHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
 .leftButtonContainer {
     display: flex;
     gap: 10px; /* Adjust gap as needed */
-    align-items: center;
-    margin-left: -500px; /* Adjust margin as needed to control spacing */
+    // align-items: center;
+    align-items: flex-start;
+    margin-left: -800px; /* Adjust margin as needed to control spacing */
 }
 .rightButtonContainer {
     display: flex;

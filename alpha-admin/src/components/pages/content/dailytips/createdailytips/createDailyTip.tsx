@@ -89,7 +89,6 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
             fetchStaffData(currentPage - 1);
         }
     };
-    
 
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
@@ -218,20 +217,22 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>
-                    <header className={styles.header}>
-                        <Typography variant="h5">Create Daily tips</Typography>
+                    <div className={styles.combinedHeader}>
+                        <header className={styles.header}>
+                            <Typography variant="h5">Create Daily tips</Typography>
 
-                        <div className={styles.leftButtonContainer}>
-                            <DeleteButton showLeftIcon />
+                            {/* <div className={styles.leftButtonContainer}> */}
+                            {/* <DeleteButton showLeftIcon /> */}
                             <EditButton buttonText="Cancel" onButtonClick={handleCancel} />
-                        </div>
+                            {/* </div> */}
+                        </header>
                         <div className={styles.rightButtonContainer}>
                             <AppButton
                                 buttonText="Save"
                                 onButtonClick={() => navigate('/content/dailytips')}
                             />
                         </div>
-                    </header>
+                    </div>
 
                     <div className={styles.categories}>
                         <div className={styles.tableheader}>

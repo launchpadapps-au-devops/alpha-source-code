@@ -19,7 +19,7 @@ const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData, errors, 
             themeData: {
                 ...data.themeData,
                 habits: data.themeData.habits.map((habit: any, index: number) =>
-                    index === habitIndex ? { ...habit, [name]: value } : habit
+                    index === habitIndex ? { ...habit,  [name]: name === "timeAllocation" || name === "pointAllocation" ? Number(value) : value } : habit
                 ),
             },
         });

@@ -28,7 +28,6 @@ export const ManagePassword = ({ className }: CareTeamProfileProps) => {
     const role = localStorage.getItem('LoggedInUserRole'); // Get role from localStorage
     const accessToken = localStorage.getItem('accessToken'); // Get accessToken from localStorage
     // console.log('accessToken', accessToken);
-    
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -40,7 +39,6 @@ export const ManagePassword = ({ className }: CareTeamProfileProps) => {
 
     // Handle form submit
     const handleFormSubmit = async () => {
-
         // Check if new password and confirm new password match
         if (newPassword !== confirmNewPassword) {
             setConfirmPasswordError(true);
@@ -145,7 +143,9 @@ export const ManagePassword = ({ className }: CareTeamProfileProps) => {
                                 onChange={handlePasswordChange}
                                 className={currentPasswordError ? styles['error-input'] : ''}
                             />
-                            {currentPasswordError && <span className={styles['error-text']}>{errorMessage}</span>}
+                            {currentPasswordError && (
+                                <span className={styles['error-text']}>{errorMessage}</span>
+                            )}
                         </div>
                         <div className={styles['input-field-wrapper']}>
                             <div className={styles['input-field-label-main-wrapper']}>
@@ -173,22 +173,27 @@ export const ManagePassword = ({ className }: CareTeamProfileProps) => {
                                 onChange={handleConfirmNewPasswordChange}
                                 className={confirmPasswordError ? styles['error-input'] : ''}
                             />
-                        {confirmPasswordError && (
-                            <span className={styles['error-text']}>Passwords do not match.</span>
-                        )}
+                            {confirmPasswordError && (
+                                <span className={styles['error-text']}>
+                                    Passwords do not match.
+                                </span>
+                            )}
                         </div>
-                        <AppButton
-                            buttonText="Save new password"
-                            showLeftIcon={false}
-                            showRightIcon={false}
-                            onButtonClick={handleFormSubmit}
-                        />
-                        <EditButton
-                            buttonText="Cancel"
-                            showLeftIcon={false}
-                            showRightIcon={false}
-                            onButtonClick={() => navigate('/terms-and-condition')}
-                        />
+                        <div className={styles['button-wrapper']}>
+                            <EditButton
+                                buttonText="Cancel"
+                                showLeftIcon={false}
+                                showRightIcon={false}
+                                onButtonClick={() => navigate('/terms-and-condition')}
+                                className={styles['cancel-button']}
+                            />
+                            <AppButton
+                                buttonText="Save new password"
+                                showLeftIcon={false}
+                                showRightIcon={false}
+                                onButtonClick={handleFormSubmit}
+                            />
+                        </div>
                         {saveModal && <SaveResetPassword open={saveModal} />}
                     </div>
                 </div>

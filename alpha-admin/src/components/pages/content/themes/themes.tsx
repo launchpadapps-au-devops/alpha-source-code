@@ -118,7 +118,6 @@ export const Themes = ({ className }: ContentProps) => {
     return (
         <>
             <BackButton onClick={handleBackClick} />
-            <BackButton onClick={handleBackClick} />
             <div
                 className={classNames(styles.container, className, {
                     'blur-effect': isSidebarOpen,

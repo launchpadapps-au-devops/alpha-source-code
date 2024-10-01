@@ -47,7 +47,7 @@ const StyledListItemButton = styled(ListItemButton)<{ selected: boolean }>(({ se
 }));
 
 // Add dirty and handlers for blocking navigation
-const Sidebar: React.FC<{ dirty: boolean, setDirty: any ,  saveAsDraft: () => void, discardChanges: () => void, cancelNavigation: () => void }> = ({ dirty, saveAsDraft, discardChanges, cancelNavigation }) => {
+const Sidebar: React.FC<{ dirty?: boolean, setDirty?: any ,  saveAsDraft?: () => void, discardChanges?: () => void, cancelNavigation?: () => void }> = ({ dirty, saveAsDraft, discardChanges, cancelNavigation }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [selectedItem, setSelectedItem] = useState('');
     const [showPrompt, setShowPrompt] = useState(false); // Track if the unsaved changes modal is shown
@@ -93,13 +93,13 @@ const Sidebar: React.FC<{ dirty: boolean, setDirty: any ,  saveAsDraft: () => vo
 
     // Handle modal actions
     const handleSaveAsDraft = () => {
-        discardChanges();  // Discard unsaved changes
+       // discardChanges();  // Discard unsaved changes
         setShowPrompt(false);  // Close the modal
         navigate('/');  // Navigate after saving or discarding
     };
 
     const handleDiscardChanges = () => {
-        discardChanges();  // Reset unsaved changes
+       // discardChanges();  // Reset unsaved changes
         setShowPrompt(false);  // Close the modal
         navigate( '/');  // Proceed with navigation
     };

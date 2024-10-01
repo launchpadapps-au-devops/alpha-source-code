@@ -23,77 +23,119 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../../back-button/backButton';
 import React from 'react';
 
+// Define the Meta and PropertyTag interfaces for reusable data structures
+interface Meta {
+    key: string;
+    value?: string;
+}
+
+interface PropertyTag {
+    key: string;
+}
+
+// Define the Habit interface
+interface Habit {
+    id: number;
+    order: number;
+    name: string;
+    timeAllocation: number;
+    pointAllocation: number;
+    instructions: string;
+    meta: Meta[];
+}
+
+// Define the ThemeData interface
+interface ThemeData {
+    themeCode: number;
+    categoryId: number;
+    isPublished: boolean;
+    status: string;
+    internalNotes: string;
+    name: string;
+    image: string;
+    description: string;
+    propertyTags: PropertyTag[];
+    habits: Habit[];
+}
+
+// Define the Data interface
+export interface Data {
+    themeData: ThemeData;
+    lessonData: number[]; // Array of lesson IDs
+}
+
+// Exported interface for the props (optional if it's reused elsewhere)
 export interface CreateThemeProps {
     className?: string;
 }
 
-const initialLessons: Lesson[] = [
-    {
-        lessonCode: 1,
-        name: 'Lesson 1',
-        createdAt: '26/06/2023',
-        isPublished: true,
-        category: 'Nutrition',
-        quizData: true,
-        select: false,
-        status: '',
-    },
-    {
-        lessonCode: 2,
-        name: 'Lesson 2',
-        createdAt: '26/06/2023',
-        isPublished: false,
-        category: 'Nutrition',
-        quizData: false,
-        select: false,
-        status: '',
-    },
-    {
-        lessonCode: 3,
-        name: 'Lesson 3',
-        createdAt: '26/06/2023',
-        isPublished: true,
-        category: 'Nutrition',
-        quizData: false,
-        select: false,
-        status: '',
-    },
-    {
-        lessonCode: 4,
-        name: 'Lesson 4',
-        createdAt: '26/06/2023',
-        isPublished: true,
-        category: 'Nutrition',
-        quizData: true,
-        select: false,
-        status: '',
-    },
-    {
-        lessonCode: 5,
-        name: 'Lesson 5',
-        createdAt: '26/06/2023',
-        isPublished: true,
-        category: 'Nutrition',
-        quizData: false,
-        select: false,
-        status: '',
-    },
-    {
-        lessonCode: 6,
-        name: 'Lesson 6',
-        createdAt: '26/06/2023',
-        isPublished: true,
-        category: 'Nutrition',
-        quizData: true,
-        select: false,
-        status: '',
-    },
-];
+// const initialLessons: Lesson[] = [
+//     {
+//         lessonCode: 1,
+//         name: 'Lesson 1',
+//         createdAt: '26/06/2023',
+//         isPublished: true,
+//         category: 'Nutrition',
+//         quizData: true,
+//         select: false,
+//         status: '',
+//     },
+//     {
+//         lessonCode: 2,
+//         name: 'Lesson 2',
+//         createdAt: '26/06/2023',
+//         isPublished: false,
+//         category: 'Nutrition',
+//         quizData: false,
+//         select: false,
+//         status: '',
+//     },
+//     {
+//         lessonCode: 3,
+//         name: 'Lesson 3',
+//         createdAt: '26/06/2023',
+//         isPublished: true,
+//         category: 'Nutrition',
+//         quizData: false,
+//         select: false,
+//         status: '',
+//     },
+//     {
+//         lessonCode: 4,
+//         name: 'Lesson 4',
+//         createdAt: '26/06/2023',
+//         isPublished: true,
+//         category: 'Nutrition',
+//         quizData: true,
+//         select: false,
+//         status: '',
+//     },
+//     {
+//         lessonCode: 5,
+//         name: 'Lesson 5',
+//         createdAt: '26/06/2023',
+//         isPublished: true,
+//         category: 'Nutrition',
+//         quizData: false,
+//         select: false,
+//         status: '',
+//     },
+//     {
+//         lessonCode: 6,
+//         name: 'Lesson 6',
+//         createdAt: '26/06/2023',
+//         isPublished: true,
+//         category: 'Nutrition',
+//         quizData: true,
+//         select: false,
+//         status: '',
+//     },
+// ];
 
 export const CreateTheme = ({ className }: CreateThemeProps) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [lessons, setLessons] = useState<Lesson[]>(initialLessons);
+    const [lessons, setLessons] = useState<Lesson[]>([]);
     const [newLessons, setNewLessons] = useState<Lesson[]>([]);
     const [selectedLessons, setSelectedLessons] = useState<Lesson[]>([]);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -102,7 +144,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     const [errors, setErrors] = React.useState<any>({});
     const dispatch = useAppDispatch();
 
-    const [data, setData] = useState({
+    const [data, setData] = useState<Data>({
         themeData: {
             themeCode: 1,
             categoryId: 1,
@@ -111,7 +153,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
             internalNotes: '',
             name: '',
             image: 'https://sample.com/sample.jpg',
-            description: 'Theme Description',
+            description: '',
             propertyTags: [
                 {
                     key: 'value',
@@ -155,31 +197,31 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
             fieldErrors.lessonData = 'At least one lesson is required';
         }
 
-       // Validate habits
-    if (data.themeData.habits.length > 0) {
-        data.themeData.habits.forEach((habit, index) => {
-            let habitErrors: any = {};
+        // Validate habits
+        if (data.themeData.habits.length > 0) {
+            data.themeData.habits.forEach((habit, index) => {
+                let habitErrors: any = {};
 
-            if (!habit.name) {
-                habitErrors.name = 'Habit name is required';
-            }
-            if (!habit.timeAllocation) {
-                habitErrors.timeAllocation = 'Time allocation is required';
-            }
-            if (!habit.pointAllocation) {
-                habitErrors.pointAllocation = 'Point allocation is required';
-            }
-            if (!habit.instructions) {
-                habitErrors.instructions = 'Instructions are required';
-            }
+                if (!habit.name) {
+                    habitErrors.name = 'Habit name is required';
+                }
+                if (!habit.timeAllocation) {
+                    habitErrors.timeAllocation = 'Time allocation is required';
+                }
+                if (!habit.pointAllocation) {
+                    habitErrors.pointAllocation = 'Point allocation is required';
+                }
+                if (!habit.instructions) {
+                    habitErrors.instructions = 'Instructions are required';
+                }
 
-            if (Object.keys(habitErrors).length > 0) {
-                fieldErrors[`habits_${index}`] = habitErrors; // Store errors for each habit
-            }
-        });
-    } else {
-        fieldErrors.habits = 'At least one habit is required';
-    }
+                if (Object.keys(habitErrors).length > 0) {
+                    fieldErrors[`habits_${index}`] = habitErrors; // Store errors for each habit
+                }
+            });
+        } else {
+            fieldErrors.habits = 'At least one habit is required';
+        }
 
         setErrors(fieldErrors);
 
@@ -198,6 +240,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
             },
             lessonData: lessonIds, // Ensure lessonData is an array of lesson codes
         };
+        console.log('updatedData', updatedData);
 
         if (!validateFields()) {
             dispatch(addThemeThunk(updatedData))
@@ -275,14 +318,16 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>
-                    <header className={styles.header}>
-                        <h4>Create a new Theme</h4>
-                        <div className={styles.leftButtonContainer}>
+                    <div className={styles.combinedHeader}>
+                        <header className={styles.header}>
+                            <h4>Create a new Theme</h4>
+                            {/* <div className={styles.leftButtonContainer}> */}
                             <EditButton
                                 buttonText="Cancel"
                                 onButtonClick={() => navigate('/content/themes')}
                             />
-                        </div>
+                        </header>
+                        {/* </div> */}
                         <div className={styles.rightButtonContainer}>
                             <EditButton
                                 buttonText="Save as draft"
@@ -293,7 +338,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                                 onButtonClick={() => submitData('ACTIVE')}
                             />
                         </div>
-                    </header>
+                    </div>
                     <div className={styles.themeContainer}>
                         <div className={styles.leftColumn}>
                             <ThemeDetails

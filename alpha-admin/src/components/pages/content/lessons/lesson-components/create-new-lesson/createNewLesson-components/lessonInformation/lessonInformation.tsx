@@ -120,7 +120,7 @@ export const LessonInformation = ({
                         placeholder="Add to theme"
                         readOnly
                         className={styles.inputWithPlusIcon}
-                        value={selectedTheme.name}
+                        value={selectedTheme?.name}
                         required
                     />
                     <AddIcon className={styles.plusIcon} />
@@ -146,7 +146,7 @@ export const LessonInformation = ({
                         </option>
                         {categories.map((category: any) => (
                             <option key={category.id} value={category.id}>
-                                {category.name}
+                                {category?.name}
                             </option>
                         ))}
                     </select>

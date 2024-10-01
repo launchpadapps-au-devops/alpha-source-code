@@ -41,10 +41,19 @@
 }
 .header {
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
+  align-items: center;
+  gap: 20px; /* Adjust gap as needed */
   padding: 20px; /* Adjust padding as needed */
   background-color: #f9fafe;
   align-items: center;
+}
+
+.combinedHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .buttonContainer {
@@ -79,7 +88,7 @@
   border: 1px solid var(--primary-500-main, #00acee);
   border-radius: 6px;
   box-shadow: 0px 0px 0px 2px #e6f7fd;
-  padding: 4px;
+  padding: 10px;
   color: var(--Gray-01, #22272b);
   font-family: 'Public Sans';
   font-size: 16px;
@@ -115,6 +124,7 @@
   }
 
   .dayInput {
+    display: flex;
       width: 3%; /* Adjust width as needed */
       font-weight: bold;
       color: #22272b; /* Style for the day text */
@@ -169,7 +179,7 @@
     border: 1px solid var(--primary-500-main, #00acee);
     border-radius: 6px;
     box-shadow: 0px 0px 0px 2px #e6f7fd;
-    padding: 4px;
+    padding: 10px;
     color: var(--Gray-01, #22272b);
     font-family: 'Public Sans';
     font-size: 16px;

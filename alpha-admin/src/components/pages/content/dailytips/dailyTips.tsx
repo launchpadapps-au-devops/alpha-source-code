@@ -198,16 +198,19 @@ export const DailyTips = ({ className }: ContentProps) => {
         <div className={classNames(styles.container, className)}>
             <Sidebar />
             <div className={styles.content}>
+                <div className={styles.combinedHeader}>
                 <header className={styles.header}>
                     <Typography variant="h5">
                         {isEditable ? 'Edit Daily tips' : 'Daily tips'}
                     </Typography>
+                    {isEditable ? <EditButton buttonText='Cancel' onButtonClick={() => setIsEditable(!isEditable)}/> : null} 
+                </header>
                     <div className={styles.buttonContainer}>
-                        <EditButton
+                        {isEditable ? '' : <EditButton
                             showLeftIcon={!isEditable}
-                            buttonText={isEditable ? 'Cancel' : 'Edit Daily tips'}
+                            buttonText='Edit Daily tips'
                             onButtonClick={() => setIsEditable(!isEditable)}
-                        />
+                        />}
                         <AppButton
                             ref={buttonRef}
                             showLeftIcon
@@ -254,7 +257,7 @@ export const DailyTips = ({ className }: ContentProps) => {
                             </MenuItem>
                         </Menu>
                     </div>
-                </header>
+                    </div>
 
                 <div className={styles.categories}>
                     <div className={styles.tableheader}>

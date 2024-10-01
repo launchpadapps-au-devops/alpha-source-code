@@ -12,11 +12,19 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
+  gap: 20px; /* Adjust gap as needed */
   align-items: center;
   padding: 20px; /* Adjust padding as needed */
   background-color: #fff;
   // border-bottom: 1px solid #ddd;
+}
+
+.combinedHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .leftButtonContainer {

@@ -55,7 +55,7 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                             ...data,
                             themeData: {
                                 ...data.themeData,
-                                themeCode: e.target.value,
+                                themeCode: Number(e.target.value),
                             },
                         });
                     }}

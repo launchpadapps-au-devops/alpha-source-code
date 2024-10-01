@@ -45,7 +45,6 @@ const initialLessons: Lesson[] = [
         quizData: false,
         select: false,
         status: '',
-
     },
     {
         lessonCode: 3,
@@ -56,7 +55,6 @@ const initialLessons: Lesson[] = [
         quizData: false,
         select: false,
         status: '',
-
     },
     {
         lessonCode: 4,
@@ -200,14 +198,16 @@ export const EditTheme = ({ className }: EditThemeProps) => {
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>
-                    <header className={styles.header}>
-                        <h4>Edit theme</h4>
-                        <div className={styles.leftButtonContainer}>
+                    <div className={styles.combinedHeader}>
+                        <header className={styles.header}>
+                            <h4>Edit theme</h4>
+                            {/* <div className={styles.leftButtonContainer}> */}
                             <EditButton
                                 buttonText="Cancel"
                                 onButtonClick={() => navigate('/content/themes')}
                             />
-                        </div>
+                        </header>
+                        {/* </div> */}
                         <div className={styles.rightButtonContainer}>
                             <EditButton
                                 buttonText="Save as draft"
@@ -215,7 +215,7 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                             />
                             <AppButton buttonText="Publish" onButtonClick={() => submitData(id)} />
                         </div>
-                    </header>
+                    </div>
                     <div className={styles.themeContainer}>
                         <div className={styles.leftColumn}>
                             <ThemeDetails
@@ -227,8 +227,13 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                             />
                         </div>
                         <div className={styles.rightColumn}>
-                            <AddThemeDetails category={category} data={data} setData={setData}  errors={{}}
-                                setErrors={() => {}}/>
+                            <AddThemeDetails
+                                category={category}
+                                data={data}
+                                setData={setData}
+                                errors={{}}
+                                setErrors={() => {}}
+                            />
                             {!hideLessons && (
                                 <LessonManagement
                                     selectedLessons={selectedLessons}
@@ -254,8 +259,13 @@ export const EditTheme = ({ className }: EditThemeProps) => {
                                     )}
                                 </div>
                                 {showHabit ? (
-                                    <Habit showDeleteButton={false} data={data} setData={setData}  errors={{}}
-                                    setErrors={() => {}}/>
+                                    <Habit
+                                        showDeleteButton={false}
+                                        data={data}
+                                        setData={setData}
+                                        errors={{}}
+                                        setErrors={() => {}}
+                                    />
                                 ) : (
                                     <EditButton
                                         buttonText="Add Habit"

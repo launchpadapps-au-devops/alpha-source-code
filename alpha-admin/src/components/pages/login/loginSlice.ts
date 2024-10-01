@@ -11,6 +11,14 @@ export interface UserDetails {
     refreshTokenExpiresAt: string;
 }
 
+export interface ErrorDetails {
+    code: number;
+    urlPath: string;
+    timestamp: string;
+    message: string;
+    details: any[];
+}
+
 export interface LoginSliceState {
     refreshTokenExpiresAt: string;
     refreshToken: string;
@@ -19,7 +27,7 @@ export interface LoginSliceState {
     userDetails: UserDetails;
     loggedIn: boolean;
     loading: boolean;
-    error: string | null;
+    error: ErrorDetails | null;
     userType: string | null; // Added userType to the state
 }
 
@@ -88,7 +96,13 @@ export const loginThunk = createAsyncThunk(
             // Return the combined response data (tokens and userType)
             return { ...response.data, userType };
         } catch (error: any) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response?.data?.error || {
+                code: 500,
+                message: 'An unknown error occurred',
+                urlPath: '/unknown',
+                timestamp: new Date().toISOString(),
+                details: []
+            });
         }
     }
 );
@@ -152,7 +166,7 @@ export const authSlice = createSlice({
             })
             .addCase(loginThunk.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload as string;
+                state.error = action.payload as ErrorDetails;
             });
     },
 });

@@ -330,54 +330,78 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
             categoryId: Number(dataVal?.categoryId),
             duration: Number(dataVal?.duration),
             points: Number(dataVal?.points),
-            lessonTags: dataVal?.lessonTags.map((tag: { Prop: any[] }) => ({
-                Prop: tag.Prop.filter(Boolean), // Ensure non-empty tags
-            })),
-            screenData: dataVal.screenData.map((screen: { order: any }) => ({
-                ...screen,
-                order: Number(screen.order),
-            })),
-            freeTextQuiz: dataVal.freeTextQuiz.map(
-                (quiz: {
-                    id: any;
-                    type: any;
-                    answer: any;
-                    question: any;
-                    quizName: any;
-                    userInstructions: any;
-                }) => ({
-                    id: quiz.id,
-                    type: quiz.type,
-                    answer: quiz.answer || '',
-                    question: quiz.question,
-                    quizName: quiz.quizName,
-                    userInstructions: quiz.userInstructions,
-                })
-            ),
-            quizData: dataVal.quizData.map(
-                (quiz: { id: any; min: any; max: any; options: any[]; answer: any[] }) => ({
-                    ...quiz,
-                    id: Number(quiz.id),
-                    min: Number(quiz.min),
-                    max: Number(quiz.max),
-                    options: quiz.options?.map(
-                        (option: { id: any; option: any; isCorrect: any }, index: number) => ({
-                            id: option.id || index + 1,
-                            option: option.option || '',
-                            isCorrect: option.isCorrect || false,
-                        })
-                    ),
-                    answer: Array.isArray(quiz.answer)
-                        ? quiz.answer.map(
-                              (ans: { id: any; option: any; isCorrect: any }, index: number) => ({
-                                  id: ans.id || index + 1,
-                                  option: ans.option || '',
-                                  isCorrect: ans.isCorrect || false,
-                              })
-                          )
-                        : [], // Default to an empty array if not an array
-                })
-            ),
+
+            // Safely handle lessonTags mapping
+            lessonTags: Array.isArray(dataVal?.lessonTags)
+                ? dataVal.lessonTags.map((tag: { Prop: any[] }) => ({
+                      Prop: Array.isArray(tag?.Prop) ? tag.Prop.filter(Boolean) : [], // Ensure non-empty and valid array
+                  }))
+                : [], // Default to an empty array if undefined or not an array
+
+            // Safely handle screenData mapping
+            screenData: Array.isArray(dataVal?.screenData)
+                ? dataVal.screenData.map((screen: { order: any }) => ({
+                      ...screen,
+                      order: Number(screen.order),
+                  }))
+                : [], // Default to an empty array if undefined or not an array
+
+            // Safely handle freeTextQuiz mapping
+            freeTextQuiz: Array.isArray(dataVal?.freeTextQuiz)
+                ? dataVal.freeTextQuiz.map(
+                      (quiz: {
+                          id: any;
+                          type: any;
+                          answer: any;
+                          question: any;
+                          quizName: any;
+                          userInstructions: any;
+                      }) => ({
+                          id: quiz.id,
+                          type: quiz.type,
+                          answer: quiz.answer || '',
+                          question: quiz.question,
+                          quizName: quiz.quizName,
+                          userInstructions: quiz.userInstructions,
+                      })
+                  )
+                : [], // Default to an empty array if undefined or not an array
+
+            // Safely handle quizData mapping
+            quizData: Array.isArray(dataVal?.quizData)
+                ? dataVal.quizData.map(
+                      (quiz: { id: any; min: any; max: any; options: any[]; answer: any[] }) => ({
+                          ...quiz,
+                          id: Number(quiz.id),
+                          min: Number(quiz.min),
+                          max: Number(quiz.max),
+                          options: Array.isArray(quiz.options)
+                              ? quiz.options.map(
+                                    (
+                                        option: { id: any; option: any; isCorrect: any },
+                                        index: number
+                                    ) => ({
+                                        id: option.id || index + 1,
+                                        option: option.option || '',
+                                        isCorrect: option.isCorrect || false,
+                                    })
+                                )
+                              : [], // Default to empty array if undefined or not an array
+                          answer: Array.isArray(quiz.answer)
+                              ? quiz.answer.map(
+                                    (
+                                        ans: { id: any; option: any; isCorrect: any },
+                                        index: number
+                                    ) => ({
+                                        id: ans.id || index + 1,
+                                        option: ans.option || '',
+                                        isCorrect: ans.isCorrect || false,
+                                    })
+                                )
+                              : [], // Default to empty array if not an array
+                      })
+                  )
+                : [], // Default to an empty array if undefined or not an array
         };
     };
 
@@ -408,20 +432,20 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
     const handlePreview = () => {
         const updatedData = updateQuizData(data);
         if (validateFields()) {
-        setData(updatedData);
-        console.log('Data:', updatedData);
-        const formattedData = formatData(updatedData);
-        console.log('Formatted data:', formattedData);
+            setData(updatedData);
+            console.log('Data:', updatedData);
+            const formattedData = formatData(updatedData);
+            console.log('Formatted data:', formattedData);
 
-        if (isEditMode) {
-            dispatch(updateLessonThunk({ id: params.id, data: formattedData })).then(
-                (response: any) => {
-                    navigate('/content/lessons/viewlesson/' + response.payload.data.id);
-                }
-            );
-        } else {
-            setShowPreview(true); // Show preview before submission
-        }
+            if (isEditMode) {
+                dispatch(updateLessonThunk({ id: params.id, data: formattedData })).then(
+                    (response: any) => {
+                        navigate('/content/lessons/viewlesson/' + response.payload.data.id);
+                    }
+                );
+            } else {
+                setShowPreview(true); // Show preview before submission
+            }
         } else {
             console.log('Validation failed', errors);
         }
@@ -516,23 +540,25 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
         />
       )}
                 <div className={styles.content}>
-                    <header className={styles.header}>
-                        {isEditMode ? (
-                            <Typography variant="h5">Edit lesson</Typography>
-                        ) : (
-                            <Typography variant="h5">Create a new lesson</Typography>
-                        )}
-                        <div className={styles.leftButtonContainer}>
+                    <div className={styles.combinedHeader}>
+                        <header className={styles.header}>
+                            {isEditMode ? (
+                                <Typography variant="h5">Edit lesson</Typography>
+                            ) : (
+                                <Typography variant="h5">Create a new lesson</Typography>
+                            )}
+                            {/* <div className={styles.leftButtonContainer}> */}
                             <EditButton
                                 buttonText="Cancel"
                                 onButtonClick={() => navigate('/content/lessons')}
                             />
-                        </div>
+                        </header>
+                        {/* </div> */}
                         <div className={styles.rightButtonContainer}>
                             <EditButton buttonText="Save as draft" onButtonClick={saveAsDraft} />
                             <AppButton buttonText="Preview" onButtonClick={handlePreview} />
                         </div>
-                    </header>
+                    </div>
                     <div className={styles.mainContent}>
                         <LessonInformation
                             setDirty={setDirty}

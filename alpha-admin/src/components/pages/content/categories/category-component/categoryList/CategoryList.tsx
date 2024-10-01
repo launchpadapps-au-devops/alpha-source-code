@@ -78,7 +78,6 @@ const CategoryList: React.FC = () => {
             fetchStaffData(currentPage - 1);
         }
     };
-    
 
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
@@ -105,7 +104,7 @@ const CategoryList: React.FC = () => {
         setErrors(fieldErrors);
         return Object.keys(fieldErrors).length === 0;
     };
-    
+
     const handleSaveClick = (category: Category) => {
         if (validateFields(false)) {
             const updatedCategory = { ...category, name: editName };
@@ -114,7 +113,7 @@ const CategoryList: React.FC = () => {
             setEditName('');
         }
     };
-    
+
     const handleNewCategory = () => {
         if (validateFields(true)) {
             dispatch(addCategoryThunk(newCategoryName));
@@ -122,8 +121,6 @@ const CategoryList: React.FC = () => {
             setNewCategoryName('');
         }
     };
-    
-    
 
     const handleDeleteClick = (id: number | null) => {
         if (id !== null) {
@@ -155,135 +152,153 @@ const CategoryList: React.FC = () => {
     );
 
     return (
-        <div className={styles.categoryList}>
-            <table className={styles.table}>
-                <thead>
-                    <tr>
-                        <th className={styles.categoriesHeader}>Categories</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {newCategory && (
+        <>
+            <div className={styles.categoryList}>
+                <table className={styles.table}>
+                    <thead>
                         <tr>
-                            <td>
-                                <div className={styles.categoryCell}>
-                                    <input
-                                        type="text"
-                                        className={`${styles.contentInput} ${errors.newCategoryName ? styles.errorBorder : ''}`}
-                                        value={newCategoryName}
-                                        onChange={(e) => setNewCategoryName(e.target.value)}
-                                        required
-                                    />
-                                    {errors.newCategoryName && <span className={styles.errorText}>{errors.newCategoryName}</span>}
-                                    <AppButton
-                                        buttonText="Save & add more"
-                                        className={styles.button}
-                                        onButtonClick={handleNewCategory}
-                                    />
-                                    <EditButton
-                                        buttonText="Save"
-                                        className={styles.button}
-                                        onButtonClick={handleNewCategory}
-                                    />
-                                    <DeleteButton
-                                        buttonText="Delete"
-                                        className={styles.button}
-                                        onButtonClick={() => setNewCategory(false)}
-                                    />
-                                </div>
-                            </td>
+                            <th className={styles.categoriesHeader}>Categories</th>
+                            <th></th>
                         </tr>
-                    )}
-                    {activeCategories.map((category: Category) => (
-                        <tr key={category.id}>
-                            <td className={styles.categoryCell}>
-                                {editId === category.id ? (
-                                    <div className={styles.editContainer}>
-                                        <input
-                                            className= {`${styles.contentInput} ${errors.editName ? styles.errorBorder : ''}`}
-                                            type="text"
-                                            value={editName}
-                                            onChange={handleNameChange}
-                                            required
-                                        />
-                                        {errors.editName && <span className={styles.errorText}>{errors.editName}</span>}
-                                        <div className={styles.buttonContainer}>
-                                            <AppButton
-                                                buttonText="Save & add more"
-                                                className={styles.button}
-                                                onButtonClick={() => handleSaveClick(category)}
+                    </thead>
+                    <tbody>
+                        {newCategory && (
+                            <tr>
+                                <td>
+                                    <div className={styles.categoryCell}>
+                                        <div className={styles.editContainer}>
+                                            <input
+                                                type="text"
+                                                className={`${styles.contentInput} ${
+                                                    errors.newCategoryName ? styles.errorBorder : ''
+                                                }`}
+                                                value={newCategoryName}
+                                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                                required
                                             />
-                                            <EditButton
-                                                className={styles.smallButton}
-                                                buttonText="Save"
-                                                onButtonClick={() => handleSaveClick(category)}
-                                            />
-                                            <DeleteButton
-                                                className={styles.smallButton}
-                                                buttonText="Delete"
-                                                onButtonClick={() => setOpenModal(true)}
-                                            />
+                                            {errors.newCategoryName && (
+                                                <span className={styles.errorText}>
+                                                    {errors.newCategoryName}
+                                                </span>
+                                            )}
+                                            <div className={styles.buttonContainer}>
+                                                <AppButton
+                                                    buttonText="Save & add more"
+                                                    className={styles.button}
+                                                    onButtonClick={handleNewCategory}
+                                                />
+                                                <EditButton
+                                                    buttonText="Save"
+                                                    className={styles.button}
+                                                    onButtonClick={handleNewCategory}
+                                                />
+                                                <DeleteButton
+                                                    buttonText="Delete"
+                                                    className={styles.button}
+                                                    onButtonClick={() => setNewCategory(false)}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
-                                ) : (
-                                    <>
-                                        <span>{category.name}</span>
-                                        <EditButton
-                                            buttonText="Edit"
-                                            onButtonClick={() => handleEditClick(category)}
-                                            className={styles.editButton}
-                                        />
-                                    </>
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                                </td>
+                            </tr>
+                        )}
+                        {activeCategories.map((category: Category) => (
+                            <tr key={category.id}>
+                                <td className={styles.categoryCell}>
+                                    {editId === category.id ? (
+                                        <div className={styles.editContainer}>
+                                            <input
+                                                className={`${styles.contentInput} ${
+                                                    errors.editName ? styles.errorBorder : ''
+                                                }`}
+                                                type="text"
+                                                value={editName}
+                                                onChange={handleNameChange}
+                                                required
+                                            />
+                                            {errors.editName && (
+                                                <span className={styles.errorText}>
+                                                    {errors.editName}
+                                                </span>
+                                            )}
+                                            <div className={styles.buttonContainer}>
+                                                <AppButton
+                                                    buttonText="Save & add more"
+                                                    className={styles.button}
+                                                    onButtonClick={() => handleSaveClick(category)}
+                                                />
+                                                <EditButton
+                                                    className={styles.button}
+                                                    buttonText="Save"
+                                                    onButtonClick={() => handleSaveClick(category)}
+                                                />
+                                                <DeleteButton
+                                                    className={styles.button}
+                                                    buttonText="Delete"
+                                                    onButtonClick={() => setOpenModal(true)}
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <span>{category.name}</span>
+                                            <EditButton
+                                                buttonText="Edit"
+                                                onButtonClick={() => handleEditClick(category)}
+                                                className={styles.editButton}
+                                            />
+                                        </>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                {openModal && (
+                    <DeleteCategoryModal
+                        open={openModal}
+                        descriptionText={
+                            <>
+                                <p>Are you sure you wish to delete this Category?</p> <br />
+                                <p>
+                                    If you delete this Category, all Themes and Lessons tagged to it
+                                    will lose their tags.
+                                </p>
+                                <br />
+                                <p>
+                                    However, the Lessons and Themes will remain available under
+                                    ‘Lessons’ and ‘Themes’.
+                                </p>
+                            </>
+                        }
+                        title="Delete category"
+                        closeModal={handleCloseModal}
+                        cancelButtonText="Cancel"
+                        deleteButtonText="Yes, delete category"
+                        handleDelete={() => handleDeleteClick(editId)} // Pass handleDeleteClick here
+                    />
+                )}
+                {publishModalOpen && (
+                    <PublishCategoryModal
+                        open={publishModalOpen}
+                        descriptionText="Are you sure you wish to publish this Category?"
+                        title="Publish category"
+                        closeModal={handleClosePublishModal}
+                        // handlePublish={() => console.log('Category Published')} // Implement your publish logic here
+                    />
+                )}
+            </div>
             <div className={styles.pagination}>
                 <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
-                    onPageChange={handlePageChange} 
+                    onPageChange={handlePageChange}
                     currentPage={currentPage}
                     totalPages={totalPages}
                 />
             </div>
-            {openModal && (
-                <DeleteCategoryModal
-                    open={openModal}
-                    descriptionText={
-                        <>
-                            <p>Are you sure you wish to delete this Category?</p> <br />
-                            <p>
-                                If you delete this Category, all Themes and Lessons tagged to it
-                                will lose their tags.
-                            </p>
-                            <br />
-                            <p>
-                                However, the Lessons and Themes will remain available under
-                                ‘Lessons’ and ‘Themes’.
-                            </p>
-                        </>
-                    }
-                    title="Delete category"
-                    closeModal={handleCloseModal}
-                    cancelButtonText="Cancel"
-                    deleteButtonText="Yes, delete category"
-                    handleDelete={() => handleDeleteClick(editId)} // Pass handleDeleteClick here
-                />
-            )}
-            {publishModalOpen && (
-                <PublishCategoryModal
-                    open={publishModalOpen}
-                    descriptionText="Are you sure you wish to publish this Category?"
-                    title="Publish category"
-                    closeModal={handleClosePublishModal}
-                    // handlePublish={() => console.log('Category Published')} // Implement your publish logic here
-                />
-            )}
-        </div>
+        </>
     );
 };
 

@@ -50,22 +50,24 @@ export const CreateCategories = ({ className }: CreateContentProps) => {
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>
+                    <div className={styles.combinedHeader}>
                     <header className={styles.header}>
                         <Typography variant="h5">Create category</Typography>
-                        <div className={styles.leftButtonContainer}>
+                        {/* <div className={styles.leftButtonContainer}> */}
                             {/* <DeleteButton showLeftIcon onButtonClick={handleDeleteModal} /> */}
                             <EditButton
                                 buttonText="Cancel"
                                 onButtonClick={() => navigate('/content')}
                             />
-                        </div>
+                            </header>
+                        {/* </div> */}
                         <div className={styles.rightButtonContainer}>
                             <AppButton
                                 buttonText="Save updates"
                                 onButtonClick={() => navigate('/content')}
                             />
                         </div>
-                    </header>
+                    </div>
                     <CategoryList />
                 </div>
                 {openModal && (

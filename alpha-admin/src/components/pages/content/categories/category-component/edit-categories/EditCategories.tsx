@@ -45,26 +45,28 @@ export const EditCategories = ({ className }: EditContentProps) => {
 
     return (
         <>
-            <BackButton onClick={handleBackClick}/>
+            <BackButton onClick={handleBackClick} />
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>
-                    <header className={styles.header}>
-                        <Typography variant="h5">Edit categories</Typography>
-                        <div className={styles.leftButtonContainer}>
+                    <div className={styles.combinedHeader}>
+                        <header className={styles.header}>
+                            <Typography variant="h5">Edit categories</Typography>
+                            {/* <div className={styles.leftButtonContainer}> */}
                             {/* <DeleteButton showLeftIcon onButtonClick={handleDeleteModal} /> */}
                             <EditButton
                                 buttonText="Cancel"
                                 onButtonClick={() => navigate('/content/categories')}
                             />
-                        </div>
+                        </header>
+                        {/* </div> */}
                         <div className={styles.rightButtonContainer}>
                             <AppButton
                                 buttonText="Save updates"
                                 onButtonClick={() => navigate('/content/categories')}
                             />
                         </div>
-                    </header>
+                    </div>
                     <CategoryList />
                 </div>
                 {openModal && (

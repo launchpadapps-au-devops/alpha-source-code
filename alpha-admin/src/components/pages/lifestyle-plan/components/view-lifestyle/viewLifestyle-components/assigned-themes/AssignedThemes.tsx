@@ -31,7 +31,7 @@ const AssignedThemes = ({ className, plan }: AssignedThemesProps) => {
                 </header>
             </div>
             <div>
-                <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
+                {/* <TabBar tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} /> */}
                 <ThemesTable
                     themes={plan.themes}
                     setThemes={undefined}
