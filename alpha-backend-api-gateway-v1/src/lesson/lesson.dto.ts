@@ -87,6 +87,10 @@ export class CreateLessonDto {
      }], required: false })
     @IsOptional()
     quizData?: object;
+
+    @ApiProperty({ example: [{}] })
+    @IsOptional()
+    freeTextQuiz?: object;
 }
 
 export class UpdateLessonDto extends CreateLessonDto {

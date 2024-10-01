@@ -60,6 +60,7 @@ export class DataAnalyticService {
     async getEnrollements(
         fromDate?: Date,
         toDate?: Date,
+        gender?: string,
         reqUser = { userId: null }
     ) {
         return this.baseHttpService.invoke(
@@ -68,7 +69,8 @@ export class DataAnalyticService {
             {},
             {
                 fromDate,
-                toDate
+                toDate,
+                gender
             },
             {
                 'x-request-userId': reqUser.userId
@@ -90,6 +92,50 @@ export class DataAnalyticService {
                 userId,
                 categoryId,
                 themeId
+            },
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+    async getStepsAnalysis(
+        fromAge: number,
+        toAge: number,
+        fromDate: Date,
+        toDate: Date,
+        reqUser = { userId: null }
+    ) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/data-analytics/steps`,
+            'GET',
+            {},
+            {
+                fromAge,
+                toAge,
+                fromDate,
+                toDate
+            },
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
+    async lifestylePlanAnalysis(
+        planId: string,
+        fromDate: Date,
+        toDate: Date,
+        reqUser = { userId: null }
+    ) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/data-analytics/life-style-plan`,
+            'GET',
+            {},
+            {
+                planId,
+                fromDate,
+                toDate
             },
             {
                 'x-request-userId': reqUser.userId

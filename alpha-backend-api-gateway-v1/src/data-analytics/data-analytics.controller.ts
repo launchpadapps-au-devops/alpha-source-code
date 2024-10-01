@@ -144,6 +144,7 @@ export class DataAnalyticController {
     @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
     @ApiQuery({ name: 'fromDate', required: false })
     @ApiQuery({ name: 'toDate', required: false })
+    @ApiQuery({ name: 'gender', required: false, enum: ['Male', 'Female', 'Non Binary'] })
     @ApiResponse({
         status: 201,
         description: 'A successful response',
@@ -185,6 +186,7 @@ export class DataAnalyticController {
         return this.dataAnalyticService.getEnrollements(
             req.query.fromDate,
             req.query.toDate,
+            req.query.gender,
             { userId: req.user.userId }
         );
     }
@@ -261,6 +263,98 @@ export class DataAnalyticController {
             req.query.userId,
             req.query.categoryId,
             req.query.themeId,
+            { userId: req.user.userId }
+        );
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiQuery({ name: 'fromAge', required: true })
+    @ApiQuery({ name: 'toAge', required: true })
+    @ApiQuery({ name: 'fromDate', required: true })
+    @ApiQuery({ name: 'toDate', required: true })
+    @ApiResponse({
+        status: 201,
+        description: 'A successful response',
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'Average steps fetched successfully' },
+                data: {
+                    type: 'object',
+                    properties: {
+                        totalStepsInDate: { type: 'number', example: 100 },
+                        averageStepsInDate: { type: 'number', example: 100 },
+                    }
+                },
+                meta: { type: 'object', example: {} }
+            },
+            required: ['statusCode', 'data'],
+        },
+    })
+    @Get('/steps')
+    async getAverageSteps(
+        @Request() req,
+    ): Promise<object> {
+        return this.dataAnalyticService.getStepsAnalysis(
+            req.query.fromAge,
+            req.query.toAge,
+            req.query.fromDate,
+            req.query.toDate,
+            { userId: req.user.userId }
+        );
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiQuery({ name: 'planId', required: true })
+    @ApiQuery({ name: 'fromDate', required: true })
+    @ApiQuery({ name: 'toDate', required: true })
+    @ApiResponse({
+        status: 201,
+        description: 'A successful response',
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'Lifestyle plan analysis fetched successfully' },
+                data: {
+                    type: 'object',
+                    properties: {
+                        count: { type: 'number', example: 10 },
+                        users: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    id: { type: 'string', example: '123' },
+                                    email: { type: 'string', example: 'abc@exmaple.com' },
+                                    firstName: { type: 'string', example: 'John' },
+                                    lastName: { type: 'string', example: 'Doe' },
+                                    dob: { type: 'string', example: '1990-01-01' },
+                                    gender: { type: 'string', example: 'male' },
+                                    age: { type: 'number', example: 25 }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    })
+    @Get('/lifestyle-plan')
+    async getLifestylePlanAnalysis(
+        @Request() req,
+    ): Promise<object> {
+        return this.dataAnalyticService.lifestylePlanAnalysis(
+            req.query.planId,
+            req.query.fromDate,
+            req.query.toDate,
             { userId: req.user.userId }
         );
     }

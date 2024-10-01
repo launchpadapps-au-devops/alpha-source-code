@@ -311,6 +311,16 @@ class LessonDetailsDTO {
         userInstructions: string
     }>;
 
+    @ApiProperty({
+        type: 'array',
+        items: {
+            type: 'object',
+            properties: {},
+            example: [{ key: 'This is a free object' }]
+        }
+    })
+    freeTextQuiz: Array<{}>;
+
     @ApiProperty({ example: '2024-07-09T01:37:01.059Z' })
     createdAt: string;
 
