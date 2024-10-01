@@ -101,7 +101,6 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
     const params = useParams();
     const [errors, setErrors] = useState<any>({});
     const [showPrompt, setShowPrompt] = useState(false); 
-    // const [dirty, setDirty] = useState(false); 
     const { setDirty, dirty } = useUnsavedChanges();  // Use context state
 
 
