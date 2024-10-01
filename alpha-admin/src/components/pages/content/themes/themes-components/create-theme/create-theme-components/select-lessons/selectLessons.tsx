@@ -44,24 +44,25 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
+    console.log('Lessons', Lessons);
     // useEffect(() => {
     //     dispatch(fetchThemesThunk(1)).then((res: any) => {
     //         console.log('res', res);
 
-            // Extract lessons from the response and set them in the Lessons state
-            // const extractedLessons = res.payload.data.flatMap((theme: any) =>
-            //     theme.lessons.map((lesson: any) => ({
-            //         code: lesson.id,
-            //         title: lesson.name,
-            //         date: theme.createdAt,
-            //         published: lesson.isPublished,
-            //         category: theme.category.name,
-            //         quiz: false, // Assuming no quiz data is provided
-            //         select: false,
-            //     }))
-            // );
+    // Extract lessons from the response and set them in the Lessons state
+    // const extractedLessons = res.payload.data.flatMap((theme: any) =>
+    //     theme.lessons.map((lesson: any) => ({
+    //         code: lesson.id,
+    //         title: lesson.name,
+    //         date: theme.createdAt,
+    //         published: lesson.isPublished,
+    //         category: theme.category.name,
+    //         quiz: false, // Assuming no quiz data is provided
+    //         select: false,
+    //     }))
+    // );
 
-            // setLessons(extractedLessons);
+    // setLessons(extractedLessons);
     //     });
     // }, []);
 
@@ -72,16 +73,18 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
             const extractedLessons = res.payload.data.flatMap((lesson: any) => ({
                 // id: lesson.id,
                 lessonCode: lesson.id,
-                name: lesson.name,
+                name: lesson?.name,
                 createdAt: lesson.createdAt,
                 isPublished: lesson.isPublished,
-                category: lesson.category.name,
+                category: lesson.category?.name,
                 quizData: false,
                 select: false,
                 status: lesson.status,
             }));
 
             setLessons(extractedLessons);
+
+            // console.log('extractedLessons', extractedLessons);
 
             // Extract lessons from the response and set them in the Lessons state
             // const extractedLessons = res.payload.data.Flatmap((lesson: any) =>
@@ -112,12 +115,16 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
         setIsAnyLessonSelected(isAnyLessonSelected);
     }, [Lessons]);
 
-    const handleCheckboxChange = (index: number) => {
-        const updatedLessons = [...Lessons];
-        updatedLessons[index].select = !updatedLessons[index].select;
+    const handleCheckboxChange = (lessonCode: number) => {
+        const updatedLessons = Lessons.map((lesson) =>
+            lesson.lessonCode === lessonCode
+                ? { ...lesson, select: !lesson.select }
+                : lesson
+        );
         setLessons(updatedLessons);
         onUpdateLessons(updatedLessons);
     };
+    
 
     const handleAddToThemeClick = () => {
         if (isAnyLessonSelected) {
@@ -140,10 +147,12 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
 
     const filteredLessons = Lessons.filter(
         (lesson: Lesson) =>
-            lesson.name?.toLowerCase().includes(searchQuery.toLowerCase()) && 
+            lesson.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
             (lesson.status?.toLowerCase() === 'active' || lesson.status?.toLowerCase() === 'draft') // Check for 'active' or 'draft'
     );
-    
+
+    console.log('filteredLessons', filteredLessons);
+
     const handleCreateNewLesson = () => {
         navigate('/content/lessons/createlesson');
     };
@@ -151,7 +160,9 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
     return (
         <>
             {isOpen && <div className={styles.overlay} onClick={onClose} />}
+            
             <div className={classNames(styles.sidebar, { [styles.open]: isOpen })}>
+            <div className={styles['inner-block']}>
                 {isOpen && (
                     <button onClick={onClose} className={styles.closeButton}>
                         <ChevronRightIcon className={styles.arrowIcon} />
@@ -209,16 +220,16 @@ export const SelectLessonSidebar: React.FC<SelectLessonSidebarProps> = ({
                                 <td onClick={(event) => event.stopPropagation()}>
                                     <Checkbox
                                         checked={lesson.select}
-                                        onChange={() => handleCheckboxChange(index)}
+                                        onClick={(event) => event.stopPropagation()} // Ensure the click on the checkbox doesn't propagate
+                                        onChange={() => handleCheckboxChange(lesson.lessonCode)}
                                     />
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                <div className={styles.pagination}>
-                    <a href="#">Next</a>
-                </div>
+                <div className={styles.pagination}>{/* <a href="#">Next</a> */}</div>
+            </div>
             </div>
         </>
     );

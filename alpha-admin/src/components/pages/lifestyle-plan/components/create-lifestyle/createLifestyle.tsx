@@ -60,10 +60,13 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
     const onUpdateThemes = (theme: any) => {
         if (selectedThemes.includes(theme.id)) {
             setSelectedThemes(selectedThemes.filter((id: any) => id !== theme.id));
-            return;
+        } else {
+            setSelectedThemes([...selectedThemes, theme.id]);
         }
-        setSelectedThemes([...selectedThemes, theme.id]);
+        console.log('Updated selectedThemes:', selectedThemes);
     };
+    
+    // console.log('Updated selectedThemes:', selectedThemes);
 
     const isEditMode = location.pathname.includes('/lifestyle-plan/edit');
 
@@ -102,9 +105,9 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
         if (!internalNotes) {
             fieldErrors.internalNotes = 'Please enter the internal notes';
         }
-        if (selectedThemes.length === 0) {
-            fieldErrors.selectedThemes = 'Please select at least one theme';
-        }
+        // if (selectedThemes.length === 0) {
+        //     fieldErrors.selectedThemes = 'Please select at least one theme';
+        // }
 
         setErrors(fieldErrors);
 
@@ -124,9 +127,11 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
             },
             themes: selectedThemes,
         };
+
+        console.log('final data', data);
     
         // Run validation first
-        if (!validateFields()) {
+        // if (!validateFields()) {
             if (isEditMode) {
                 // Call updatePlanThunk and handle promise result
                 dispatch(updatePlanThunk({ id: id, plan: data }))
@@ -154,10 +159,11 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
                         console.log('Error during add plan:', err);
                     });
             }
-        } else {
-            // Validation failed, show errors
-            console.log('Validation failed', errors);
-        }
+        // } 
+        // else {
+        //     // Validation failed, show errors
+        //     console.log('Validation failed', errors);
+        // }
     };
     
     const handleAPIError = (error: any) => {

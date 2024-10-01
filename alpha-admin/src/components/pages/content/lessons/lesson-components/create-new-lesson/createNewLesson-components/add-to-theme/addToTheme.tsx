@@ -90,60 +90,64 @@ export const SelectTheme: React.FC<SelectThemeSidebarProps> = ({
         <>
             {isOpen && <div className={styles.overlay} onClick={onClose} />}
             <div className={classNames(styles.sidebar, { [styles.open]: isOpen })}>
-                <div className={styles.floatIcon}>
-                {isOpen && (
-                    <button onClick={onClose} className={styles.closeButton}>
-                        <ChevronRightIcon className={styles.arrowIcon} />
-                    </button>
-                )}
-                </div>
-                <div className={styles.header}>
-                    <h2>Assign to theme</h2>
-                    <div className={styles.rightButtonContainer}>
-                        <EditButton
-                            buttonText="Create new theme"
-                            onButtonClick={handleCreateNewTheme}
-                        />
-                        <AppButton
-                            buttonText="Add to theme"
-                            onButtonClick={handleAddToThemeClick}
-                            className={!isAnyLessonSelected ? styles.disabledButton : ''}
-                        />
+                <div className={styles['inner-block']}>
+                    <div className={styles.floatIcon}>
+                        {isOpen && (
+                            <button onClick={onClose} className={styles.closeButton}>
+                                <ChevronRightIcon className={styles.arrowIcon} />
+                            </button>
+                        )}
                     </div>
-                </div>
-                <table className={styles.lessonsTable}>
-                    <thead>
-                        <tr>
-                            <th>Theme Code</th>
-                            <th>Theme title</th>
-                            <th>Habit</th>
-                            <th>Published</th>
-                            <th></th>
-                            <th>Select</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {theme &&
-                            theme.length > 0 &&
-                            theme.map((theme: any, index: any) => (
-                                <tr key={index} onClick={() => handleRowClick(theme)}>
-                                    <td>{theme.themeCode}</td>
-                                    <td>{theme.name}</td>
-                                    <td>{theme.description}</td>
-                                    <td>{theme.published ? <CheckCircleOutlineIcon /> : ''}</td>
-                                    <td>{theme.quiz ? <CheckCircleOutlineIcon /> : ''}</td>
-                                    <td onClick={(event) => event.stopPropagation()}>
-                                        <Checkbox
-                                            checked={selectedTheme && selectedTheme.id === theme.id}
-                                            onChange={() => handleCheckboxChange(theme)}
-                                        />
-                                    </td>
-                                </tr>
-                            ))}
-                    </tbody>
-                </table>
-                <div className={styles.pagination}>
-                    <a href="#">Next</a>
+                    <div className={styles.header}>
+                        <h2>Assign to theme</h2>
+                        <div className={styles.rightButtonContainer}>
+                            <EditButton
+                                buttonText="Create new theme"
+                                onButtonClick={handleCreateNewTheme}
+                            />
+                            <AppButton
+                                buttonText="Add to theme"
+                                onButtonClick={handleAddToThemeClick}
+                                className={!isAnyLessonSelected ? styles.disabledButton : ''}
+                            />
+                        </div>
+                    </div>
+                    <table className={styles.lessonsTable}>
+                        <thead>
+                            <tr>
+                                <th>Theme Code</th>
+                                <th>Theme title</th>
+                                <th>Habit</th>
+                                <th>Published</th>
+                                <th></th>
+                                <th>Select</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {theme &&
+                                theme.length > 0 &&
+                                theme.map((theme: any, index: any) => (
+                                    <tr key={index} onClick={() => handleRowClick(theme)}>
+                                        <td>{theme.themeCode}</td>
+                                        <td>{theme.name}</td>
+                                        <td>{theme.description}</td>
+                                        <td>{theme.published ? <CheckCircleOutlineIcon /> : ''}</td>
+                                        <td>{theme.quiz ? <CheckCircleOutlineIcon /> : ''}</td>
+                                        <td onClick={(event) => event.stopPropagation()}>
+                                            <Checkbox
+                                                checked={
+                                                    selectedTheme && selectedTheme.id === theme.id
+                                                }
+                                                onChange={() => handleCheckboxChange(theme)}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                        </tbody>
+                    </table>
+                    <div className={styles.pagination}>
+                        <a href="#">Next</a>
+                    </div>
                 </div>
             </div>
         </>

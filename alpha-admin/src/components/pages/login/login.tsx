@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { AppDispatch } from '../../../app/store'; // Import the type for the dispatch
 import { LoginSliceState, loginThunk } from './loginSlice';
 import { Spinner } from '../../Spinner-loading/spinner';
+import { PuffLoader } from 'react-spinners';
 
 export interface LoginProps {
     className?: string;
@@ -136,7 +137,7 @@ export const Login = ({ className }: LoginProps) => {
                     </div>
                 </div>
             </div>
-            {loading && <Spinner open={true} />}
+            {loading && <Spinner />}
         </div>
     );
 };

@@ -276,6 +276,29 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
         setSelectedLessons((prev) => prev.filter((lesson) => lesson.lessonCode !== lessonCode));
     };
 
+    // Add or remove 'no-scroll' class to the body when the sidebar opens or closes
+    useEffect(() => {
+        const html = document.documentElement;
+        const body = document.body;
+        
+        if (isSidebarOpen) {
+            console.log('Opening sidebar, disabling scroll');
+            html.classList.add('no-scroll'); // Disable scrolling when sidebar is open
+            body.classList.add('no-scroll');
+        } else {
+            console.log('Closing sidebar, enabling scroll');
+            html.classList.remove('no-scroll'); // Enable scrolling when sidebar is closed
+            body.classList.remove('no-scroll');
+        }
+
+        // Cleanup on component unmount
+        return () => {
+            console.log('Component unmount, enabling scroll');
+            html.classList.remove('no-scroll');
+            body.classList.remove('no-scroll');
+        };
+    }, [isSidebarOpen]); // Re-run effect when isSidebarOpen changes
+
     const handleOpenSidebar = () => {
         setIsSidebarOpen(true);
     };
