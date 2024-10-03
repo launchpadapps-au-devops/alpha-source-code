@@ -1,5 +1,5 @@
 import { Request, Body, Controller, Get, Post, UseGuards, Put } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiExtraModels, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { UserDailyHabitsService } from './user-daily-habits.service';
 import { UserHabitResponseDto } from './user-daily-habits.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -40,6 +40,7 @@ export class UserDailyHabitsController {
         return await this.userDailyHabitsService.getUserDailyHabitOptions(req.user.userId, req.user);
     }
 
+    @ApiExcludeEndpoint()
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.PATIENT)

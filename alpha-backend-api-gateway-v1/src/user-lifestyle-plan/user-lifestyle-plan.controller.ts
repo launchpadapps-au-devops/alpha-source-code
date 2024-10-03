@@ -65,6 +65,51 @@ export class UserLifeStylePlanController {
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB)
+    @ApiBody({ 
+        schema: {
+            type: 'object',
+            properties: {
+                userId: { type: 'string', example: '5f8f4f4f4f4f4f4f4f4f4f4f' },
+                planId: { type: 'string', example: '5f8f4f4f4f4f4f4f4f4f4f4f' },
+            },
+            required: ['userId', 'planId'],
+        },
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'A successful response',
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'User lifestyle plan un assigned successfully' },
+                data: { type: 'object', example: {} },
+                meta: { type: 'object', example: {} },
+            },
+            required: ['statusCode', 'message'],
+        },
+    })
+    @Post('/un-assign')
+    async unAssignUserLifestylePlan(
+        @Request() req,
+        @Body() payload: {
+            userId: string,
+            planId: number
+        }
+    ) {
+        await this.userLifeStylePlanService.unAssignUserLifestylePlan({
+            ...payload
+        }, req.user);
+
+        return {
+            message: 'User lifestyle plan un assigned successfully'
+        };
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.PATIENT)
     @Platforms(USER_PLATFORMS.PATIENT_MOBILE)
     @ApiResponse({

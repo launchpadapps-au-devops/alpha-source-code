@@ -31,6 +31,20 @@ export class UserLifeStylePlanService {
         );
     }
 
+    async unAssignUserLifestylePlan(data: Partial<UserPlan>, reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/un-assign`,
+            'POST',
+            {
+                ...data,
+            },
+            {},
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
     async personalizeUserLifeStylePlan(data: Partial<UserPlan>, reqUser = { userId: null }) {
         return this.baseHttpService.invoke(
             `${this.healthApiUrl}${this.healthApiPrefix}/user-lifetstyle-plan/personalize`,
