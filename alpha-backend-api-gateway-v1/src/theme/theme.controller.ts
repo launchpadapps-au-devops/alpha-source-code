@@ -60,7 +60,7 @@ export class ThemeController {
         }
     ) {
         let lessons = [];
-        if (payload.lessonData?.length === 0) {
+        if (payload.lessonData?.length) {
             ({ data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData));
             if (lessons.length !== payload.lessonData.length) {
                 throw new NotFoundException('Some lessons not found');
@@ -126,36 +126,36 @@ export class ThemeController {
             lessonData: number[],
         }
     ) {
-        // const { data: existingTheme } = await this.themeService.findThemeById(id);
+        const { data: existingTheme } = await this.themeService.findThemeById(id);
 
-        // let lessons = [];
-        // if (payload.lessonData?.length) {
-        //     ({ data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData));
+        let lessons = [];
+        if (payload.lessonData?.length) {
+            ({ data: lessons = [] } = await this.lessonService.findLessonByIds(payload.lessonData));
 
-        //     if (lessons?.length !== payload.lessonData.length) {
-        //         throw new NotFoundException('Some lessons not found');
-        //     }
+            if (lessons?.length !== payload.lessonData.length) {
+                throw new NotFoundException('Some lessons not found');
+            }
 
-        //     if (lessons?.some((l) => l.themeId && l.themeId !== id)) {
-        //         throw new NotFoundException('Some lessons already have theme assigned');
-        //     }
+            if (lessons?.some((l) => l.themeId && l.themeId !== id)) {
+                throw new NotFoundException('Some lessons already have theme assigned');
+            }
 
-        //     lessons.length && await this.lessonService.bulkUpdateLesson(
-        //         lessons?.map(lesson => ({ ...lesson, themeId: id })) || [],
-        //     )
+            lessons.length && await this.lessonService.bulkUpdateLesson(
+                lessons?.map(lesson => ({ ...lesson, themeId: id })) || [],
+            )
 
-        //     const lessonIds = lessons?.map(l => l.id) || [];
-        //     const removeLessonIds = existingTheme?.lessons?.filter(l => !lessonIds.includes(l.id))?.map((l) => l.id) || [];
+            const lessonIds = lessons?.map(l => l.id) || [];
+            const removeLessonIds = existingTheme?.lessons?.filter(l => !lessonIds.includes(l.id))?.map((l) => l.id) || [];
             
             
-        //     const { data: lessonsToRemove = [] } = removeLessonIds?.length 
-        //         ? await this.lessonService.findLessonByIds(removeLessonIds)
-        //         : [];
+            const { data: lessonsToRemove = [] } = removeLessonIds?.length 
+                ? await this.lessonService.findLessonByIds(removeLessonIds)
+                : [];
 
-        //     lessonsToRemove?.length && await this.lessonService.bulkUpdateLesson(
-        //         lessonsToRemove.map(lesson => ({ ...lesson, themeId: null })),
-        //     )
-        // }
+            lessonsToRemove?.length && await this.lessonService.bulkUpdateLesson(
+                lessonsToRemove.map(lesson => ({ ...lesson, themeId: null })),
+            )
+        }
 
         return this.themeService.updateTheme(id, payload.themeData, req.user);
     }
