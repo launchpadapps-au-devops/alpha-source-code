@@ -67,9 +67,9 @@ export class PlanController {
             message: 'Plans fetched successfully',
             data: response.data,
             meta: {
-                page: response.page,
-                limit: response.limit,
-                totalRecords: response.totalRecords,
+                page: response.page*1,
+                limit: response.limit*1,
+                totalRecords: response.totalRecords*1,
                 totalPages: Math.ceil(response.totalRecords / response.limit)
             }
         };
