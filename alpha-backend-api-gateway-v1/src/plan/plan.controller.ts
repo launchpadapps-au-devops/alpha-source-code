@@ -155,7 +155,7 @@ export class PlanController {
         @Query('sortOrder') sortOrder: SortOrderType = 'DESC',
         @Query('searchText') searchText: string = '',
     ) {
-        const response = await this.planService.findAllPlans(
+        return this.planService.findAllPlans(
             {
                 page,
                 limit,
@@ -168,15 +168,6 @@ export class PlanController {
                 searchText
             }
         );
-
-        return {
-            message: 'Plans fetched successfully',
-            data: response.data,
-            meta: {
-                pagination: response.pagination,
-                sorting: response.sorting
-            }
-        };
     }
 
     @ApiBearerAuth()

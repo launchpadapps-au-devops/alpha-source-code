@@ -68,7 +68,7 @@ export class CreateLessonDto {
         'content': 'Content',
      }], required: false })
     @IsOptional()
-    screenData?: object;
+    screenData?: object [];
 
     @ApiProperty({ example: [{ 
         'quizName': 'Quiz Name',
@@ -86,11 +86,11 @@ export class CreateLessonDto {
         ],
      }], required: false })
     @IsOptional()
-    quizData?: object;
+    quizData?: object [];
 
     @ApiProperty({ example: [{}] })
     @IsOptional()
-    freeTextQuiz?: object;
+    freeTextQuiz?: object [];
 }
 
 export class UpdateLessonDto extends CreateLessonDto {
