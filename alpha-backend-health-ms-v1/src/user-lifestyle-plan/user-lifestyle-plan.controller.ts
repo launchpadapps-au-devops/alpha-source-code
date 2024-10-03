@@ -24,6 +24,22 @@ export class UserLifestylePlanController {
         };
     }
 
+    @Post('/un-assign')
+    async unAssignUserLifestylePlan(
+        @Headers('x-request-userId') reqUserId: string,
+        @Body() payload: Partial<UserPlan>
+    ) {
+        await this.userLifeStylePlanService.unAssignUserLifestylePlan({
+            ...payload
+        }, {
+            userId: reqUserId
+        });
+
+        return {
+            message: 'User lifestyle plan u assigned successfully'
+        };
+    }
+
     @Post('/personalize')
     async personalizeUserLifeStylePlan(
         @Headers('x-request-userId') reqUserId: string,

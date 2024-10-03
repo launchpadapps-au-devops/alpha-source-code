@@ -72,6 +72,60 @@ export class UserLifeStylePlanService {
         await userThemeService.createUserThemes(userThemes);
     }
 
+    async unAssignUserLifestylePlan(data: Partial<UserPlan>, reqUser = { userId: null }) {
+        // make status archive for user habits, user lessons, user themes, user categories, user plan
+        const userPlan = await userPlanService.findUserPlansByUserId(data.userId);
+        if (!userPlan) {
+            throw new BadRequestException('User Plan not found');
+        }
+
+        const userCategories = await userCategoryService.findUserCategoriesByUserLifestylePlanId(userPlan.id);
+        const userThemes = await userThemeService.findUserThemesByUserLifestylePlanId(userPlan.id);
+        const userLessons = await userLessonService.findUserLessonsByLifeStylePlanId(userPlan.id);
+        const userHabits = await userHabitService.findUserHabitsByUserThemeIds(userThemes.map(ut => ut.id));
+        const userHabitProgresses = await userHabitService.findUserHabitProgressByUserHabitIds(userHabits.map(h => h.id));
+
+        userPlan.status = 'ARCHIVE';
+        userPlan.updatedBy = reqUser.userId;
+
+        await userPlanService.updateUserPlan(userPlan.id, userPlan);
+
+        for (const userCategory of userCategories) {
+            userCategory.status = 'ARCHIVE';
+            userCategory.updatedBy = reqUser.userId;
+        }
+
+        await userCategoryService.updateUserCategories(userCategories);
+
+        for (const userTheme of userThemes) {
+            userTheme.status = 'ARCHIVE';
+            userTheme.updatedBy = reqUser.userId;
+        }
+
+        await userThemeService.updateUserThemes(userThemes);
+
+        for (const userLesson of userLessons) {
+            userLesson.status = 'ARCHIVE';
+            userLesson.updatedBy = reqUser.userId;
+        }
+
+        await userLessonService.updateUserLessons(userLessons);
+
+        for (const userHabit of userHabits) {
+            userHabit.status = 'ARCHIVE';
+            userHabit.updatedBy = reqUser.userId;
+        }
+
+        await userHabitService.updateUserHabits(userHabits);
+
+        for (const userHabitProgress of userHabitProgresses) {
+            userHabitProgress.status = 'ARCHIVE';
+            userHabitProgress.updatedBy = reqUser.userId;
+        }
+
+        await userHabitService.updateUserHabitProgresses(userHabitProgresses);
+    }
+
     async personalizeUserLifeStylePlan(userId: string, reqUser = { userId: null }) {
         const userHealthData = await healthProfileQuestionariesService.findAllHealthQuestionAnswer(userId);
         if (!userHealthData.length) {
