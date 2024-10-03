@@ -42,6 +42,24 @@ class UserLessonService implements IUserLessonService {
     return userLesson;
   }
 
+  async updateUserLessons(data: Partial<UserLesson>[]): Promise<UserLesson[]> {
+    const userLessons = await UserLessonService.UserLessonRepository.find({
+      where: { id: In(data.map(d => d.id)) }
+    });
+
+    if (!userLessons) {
+      throw new NotFoundException(`UserLessons not found`);
+    }
+
+    userLessons.forEach(userLesson => {
+      const updatedData = data.find(d => d.id === userLesson.id);
+      Object.assign(userLesson, updatedData);
+    });
+
+    await UserLessonService.UserLessonRepository.save(userLessons);
+    return userLessons;
+  }
+
   async findUserLessonById(id: string): Promise<UserLesson> {
     return UserLessonService.UserLessonRepository.findOne({
       where: { id },
@@ -96,6 +114,7 @@ class UserLessonService implements IUserLessonService {
     const { searchText, ...restFilters } = filters;
 
     const where: any = {
+      status: 'ACTIVE',
       ...(!!searchText ? { 'lesson.name': ILike(`%${searchText}%`) } : {}),
       ...restFilters,
     };
@@ -125,7 +144,9 @@ class UserLessonService implements IUserLessonService {
     categoryId?: string,
     themeId?: string,
   ) {
-    const where: any = {};
+    const where: any = {
+      status: 'ACTIVE',
+    };
 
     if (userId) {
       where.userId = userId;
@@ -172,6 +193,7 @@ class UserLessonService implements IUserLessonService {
   ): Promise<UserLesson[]> {
     return UserLessonService.UserLessonRepository.find({
       where: {
+        status: 'ACTIVE',
         ...(fromDateKey && fromDate ? { [fromDateKey]: ILike(`%${fromDate}%`) } : {}),
         ...(toDateKey && toDate ? { [toDateKey]: ILike(`%${toDate}%`) } : {}),
         ...(userIds ? { userId: In(userIds) } : {}),

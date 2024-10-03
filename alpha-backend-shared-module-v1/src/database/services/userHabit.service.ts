@@ -80,9 +80,10 @@ class UserHabitService {
   async findUserHabitsByUserId(userId: string, filters: GenericFilterDto = {}): Promise<UserHabit[]> {
     return UserHabitService.UserHabitRepository.find({
       where: { 
+        status: 'ACTIVE',
         userId, 
         ...filters
-        },
+      },
       relations: ['habit', 'habit.theme'],
       select: {
         id: true,
@@ -127,6 +128,13 @@ class UserHabitService {
     });
   }
 
+  async findUserHabitsByUserThemeIds(userThemeIds: string[]): Promise<UserHabit[]> {
+    return UserHabitService.UserHabitRepository.find({
+      where: { userThemeId: In(userThemeIds), status: 'ACTIVE' },
+      relations: ['userTheme', 'userTheme.theme', 'habit'],
+    });
+  }
+
   async findAllUserHabits(
     pagination: PaginationDto = { page: 1, limit: 10 },
     sorting: SortingDto = { sortField: 'createdAt', sortOrder: 'DESC' as SortOrderType },
@@ -140,6 +148,7 @@ class UserHabitService {
     const { searchText, ...restFilters } = filters;
 
     const where: any = {
+      status: 'ACTIVE',
       ...(searchText ? { 'habit.name': ILike(`%${searchText}%`) } : {}),
       ...restFilters,
     };
@@ -189,6 +198,24 @@ class UserHabitService {
     return userHabitProgress;
   }
 
+  async updateUserHabitProgresses(data: Partial<UserHabitProgress>[]): Promise<UserHabitProgress[]> {
+    const userHabitProgresses = await UserHabitService.UserHabitProgressRepository.find({
+      where: { id: In(data.map(d => d.id)) },
+    });
+
+    if (!userHabitProgresses) {
+      throw new NotFoundException(`UserHabitProgresses not found`);
+    }
+
+    userHabitProgresses.forEach(userHabitProgress => {
+      const updatedData = data.find(d => d.id === userHabitProgress.id);
+      Object.assign(userHabitProgress, updatedData);
+    });
+
+    await UserHabitService.UserHabitProgressRepository.save(userHabitProgresses);
+    return userHabitProgresses;
+  }
+
   async findUserHabitProgressById(id: string): Promise<UserHabitProgress> {
     return UserHabitService.UserHabitProgressRepository.findOne({
       where: { id },
@@ -199,6 +226,12 @@ class UserHabitService {
   async findUserHabitProgressByUserHabitId(userHabitId: string): Promise<UserHabitProgress[]> {
     return UserHabitService.UserHabitProgressRepository.find({
       where: { userHabitId, status: 'ACTIVE' },
+    });
+  }
+
+  async findUserHabitProgressByUserHabitIds(userHabitIds: string[]): Promise<UserHabitProgress[]> {
+    return UserHabitService.UserHabitProgressRepository.find({
+      where: { userHabitId: In(userHabitIds), status: 'ACTIVE' },
     });
   }
 }

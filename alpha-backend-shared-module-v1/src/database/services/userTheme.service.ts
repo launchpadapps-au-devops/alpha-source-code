@@ -42,6 +42,24 @@ class UserThemeService implements IUserThemeService {
     return userTheme;
   }
 
+  async updateUserThemes(data: Partial<UserTheme[]>): Promise<UserTheme[]> {
+    const userThemes = await UserThemeService.UserThemeRepository.find({
+      where: { id: In(data.map(d => d.id)) }
+    });
+
+    if (!userThemes) {
+      throw new NotFoundException(`UserThemes not found`);
+    }
+
+    userThemes.forEach(userTheme => {
+      const updatedData = data.find(d => d.id === userTheme.id);
+      Object.assign(userTheme, updatedData);
+    });
+
+    await UserThemeService.UserThemeRepository.save(userThemes);
+    return userThemes;
+  }
+
   async findUserThemeById(id: string): Promise<UserTheme> {
     return UserThemeService.UserThemeRepository.findOne({
       where: { id },
@@ -57,7 +75,7 @@ class UserThemeService implements IUserThemeService {
 
   async findUserThemeByThemeId(themeId: number): Promise<UserTheme[]> {
     return UserThemeService.UserThemeRepository.find({
-      where: { themeId },
+      where: { themeId, status: 'ACTIVE' },
       relations: ['theme', 'userLifestylePlan', 'userLessons'],
     });
   }
@@ -97,6 +115,7 @@ class UserThemeService implements IUserThemeService {
     const { searchText, ...restFilters } = filters;
 
     const where: any = {
+      status: 'ACTIVE',
       ...(searchText ? { name: ILike(`%${searchText}%`) } : {}),
       ...restFilters,
     };

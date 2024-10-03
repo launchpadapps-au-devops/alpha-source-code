@@ -43,6 +43,24 @@ class UserCategoryService {
     return userCategory;
   }
 
+  async updateUserCategories(data: Partial<UserCategory[]>): Promise<UserCategory[]> {
+    const userCategories = await UserCategoryService.UserCategoryRepository.find({
+      where: { id: In(data.map(d => d.id)) }
+    });
+
+    if (!userCategories) {
+      throw new NotFoundException(`UserCategories not found`);
+    }
+
+    userCategories.forEach(userCategory => {
+      const updatedData = data.find(d => d.id === userCategory.id);
+      Object.assign(userCategory, updatedData);
+    });
+
+    await UserCategoryService.UserCategoryRepository.save(userCategories);
+    return userCategories;
+  }
+
   async findUserCategoryById(id: string): Promise<UserCategory> {
     return UserCategoryService.UserCategoryRepository.findOne({
       where: { id },
@@ -59,7 +77,7 @@ class UserCategoryService {
 
   async findUserCategoryByCategoryId(categoryId: number): Promise<UserCategory[]> {
     return UserCategoryService.UserCategoryRepository.find({
-      where: { categoryId },
+      where: { categoryId, status: 'ACTIVE' },
       relations: ['category', 'userLifestylePlan', 'userLessons'],
     });
   }

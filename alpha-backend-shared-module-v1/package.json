@@ -1,6 +1,6 @@
 {
   "name": "@launchpadapps-au/alpha-shared",
-  "version": "4.7.0",
+  "version": "4.7.1",
   "description": "A shared module for shared resources and operations across Alpha backend services.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
