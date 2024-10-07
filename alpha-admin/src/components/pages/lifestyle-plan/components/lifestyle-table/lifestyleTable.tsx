@@ -8,30 +8,24 @@ import {
     TableRow,
     Paper,
     Switch,
-    Pagination,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import styles from './lifestyleTable.module.scss';
 import { useAppDispatch } from '../../../../../app/hooks';
 import { fetchPlansThunk, updatePlanThunk } from '../lifeStyleSlice';
-// import {TableFooter} from '../../../content/content-components/table-footer/TableFooter';
 import { CustomPagination } from '../../../content/content-components/custom-pagination/customPagination';
 import { PublishLessonModal } from '../../../content/lessons/lesson-components/publish-lesson-modal/publishLessonModal';
 import { UnpublishLessonModal } from '../../../content/lessons/lesson-components/unpublish-lesson-modal/unpublishLessonModal';
-
-const initialLifeStyles = [
-    { code: 1, name: 'Heart health', dateCreated: '26/06/2024', published: false },
-    { code: 2, name: 'Healthy Plan', dateCreated: '26/06/2024', published: false },
-    { code: 3, name: 'Pregnancy', dateCreated: '26/06/2024', published: true },
-];
+import styles from './lifestyleTable.module.scss';
 
 export interface lifeStyleProps {
-    plans: any;
-    setPlans: any;
+    plans: any[];
+    setPlans: React.Dispatch<React.SetStateAction<any[]>>;
     totalPages: number;
-    setTotalPages: any;
     totalRecords: number;
-    setTotalRecords: any;
+    setTotalPages: React.Dispatch<React.SetStateAction<number>>;
+    setTotalRecords: React.Dispatch<React.SetStateAction<number>>;
+    currentPage: number;
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const LifestyleTable: React.FC<lifeStyleProps> = ({
@@ -41,105 +35,83 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
     setTotalPages,
     totalRecords,
     setTotalRecords,
+    currentPage,
+    setCurrentPage,
 }) => {
-    const [LifeStyles, setLifeStyles] = useState(initialLifeStyles);
-    const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
+    const [selectedPlanIndex, setSelectedPlanIndex] = useState<number | null>(null);
     const [openPublishModal, setOpenPublishModal] = useState(false);
     const [openUnpublishModal, setOpenUnpublishModal] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     const handleNextPage = () => {
-        console.log('currentPage', currentPage);
-        dispatch(fetchPlansThunk(currentPage + 1)).then((res: any) => {
-            console.log('res', res);
-            setLifeStyles(res.payload.data);
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+        if (currentPage < totalPages) {
+            const nextPage = currentPage + 1;
+            dispatch(fetchPlansThunk(nextPage)).then((res: any) => {
+                setPlans(res.payload.data);
+                setTotalPages(res.payload.meta.totalPages);
+                setTotalRecords(res.payload.meta.totalRecords);
+                setCurrentPage(nextPage);
+            });
+        }
     };
 
     const handlePreviousPage = () => {
-        // setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-        dispatch(fetchPlansThunk(currentPage - 1)).then((res: any) => {
-            setLifeStyles(res.payload.data);
-            setTotalPages(res.payload.meta.totalPages);
-            setTotalRecords(res.payload.meta.totalRecords);
-        });
-        setCurrentPage((prevPage) => Math.min(prevPage - 1, totalPages));
+        if (currentPage > 1) {
+            const previousPage = currentPage - 1;
+            dispatch(fetchPlansThunk(previousPage)).then((res: any) => {
+                setPlans(res.payload.data);
+                setTotalPages(res.payload.meta.totalPages);
+                setTotalRecords(res.payload.meta.totalRecords);
+                setCurrentPage(previousPage);
+            });
+        }
     };
 
     const handleToggle = (plan: any) => {
-        const themeids = plan.themes.map((t: any) => t.id);
-        const newTheme = {
+        const updatedPlan = {
             planData: {
-                // planCode: parseInt(plan.code, 10),
-                // name: plan.name,
-                // image: plan.image,
-                // description: plan.description,
-                // internalNotes: plan.internalNotes,
-                // status: plan.status,
                 isPublished: !plan.isPublished,
-                // id: parseInt(plan.id, 10),
             },
-            themes: themeids,
+            themes: plan.themes.map((t: any) => t.id),
         };
-        dispatch(updatePlanThunk({ id: plan.id, plan: newTheme })).then((data: any) => {
-            dispatch(fetchPlansThunk(1)).then((data: any) => {
-                if (data.payload) {
-                    setPlans(data.payload.data);
-                }
-            });
+
+        dispatch(updatePlanThunk({ id: plan.id, plan: updatedPlan })).then(() => {
+            dispatch(fetchPlansThunk(currentPage)); // Refresh plans after updating
         });
     };
 
     const handlePublish = () => {
-        if (selectedThemeIndex !== null) {
-            setLifeStyles((prevLifeStyles) =>
-                prevLifeStyles.map((theme, i) =>
-                    i === selectedThemeIndex ? { ...theme, published: true } : theme
-                )
-            );
+        if (selectedPlanIndex !== null) {
+            setOpenPublishModal(false);
+            const selectedPlan = plans[selectedPlanIndex];
+            handleToggle(selectedPlan);
         }
-        setOpenPublishModal(true);
     };
 
     const handleUnpublish = () => {
-        if (selectedThemeIndex !== null) {
-            setLifeStyles((prevLifeStyles) =>
-                prevLifeStyles.map((theme, i) =>
-                    i === selectedThemeIndex ? { ...theme, published: false } : theme
-                )
-            );
+        if (selectedPlanIndex !== null) {
+            setOpenUnpublishModal(false);
+            const selectedPlan = plans[selectedPlanIndex];
+            handleToggle(selectedPlan);
         }
-        setOpenUnpublishModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setOpenPublishModal(false);
-        setOpenUnpublishModal(false);
     };
 
     const handleRowClick = (id: any, index: number) => {
-        setSelectedThemeIndex(index);  // Ensure index is set correctly
+        setSelectedPlanIndex(index);
         navigate(`/lifestyle-plan/view/${id}`);
     };
-    
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = plans.slice(indexOfFirstItem, indexOfLastItem);
 
-    const activePlans = plans.filter((plan: any) => plan.status.toLowerCase() === 'active');
-
     const formatDate = (data: any) => {
         const date = new Date(data);
-        return `${
-            date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-        }/${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${date.getFullYear()}`;
+        return `${date.getDate() > 9 ? date.getDate() : '0' + date.getDate()}/${
+            date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
+        }/${date.getFullYear()}`;
     };
 
     return (
@@ -147,20 +119,14 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
             <TableContainer component={Paper}>
                 <Table className={styles['key-contacts-table']}>
                     <TableHead>
-                        <TableRow
-                            style={{
-                                textTransform: 'none',
-                                fontFamily: 'Public Sans',
-                                fontSize: '14px',
-                            }}
-                        >
+                        <TableRow>
                             <TableCell className={styles['code']}>Plan name</TableCell>
                             <TableCell className={styles['date']}>Date created</TableCell>
                             <TableCell className={styles['published']}>Published</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {activePlans.map((plan: any, index: any) => (
+                        {currentItems.map((plan: any, index: any) => (
                             <TableRow
                                 key={index}
                                 onClick={() => handleRowClick(plan.id, index)}
@@ -171,7 +137,12 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                                 <TableCell onClick={(event) => event.stopPropagation()}>
                                     <Switch
                                         checked={plan.isPublished}
-                                        onChange={() => handleToggle(plan)}
+                                        onChange={() => {
+                                            setSelectedPlanIndex(index);
+                                            plan.isPublished
+                                                ? setOpenUnpublishModal(true)
+                                                : setOpenPublishModal(true);
+                                        }}
                                     />
                                 </TableCell>
                             </TableRow>
@@ -183,41 +154,47 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                 <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
-                    onPageChange={setCurrentPage}
+                    onPageChange={(page) => {
+                        dispatch(fetchPlansThunk(page)).then((res: any) => {
+                            setPlans(res.payload.data);
+                            setTotalPages(res.payload.meta.totalPages);
+                            setTotalRecords(res.payload.meta.totalRecords);
+                            setCurrentPage(page);
+                        });
+                    }}
                     currentPage={currentPage}
                     totalPages={totalPages}
                 />
             </div>
-            {openPublishModal && selectedThemeIndex !== null && (
+            {openPublishModal && selectedPlanIndex !== null && (
                 <PublishLessonModal
                     open={openPublishModal}
                     descriptionText={
                         <>
-                            <p>Are you sure you wish to publish this lesson?</p>
+                            <p>Are you sure you wish to publish this plan?</p>
                             <br />
-                            <p>This lesson will be made available to patients.</p>
+                            <p>This plan will be made available to patients.</p>
                         </>
                     }
-                    title="Publish lesson"
-                    closeModal={handleCloseModal}
+                    title="Publish Plan"
+                    closeModal={() => setOpenPublishModal(false)}
                     handlePublish={handlePublish}
                 />
-            )} 
-            {openUnpublishModal && selectedThemeIndex !== null && (
+            )}
+            {openUnpublishModal && selectedPlanIndex !== null && (
                 <UnpublishLessonModal
                     open={openUnpublishModal}
                     descriptionText={
                         <>
-                            <p>Are you sure you wish to unpublish this lesson?</p>
+                            <p>Are you sure you wish to unpublish this plan?</p>
                             <br />
                             <p>
-                                This lesson will be saved to ‘Drafts’ and won’t be visible to
-                                patients.
+                                This plan will be saved to ‘Drafts’ and won’t be visible to patients.
                             </p>
                         </>
                     }
-                    title="Unpublish lesson"
-                    closeModal={handleCloseModal}
+                    title="Unpublish Plan"
+                    closeModal={() => setOpenUnpublishModal(false)}
                     handleunpublish={handleUnpublish}
                 />
             )}

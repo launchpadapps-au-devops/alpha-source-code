@@ -22,6 +22,11 @@
         background-color: #ecfdf3; /* Light green background for success */
         color: #008000; /* Darker green text for success */
     }
+    
+    &[data-type="delete"] {
+        background-color: #ecfdf3; /* Light green background for success */
+        color: #c90c0c; /* Darker green text for success */
+    }
   }
   
   .notificationBannerIcon {

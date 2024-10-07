@@ -22,6 +22,7 @@ import { fetchLessonsThunk } from '../../../lessons/lesson-components/lessonsSli
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../../back-button/backButton';
 import React from 'react';
+import NotificationBanner from '../../../../notification-banner/notificationBanner';
 
 // Define the Meta and PropertyTag interfaces for reusable data structures
 interface Meta {
@@ -38,16 +39,16 @@ interface Habit {
     id: number;
     order: number;
     name: string;
-    timeAllocation: number;
-    pointAllocation: number;
-    instructions: string;
+    timeAllocation: any;
+    pointAllocation: any;
+    instruction: string;
     meta: Meta[];
 }
 
 // Define the ThemeData interface
 interface ThemeData {
-    themeCode: number;
-    categoryId: number;
+    themeCode: any;
+    categoryId: any;
     isPublished: boolean;
     status: string;
     internalNotes: string;
@@ -143,10 +144,15 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     const [showHabit, setShowHabit] = useState(false);
     const [errors, setErrors] = React.useState<any>({});
     const dispatch = useAppDispatch();
+    const [notification, setNotification] = useState({
+        isVisible: false,
+        message: '',
+        type: 'success' as 'success' | 'error' | 'delete', // Add the 'delete' type
+    });
 
     const [data, setData] = useState<Data>({
         themeData: {
-            themeCode: 1,
+            themeCode: undefined,
             categoryId: 1,
             isPublished: false,
             status: 'ACTIVE',
@@ -164,9 +170,9 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                     id: 1,
                     order: 1,
                     name: '',
-                    timeAllocation: 1,
-                    pointAllocation: 50,
-                    instructions: '',
+                    timeAllocation: undefined,
+                    pointAllocation: undefined,
+                    instruction: '',
                     meta: [
                         {
                             key: 'value',
@@ -211,9 +217,9 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
                 if (!habit.pointAllocation) {
                     habitErrors.pointAllocation = 'Point allocation is required';
                 }
-                if (!habit.instructions) {
-                    habitErrors.instructions = 'Instructions are required';
-                }
+                if (!habit.instruction) {
+                    habitErrors.instruction = 'Instructions are required';
+                }                
 
                 if (Object.keys(habitErrors).length > 0) {
                     fieldErrors[`habits_${index}`] = habitErrors; // Store errors for each habit
@@ -231,7 +237,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
     const submitData = (status: string) => {
         const lessonIds = selectedLessons.map((lesson) => lesson.lessonCode);
         console.log('selectedLessons', lessonIds);
-
+    
         const updatedData = {
             ...data,
             themeData: {
@@ -241,22 +247,67 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
             lessonData: lessonIds, // Ensure lessonData is an array of lesson codes
         };
         console.log('updatedData', updatedData);
-
-        if (!validateFields()) {
+    
+        if (validateFields()) {
             dispatch(addThemeThunk(updatedData))
                 .then((res: any) => {
                     if (res.payload.statusCode === 200 || res.payload.statusCode === 201) {
-                        navigate('/content/themes');
+                        // Show success notification
+                        setNotification({
+                            isVisible: true,
+                            message: `Theme ${status === 'DRAFT' ? 'saved as draft' : 'published'} successfully!`,
+                            type: 'success',
+                        });
+    
+                        // Hide notification after 1 seconds
+                        setTimeout(() => {
+                            setNotification((prev) => ({ ...prev, isVisible: false }));
+                            navigate('/content/themes'); // Navigate after notification disappears
+                        }, 1000);
+                    } else {
+                        // Show error notification if the response status code is not 200 or 201
+                        setNotification({
+                            isVisible: true,
+                            message: 'Failed to save theme. Please try again.',
+                            type: 'error',
+                        });
+    
+                        // Hide notification after 3 seconds
+                        setTimeout(() => {
+                            setNotification((prev) => ({ ...prev, isVisible: false }));
+                        }, 3000);
                     }
                 })
                 .catch((err: any) => {
-                    console.log(err);
-                    alert('Error' + err);
+                    console.log('Error:', err);
+                    // Show error notification on catch
+                    setNotification({
+                        isVisible: true,
+                        message: `Error: ${err.message}`,
+                        type: 'error',
+                    });
+    
+                    // Hide notification after 3 seconds
+                    setTimeout(() => {
+                        setNotification((prev) => ({ ...prev, isVisible: false }));
+                    }, 3000);
                 });
         } else {
             console.log('Validation failed', errors);
+            // Show validation error notification
+            setNotification({
+                isVisible: true,
+                message: 'Validation failed. Please check the form and try again.',
+                type: 'error',
+            });
+    
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                setNotification((prev) => ({ ...prev, isVisible: false }));
+            }, 3000);
         }
     };
+    
 
     // Handle updates to the lessons
     const handleUpdateLessons = (updatedLessons: Lesson[]) => {
@@ -341,6 +392,12 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>
+                <NotificationBanner
+                        isVisible={notification.isVisible}
+                        message={notification.message}
+                        onClose={() => setNotification((prev) => ({ ...prev, isVisible: false }))}
+                        type={notification.type}
+                    />
                     <div className={styles.combinedHeader}>
                         <header className={styles.header}>
                             <h4>Create a new Theme</h4>

@@ -15,10 +15,15 @@ import { AppButton } from '../../../../../app-button/app-button';
 import { EditButton } from '../../../content-components/edit-button/edit-button';
 import { fetchThemesThunk } from '../../../themes/themes-components/themeSlice';
 import { fetchCategoriesThunk } from '../../../categories/category-component/categorySlice';
-import { addLessonThunk, fetchLessonByIdThunk, updateLessonThunk } from '../lessonsSlice';   
+import { addLessonThunk, fetchLessonByIdThunk, updateLessonThunk } from '../lessonsSlice';
 import { UnsavedChangesModal } from '../../../content-components/unsaved-changes-alert/unsavedChanges';
 import { useUnsavedChanges } from '../unchanged-warning-hook-context';
-import { useBeforeUnload, useBlockBackButton, usePrompt } from './createNewLesson-components/unchanged-warning-hook';
+import {
+    useBeforeUnload,
+    useBlockBackButton,
+    usePrompt,
+} from './createNewLesson-components/unchanged-warning-hook';
+import NotificationBanner from '../../../../notification-banner/notificationBanner';
 
 interface LessonTag {
     Ethnicity?: string[]; // Optional property of type string array
@@ -100,9 +105,13 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
     const [showPreview, setShowPreview] = useState(false);
     const params = useParams();
     const [errors, setErrors] = useState<any>({});
-    const [showPrompt, setShowPrompt] = useState(false); 
-    const { setDirty, dirty } = useUnsavedChanges();  // Use context state
-
+    const [showPrompt, setShowPrompt] = useState(false);
+    const { setDirty, dirty } = useUnsavedChanges(); // Use context state
+    const [notification, setNotification] = useState({
+        isVisible: false,
+        message: '',
+        type: 'success' as 'success' | 'error' | 'delete', // Add the 'delete' type
+    });
 
     const [dashboardCardDetails, setDashboardCardDetails] = useState<{
         coverImage: string;
@@ -114,9 +123,8 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
         lessonDescription: '',
     });
 
-
     usePrompt('You have unsaved changes. Do you want to leave without saving?', dirty);
-    
+
     useBeforeUnload(dirty); // Hook to manage page refresh/close
     useBlockBackButton(dirty); // Hook to block back button
 
@@ -245,7 +253,7 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
 
     const validateFields = () => {
         let fieldErrors: any = {};
-    
+
         // Basic validation for other fields (already exists)
         if (!data.lessonCode) {
             fieldErrors.lessonCode = 'Lesson Code is required';
@@ -265,10 +273,7 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
         if (!data.description) {
             fieldErrors.description = 'Lesson description is required';
         }
-        // if (!data.coverImage) {
-        //     fieldErrors.coverImage = 'Cover image is required';
-        // }
-    
+
         // Validation for Lesson Tags
         data.lessonTags.forEach((tag: any) => {
             const tagKey = Object.keys(tag)[0]; // Extract the tag key
@@ -276,50 +281,101 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
                 fieldErrors[`tag-${tagKey}`] = `${tagKey} is required`;
             }
         });
-    
-        // **New Validation for Lesson Content Screens**
+
+        // Validation for Lesson Content Screens
         if (!data.screenData || data.screenData.length === 0) {
             fieldErrors['screenData'] = 'At least one screen is required';
         } else {
             data.screenData.forEach((screen: any, index: number) => {
                 if (!screen.subtitle) {
-                    fieldErrors[`subtitle-${index}`] = 'Subtitle is required for screen ' + (index + 1);
+                    fieldErrors[`subtitle-${index}`] =
+                        'Subtitle is required for screen ' + (index + 1);
                 }
                 if (!screen.content) {
-                    fieldErrors[`content-${index}`] = 'Content is required for screen ' + (index + 1);
+                    fieldErrors[`content-${index}`] =
+                        'Content is required for screen ' + (index + 1);
                 }
                 if (!screen.media) {
                     fieldErrors[`media-${index}`] = 'Media is required for screen ' + (index + 1);
                 }
             });
         }
-    
+
         // **New Validation for Quizzes**
-        if (!data.quizData || data.quizData.length === 0) {
-            fieldErrors['quizData'] = 'At least one quiz is required';
-        } else {
-            data.quizData.forEach((quiz: any, index: number) => {
-                if (!quiz.quizName) {
-                    fieldErrors[`quizName-${index}`] = 'Quiz name is required for quiz ' + (index + 1);
+        // if (!data.quizData || data.quizData.length === 0) {
+        //     fieldErrors['quizData'] = 'At least one quiz is required';
+        // } else {
+        //     data.quizData.forEach((quiz: any, index: number) => {
+        //         if (!quiz.quizName) {
+        //             fieldErrors[`quizName-${index}`] =
+        //                 'Quiz name is required for quiz ' + (index + 1);
+        //         }
+        //         if (!quiz.question) {
+        //             fieldErrors[`question-${index}`] =
+        //                 'Question is required for quiz ' + (index + 1);
+        //         }
+        //         if (!quiz.userInstructions) {
+        //             fieldErrors[`userInstructions-${index}`] =
+        //                 'User instruction is required for quiz ' + (index + 1);
+        //         }
+        //         if (
+        //             quiz.type === 'multiple-choice' &&
+        //             (!quiz.options || quiz.options.length === 0)
+        //         ) {
+        //             fieldErrors[`options-${index}`] =
+        //                 'At least one option is required for multiple-choice quiz ' + (index + 1);
+        //         } else if (quiz.type === 'multiple-choice') {
+        //             // Check that at least one option is marked as correct
+        //             const correctOptions = quiz.options.filter((option: any) => option.isCorrect);
+        //             if (correctOptions.length === 0) {
+        //                 fieldErrors[`correctAnswer-${index}`] = 'At least one correct answer is required for quiz ' + (index + 1);
+        //             }
+        //         }
+        //     });
+        // }
+
+        data.quizData.forEach((quiz: any, index: number) => {
+            if (!quiz.quizName) {
+                fieldErrors[`quizName-${index}`] = 'Quiz name is required for quiz ' + (index + 1);
+            }
+            if (!quiz.question) {
+                fieldErrors[`question-${index}`] = 'Question is required for quiz ' + (index + 1);
+            }
+            if (!quiz.userInstructions) {
+                fieldErrors[`userInstructions-${index}`] =
+                    'User instruction is required for quiz ' + (index + 1);
+            }
+
+            // Validation for multiple-choice quiz
+            if (quiz.type === 'multiple-choice') {
+                if (!quiz.options || quiz.options.length === 0) {
+                    fieldErrors[`options-${index}`] =
+                        'At least one option is required for quiz ' + (index + 1);
+                } else {
+                    quiz.options.forEach((option: any, optionIndex: number) => {
+                        if (!option.option) {
+                            fieldErrors[`option-${index}-${optionIndex}`] = `Option ${
+                                optionIndex + 1
+                            } is required for quiz ${index + 1}`;
+                        }
+                    });
+
+                    // Check if at least one option is correct
+                    const correctOptions = quiz.options.filter((option: any) => option.isCorrect);
+                    if (correctOptions.length === 0) {
+                        fieldErrors[
+                            `correctAnswer-${index}`
+                        ] = `At least one correct answer is required for quiz ${index + 1}`;
+                    }
                 }
-                if (!quiz.question) {
-                    fieldErrors[`question-${index}`] = 'Question is required for quiz ' + (index + 1);
-                }
-                if (!quiz.userInstructions) {
-                    fieldErrors[`userInstructions-${index}`] = 'User instruction is required for quiz ' + (index + 1);
-                }
-                if (quiz.type === 'multiple-choice' && (!quiz.options || quiz.options.length === 0)) {
-                    fieldErrors[`options-${index}`] = 'At least one option is required for multiple-choice quiz ' + (index + 1);
-                }
-            });
-        }
-    
+            }
+        });
+
         setErrors(fieldErrors);
-    
+
         // If there are no errors, return true, otherwise false
         return Object.keys(fieldErrors).length === 0;
     };
-    
 
     const formatData = (dataVal: any) => {
         console.log('DataVal:', dataVal);
@@ -416,7 +472,7 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
                 } as FreeTextQuiz); // Cast as FreeTextQuiz
             } else {
                 // Instead of adding the lesson and navigating directly, show the preview
-                setShowPreview(true);
+                // setShowPreview(true);
                 newQuizData.push(quiz);
             }
         });
@@ -430,51 +486,150 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
 
     const handlePreview = () => {
         const updatedData = updateQuizData(data);
-        if (validateFields()) {
-            setData(updatedData);
-            console.log('Data:', updatedData);
+        // Run validation
+        const isValid = validateFields();
+    
+        if (isValid) {
             const formattedData = formatData(updatedData);
+            setData(formattedData); // Update the state with the formatted data
+            setShowPreview(true);  
             console.log('Formatted data:', formattedData);
-
+    
             if (isEditMode) {
-                dispatch(updateLessonThunk({ id: params.id, data: formattedData })).then(
-                    (response: any) => {
-                        navigate('/content/lessons/viewlesson/' + response.payload.data.id);
-                    }
-                );
+                // In edit mode, we navigate to the view page after updating
+                dispatch(updateLessonThunk({ id: params.id, data: formattedData }))
+                    .then((response: any) => {
+                        if (response.payload.statusCode === 200 || response.payload.statusCode === 201) {
+                            // Show success notification
+                            setNotification({
+                                isVisible: true,
+                                message: 'Lesson updated successfully!',
+                                type: 'success',
+                            });
+    
+                            // Hide notification after 3 seconds and navigate
+                            setTimeout(() => {
+                                setNotification((prev) => ({ ...prev, isVisible: false }));
+                                navigate(`/content/lessons/viewlesson/${response.payload.data.id}`);
+                            }, 1000);
+                        }
+                    })
+                    .catch((error: any) => {
+                        console.error('Error updating lesson:', error);
+                        // Show error notification
+                        setNotification({
+                            isVisible: true,
+                            message: 'Failed to update the lesson. Please try again.',
+                            type: 'error',
+                        });
+    
+                        // Hide notification after 3 seconds
+                        setTimeout(() => {
+                            setNotification((prev) => ({ ...prev, isVisible: false }));
+                        }, 3000);
+                    });
             } else {
-                setShowPreview(true); // Show preview before submission
+                // Show preview when not in edit mode
+                setShowPreview(true);
             }
         } else {
+            // Prevent preview and show validation errors
             console.log('Validation failed', errors);
+            // Show validation error notification
+            setNotification({
+                isVisible: true,
+                message: 'Validation failed. Please fix the errors and try again.',
+                type: 'error',
+            });
+    
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                setNotification((prev) => ({ ...prev, isVisible: false }));
+            }, 3000);
         }
     };
+    
 
     const saveAsDraft = () => {
+        // Update the status to DRAFT
         const updatedData = updateQuizData(data);
-        console.log('Data:', updatedData);
-        setData(updatedData);
-
+        const Data = {
+            ...updatedData,
+            status: 'DRAFT', // Set status to DRAFT for saving as draft
+        };
+    
+        console.log('Formatted data:', Data);
+    
         if (isEditMode) {
-            dispatch(updateLessonThunk({ id: params.id, data: updatedData }))
+            // If in edit mode, update the existing lesson
+            dispatch(updateLessonThunk({ id: params.id, data: Data }))
                 .then((response: any) => {
-                    navigate('/content/lessons');
+                    if (response.payload.statusCode === 200 || response.payload.statusCode === 201) {
+                        // Show success notification
+                        setNotification({
+                            isVisible: true,
+                            message: 'Lesson saved as draft successfully!',
+                            type: 'success',
+                        });
+    
+                        // Hide notification after 3 seconds and navigate to lessons page
+                        setTimeout(() => {
+                            setNotification((prev) => ({ ...prev, isVisible: false }));
+                            navigate('/content/lessons'); // Navigate to the lessons page
+                        }, 1000);
+                    }
                 })
                 .catch((error: any) => {
                     console.error('Error updating draft:', error);
+                    // Show error notification
+                    setNotification({
+                        isVisible: true,
+                        message: 'Failed to save draft. Please try again.',
+                        type: 'error',
+                    });
+    
+                    // Hide notification after 3 seconds
+                    setTimeout(() => {
+                        setNotification((prev) => ({ ...prev, isVisible: false }));
+                    }, 3000);
                 });
         } else {
-            dispatch(addLessonThunk(updatedData))
+            // If in create mode, add a new lesson as draft
+            dispatch(addLessonThunk(Data))
                 .then((response: any) => {
-                    navigate('/content/lessons');
-                    setDirty(false); // Reset dirty state after saving
-                    setShowPrompt(false); 
+                    if (response.payload.statusCode === 200 || response.payload.statusCode === 201) {
+                        // Show success notification
+                        setNotification({
+                            isVisible: true,
+                            message: 'Lesson saved as draft successfully!',
+                            type: 'success',
+                        });
+    
+                        // Hide notification after 3 seconds and navigate to lessons page
+                        setTimeout(() => {
+                            setNotification((prev) => ({ ...prev, isVisible: false }));
+                            navigate('/content/lessons');
+                            setDirty(false); // Reset the dirty state after saving
+                        }, 1000);
+                    }
                 })
                 .catch((error: any) => {
                     console.error('Error adding draft:', error);
+                    // Show error notification
+                    setNotification({
+                        isVisible: true,
+                        message: 'Failed to save draft. Please try again.',
+                        type: 'error',
+                    });
+    
+                    // Hide notification after 3 seconds
+                    setTimeout(() => {
+                        setNotification((prev) => ({ ...prev, isVisible: false }));
+                    }, 3000);
                 });
         }
     };
+    
 
     const handleBackClick = () => {
         if (showPreview) {
@@ -496,48 +651,55 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
 
     const handleInputChange = () => {
         setDirty(true); // Mark the form as having unsaved changes when an input changes
-      };
+    };
 
-      const handleDiscardChanges = () => {
+    const handleDiscardChanges = () => {
         setDirty(false); // Reset dirty state
         // Navigate away or allow navigation
-      };
+    };
 
-      const handleCancelNavigation = () => {
+    const handleCancelNavigation = () => {
         setShowPrompt(false); // Close the prompt
         // Keep the user on the current page
-      };
+    };
 
-      const handleNavigation = () => {
+    const handleNavigation = () => {
         // This function will be triggered when user tries to navigate away
         if (dirty) {
-          setShowPrompt(true); // Show the prompt asking the user what to do
+            setShowPrompt(true); // Show the prompt asking the user what to do
         } else {
-          // Allow navigation if no unsaved changes
-          navigate(-1);
+            // Allow navigation if no unsaved changes
+            navigate(-1);
         }
-      };
+    };
 
     return (
         <>
             <BackButton onClick={handleNavigation} />
             <div className={classNames(styles.container, className)}>
-            <Sidebar
-    setDirty={setDirty}
-    dirty={dirty}
-    saveAsDraft={saveAsDraft}
-    discardChanges={handleDiscardChanges}
-    cancelNavigation={handleCancelNavigation}
-/>
+                <Sidebar
+                    setDirty={setDirty}
+                    dirty={dirty}
+                    saveAsDraft={saveAsDraft}
+                    discardChanges={handleDiscardChanges}
+                    cancelNavigation={handleCancelNavigation}
+                />
                 {showPrompt && (
-        <UnsavedChangesModal
-        open={showPrompt}
-        handleSaveAsDraft={saveAsDraft}
-        handleCancel={handleDiscardChanges}
-        closeModal={handleCancelNavigation}
-        descriptionText="You have unsaved changes. Do you want to save them before leaving?"
-        />
-      )}
+                    <UnsavedChangesModal
+                        open={showPrompt}
+                        handleSaveAsDraft={saveAsDraft}
+                        handleCancel={handleDiscardChanges}
+                        closeModal={handleCancelNavigation}
+                        descriptionText="You have unsaved changes. Do you want to save them before leaving?"
+                    />
+                )}
+
+                <NotificationBanner
+                    isVisible={notification.isVisible}
+                    message={notification.message}
+                    onClose={() => setNotification((prev) => ({ ...prev, isVisible: false }))}
+                    type={notification.type}
+                />
                 <div className={styles.content}>
                     <div className={styles.combinedHeader}>
                         <header className={styles.header}>

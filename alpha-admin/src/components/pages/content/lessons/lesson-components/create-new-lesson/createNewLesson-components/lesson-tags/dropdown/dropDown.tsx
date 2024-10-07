@@ -3,10 +3,10 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import './dropDown.scss';
 
-
 interface DropdownProps {
     label: string;
     options: string[];
+    selectedValue?: string[]; // Optional selectedValue prop
     setData: any;
     isEditMode?: boolean;
     data?: any;
@@ -14,61 +14,85 @@ interface DropdownProps {
     setErrors?: (errors: any) => void; // Add setter for errors
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode, data, className ,setErrors }) => {
+const Dropdown: React.FC<DropdownProps> = ({
+    label,
+    options,
+    setData,
+    isEditMode,
+    data,
+    className,
+    setErrors,
+    selectedValue = [], // Default value to an empty array if no selectedValue is passed
+}) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+    const [selectedOptions, setSelectedOptions] = useState<string[]>(selectedValue);
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
 
+    // Populate selectedOptions in edit mode from selectedValue
     useEffect(() => {
-        if (isEditMode) {
-            const lessonTags = data.lessonTags.find((tagObj: { [key: string]: string[] }) =>
-                Object.keys(tagObj)[0].includes(label.toLowerCase())
-            );
-
-            if (lessonTags) {
-                setSelectedOptions(lessonTags[label]);
-            }
+        if (isEditMode && selectedValue) {
+            setSelectedOptions(selectedValue);
         }
-    }, [isEditMode, data, label]);
+    }, [isEditMode, selectedValue]);
 
     const handleOptionChange = (option: string) => {
+        // Update selected options
         setSelectedOptions((prev) =>
             prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]
         );
+
+        // Update the data object with the new selections
         setData((prev: { lessonTags: { [key: string]: string[] }[] }) => {
             const updatedLessonTags = prev.lessonTags.map((tagObj) => {
                 const [key, value] = Object.entries(tagObj)[0];
-
-                const normalizedLabel = label;
-                if (key === normalizedLabel) {
+                if (key === label) {
                     return {
                         [key]: value.includes(option)
                             ? value.filter((item) => item !== option)
                             : [...value, option],
                     };
                 }
-
                 return tagObj;
             });
-
-            setErrors &&setErrors((prevErrors: any) => ({
-                ...prevErrors,
-                [`tag-${label}`]: '', // Clear the specific error for this tag
-            }));
 
             return {
                 ...prev,
                 lessonTags: updatedLessonTags,
             };
-
         });
+
+        // Clear the error for this tag if it exists
+        setErrors &&
+            setErrors((prevErrors: any) => ({
+                ...prevErrors,
+                [`tag-${label}`]: '', // Clear error specific to this tag
+            }));
     };
 
     const handleRemoveTag = (option: string) => {
+        // Remove the tag from selectedOptions
         setSelectedOptions((prev) => prev.filter((item) => item !== option));
+
+        // Also update the parent data object to reflect removal
+        setData((prev: { lessonTags: { [key: string]: string[] }[] }) => {
+            const updatedLessonTags = prev.lessonTags.map((tagObj) => {
+                const [key, value] = Object.entries(tagObj)[0];
+                if (key === label) {
+                    return {
+                        [key]: value.filter((item) => item !== option),
+                    };
+                }
+                return tagObj;
+            });
+
+            return {
+                ...prev,
+                lessonTags: updatedLessonTags,
+            };
+        });
     };
 
     return (
@@ -101,7 +125,6 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, setData, isEditMode
                                 type="checkbox"
                                 checked={selectedOptions.includes(option)}
                                 onChange={() => handleOptionChange(option)}
-                                required
                             />
                             {option}
                         </label>

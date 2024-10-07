@@ -10,7 +10,8 @@ import { PublishButton } from '../../../../../content-components/publish-button/
 import { useAppDispatch } from '../../../../../../../../app/hooks';
 import { addLessonThunk } from '../../../lessonsSlice';
 import { BackButton } from '../../../../../../../back-button/backButton';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import NotificationBanner from '../../../../../../notification-banner/notificationBanner';
 
 interface TagProps {
     label: string;
@@ -31,13 +32,43 @@ export const PreviewLessons = ({
 }) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const [notification, setNotification] = useState({
+        isVisible: false,
+        message: '',
+        type: 'success' as 'success' | 'error' | 'delete', // Add the 'delete' type
+    });
 
     const handlePublishClick = () => {
         dispatch(addLessonThunk(data)).then((response: any) => {
-            console.log('Response', response);
-            navigate('/content/lessons/viewlesson/' + response.payload.data.id);
+            if (response.payload?.data?.id) {
+                // Show success notification
+                setNotification({
+                    isVisible: true,
+                    message: 'Lesson published successfully!',
+                    type: 'success',
+                });
+    
+                // Delay navigation for 3 seconds to show the notification
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                    navigate('/content/lessons/viewlesson/' + response.payload.data.id);
+                }, 1000); // Wait for 3 seconds before navigating
+            } else {
+                // Handle failure case
+                setNotification({
+                    isVisible: true,
+                    message: 'Failed to publish lesson. Please try again.',
+                    type: 'error',
+                });
+    
+                // Hide error notification after 3 seconds
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                }, 3000);
+            }
         });
     };
+    
 
     const handleBackClick = () => {
         onBack(); // Use the onBack function passed from CreateNewLesson to go back to the form
@@ -52,6 +83,12 @@ export const PreviewLessons = ({
             <div className={classNames(styles.container)}>
                 <Sidebar />
                 <div className={styles.content}>
+                <NotificationBanner
+                        isVisible={notification.isVisible}
+                        message={notification.message}
+                        onClose={() => setNotification((prev) => ({ ...prev, isVisible: false }))}
+                        type={notification.type}
+                    />
                     <header className={styles.header}>
                         <div className={styles.leftButtonContainer}>
                             <Typography variant="h5">View Lesson</Typography>

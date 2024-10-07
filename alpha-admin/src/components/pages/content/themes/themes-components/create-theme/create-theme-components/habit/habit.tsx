@@ -94,11 +94,11 @@ const Habit: React.FC<HabitProps> = ({ showDeleteButton, data, setData, errors, 
                     value={data.themeData.habits[habitIndex].instruction}
                     onChange={handleInputChange}
                     maxLength={200}
-                    className={`${styles.textarea} ${errors.instructions ? styles.errorBorder : ''}`}
+                    className={`${styles.textarea} ${errors.instruction ? styles.errorBorder : ''}`}
                     placeholder="Enter the habit instruction"
                     required
                 />
-                {errors?.instructions && <span className={styles.errorText}>{errors.instructions}</span>}
+                {errors?.instruction && <span className={styles.errorText}>{errors.instruction}</span>}
             </div>
         </>
     );

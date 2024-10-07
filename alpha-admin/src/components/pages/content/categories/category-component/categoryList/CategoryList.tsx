@@ -17,6 +17,7 @@ import { DeleteCategoryModal } from '../../../content-components/delete-category
 import { PublishCategoryModal } from '../publish-category-modal/PublishCategoryModal';
 import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
 import { AppDispatch } from '../../../../../../app/store';
+import NotificationBanner from '../../../../notification-banner/notificationBanner';
 
 interface Category {
     id: number;
@@ -44,6 +45,11 @@ const CategoryList: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [publishModalOpen, setPublishModalOpen] = useState(false);
     const [errors, setErrors] = React.useState<any>({});
+    const [notification, setNotification] = useState({
+        isVisible: false,
+        message: '',
+        type: 'success' as 'success' | 'error' | 'delete', // Add the 'delete' type
+    });
 
     useEffect(() => {
         // Fetch categories
@@ -108,25 +114,96 @@ const CategoryList: React.FC = () => {
     const handleSaveClick = (category: Category) => {
         if (validateFields(false)) {
             const updatedCategory = { ...category, name: editName };
-            dispatch(updateCategoryThunk({ id: updatedCategory.id, data: updatedCategory }));
-            setEditId(null);
-            setEditName('');
+            dispatch(updateCategoryThunk({ id: updatedCategory.id, data: updatedCategory })).then(
+                (res: any) => {
+                    if (res.payload) {
+                        // Show success notification
+                        setNotification({
+                            isVisible: true,
+                            message: 'Category updated successfully!',
+                            type: 'success',
+                        });
+                    } else {
+                        // Show error notification
+                        setNotification({
+                            isVisible: true,
+                            message: 'Failed to update category. Please try again.',
+                            type: 'error',
+                        });
+                    }
+
+                    // Hide notification after 3 seconds
+                    setTimeout(() => {
+                        setNotification((prev) => ({ ...prev, isVisible: false }));
+                    }, 3000);
+
+                    // Clear edit state
+                    setEditId(null);
+                    setEditName('');
+                }
+            );
         }
     };
 
     const handleNewCategory = () => {
         if (validateFields(true)) {
-            dispatch(addCategoryThunk(newCategoryName));
-            setNewCategory(false);
-            setNewCategoryName('');
+            dispatch(addCategoryThunk(newCategoryName)).then((res: any) => {
+                if (res.payload) {
+                    // Show success notification
+                    setNotification({
+                        isVisible: true,
+                        message: 'New category added successfully!',
+                        type: 'success',
+                    });
+                } else {
+                    // Show error notification
+                    setNotification({
+                        isVisible: true,
+                        message: 'Failed to add category. Please try again.',
+                        type: 'error',
+                    });
+                }
+
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                }, 3000);
+
+                // Reset new category input
+                setNewCategory(false);
+                setNewCategoryName('');
+            });
         }
     };
 
     const handleDeleteClick = (id: number | null) => {
         if (id !== null) {
-            dispatch(deleteCategoryThunk({ id, name: editName }));
-            setEditId(null);
-            setEditName('');
+            dispatch(deleteCategoryThunk({ id, name: editName })).then((res: any) => {
+                if (res.payload) {
+                    // Show delete success notification
+                    setNotification({
+                        isVisible: true,
+                        message: 'Category deleted successfully!',
+                        type: 'delete',
+                    });
+                } else {
+                    // Show error notification
+                    setNotification({
+                        isVisible: true,
+                        message: 'Failed to delete category. Please try again.',
+                        type: 'error',
+                    });
+                }
+
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                }, 3000);
+
+                // Reset edit state after deletion
+                setEditId(null);
+                setEditName('');
+            });
         }
         setOpenModal(false);
     };
@@ -153,6 +230,12 @@ const CategoryList: React.FC = () => {
 
     return (
         <>
+            <NotificationBanner
+                isVisible={notification.isVisible}
+                message={notification.message}
+                onClose={() => setNotification((prev) => ({ ...prev, isVisible: false }))}
+                type={notification.type}
+            />
             <div className={styles.categoryList}>
                 <table className={styles.table}>
                     <thead>

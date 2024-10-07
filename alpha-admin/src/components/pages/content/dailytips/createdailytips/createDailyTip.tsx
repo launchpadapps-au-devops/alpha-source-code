@@ -14,6 +14,7 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../back-button/backButton';
 // import {TableFooter} from '../../content-components/table-footer/TableFooter';
 import { CustomPagination } from '../../content-components/custom-pagination/customPagination';
+import NotificationBanner from '../../../notification-banner/notificationBanner';
 
 export interface ContentProps {
     className?: string;
@@ -66,6 +67,11 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [notification, setNotification] = useState({
+        isVisible: false,
+        message: '',
+        type: 'success' as 'success' | 'error' | 'delete', // Add the 'delete' type
+    });
 
     const fetchStaffData = (page: number) => {
         dispatch(fetchTipsThunk(page)).then((res: any) => {
@@ -110,16 +116,16 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
             alert('Tip content cannot be empty.');
             return;
         }
-
+    
         console.log('Saving tip with ID:', tipId, 'Content:', editContent);
-
+    
         // Find and update the specific tip by ID
         const updatedTip = tips.find((tip: Tip) => tip.id === tipId);
         if (!updatedTip) {
             alert('Tip not found.');
             return;
         }
-
+    
         // Construct the updated tip data with all required fields
         const updatedTipData: any = {
             ...updatedTip,
@@ -129,26 +135,104 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
             tip: updatedTip.tip || '', // Set a default value if necessary
             date: updatedTip.date || new Date().toISOString(), // Set the current date or another appropriate value
         };
-
+    
         console.log('Updated Tip Data:', updatedTipData);
         const newUpdatedValue = {
             content: editContent,
             day: updatedTip.day,
         };
+    
         // Dispatch the updated single tip object
-        dispatch(addTipThunk(newUpdatedValue));
-        dispatch(fetchTipsThunk(1));
-
-        setEditTipId(null);
-        setEditContent('');
+        dispatch(addTipThunk(newUpdatedValue)).then((res: any) => {
+            if (res.payload) {
+                // Show success notification
+                setNotification({
+                    isVisible: true,
+                    message: 'Daily tip updated successfully!',
+                    type: 'success',
+                });
+    
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                }, 3000);
+    
+                // Fetch the latest tips to refresh the list
+                dispatch(fetchTipsThunk(1));
+    
+                // Reset input fields
+                setEditTipId(null);
+                setEditContent('');
+            } else {
+                // Handle any error response and show error notification
+                setNotification({
+                    isVisible: true,
+                    message: 'Failed to update daily tip. Please try again.',
+                    type: 'error',
+                });
+    
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                }, 3000);
+            }
+        });
     };
+    
 
     const handleDeleteClick = (tipId: number) => {
-        // Dispatch an action to delete the tip by its id
+        const updatedTip = tips.find((tip: Tip) => tip.id === tipId);
+        if (!updatedTip) {
+            alert('Tip not found.');
+            return;
+        }
+    
+        // Construct the updated tip data with the "ARCHIVE" status
+        const updatedTipData: any = {
+            ...updatedTip,
+            content: updatedTip.content,
+            status: "ARCHIVE",
+            tip: updatedTip.tip || '',
+            date: updatedTip.date || new Date().toISOString(),
+        };
+    
+        // Dispatch the updated tip with "ARCHIVE" status to simulate a deletion
+        dispatch(addTipThunk(updatedTipData)).then((res: any) => {
+            if (res.payload) {
+                // Show success notification
+                setNotification({
+                    isVisible: true,
+                    message: 'Daily tip deleted successfully!',
+                    type: 'delete',
+                });
+    
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                }, 3000);
+    
+                // Fetch the latest tips to refresh the list
+                dispatch(fetchTipsThunk(1));
+            } else {
+                // Handle any error response and show error notification
+                setNotification({
+                    isVisible: true,
+                    message: 'Failed to delete daily tip. Please try again.',
+                    type: 'error',
+                });
+    
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                }, 3000);
+            }
+        });
+    
+        // Reset the editing state
         setEditTipId(null);
         setEditContent('');
     };
-
+    
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEditContent(e.target.value);
     };
@@ -180,19 +264,64 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
         });
     }, [dispatch]);
 
+    // const handleNewDailyTip = () => {
+    //     const newUpdatedValue = {
+    //         content: newDailytipName,
+    //         day: newDailytipDay,
+    //         status: 'ACTIVE',
+    //     };
+    //     // Dispatch the updated single tip object
+    //     dispatch(addTipThunk(newUpdatedValue));
+    //     dispatch(fetchTipsThunk(1));
+
+    //     setnewDailyTip(false);
+    //     // setEditTipId(null);
+    //     // setEditContent('');
+    // };
+
     const handleNewDailyTip = () => {
         const newUpdatedValue = {
             content: newDailytipName,
             day: newDailytipDay,
             status: 'ACTIVE',
         };
-        // Dispatch the updated single tip object
-        dispatch(addTipThunk(newUpdatedValue));
-        dispatch(fetchTipsThunk(1));
 
-        setnewDailyTip(false);
-        // setEditTipId(null);
-        // setEditContent('');
+        // Dispatch the updated single tip object
+        dispatch(addTipThunk(newUpdatedValue)).then((res: any) => {
+            if (res.payload) {
+                // Show success notification
+                setNotification({
+                    isVisible: true,
+                    message: 'Daily tip added successfully!',
+                    type: 'success',
+                });
+
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                }, 3000);
+
+                // Fetch the latest tips to refresh the list
+                dispatch(fetchTipsThunk(1));
+
+                // Reset input fields
+                setnewDailyTip(false);
+                setNewDailytipName('');
+                setNewDailytipDay('');
+            } else {
+                // Handle any error response and show error notification
+                setNotification({
+                    isVisible: true,
+                    message: 'Failed to add daily tip. Please try again.',
+                    type: 'error',
+                });
+
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                }, 3000);
+            }
+        });
     };
 
     useEffect(() => {
@@ -217,6 +346,12 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>
+                    <NotificationBanner
+                        isVisible={notification.isVisible}
+                        message={notification.message}
+                        onClose={() => setNotification((prev) => ({ ...prev, isVisible: false }))}
+                        type={notification.type}
+                    />
                     <div className={styles.combinedHeader}>
                         <header className={styles.header}>
                             <Typography variant="h5">Create Daily tips</Typography>
@@ -265,15 +400,14 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
                                             <AppButton
                                                 buttonText="Save & add more"
                                                 className={styles.button}
-                                                onButtonClick={() =>
-                                                    handleSaveAndAddMoreClick(tips)
-                                                }
+                                                onButtonClick={handleNewDailyTip} // Wrap in an arrow function
                                             />
                                             <EditButton
                                                 buttonText="Save"
                                                 className={styles.button}
-                                                onButtonClick={handleNewDailyTip}
+                                                onButtonClick={handleNewDailyTip} // Wrap in an arrow function
                                             />
+
                                             <DeleteButton
                                                 buttonText="Delete"
                                                 className={styles.button}
@@ -284,58 +418,54 @@ export const CreateDailyTips = ({ className }: ContentProps) => {
                                 </tr>
                             )}
 
-                            {tips &&
-                                tips.length > 0 &&
-                                tips
-                                    .filter((tip: Tip) => tip.status.toLowerCase() === 'active')
-                                    .map((tip: Tip) => (
-                                        <div className={styles.listItem} key={tip.id}>
-                                            {editTipId === tip.id ? (
-                                                <>
-                                                    <div className={styles.dayInput}>{tip.day}</div>
-                                                    <input
-                                                        className={styles.contentInput}
-                                                        type="text"
-                                                        value={editContent}
-                                                        onChange={handleInputChange}
-                                                    />
-                                                    <AppButton
-                                                        buttonText="Save & add more"
-                                                        className={styles.button}
-                                                        onButtonClick={handleSaveClick(tip.id)}
-                                                    />
-                                                    <EditButton
-                                                        buttonText="Save"
-                                                        className={styles.button}
-                                                        onButtonClick={() =>
-                                                            handleSaveClick(tip.id)
-                                                        }
-                                                    />
-                                                    <DeleteButton
-                                                        buttonText="Delete"
-                                                        className={styles.button}
-                                                        onButtonClick={() =>
-                                                            handleDeleteClick(tip.id)
-                                                        }
-                                                    />
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <div className={styles.day}>{tip.day}</div>
-                                                    <div className={styles.content}>
-                                                        {tip.content}
-                                                    </div>
-                                                    <EditButton
-                                                        buttonText="Edit"
-                                                        className={styles.editButton}
-                                                        onButtonClick={() =>
-                                                            handleEditClick(tip.id, tip.content)
-                                                        }
-                                                    />
-                                                </>
-                                            )}
-                                        </div>
-                                    ))}
+{tips &&
+        tips.length > 0 &&
+        tips
+            .filter((tip: Tip) => tip.status.toLowerCase() === 'active')
+            .map((tip: Tip) => (
+                <div className={styles.listItem} key={tip.id}>
+                    {editTipId === tip.id && isEditable ? (
+                        <>
+                            <div className={styles.dayInput}>{tip.day}</div>
+                            <input
+                                className={styles.contentInput}
+                                type="text"
+                                value={editContent}
+                                onChange={handleInputChange}
+                            />
+                            <AppButton
+                                buttonText="Save & add more"
+                                className={styles.button}
+                                onButtonClick={() => handleSaveClick(tip.id)}  // Update to prevent immediate execution
+                            />
+                            <EditButton
+                                buttonText="Save"
+                                className={styles.button}
+                                onButtonClick={() => handleSaveClick(tip.id)}  // Same update
+                            />
+                            <DeleteButton
+                                buttonText="Delete"
+                                className={styles.button}
+                                onButtonClick={() => handleDeleteClick(tip.id)}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <div className={styles.day}>{tip.day}</div>
+                            <div className={styles.content}>
+                                {tip.content}
+                            </div>
+                            <EditButton
+                                buttonText="Edit"
+                                className={styles.editButton}
+                                onButtonClick={() =>
+                                    handleEditClick(tip.id, tip.content)  // Correct usage
+                                }
+                            />
+                        </>
+                    )}
+                </div>
+            ))}
                         </List>
                     </div>
                     <div className={styles.pagination}>

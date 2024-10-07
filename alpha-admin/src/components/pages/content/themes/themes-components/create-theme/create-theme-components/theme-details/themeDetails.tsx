@@ -49,13 +49,14 @@ const ThemeDetails: React.FC<ThemeDetailsProps> = ({ onCategoryChange, data, set
                     type="number"
                     id="themeCode"
                     placeholder='Enter theme code'
-                    value={data.themeData.themeCode}
+                    value={data.themeData.themeCode || ''}
                     onChange={(e) => {
+                        const value = e.target.value;
                         setData({
                             ...data,
                             themeData: {
                                 ...data.themeData,
-                                themeCode: Number(e.target.value),
+                                themeCode: value === '' ? '' : Number(value),
                             },
                         });
                     }}

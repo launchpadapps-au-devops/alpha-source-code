@@ -20,6 +20,7 @@ import { fetchLessonsThunk } from '../../../lessons/lesson-components/lessonsSli
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { addThemeThunk, fetchThemeByIdThunk, updateThemeThunk } from '../themeSlice';
 import { BackButton } from '../../../../../back-button/backButton';
+import NotificationBanner from '../../../../notification-banner/notificationBanner';
 
 export interface EditThemeProps {
     className?: string;
@@ -98,6 +99,11 @@ export const EditTheme = ({ className }: EditThemeProps) => {
     const [category, setCategory] = useState<string>('');
     const [showHabit, setShowHabit] = useState(false);
     const { id } = useParams();
+    const [notification, setNotification] = useState({
+        isVisible: false,
+        message: '',
+        type: 'success' as 'success' | 'error' | 'delete', // Add the 'delete' type
+    });
     const [data, setData] = useState({
         themeData: {
             themeCode: '0',
@@ -134,18 +140,49 @@ export const EditTheme = ({ className }: EditThemeProps) => {
     const submitData = (id: any) => {
         dispatch(updateThemeThunk({ id, theme: data.themeData }))
             .then((res: any) => {
-                console.log(data.themeData);
-                if (res.payload.status === 200) {
-                    navigate('/content/themes');
-                } else if (res.payload.status === 201) {
-                    navigate('/content/themes');
+                if (res?.payload?.statusCode === 200 || res?.payload?.statusCode === 201) {
+                    // Show success notification
+                    setNotification({
+                        isVisible: true,
+                        message: 'Theme updated successfully!',
+                        type: 'success',
+                    });
+    
+                    // Delay navigation until after the notification is shown
+                    setTimeout(() => {
+                        setNotification((prev) => ({ ...prev, isVisible: false }));
+                        navigate('/content/themes');
+                    }, 1000); // Wait for 3 seconds before navigating
+                } else {
+                    // Show error notification if the status code is not 200 or 201
+                    setNotification({
+                        isVisible: true,
+                        message: 'Failed to update the theme. Please try again.',
+                        type: 'error',
+                    });
+    
+                    // Hide notification after 3 seconds
+                    setTimeout(() => {
+                        setNotification((prev) => ({ ...prev, isVisible: false }));
+                    }, 3000);
                 }
             })
             .catch((err: any) => {
-                console.log(err);
-                alert('Error' + err);
+                console.error('Error:', err);
+                // Show error notification on catch
+                setNotification({
+                    isVisible: true,
+                    message: `Error: ${err.message}`,
+                    type: 'error',
+                });
+    
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    setNotification((prev) => ({ ...prev, isVisible: false }));
+                }, 3000);
             });
     };
+    
     const handleUpdateLessons = (updatedLessons: Lesson[]) => {
         setLessons(updatedLessons);
     };
@@ -198,6 +235,12 @@ export const EditTheme = ({ className }: EditThemeProps) => {
             <div className={classNames(styles.container, className)}>
                 <Sidebar />
                 <div className={styles.content}>
+                <NotificationBanner
+                        isVisible={notification.isVisible}
+                        message={notification.message}
+                        onClose={() => setNotification((prev) => ({ ...prev, isVisible: false }))}
+                        type={notification.type}
+                    />
                     <div className={styles.combinedHeader}>
                         <header className={styles.header}>
                             <h4>Edit theme</h4>

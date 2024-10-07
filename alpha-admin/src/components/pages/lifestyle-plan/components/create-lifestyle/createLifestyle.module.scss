@@ -12,6 +12,15 @@
 
 .header {
   display: flex;
+  // justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  padding: 20px; /* Adjust padding as needed */
+  background: #F9FAFE;
+}
+
+.combinedHeader {
+  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px; /* Adjust padding as needed */
@@ -36,6 +45,7 @@
 
 .ButtonContainer{
   display: flex;
+  justify-content: flex-end;
   gap: 10px; /* Adjust gap as needed */
   align-items: center;
   margin-left: 1350px; /* Adjust margin as needed to control spacing */

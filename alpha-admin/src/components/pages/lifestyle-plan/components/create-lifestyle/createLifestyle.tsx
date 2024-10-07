@@ -17,6 +17,7 @@ import { AddThemes } from '../add-themes/addThemes';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { BackButton } from '../../../../back-button/backButton';
 import React from 'react';
+import NotificationBanner from '../../../notification-banner/notificationBanner';
 
 export interface CreateLifestyleProps {
     className?: string;
@@ -56,6 +57,11 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
     const [selectedThemes, setSelectedThemes] = useState<any>([]);
     const [errors, setErrors] = React.useState<any>({});
     console.log('selectedThemes', selectedThemes);
+    const [notification, setNotification] = useState({
+        isVisible: false,
+        message: '',
+        type: 'success' as 'success' | 'error' | 'delete', // Add the 'delete' type
+    });
 
     const onUpdateThemes = (theme: any) => {
         if (selectedThemes.includes(theme.id)) {
@@ -65,7 +71,7 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
         }
         console.log('Updated selectedThemes:', selectedThemes);
     };
-    
+
     // console.log('Updated selectedThemes:', selectedThemes);
 
     const isEditMode = location.pathname.includes('/lifestyle-plan/edit');
@@ -114,70 +120,61 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
         return Object.keys(fieldErrors).length === 0;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (status: string = 'ACTIVE') => {
+        if (!validateFields()) {
+            setNotification({
+                isVisible: true,
+                message: 'Please fill out all required fields',
+                type: 'error',
+            });
+            setTimeout(() => setNotification({ ...notification, isVisible: false }), 3000);
+            return;
+        }
+
         const data = {
             planData: {
                 planCode: Math.random().toString().slice(2, 6),
                 name: planName,
                 image: 'https://sample.com/sample.jpg',
                 description: planDescription,
-                internalNotes: internalNotes,
-                status: 'ACTIVE',
+                internalNotes,
+                status,
                 isPublished: false,
             },
             themes: selectedThemes,
         };
 
-        console.log('final data', data);
-    
-        // Run validation first
-        // if (!validateFields()) {
-            if (isEditMode) {
-                // Call updatePlanThunk and handle promise result
-                dispatch(updatePlanThunk({ id: id, plan: data }))
-                    .then((response: any) => {
-                        if (response.meta.requestStatus === "fulfilled") {
-                            navigate('/lifestyle-plan'); // Navigate only on success
-                        } else if (response.meta.requestStatus === "rejected") {
-                            handleAPIError(response.error); // Only handle error if rejected
-                        }
-                    })
-                    .catch((err: any) => {
-                        console.log('Error during update:', err);
+        const action = isEditMode ? updatePlanThunk({ id, plan: data }) : addPlanThunk(data);
+        dispatch(action)
+            .then((response: any) => {
+                if (response.meta.requestStatus === 'fulfilled') {
+                    setNotification({
+                        isVisible: true,
+                        message: `Plan ${isEditMode ? 'updated' : 'created'} successfully`,
+                        type: 'success',
                     });
-            } else {
-                // Call addPlanThunk and handle promise result
-                dispatch(addPlanThunk(data))
-                    .then((response: any) => {
-                        if (response.meta.requestStatus === "fulfilled") {
-                            navigate('/lifestyle-plan'); // Navigate only on success
-                        } else if (response.meta.requestStatus === "rejected") {
-                            handleAPIError(response.error); // Only handle error if rejected
-                        }
-                    })
-                    .catch((err: any) => {
-                        console.log('Error during add plan:', err);
-                    });
-            }
-        // } 
-        // else {
-        //     // Validation failed, show errors
-        //     console.log('Validation failed', errors);
-        // }
+                    setTimeout(() => {
+                        setNotification({ ...notification, isVisible: false });
+                        navigate('/lifestyle-plan');
+                    }, 1000);
+                } else {
+                    handleAPIError(response.error);
+                }
+            })
+            .catch((err: any) => {
+                console.log('Error:', err);
+            });
     };
-    
+
     const handleAPIError = (error: any) => {
-        if (error?.code === 400 && error.message === "Unique constraint violation error") {
-            // Handle specific unique constraint violation error
-            console.error("Unique constraint violation:", error.message);
-            alert("A plan with the same unique field (e.g., planCode or name) already exists.");
-        } else {
-            console.error("API error:", error?.message);
-        }
+        console.error('API Error:', error.message);
+        setNotification({
+            isVisible: true,
+            message: error.message || 'An error occurred. Please try again.',
+            type: 'error',
+        });
+        setTimeout(() => setNotification({ ...notification, isVisible: false }), 3000);
     };
-    
-    
-    
 
     const handleDelete = () => {
         const data = {
@@ -186,15 +183,32 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
                 name: planName,
                 image: 'https://sample.com/sample.jpg',
                 description: planDescription,
-                internalNotes: internalNotes,
-                status: 'ARCHIVE',
+                internalNotes,
+                status: 'ARCHIVE', // Marking the plan as archived
                 isPublished: false,
             },
             themes: selectedThemes,
         };
-        dispatch(updatePlanThunk({ id: id, plan: data })).then(() => {
-            navigate('/lifestyle-plan');
-        });
+
+        dispatch(updatePlanThunk({ id, plan: data }))
+            .then((response: any) => {
+                if (response.meta.requestStatus === 'fulfilled') {
+                    setNotification({
+                        isVisible: true,
+                        message: 'Plan deleted successfully!',
+                        type: 'success',
+                    });
+                    setTimeout(() => {
+                        setNotification({ ...notification, isVisible: false });
+                        navigate('/lifestyle-plan'); // Navigate after the notification disappears
+                    }, 3000); // Show the notification for 3 seconds
+                } else {
+                    handleAPIError(response.error);
+                }
+            })
+            .catch((err: any) => {
+                console.log('Error during delete:', err);
+            });
     };
 
     const handleBackClick = () => {
@@ -204,14 +218,21 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
     return (
         <>
             <BackButton onClick={handleBackClick} />
+            <NotificationBanner
+                isVisible={notification.isVisible}
+                message={notification.message}
+                onClose={() => setNotification((prev) => ({ ...prev, isVisible: false }))}
+                type={notification.type}
+            />
             {!themeView ? (
                 <div className={classNames(styles.container, className)}>
                     <div className={styles.content}>
+                        <div className={styles.combinedHeader}>
                         <header className={styles.header}>
                             <h4>
                                 {isEditMode ? 'Edit Lifestyle Plan' : 'Create new Lifestyle plan'}
                             </h4>
-                            <div className={styles.leftButtonContainer}>
+                            {/* <div className={styles.leftButtonContainer}> */}
                                 {isEditMode && (
                                     <DeleteButton
                                         showLeftIcon
@@ -222,18 +243,20 @@ export const CreateLifestyle = ({ className }: CreateLifestyleProps) => {
                                     buttonText="Cancel"
                                     onButtonClick={() => navigate('/lifestyle-plan')}
                                 />
-                            </div>
+                            {/* </div> */}
+                            </header>
+
                             <div className={styles.rightButtonContainer}>
                                 <EditButton
                                     buttonText="Save as draft"
-                                    onButtonClick={() => handleSubmit()}
+                                    onButtonClick={() => handleSubmit('DRAFT')} // Pass 'DRAFT' for draft status
                                 />
                                 <AppButton
                                     buttonText="Preview"
                                     onButtonClick={() => handleSubmit()}
                                 />
                             </div>
-                        </header>
+                        </div>
                         <div className={styles.themeContainer}>
                             <div className={styles.rightColumn}>
                                 <NewLifestyle
