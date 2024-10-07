@@ -60,7 +60,10 @@ export class NotificationController {
             properties: {
                 statusCode: { type: 'number', example: 200 },
                 message: { type: 'string', example: 'Lesson added successfully' },
-                data: { type: 'object', $ref: getSchemaPath(NotificationResponseDto) },
+                data: { 
+                    type: 'array',
+                    items: { $ref: getSchemaPath(NotificationResponseDto) }
+                },
                 meta: {
                     type: 'object',
                     properties: {
@@ -146,7 +149,7 @@ export class NotificationController {
     @ApiParam({
         name: 'userId',
         description: 'User ID',
-        type: 'number',
+        type: 'string',
         required: true
     })
     @ApiResponse({
@@ -169,7 +172,7 @@ export class NotificationController {
     @Get('/preference/:userId')
     async getUserNotificationPreference(
         @Request() req,
-        @Param('id') userId: string
+        @Param('userId') userId: string
     ) {
         return this.notificationService.getUserNotificationPreference(userId);
     }
