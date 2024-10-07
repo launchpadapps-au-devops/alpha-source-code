@@ -11,16 +11,22 @@ import { fetchActivePatientsThunk } from './dashboard-components/activePatientsS
 import { useEffect, useMemo, useState } from 'react';
 import { fetchUserDataOverviewThunk } from './dashboard-components/user-data-overvie-store/userDataOverviewSlice';
 import { DropdownPatientAnalytics } from './dashboard-components/dashboard-dropdown-patient-analytics/patient-analytics-dashboard';
+import { fetchPatientsDataByGender, fetchPatientsDataByPlan } from './dashboard-components/dashboard-dropdown-patient-analytics/patient-analytics-API';
+import { getLifestylePlans } from '../patient-platform/patient-lifestyle-plan/patientLifeStyleAPI';
 
 export const Dashboard: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const demographicOptions = ["All", "Male", "Female", "Other"];
-    const [selectedDemographic, setSelectedDemographic] = useState<string>("All");
-    
+    const demographicOptions = ["All", "Male", "Female", "Non-binary"]; // Update with dynamic plans if needed
+
+    const [selectedGender, setSelectedGender] = useState<string>("All");
+    const [genderResponse, setGenderResponse] = useState<any>(null);
+    const [selectedPlan, setSelectedPlan] = useState<string>("All");
+    const [lifestylePlans, setLifestylePlans] = useState<any[]>([]);
+    const [lifestylePlanResponse, setLifestylePlanResponse] = useState<any>(null);
+
     const { users, loading, errorMessage, count } = useSelector(
         (state: RootState) => state.activePatients.activePatients
     );
-
     const { data: userOverviewData } = useSelector(
         (state: RootState) => state.userDataOverview.userDataOverview
     );
@@ -29,19 +35,71 @@ export const Dashboard: React.FC = () => {
     const FirstName = localStorage.getItem('LoggedInUserFirstName');
 
     useEffect(() => {
+        const fetchPlans = async () => {
+            try {
+                const response = await getLifestylePlans();
+                console.log('Lifestyle plans:', response.data);
+                setLifestylePlans(response.data);
+            } catch (error) {
+                console.error("Error fetching lifestyle plans:", error);
+            }
+        };
+
+        fetchPlans();
+    }, []);
+
+    
+    useEffect(() => {
+       const data =  fetchPatientsDataByGender("All").then((data) => {
+        setGenderResponse(data.data.count);
+       }); 
+    }, []);
+
+    useEffect(() => {
+        const data =  fetchPatientsDataByGender("All").then((data) => {
+         setGenderResponse(data.data.count);
+        }); 
+     }, []);
+ 
+    
+    useEffect(() => {
         if (loggedUserID) {
             dispatch(fetchUserDataOverviewThunk(loggedUserID));
         }
-    }, [dispatch]);
+    }, [dispatch, loggedUserID]);
 
     useEffect(() => {
         dispatch(fetchActivePatientsThunk());
     }, [dispatch]);
 
-    const demographicChangeHandler = (option: string) => {
-        setSelectedDemographic(option);
+    const handleGenderChange = async (gender: string) => {
+        setSelectedGender(gender);
+        try {
+            const data = await fetchPatientsDataByGender(gender);
+            console.log('Gender-based data:', data);
+            setGenderResponse(data.data.count);
+            console.log('Gender response:', data.data.count);
+            // Update state or UI based on gender data
+        } catch (error) {
+            console.error("Error fetching data by gender:", error);
+        }
     };
 
+    const handlePlanChange = async (plan: string) => {
+        setSelectedPlan(plan);
+        try {
+            const planId = lifestylePlans.findIndex(p => p === plan) + 1; // Replace with actual plan IDs if needed
+            const data = await fetchPatientsDataByPlan(planId);
+            console.log('Plan-based data:', data.data.count);
+            setLifestylePlanResponse(data.data.count);
+            // Update state or UI based on plan data
+        } catch (error) {
+            console.error("Error fetching data by plan:", error);
+        }
+    };
+
+
+    
     // Calculate percentages dynamically based on userOverviewData
     const legendItems = useMemo(() => {
         if (userOverviewData?.nutritionData) {
@@ -91,7 +149,6 @@ export const Dashboard: React.FC = () => {
                                 }}
                             />
                         </div>
-
                         <LegendData data={legendItems} />
                     </DataCard>
                 </div>
@@ -112,7 +169,7 @@ export const Dashboard: React.FC = () => {
                             <span className={styles['analytics-label']}>Average steps per day</span>
                             <DropdownPatientAnalytics
                                 options={["20-29", "30-39", "40-49", "50+"]}
-                                onSelect={demographicChangeHandler}
+                                onSelect={() => {}}
                                 label="Select Age Group"
                             />
                         </div>
@@ -128,13 +185,12 @@ export const Dashboard: React.FC = () => {
                         <div className={styles['label-with-dropdown']}>
                             <span className={styles['analytics-label']}>Total enrolled patients</span>
                             <DropdownPatientAnalytics
-                                options={["Male", "Female", "Non-binary"]}
-                                onSelect={demographicChangeHandler}
+                                options={demographicOptions}
+                                onSelect={handleGenderChange}
                                 label="Select Gender"
                             />
                         </div>
-                        <span className={styles['analytics-count']}>336</span>
-                        <span className={styles['assigned-by']}>by demographic</span>
+                        <span className={styles['analytics-count']}>{genderResponse}</span>
                     </DataCard>
 
                     <div className={styles['divider']}>
@@ -147,13 +203,15 @@ export const Dashboard: React.FC = () => {
                                 Patients per lifestyle plan
                             </span>
                             <DropdownPatientAnalytics
-                                options={["Heart Health", "Wealth", "Weight Health"]}
-                                onSelect={demographicChangeHandler}
+                                options={lifestylePlans.map((plan) => plan.name)}
+                                onSelect={(selectedName) => {
+                                    const selectedPlan = lifestylePlans.find((plan) => plan.name === selectedName);
+                                    handlePlanChange(selectedPlan ? selectedPlan.id : null);
+                                }}
                                 label="Select Lifestyle Plan"
                             />
                         </div>
-                        <span className={styles['analytics-count']}>234</span>
-                        <span className={styles['assigned-by']}>by demographic</span>
+                        <span className={styles['analytics-count']}>{lifestylePlanResponse}</span>
                     </DataCard>
                 </div>
             </section>

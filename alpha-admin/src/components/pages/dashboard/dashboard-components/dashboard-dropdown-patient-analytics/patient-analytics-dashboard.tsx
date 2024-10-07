@@ -3,7 +3,7 @@ import styles from './patient-analytics-dashboard.module.scss';
 
 interface DropdownProps {
   options: string[];
-  onSelect: (option: string) => void;
+  onSelect: (option: any) => void;
   label: string;
 }
 
