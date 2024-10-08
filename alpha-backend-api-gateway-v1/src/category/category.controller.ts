@@ -154,6 +154,12 @@ export class CategoryController {
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
     @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiQuery({
+        name: 'status',
+        type: 'string',
+        required: false,
+        enum: ['ACTIVE', 'ARCHIVE'],
+    })
+    @ApiQuery({
         name: 'page',
         type: 'number',
         required: false,
@@ -209,11 +215,11 @@ export class CategoryController {
     async findAllCategories(
         @Request() req
     ) {
-        const { page, limit, sortField, sortOrder, searchText } = req.query;
+        const { page, limit, sortField, sortOrder, searchText, status } = req.query;
         return this.categoryService.findAllCategories(
             { page, limit },
             { sortField, sortOrder },
-            { searchText }
+            { searchText, status }
         );
     }
 
