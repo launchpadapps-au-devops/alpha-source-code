@@ -98,7 +98,7 @@ export class UserDailyHabitsController {
     })
     @Get('current')
     async getUserDailyHabit(@Request() req): Promise<object> {
-        return await this.userDailyHabitsService.getUserDailyHabit(req.user.userId);
+        return await this.userDailyHabitsService.getUserDailyHabit(req.user.userId, req.user);
     }
 
     // start selected habit
