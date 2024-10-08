@@ -18,6 +18,7 @@ import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchLessonsThunk, updateLessonThunk } from '../lessonsSlice';
 import CategoryItem from '../../../categories/category-component/categoryItem/categoryItem';
 import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
+import ToggleSwitch from '../../../content-components/toggle/toggle';
 
 export type Lesson = {
     id: number;
@@ -31,22 +32,30 @@ export type Lesson = {
     onPageChange: (newPage: number) => void; // Add onPageChange
 };
 
-export const LessonTable: React.FC<{ 
-    className?: string; 
-    lessons: Lesson[]; 
-    setLessons: React.Dispatch<React.SetStateAction<Lesson[]>>; 
-    filteredLessons: Lesson[];  // Add filteredLessons here
-    setFilteredLessons: React.Dispatch<React.SetStateAction<Lesson[]>>;  // Add setFilteredLessons here
-    currentPage: number;  
-    onPageChange: (newPage: number) => void;  
-}> = ({ className, lessons, setLessons, filteredLessons, setFilteredLessons, currentPage, onPageChange }) => {  
+export const LessonTable: React.FC<{
+    className?: string;
+    lessons: Lesson[];
+    setLessons: React.Dispatch<React.SetStateAction<Lesson[]>>;
+    filteredLessons: Lesson[]; // Add filteredLessons here
+    setFilteredLessons: React.Dispatch<React.SetStateAction<Lesson[]>>; // Add setFilteredLessons here
+    currentPage: number;
+    onPageChange: (newPage: number) => void;
+}> = ({
+    className,
+    lessons,
+    setLessons,
+    filteredLessons,
+    setFilteredLessons,
+    currentPage,
+    onPageChange,
+}) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [openPublishModal, setOpenPublishModal] = useState(false);
     const [openUnpublishModal, setOpenUnpublishModal] = useState(false);
     const [totalPages, setTotalPages] = useState(0);
-    const [forceUpdate, setForceUpdate] = useState(false);  // Force re-render state
+    const [forceUpdate, setForceUpdate] = useState(false); // Force re-render state
 
     useEffect(() => {
         fetchLessons(currentPage);
@@ -56,7 +65,7 @@ export const LessonTable: React.FC<{
         dispatch(fetchLessonsThunk(page)).then((res: any) => {
             if (res.payload) {
                 setLessons(res.payload.data);
-                setFilteredLessons(res.payload.data);  // Update filteredLessons
+                setFilteredLessons(res.payload.data); // Update filteredLessons
                 setTotalPages(res.payload.meta.totalPages); // Ensure total pages are updated correctly
             }
         });
@@ -64,15 +73,28 @@ export const LessonTable: React.FC<{
 
     const handleToggle = (lesson: Lesson, index: number, event: React.MouseEvent) => {
         event.stopPropagation(); // Prevent row click propagation
-
-        setSelectedThemeIndex(index); // Set the selected lesson index
-
-        if (!lesson.isPublished) {
-            setOpenPublishModal(true); // Open publish modal
-        } else {
-            setOpenUnpublishModal(true); // Open unpublish modal
-        }
+    
+        const newPublishedState = !lesson.isPublished; // Toggle the current state
+    
+        const updatedLesson = { ...lesson, isPublished: newPublishedState };
+    
+        // Dispatch API call to update the lesson's published status
+        dispatch(updateLessonThunk({ id: lesson.id, data: updatedLesson })).then((response: any) => {
+            if (response.payload) {
+                // Optimistically update the lessons and filteredLessons states
+                const updatedLessons = lessons.map((l, i) =>
+                    i === index ? { ...l, isPublished: newPublishedState } : l
+                );
+                const updatedFilteredLessons = filteredLessons.map((l, i) =>
+                    i === index ? { ...l, isPublished: newPublishedState } : l
+                );
+    
+                setLessons(updatedLessons); // Update lessons in state
+                setFilteredLessons(updatedFilteredLessons); // Update filtered lessons in state
+            }
+        });
     };
+    
 
     const handlePublish = () => {
         if (selectedThemeIndex !== null) {
@@ -90,9 +112,9 @@ export const LessonTable: React.FC<{
                             index === selectedThemeIndex ? { ...lesson, isPublished: true } : lesson
                         );
 
-                        setLessons(updatedLessons);  // Update the lessons state
-                        setFilteredLessons(updatedFilteredLessons);  // Update filteredLessons
-                        setForceUpdate(prev => !prev);  // Force re-render if necessary
+                        setLessons(updatedLessons); // Update the lessons state
+                        setFilteredLessons(updatedFilteredLessons); // Update filteredLessons
+                        setForceUpdate((prev) => !prev); // Force re-render if necessary
                     }
                 }
             );
@@ -110,15 +132,19 @@ export const LessonTable: React.FC<{
                     if (response.payload) {
                         // Optimistically update the lessons and filteredLessons states
                         const updatedLessons = lessons.map((lesson, index) =>
-                            index === selectedThemeIndex ? { ...lesson, isPublished: false } : lesson
+                            index === selectedThemeIndex
+                                ? { ...lesson, isPublished: false }
+                                : lesson
                         );
                         const updatedFilteredLessons = filteredLessons.map((lesson, index) =>
-                            index === selectedThemeIndex ? { ...lesson, isPublished: false } : lesson
+                            index === selectedThemeIndex
+                                ? { ...lesson, isPublished: false }
+                                : lesson
                         );
 
-                        setLessons(updatedLessons);  // Update the lessons state
-                        setFilteredLessons(updatedFilteredLessons);  // Update filteredLessons
-                        setForceUpdate(prev => !prev);  // Force re-render if necessary
+                        setLessons(updatedLessons); // Update the lessons state
+                        setFilteredLessons(updatedFilteredLessons); // Update filteredLessons
+                        setForceUpdate((prev) => !prev); // Force re-render if necessary
                     }
                 }
             );
@@ -151,21 +177,24 @@ export const LessonTable: React.FC<{
 
     const formatDate = (data: any) => {
         const date = new Date(data);
-        return `${
-            date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-        }/${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${date.getFullYear()}`;
+        return `${date.getDate() > 9 ? date.getDate() : '0' + date.getDate()}/${
+            date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
+        }/${date.getFullYear()}`;
     };
 
     return (
         <>
-            <TableContainer component={Paper} className={classNames(styles['key-contacts-table'], className)}>
+            <TableContainer
+                component={Paper}
+                className={classNames(styles['key-contacts-table'], className)}
+            >
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell className={styles.themecode}>Lesson Code</TableCell>
                             <TableCell className={styles.themename}>Lesson Name</TableCell>
                             <TableCell className={styles.themedate}>Date Created</TableCell>
-                            <TableCell className={styles.themehabit}>Quiz</TableCell>      
+                            <TableCell className={styles.themehabit}>Quiz</TableCell>
                             <TableCell className={styles.themepublished}>Published</TableCell>
                         </TableRow>
                     </TableHead>
@@ -176,22 +205,23 @@ export const LessonTable: React.FC<{
                                 onClick={() => handleRowClick(index)} // Row click to navigate
                                 style={{ cursor: 'pointer' }}
                             >
-                                <TableCell className={styles.themecode}>{lesson.lessonCode}</TableCell>
-                                <TableCell className={styles.themename}>{lesson.name}</TableCell>
-                                <TableCell className={styles.themedate}>{formatDate(lesson.createdAt)}</TableCell>
-                                <TableCell className={styles.themehabit}>
-                                    {lesson.quizData.length > 0 ? (
-                                        <CheckCircleOutlineIcon />
-                                    ) : (
-                                        ''
-                                    )}
+                                <TableCell className={styles.themecode}>
+                                    {lesson.lessonCode}
                                 </TableCell>
-                                <TableCell className={styles.themepublished} onClick={(event) => handleToggle(lesson, index, event)}>
-                                    <CategoryItem
-                                        key={index}
-                                        published={lesson.isPublished}
-                                        onToggle={() => {}}
-                                        name={''} // Placeholder for actual name
+                                <TableCell className={styles.themename}>{lesson.name}</TableCell>
+                                <TableCell className={styles.themedate}>
+                                    {formatDate(lesson.createdAt)}
+                                </TableCell>
+                                <TableCell className={styles.themehabit}>
+                                    {lesson.quizData.length > 0 ? <CheckCircleOutlineIcon /> : ''}
+                                </TableCell>
+                                <TableCell
+                                    className={styles.themepublished}
+                                    onClick={(event) => event.stopPropagation()}
+                                >
+                                    <ToggleSwitch
+                                        isPublished={lesson.isPublished} // Pass the isPublished state
+                                        onToggle={(e) => handleToggle(lesson, index, e)} // Handle the toggle event
                                     />
                                 </TableCell>
                             </TableRow>
@@ -234,7 +264,10 @@ export const LessonTable: React.FC<{
                         <>
                             <p>Are you sure you wish to unpublish this lesson?</p>
                             <br />
-                            <p>This lesson will be saved to ‘Drafts’ and won’t be visible to patients.</p>
+                            <p>
+                                This lesson will be saved to ‘Drafts’ and won’t be visible to
+                                patients.
+                            </p>
                         </>
                     }
                     title="Unpublish Lesson"
@@ -245,5 +278,3 @@ export const LessonTable: React.FC<{
         </>
     );
 };
-
-

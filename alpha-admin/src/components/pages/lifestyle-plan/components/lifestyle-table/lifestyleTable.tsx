@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Table,
     TableBody,
@@ -21,11 +21,10 @@ export interface lifeStyleProps {
     plans: any[];
     setPlans: React.Dispatch<React.SetStateAction<any[]>>;
     totalPages: number;
-    totalRecords: number;
     setTotalPages: React.Dispatch<React.SetStateAction<number>>;
-    setTotalRecords: React.Dispatch<React.SetStateAction<number>>;
     currentPage: number;
     setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+    onPageChange: (newPage: number) => void;
 }
 
 export const LifestyleTable: React.FC<lifeStyleProps> = ({
@@ -33,39 +32,40 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
     setPlans,
     totalPages,
     setTotalPages,
-    totalRecords,
-    setTotalRecords,
     currentPage,
     setCurrentPage,
+    onPageChange,
 }) => {
     const [selectedPlanIndex, setSelectedPlanIndex] = useState<number | null>(null);
     const [openPublishModal, setOpenPublishModal] = useState(false);
     const [openUnpublishModal, setOpenUnpublishModal] = useState(false);
-    const itemsPerPage = 10;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
+    // Fetch data when the component mounts or when the page changes
+    useEffect(() => {
+        fetchPlans(currentPage);
+    }, [currentPage]);
+
+    const fetchPlans = (page: number) => {
+        // API call to fetch the plans for the current page
+        dispatch(fetchPlansThunk(page)).then((res: any) => {
+            if (res.payload) {
+                setPlans(res.payload.data); // Store the fetched plans
+                setTotalPages(res.payload.meta.totalPages); // Update total pages
+            }
+        });
+    };
+
     const handleNextPage = () => {
         if (currentPage < totalPages) {
-            const nextPage = currentPage + 1;
-            dispatch(fetchPlansThunk(nextPage)).then((res: any) => {
-                setPlans(res.payload.data);
-                setTotalPages(res.payload.meta.totalPages);
-                setTotalRecords(res.payload.meta.totalRecords);
-                setCurrentPage(nextPage);
-            });
+            onPageChange(currentPage + 1);
         }
     };
 
     const handlePreviousPage = () => {
         if (currentPage > 1) {
-            const previousPage = currentPage - 1;
-            dispatch(fetchPlansThunk(previousPage)).then((res: any) => {
-                setPlans(res.payload.data);
-                setTotalPages(res.payload.meta.totalPages);
-                setTotalRecords(res.payload.meta.totalRecords);
-                setCurrentPage(previousPage);
-            });
+            onPageChange(currentPage - 1);
         }
     };
 
@@ -78,7 +78,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
         };
 
         dispatch(updatePlanThunk({ id: plan.id, plan: updatedPlan })).then(() => {
-            dispatch(fetchPlansThunk(currentPage)); // Refresh plans after updating
+            fetchPlans(currentPage); // Refresh the data after update
         });
     };
 
@@ -103,10 +103,6 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
         navigate(`/lifestyle-plan/view/${id}`);
     };
 
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = plans.slice(indexOfFirstItem, indexOfLastItem);
-
     const formatDate = (data: any) => {
         const date = new Date(data);
         return `${date.getDate() > 9 ? date.getDate() : '0' + date.getDate()}/${
@@ -126,7 +122,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {currentItems.map((plan: any, index: any) => (
+                        {plans.map((plan: any, index: any) => (
                             <TableRow
                                 key={index}
                                 onClick={() => handleRowClick(plan.id, index)}
@@ -154,14 +150,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                 <CustomPagination
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
-                    onPageChange={(page) => {
-                        dispatch(fetchPlansThunk(page)).then((res: any) => {
-                            setPlans(res.payload.data);
-                            setTotalPages(res.payload.meta.totalPages);
-                            setTotalRecords(res.payload.meta.totalRecords);
-                            setCurrentPage(page);
-                        });
-                    }}
+                    onPageChange={onPageChange}
                     currentPage={currentPage}
                     totalPages={totalPages}
                 />

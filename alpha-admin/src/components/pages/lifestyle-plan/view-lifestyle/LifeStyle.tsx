@@ -42,6 +42,10 @@ export const LifeStyle = ({ className }: ReportsProps) => {
         });
     }, [dispatch, currentPage]);
 
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
+
     const handleBackClick = () => {
         navigate(-1); // Navigate to the previous page
     };
@@ -69,11 +73,12 @@ export const LifeStyle = ({ className }: ReportsProps) => {
                         plans={plans}
                         setPlans={setPlans}
                         totalPages={totalPages}
-                        totalRecords={totalRecords}
+                        // totalRecords={totalRecords}
                         setTotalPages={setTotalPages}
-                        setTotalRecords={setTotalRecords}
+                        // setTotalRecords={setTotalRecords}
                         currentPage={currentPage}
                         setCurrentPage={setCurrentPage}
+                        onPageChange={handlePageChange}
                     />
                 </Row>
             </div>

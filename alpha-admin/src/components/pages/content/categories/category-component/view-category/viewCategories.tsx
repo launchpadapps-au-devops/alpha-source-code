@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../../../../../app/hooks';
 import { fetchCategoriesThunk, updateCategoryThunk } from '../categorySlice';
 // import {TableFooter} from '../../../content-components/table-footer/TableFooter';
 import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
+import ToggleSwitch from '../../../content-components/toggle/toggle';
 
 interface Category {
     id: number;
@@ -137,6 +138,7 @@ export const ViewCategories: React.FC = () => {
                         onToggle={() => handleToggle(category, index)}
                     />
                 ))}
+                {/* <ToggleSwitch/> */}
             </List>
             <div className={styles.pagination}>
                 <CustomPagination

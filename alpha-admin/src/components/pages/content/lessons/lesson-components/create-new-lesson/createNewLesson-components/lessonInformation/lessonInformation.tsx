@@ -121,7 +121,6 @@ export const LessonInformation = ({
                         readOnly
                         className={styles.inputWithPlusIcon}
                         value={selectedTheme?.name}
-                        required
                     />
                     <AddIcon className={styles.plusIcon} />
                 </div>

@@ -245,11 +245,16 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
             setIsEditMode(true);
             dispatch(fetchLessonByIdThunk(params.id)).then((response: any) => {
                 if (response.payload.data) {
-                    setData(response.payload.data);
+                    // Ensure freeTextQuiz is set correctly in the state
+                    setData((prevState) => ({
+                        ...response.payload.data,
+                        freeTextQuiz: response.payload.data.freeTextQuiz || [], // Ensure it's an array
+                    }));
                 }
             });
         }
     }, [dispatch, params.id, location.pathname]);
+    
 
     const validateFields = () => {
         let fieldErrors: any = {};
