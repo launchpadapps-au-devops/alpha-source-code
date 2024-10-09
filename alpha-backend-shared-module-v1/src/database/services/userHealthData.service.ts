@@ -68,9 +68,10 @@ class UserHealthDataService {
     limit: number;
     page: number;
   }> {
-    const { searchText, fromDate, toDate, ...restFilters } = filters;
+    const { searchText, fromDate, toDate, userIds, ...restFilters } = filters;
   
     const where: any = {
+      ...(userIds ? { userId: In(userIds) } : {}),
       ...(searchText ? { userId: ILike(`%${searchText}%`) } : {}),
       ...(fromDate ? { createdAt: MoreThanOrEqual(fromDate) }: {}),
       ...(toDate ? { createdAt: LessThanOrEqual(toDate) }: {}),
