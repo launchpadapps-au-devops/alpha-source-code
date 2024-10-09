@@ -309,7 +309,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: cms_queue
-        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:f2be9cd42b79c14343246e35c2a20ec66211cf19e9d8083c19156b4e7d92d821
+        image: alphadev.azurecr.io/alpha-backend-cms-ms-v1@sha256:7765e3c5440d4320342452fede11393ba5b14a5d85e96d7fe408f2f8c5eecbf9
         name: alpha-backend-cms-ms-v1-container
         ports:
         - containerPort: 3003
@@ -396,7 +396,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: health_queue
-        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:d18c0a36f07e5f95800357986883c9292ee80ac2fd57301ca302b2cbab8a6c5e
+        image: alphadev.azurecr.io/alpha-backend-health-ms-v1@sha256:8d482d94bcf105177eb6f8a9411cb700225171d776a4acfbc44702379f5435c3
         imagePullPolicy: IfNotPresent
         name: alpha-backend-health-ms-v1-container
         ports:
@@ -496,7 +496,7 @@ spec:
           value: endpoint=https://alpha-dev-smtp.australia.communication.azure.com/;accesskey=BaLmwP5PlwER7J4N3vT5DWNCYJRVZBj98B2jUQxhNeL44KDF2tUcJQQJ99AIACULyCp9erg1AAAAAZCSfEWg
         - name: AZURE_EMAIL_SENDER_ADDRESS
           value: DoNotReply@d9c1761e-ec35-4cf3-ab3e-84c6becdf67a.azurecomm.net
-        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:6793eeb7d738bd4534c44ae9f2916a1eecd8581044769dca14b87c38481589ed
+        image: alphadev.azurecr.io/alpha-backend-notification-ms-v1@sha256:9dc8cc4ab522b79fe1eb2ccbafbdb38a77884eefed3c0e583aed449f50115448
         imagePullPolicy: IfNotPresent
         name: alpha-backend-notification-ms-v1-container
         ports:
@@ -584,7 +584,7 @@ spec:
           value: guest
         - name: RABBITMQ_QUEUE
           value: apigateway_queue
-        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:d526cd8ca6ff267cc2d3dbf5369ad82fa0f1b6f7fac70c116b0397d723869c11
+        image: alphadev.azurecr.io/alpha-backend-user-ms-v1@sha256:41d947094aee5a5e253b4094048e1fc61a09b050f84b0b232330abbb813b96fb
         imagePullPolicy: IfNotPresent
         name: alpha-backend-user-ms-v1-conatiner
         ports:
