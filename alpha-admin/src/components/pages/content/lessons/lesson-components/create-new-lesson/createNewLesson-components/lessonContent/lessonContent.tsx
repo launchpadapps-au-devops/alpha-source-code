@@ -52,15 +52,6 @@ export const LessonContent = ({
     const [isQuizzesCollapsed, setIsQuizzesCollapsed] = useState(false);
     const [defaultDataSet, setDefaultDataSet] = useState<any[]>([]);
     console.log('defaultDataSet', defaultDataSet);
-
-    // useEffect(() => {
-    //     const initialEditorStates = data.screenData.map(() =>
-    //         EditorState.createEmpty()
-    //     );
-    //     setEditorStates(initialEditorStates);
-    // }, [data.screenData.length]);
-
-    
     const handleFreeTextQuizChange = (
         quizIndex: number,
         field: 'question' | 'answer' | 'userInstructions',
@@ -87,62 +78,82 @@ export const LessonContent = ({
     // }, [data.freeTextQuiz]);
 
     // Handle file changes for media uploads (image/video)
-// Handle file changes for media uploads (image/video)
-const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = event.target.files?.[0];
-    if (file) {
-        const fileType = file.type;
-        const fileSize = file.size;
-        const isImage = fileType === 'image/jpeg' || fileType === 'image/png';
-        const isVideo = fileType === 'video/mp4';
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const fileType = file.type;
+            const fileSize = file.size;
+            const isImage = fileType === 'image/jpeg' || fileType === 'image/png';
+            const isVideo = fileType === 'video/mp4';
 
-        // Validate file type and size
-        if (isImage && fileSize <= 2 * 1024 * 1024) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const updatedScreenData = [...data.screenData];
-                updatedScreenData[index].media = file.name; // Save the file name for now
-                setData({ ...data, screenData: updatedScreenData });
-                setDirty(true);
-                setPreviewUrls((prevUrls) => {
-                    const newUrls = [...prevUrls];
-                    newUrls[index] = reader.result as string; // Set the local preview URL
-                    return newUrls;
-                });
-                setErrorMessage(null);
-            };
-            reader.readAsDataURL(file);
+            // Validate file type and size
+            if (isImage && fileSize <= 2 * 1024 * 1024) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const updatedScreenData = [...data.screenData];
+                    updatedScreenData[index].media = file.name; // Save the file name for now
+                    setData({ ...data, screenData: updatedScreenData });
+                    setDirty(true);
+                    setPreviewUrls((prevUrls) => {
+                        const newUrls = [...prevUrls];
+                        newUrls[index] = reader.result as string; // Set the local preview URL
+                        return newUrls;
+                    });
+                    setErrorMessage(null);
+                };
+                reader.readAsDataURL(file);
+                dispatch(uploadFile(file))
+                    .then((response: any) => {
+                        const uploadedImageUrl = response.payload.data.data.url; // Ensure the correct field from the response
 
-            // Pass the file to the parent or dispatch an action to handle the actual upload
-            // You could add a callback like onFileUpload(file) to trigger the upload
-            // if (onFileUpload) {
-            //     onFileUpload(file);
-            // }
-        } else if (isVideo && fileSize <= 100 * 1024 * 1024) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const updatedScreenData = [...data.screenData];
-                updatedScreenData[index].media = file.name; // Save the file name for now
-                setData({ ...data, screenData: updatedScreenData });
-                setPreviewUrls((prevUrls) => {
-                    const newUrls = [...prevUrls];
-                    newUrls[index] = reader.result as string; // Set the local preview URL
-                    return newUrls;
-                });
-                setErrorMessage(null);
-            };
-            reader.readAsDataURL(file);
-        } else {
-            if (!isImage && !isVideo) {
-                setErrorMessage('Only JPG, PNG images or MP4 videos are allowed.');
-            } else if (isImage && fileSize > 2 * 1024 * 1024) {
-                setErrorMessage('Image size should be less than or equal to 2MB.');
-            } else if (isVideo && fileSize > 100 * 1024 * 1024) {
-                setErrorMessage('Video size should be less than or equal to 100MB.');
+                        // Update the final uploaded image URL in the state
+                        setData((prevState: any) => ({
+                            ...prevState,
+                            coverImage: uploadedImageUrl,
+                        }));
+
+                        setDirty(true);
+
+                        // Clear any cover image errors
+                        setErrors((prevErrors: any) => ({
+                            ...prevErrors,
+                            coverImage: '',
+                        }));
+                    })
+                    .catch(() => {
+                        setErrors((prevErrors: any) => ({
+                            ...prevErrors,
+                            coverImage: 'Upload failed. Please try again.',
+                        }));
+                    })
+                    .finally(() => {
+                        //   URL.revokeObjectURL(prevUrls); // Clean up after uploading
+                    });
+            } else if (isVideo && fileSize <= 100 * 1024 * 1024) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const updatedScreenData = [...data.screenData];
+                    updatedScreenData[index].media = file.name; // Save the file name for now
+                    setData({ ...data, screenData: updatedScreenData });
+                    setPreviewUrls((prevUrls) => {
+                        const newUrls = [...prevUrls];
+                        newUrls[index] = reader.result as string; // Set the local preview URL
+                        return newUrls;
+                    });
+                    setErrorMessage(null);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                if (!isImage && !isVideo) {
+                    setErrorMessage('Only JPG, PNG images or MP4 videos are allowed.');
+                } else if (isImage && fileSize > 2 * 1024 * 1024) {
+                    setErrorMessage('Image size should be less than or equal to 2MB.');
+                } else if (isVideo && fileSize > 100 * 1024 * 1024) {
+                    setErrorMessage('Video size should be less than or equal to 100MB.');
+                }
             }
         }
-    }
-};
+    };
 
     console.log('activeQuizIndex', activeQuizIndex);
     // Handle Editor Changes for rich text content
