@@ -26,6 +26,7 @@ export const Logout = ({ className, open = false, closeModal }: LogoutProps) => 
                 console.log('Logged out successfully');
                 navigate('/');
                 dispatch(setLoggedOut());
+                
                 localStorage.clear();
             }
         } catch (error) {

@@ -11,18 +11,21 @@ import { fetchActivePatientsThunk } from './dashboard-components/activePatientsS
 import { useEffect, useMemo, useState } from 'react';
 import { fetchUserDataOverviewThunk } from './dashboard-components/user-data-overvie-store/userDataOverviewSlice';
 import { DropdownPatientAnalytics } from './dashboard-components/dashboard-dropdown-patient-analytics/patient-analytics-dashboard';
-import { fetchPatientsDataByGender, fetchPatientsDataByPlan } from './dashboard-components/dashboard-dropdown-patient-analytics/patient-analytics-API';
+import { fetchPatientsDataByGender, fetchPatientsDataByPlan, fetchSleepDataByAgeRange } from './dashboard-components/dashboard-dropdown-patient-analytics/patient-analytics-API';
 import { getLifestylePlans } from '../patient-platform/patient-lifestyle-plan/patientLifeStyleAPI';
 
 export const Dashboard: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const demographicOptions = ["All", "Male", "Female", "Non-binary"]; // Update with dynamic plans if needed
+    const demographicOptions = ["All", "Male", "Female", "Non-binary"];
 
     const [selectedGender, setSelectedGender] = useState<string>("All");
     const [genderResponse, setGenderResponse] = useState<any>(null);
-    const [selectedPlan, setSelectedPlan] = useState<string>("All");
     const [lifestylePlans, setLifestylePlans] = useState<any[]>([]);
     const [lifestylePlanResponse, setLifestylePlanResponse] = useState<any>(null);
+    const [totalSteps, setTotalSteps] = useState<number>(0);
+    const [averageSteps, setAverageSteps] = useState<number | null>(null);
+    const [selectedPlan, setSelectedPlan] = useState<string>("");
+    const [selectedAgeRange, setSelectedAgeRange] = useState<string>("20-29");
 
     const { users, loading, errorMessage, count } = useSelector(
         (state: RootState) => state.activePatients.activePatients
@@ -33,35 +36,40 @@ export const Dashboard: React.FC = () => {
 
     const loggedUserID = localStorage.getItem('loggedUserID');
     const FirstName = localStorage.getItem('LoggedInUserFirstName');
-
+    
     useEffect(() => {
         const fetchPlans = async () => {
             try {
                 const response = await getLifestylePlans();
-                console.log('Lifestyle plans:', response.data);
                 setLifestylePlans(response.data);
+                // Set the first plan as default if available
+                if (response.data.length > 0) {
+                    setSelectedPlan(response.data[0].name);
+                    handlePlanChange(response.data[0].name);
+                }
             } catch (error) {
                 console.error("Error fetching lifestyle plans:", error);
             }
         };
-
+    
         fetchPlans();
     }, []);
-
     
     useEffect(() => {
-       const data =  fetchPatientsDataByGender("All").then((data) => {
-        setGenderResponse(data.data.count);
-       }); 
+        fetchPatientsDataByGender("All").then((data) => {
+            setGenderResponse(data.data.count);
+        }); 
     }, []);
 
+
     useEffect(() => {
-        const data =  fetchPatientsDataByGender("All").then((data) => {
-         setGenderResponse(data.data.count);
-        }); 
-     }, []);
- 
-    
+        const data =  fetchSleepDataByAgeRange(20, 29).then((data) => {
+            setTotalSteps(data.data.totalStepsInDate);
+            setAverageSteps(data.data.averageStepsInDate);
+        });
+    }, []);
+
+
     useEffect(() => {
         if (loggedUserID) {
             dispatch(fetchUserDataOverviewThunk(loggedUserID));
@@ -76,10 +84,7 @@ export const Dashboard: React.FC = () => {
         setSelectedGender(gender);
         try {
             const data = await fetchPatientsDataByGender(gender);
-            console.log('Gender-based data:', data);
             setGenderResponse(data.data.count);
-            console.log('Gender response:', data.data.count);
-            // Update state or UI based on gender data
         } catch (error) {
             console.error("Error fetching data by gender:", error);
         }
@@ -88,23 +93,31 @@ export const Dashboard: React.FC = () => {
     const handlePlanChange = async (plan: string) => {
         setSelectedPlan(plan);
         try {
-            const planId = lifestylePlans.findIndex(p => p === plan) + 1; // Replace with actual plan IDs if needed
+            const planId = lifestylePlans.find(p => p.name === plan)?.id;
             const data = await fetchPatientsDataByPlan(planId);
-            console.log('Plan-based data:', data.data.count);
             setLifestylePlanResponse(data.data.count);
-            // Update state or UI based on plan data
         } catch (error) {
             console.error("Error fetching data by plan:", error);
         }
     };
 
-
+    const handleAgeRangeChange = async (selectedRange: string) => {
+        setSelectedAgeRange(selectedRange); 
+        const rangeToSend = selectedRange === "50+" ? "50-100" : selectedRange;
+        const [fromAge, toAge] = rangeToSend.split('-').map(Number);
+        
+        try {
+            const data = await fetchSleepDataByAgeRange(fromAge, toAge);
+            setTotalSteps(data.data.totalStepsInDate);
+            setAverageSteps(data.data.averageStepsInDate);
+        } catch (error) {
+            console.error("Error fetching data by age range:", error);
+        }
+    };
     
-    // Calculate percentages dynamically based on userOverviewData
     const legendItems = useMemo(() => {
         if (userOverviewData?.nutritionData) {
             const { protien = 0, carbs = 0, fats = 0 } = userOverviewData.nutritionData;
-
             const total = protien + carbs + fats;
 
             if (total === 0) {
@@ -169,11 +182,12 @@ export const Dashboard: React.FC = () => {
                             <span className={styles['analytics-label']}>Average steps per day</span>
                             <DropdownPatientAnalytics
                                 options={["20-29", "30-39", "40-49", "50+"]}
-                                onSelect={() => {}}
+                                onSelect={handleAgeRangeChange}
                                 label="Select Age Group"
+                                selectedValue={selectedAgeRange}
                             />
                         </div>
-                        <span className={styles['analytics-count']}>2933</span>
+                        <span className={styles['analytics-count']}>{averageSteps}</span>
                         <span className={styles['assigned-by']}>by demographic</span>
                     </DataCard>
 
@@ -188,6 +202,7 @@ export const Dashboard: React.FC = () => {
                                 options={demographicOptions}
                                 onSelect={handleGenderChange}
                                 label="Select Gender"
+                                selectedValue={selectedGender}
                             />
                         </div>
                         <span className={styles['analytics-count']}>{genderResponse}</span>
@@ -206,9 +221,10 @@ export const Dashboard: React.FC = () => {
                                 options={lifestylePlans.map((plan) => plan.name)}
                                 onSelect={(selectedName) => {
                                     const selectedPlan = lifestylePlans.find((plan) => plan.name === selectedName);
-                                    handlePlanChange(selectedPlan ? selectedPlan.id : null);
+                                    handlePlanChange(selectedPlan ? selectedPlan.name : "");
                                 }}
                                 label="Select Lifestyle Plan"
+                                selectedValue={selectedPlan}
                             />
                         </div>
                         <span className={styles['analytics-count']}>{lifestylePlanResponse}</span>

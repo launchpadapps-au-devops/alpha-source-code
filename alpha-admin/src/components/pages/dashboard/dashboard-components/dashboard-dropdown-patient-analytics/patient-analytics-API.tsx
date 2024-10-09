@@ -72,3 +72,28 @@ export const fetchPatientsDataByPlan = async (planId?: number): Promise<any> => 
         throw error;
     }
 };
+
+export const fetchSleepDataByAgeRange = async (fromAge: number, toAge: number): Promise<any> => {
+    const accessToken = localStorage.getItem('accessToken');
+    const today = new Date().toISOString().split('T')[0];
+    const fromDate = '2024-04-15'; // Adjust this date as needed
+
+    // Construct the API URL for fetching sleep data based on the age range
+    let apiURL = `${config.BASE_URL}/gateway/v1/data-analytics/steps?toDate=${today}&fromDate=${fromDate}&fromAge=${fromAge}&toAge=${toAge}`;
+
+    try {
+        const response = await axios.get(apiURL, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error('Error fetching sleep data by age range:', error.message);
+        } else {
+            console.error('An unexpected error occurred:', error);
+        }
+        throw error;
+    }
+};

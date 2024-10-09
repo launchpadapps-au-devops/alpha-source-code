@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './patient-analytics-dashboard.module.scss';
 
 interface DropdownProps {
   options: string[];
-  onSelect: (option: any) => void;
+  onSelect: (option: string) => void;
   label: string;
+  selectedValue?: string; // Add selectedValue as an optional prop
 }
 
-export const DropdownPatientAnalytics: React.FC<DropdownProps> = ({ options, onSelect, label }) => {
+export const DropdownPatientAnalytics: React.FC<DropdownProps> = ({ options, onSelect, label, selectedValue }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<string>(label);
+  const [selectedOption, setSelectedOption] = useState<string>(selectedValue || label);
+
+  useEffect(() => {
+    // Update the state when selectedValue prop changes
+    if (selectedValue) {
+      setSelectedOption(selectedValue);
+    }
+  }, [selectedValue]);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
