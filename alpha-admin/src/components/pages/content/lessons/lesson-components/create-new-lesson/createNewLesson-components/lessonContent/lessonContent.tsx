@@ -5,12 +5,13 @@ import { EditButton } from '../../../../../content-components/edit-button/edit-b
 import { Vector } from '../../../../../../../icon/glyps/vector';
 import { Checkbox, Menu, MenuItem } from '@mui/material';
 import { DeleteButton } from '../../../../../content-components/delete-button/delete-button';
-import { EditorState } from 'draft-js';
+import { EditorState, ContentState, convertFromRaw, convertFromHTML  } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { convertToHTML } from 'draft-convert';
 import { useAppDispatch } from '../../../../../../../../app/hooks';
 import { uploadFile } from '../../../../../../../fileUpload/fileUploadSlice';
+
 
 export interface LessonContentProps {
     screenData: any[];
@@ -39,6 +40,8 @@ export const LessonContent = ({
 }: LessonContentProps) => {
     console.log('data', data.quizData);
     const dispatch = useAppDispatch();
+    // html
+    // const [ editorContent, setEditorContent ] = useState<any>(null);
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [editorStates, setEditorStates] = useState<EditorState[]>([]); // Rich text editor states for each screen
@@ -52,6 +55,26 @@ export const LessonContent = ({
     const [isQuizzesCollapsed, setIsQuizzesCollapsed] = useState(false);
     const [defaultDataSet, setDefaultDataSet] = useState<any[]>([]);
     console.log('defaultDataSet', defaultDataSet);
+
+    useEffect(() => {
+        // Set the initial editor states for each screen convert from HTML to editor state
+        const initialEditorStates = data.screenData.map((screen: any) => {
+            const blocksFromHTML = convertFromHTML(screen.content); // Convert HTML to blocks
+            const contentState = ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap);
+            return EditorState.createWithContent(contentState);
+        });
+        
+        setEditorStates(initialEditorStates);
+    }, [data.screenData]);
+    
+    // useEffect(() => {
+    //     const initialEditorStates = data.screenData.map(() =>
+    //         EditorState.createEmpty()
+    //     );
+    //     setEditorStates(initialEditorStates);
+    // }, [data.screenData.length]);
+
+    
     const handleFreeTextQuizChange = (
         quizIndex: number,
         field: 'question' | 'answer' | 'userInstructions',
@@ -230,10 +253,64 @@ export const LessonContent = ({
     };
 
     // Remove a quiz from the lesson
-    const handleRemoveQuiz = (index: number) => {
-        const updatedQuizData = data.quizData.filter((_: any, i: number) => i !== index);
+    const handleRemoveQuiz = (index: any, quizData: any) => {
+        console.log('handleRemoveQuiz', index, quizData)
+        const updatedDefaultDataSet = [...defaultDataSet];
+        const newDefaultDataSet = updatedDefaultDataSet.filter(
+            (quiz: any, idx: number) => idx !== index
+        );
+        setDefaultDataSet(newDefaultDataSet);
+        if (quizData.type === 'single-choice') {
+            const updatedFreeTextQuiz = [...data.freeTextQuiz];
+            const newIndex = updatedFreeTextQuiz.findIndex((quiz: any) => quiz.id === quizData.id);
+            updatedFreeTextQuiz.splice(newIndex, 1);
+            setData({ ...data, freeTextQuiz: updatedFreeTextQuiz });
+        } else {
+            const updatedQuizData = [...data.quizData];
+            const newIndex = updatedQuizData.findIndex((quiz: any) => quiz.id === quizData.id);
+            updatedQuizData.splice(newIndex, 1);
+            setData({ ...data, quizData: updatedQuizData });
+        }
+    };
+
+    const handleRemoveOption = (quizIndex: number, optionIndex: number, quizData: any) => {
+        // Make a shallow copy of the quizData array
+        const updatedQuizData = [...data.quizData];
+    
+        // Find the index of the quiz
+        const newIndex = updatedQuizData.findIndex((quiz: any) => quiz.id === quizData.id);
+    
+        // If the quiz isn't found, return early
+        if (newIndex === -1) {
+            console.error(`Quiz with id ${quizData.id} not found`);
+            return;
+        }
+    
+        // Make a shallow copy of the quiz to avoid mutating the original
+        const updatedQuiz = { ...updatedQuizData[newIndex] };
+    
+        // Make a shallow copy of the options array and remove the specified option
+        const newOptions = updatedQuiz.options.filter((option: any, idx: number) => idx !== optionIndex);
+    
+        // Update the copied quiz's options
+        updatedQuiz.options = newOptions;
+    
+        // Replace the modified quiz back into the quizData array
+        updatedQuizData[newIndex] = updatedQuiz;
+    
+        // Debugging output
+        console.log('handleRemoveOption', {
+            updatedQuizData,
+            newIndex,
+            optionsBefore: updatedQuizData[newIndex].options,
+            optionsAfter: newOptions,
+        });
+    
+        // Update the state with the new quiz data
+        setQuizData(updatedQuizData);
         setData({ ...data, quizData: updatedQuizData });
     };
+    
 
     const handleCheckboxChange = (quizIndex: number, optionIndex: number) => {
         const updatedQuizData = [...data.quizData];
@@ -258,28 +335,37 @@ export const LessonContent = ({
     };
 
     // Add new option to the quiz
-    const handleAddOption = (quizIndex: number) => {
-        const updatedQuizData = [...data.quizData];
-
+    const handleAddOption = (quizIndex: number, quizData: any) => {
+        console.log('handleAddOption', quizIndex, quizData);
+    
+        // Make a deep copy of the quizData array
+        var updatedQuizData = JSON.parse(JSON.stringify(data.quizData));
+    
+        // Find the index of the quiz to update
+        const newIndex = updatedQuizData.findIndex((quiz: any) => quiz.id === quizData.id);
+        console.log("newIndex", newIndex);
+    
         // Find the highest id in the existing options and increment it for the new option
-        const currentMaxId = updatedQuizData[quizIndex].options.reduce(
+        const currentMaxId = updatedQuizData[newIndex].options.reduce(
             (maxId: number, option: any) => (option.id > maxId ? option.id : maxId),
             0
         );
-
+    
         const newOptionId = currentMaxId + 1;
-
+        console.log("eee", updatedQuizData[newIndex]);
+    
         // Add new option to the current quiz's options
-        updatedQuizData[quizIndex].options.push({
+        updatedQuizData[newIndex].options.push({
             id: newOptionId,
             option: '',
             isCorrect: false,
         });
-
+    
         // Update the state with the new quizData
         setQuizData(updatedQuizData);
         setData({ ...data, quizData: updatedQuizData });
     };
+    
 
     // Handle click to open the quiz type selection menu
     const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -306,6 +392,8 @@ export const LessonContent = ({
     const toggleQuizzesCollapse = () => {
         setIsQuizzesCollapsed(!isQuizzesCollapsed);
     };
+
+    
     return (
         <>
             {/* <div className="lesson-content"> */}
@@ -315,7 +403,7 @@ export const LessonContent = ({
                 </div>
                 {!isLessonCollapsed && (
                     <>
-                        {data.screenData.map((screen: any, index: any) => (
+                        {data.screenData?.map((screen: any, index: any) => (
                             <div
                                 key={index}
                                 className={`screen ${
@@ -413,7 +501,7 @@ export const LessonContent = ({
                                         required
                                     />
                                     {errors[`subtitle-${index}`] && (
-                                        <div className="error-message">
+                                        <div className="error-message">̉
                                             {errors[`subtitle-${index}`]}
                                         </div>
                                     )}
@@ -477,7 +565,7 @@ export const LessonContent = ({
                                     <DeleteButton
                                         showLeftIcon
                                         buttonText="Remove quiz"
-                                        onButtonClick={() => handleRemoveQuiz(quizIndex)}
+                                        onButtonClick={() => handleRemoveQuiz(quizIndex, quiz)}
                                     />
                                 </div>
 
@@ -592,17 +680,21 @@ export const LessonContent = ({
                                                 <DeleteButton
                                                     showLeftIcon
                                                     className="delete-answer-button"
-                                                    onButtonClick={() => {
-                                                        const updatedOptions = [...quiz.options];
-                                                        updatedOptions.splice(optionIndex, 1);
-                                                        const updatedQuizData = [...data.quizData];
-                                                        updatedQuizData[quizIndex].options =
-                                                            updatedOptions;
-                                                        setData({
-                                                            ...data,
-                                                            quizData: updatedQuizData,
-                                                        });
-                                                    }}
+                                                    onButtonClick={() => {handleRemoveOption(quizIndex, optionIndex, quiz)} }
+                                                        // const updatedOptions = [...quiz.options];
+                                                        // const newIndex = updatedOptions.findIndex(
+                                                        //         (option: any) =>
+                                                        //             option.id === quiz.id
+                                                        //     )
+                                                        // console.log('eee',  newIndex, updatedOptions)
+                                                        // updatedOptions.splice(newIndex, 1);
+                                                        // const updatedQuizData = [...data.quizData];
+                                                        // updatedQuizData[quizIndex].options =
+                                                        //     updatedOptions;
+                                                        // setData({
+                                                        //     ...data,
+                                                        //     quizData: updatedQuizData,
+                                                        // });
                                                 />
                                                 {errors[`option-${quizIndex}-${optionIndex}`] && (
                                                     <div className="error-message">
@@ -617,7 +709,7 @@ export const LessonContent = ({
                                         ))}
                                         <EditButton
                                             buttonText="Add another answer"
-                                            onButtonClick={() => handleAddOption(quizIndex)}
+                                            onButtonClick={() => handleAddOption(quizIndex, quiz)}
                                         />
                                         {errors[`options-${quizIndex}`] && (
                                             <div className="error-message">

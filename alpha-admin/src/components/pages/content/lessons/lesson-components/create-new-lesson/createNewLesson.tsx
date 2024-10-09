@@ -392,11 +392,48 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
             points: Number(dataVal?.points),
 
             // Safely handle lessonTags mapping
-            lessonTags: Array.isArray(dataVal?.lessonTags)
-                ? dataVal.lessonTags.map((tag: { Prop: any[] }) => ({
-                      Prop: Array.isArray(tag?.Prop) ? tag.Prop.filter(Boolean) : [], // Ensure non-empty and valid array
-                  }))
-                : [], // Default to an empty array if undefined or not an array
+            lessonTags: dataVal?.lessonTags?.map((tag: { [key: string]: any[] }) => ({
+                [Object.keys(tag)[0]]: Array.isArray(tag[Object.keys(tag)[0]])
+                    ? tag[Object.keys(tag)[0]].filter(Boolean) // Ensure non-empty and valid array
+                     : [], // Default to an empty array if undefined or not an array
+            })) || [
+                {
+                    Ethnicity: [],
+                },
+                {
+                    'Leisure Preferences': [],
+                },
+                {
+                    'Dietary Restrictions': [],
+                },
+                {
+                    'Physical Limitation': [],
+                },
+                {
+                    'Physical Limitation- Follow up': [],
+                },
+                {
+                    'Unhealthy Eating Habits': [],
+                },
+                {
+                    'Motivation to Change': [],
+                },
+                {
+                    'Goals/Motivators': [],
+                },
+                {
+                    'Young Dependents': [],
+                },
+                {
+                    'Adult Dependents': [],
+                    },
+                    ], 
+                    // Default to an empty array if undefined or not an array
+            // Array.isArray(dataVal?.lessonTags)
+            //     ? dataVal.lessonTags.map((tag: { Prop: any[] }) => ({
+            //           Prop: Array.isArray(tag?.Prop) ? tag.Prop.filter(Boolean) : [], // Ensure non-empty and valid array
+            //       }))
+            //     : [], // Default to an empty array if undefined or not an array
 
             // Safely handle screenData mapping
             screenData: Array.isArray(dataVal?.screenData)
