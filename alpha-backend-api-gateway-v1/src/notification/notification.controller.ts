@@ -144,6 +144,49 @@ export class NotificationController {
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
+    @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF, USER_TYPES.PATIENT)
+    @Platforms(USER_PLATFORMS.ADMIN_WEB, USER_PLATFORMS.PATIENT_MOBILE)
+    @ApiBody({
+        schema: {
+            type: 'array',
+            items: {
+                type: 'uuid',
+                example: 1,
+                description: 'Notification ID'
+            }
+        }
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'A successful response',
+        schema: {
+            type: 'object',
+            properties: {
+                statusCode: { type: 'number', example: 200 },
+                message: { type: 'string', example: 'Notification updated sucessfully' },
+                data: {
+                    type: 'array',
+                    items: {
+                        type: 'uuid',
+                        example: 1,
+                        description: 'Notification ID'
+                    }
+                }                    
+            },
+            required: ['statusCode'],
+        },
+    })
+    @Put('/mark-as-seen')
+    async bulkUpdateNotification(
+        @Request() req,
+        @Body() payload: [number]
+    ) {
+        const data = payload.map(id => ({ id, isSeen: true }));
+        return this.notificationService.bulkUpdateNotification(data, req.user);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard , UserTypesGuard, PlatformGuard)
     @UserTypes(USER_TYPES.ADMIN, USER_TYPES.STAFF)
     @Platforms(USER_PLATFORMS.ADMIN_WEB)
     @ApiParam({

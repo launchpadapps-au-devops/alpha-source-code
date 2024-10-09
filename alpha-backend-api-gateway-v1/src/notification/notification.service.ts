@@ -56,6 +56,21 @@ export class NotificationService {
         );
     }
 
+    async bulkUpdateNotification(data: Partial<Notification> [], reqUser = { userId: null }) {
+        return this.baseHttpService.invoke(
+            `${this.notificationApiUrl}${this.notificationApiPrefix}/bulk`,
+            'PUT',
+            {
+                data
+            },
+            {
+            },
+            {
+                'x-request-userId': reqUser.userId
+            }
+        );
+    }
+
     async getUserNotificationPreference(userId: string) {
         return this.baseHttpService.invoke(
             `${this.notificationApiUrl}${this.notificationApiPrefix}/notification/preference/${userId}`,
