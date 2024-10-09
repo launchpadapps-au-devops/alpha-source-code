@@ -199,7 +199,7 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
         if (!data.themeData.categoryId) {
             fieldErrors.categoryId = 'Category is required';
         }
-        if (selectedLessons.length === 0) {
+        if (!hideLessons && selectedLessons.length === 0) {
             fieldErrors.lessonData = 'At least one lesson is required';
         }
 
@@ -247,8 +247,10 @@ export const CreateTheme = ({ className }: CreateThemeProps) => {
             lessonData: lessonIds, // Ensure lessonData is an array of lesson codes
         };
         console.log('updatedData', updatedData);
+
+        const isValid = validateFields();
     
-        if (validateFields()) {
+        if (isValid) {
             dispatch(addThemeThunk(updatedData))
                 .then((res: any) => {
                     if (res.payload.statusCode === 200 || res.payload.statusCode === 201) {
