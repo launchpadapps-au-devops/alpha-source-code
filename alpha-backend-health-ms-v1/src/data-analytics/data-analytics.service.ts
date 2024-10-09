@@ -167,8 +167,8 @@ export class DataAnalyticService {
         totalStepsInDate: number,
         averageStepsInDate: number,
     }> {
-        const fromAgeDate = new Date(new Date().setFullYear(new Date().getFullYear() - fromAge));
-        const toAgeDate = new Date(new Date().setFullYear(new Date().getFullYear() - toAge));
+        const fromAgeDate = new Date(new Date().setFullYear(new Date().getFullYear() - fromAge*1));
+        const toAgeDate = new Date(new Date().setFullYear(new Date().getFullYear() - toAge*1));
 
         const { data: users } = await userService.findAllUsers(
             { page: null, limit: null },
@@ -182,7 +182,7 @@ export class DataAnalyticService {
             { page: null, limit: null },
             {},
             {
-                userId: users.map(({ id }) => id),
+                userIds: users.map(({ id }) => id),
                 dataType: DATA_TYPES.STEP_COUNT,
                 fromDate,
                 toDate
@@ -194,8 +194,8 @@ export class DataAnalyticService {
 
 
         return {
-            totalStepsInDate,
-            averageStepsInDate,
+            totalStepsInDate: Math.round(totalStepsInDate),
+            averageStepsInDate: Math.round(averageStepsInDate),
         };
     }
 
