@@ -36,6 +36,7 @@ export const DashboardCardDetails = ({
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(data.coverImage || null); // Start with coverImage if exists
     const [isUploading, setIsUploading] = useState(false); // Track if the file is being uploaded
+    const [isCollapsed, setIsCollapsed] = useState(false); // State to control visibility
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -90,12 +91,17 @@ export const DashboardCardDetails = ({
         }
     };
 
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed); // Toggle the collapse state
+    };
+
     return (
         <div className="dashboard-card-details-container">
-            <div className="dashboard-card-header">
-                Dashboard card details <Vector />
+             <div className="dashboard-card-header" onClick={toggleCollapse}>
+                Dashboard card details  <Vector direction={isCollapsed ? 'down' : 'up'} />
             </div>
-
+            {!isCollapsed && (
+                <>
             <div className="cover-image-section">
                 <label htmlFor="cover-image" className="cover-image-label">
                     Cover image <span style={{ color: 'red' }}>*</span>
@@ -185,6 +191,8 @@ export const DashboardCardDetails = ({
                     )}
                     <div className="lesson-description-footer">200 characters</div>
                 </div>
+            </>
+            )}
             </div>
         );
     };

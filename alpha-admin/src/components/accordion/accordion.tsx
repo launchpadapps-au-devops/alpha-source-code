@@ -1,7 +1,11 @@
 import classNames from 'classnames';
 import styles from './accordion.module.scss';
 import customStyles from './custom-accordion.module.scss';
-import { CustomAccordion, CustomAccordionDetails, CustomAccordionSummary } from '../mui-accordion-style';
+import {
+    CustomAccordion,
+    CustomAccordionDetails,
+    CustomAccordionSummary,
+} from '../mui-accordion-style';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { InputField } from '../input-field/input-field';
 
@@ -14,7 +18,14 @@ export interface CustomAccordionProps {
     onContentChange?: (key: string, value: string) => void; // Callback for content change
 }
 
-export const Accordion = ({ className, accordionText, accordionContent, accordionNumber, isEditing, onContentChange }: CustomAccordionProps) => {
+export const Accordion = ({
+    className,
+    accordionText,
+    accordionContent,
+    accordionNumber,
+    isEditing,
+    onContentChange,
+}: CustomAccordionProps) => {
     return (
         <CustomAccordion>
             <CustomAccordionSummary
@@ -47,7 +58,7 @@ export const Accordion = ({ className, accordionText, accordionContent, accordio
                     )}
                 </div>
             </CustomAccordionSummary>
-            <CustomAccordionDetails>
+            <CustomAccordionDetails aria-labelledby={`panel-${accordionNumber}-header`}>
                 {!isEditing && accordionContent}
             </CustomAccordionDetails>
         </CustomAccordion>

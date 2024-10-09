@@ -30,15 +30,19 @@
 }
 
 .tag {
-  display: flex;
+  display: inline-flex; /* Allows tag to grow based on content */
   align-items: center;
   background: #e0e0e0;
   border-radius: 4px;
-  padding: 2px 0px;
+  padding: 2px 8px; /* Add some padding to allow space around the text */
   margin: 2px;
   box-sizing: border-box;
-  width: calc(33.33% - 8px); // Ensure a maximum of 3 tags per row
+  max-width: 100%; /* Ensure it doesn’t overflow the container */
+  white-space: nowrap; /* Prevent wrapping to a new line */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ellipsis for overflowed text */
 }
+
 
 .remove-icon {
   margin-left: 4px;

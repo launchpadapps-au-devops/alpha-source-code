@@ -95,7 +95,6 @@ export const addCategoryThunk = createAsyncThunk(
             const newCategory = {
                 name: name,
                 image: 'https://sample.com/sample.jpg',
-                status: 'active',
                 isPublished: true,
                 description: 'description',
                 metadata: {
@@ -144,7 +143,7 @@ export const deleteCategoryThunk = createAsyncThunk(
             const newCategory = {
                 name: name,
                 image: 'https://sample.com/sample.jpg',
-                status: 'Inactive',
+                status: 'ARCHIVE',
                 isPublished: true,
                 description: 'Category Description',
                 metadata: {

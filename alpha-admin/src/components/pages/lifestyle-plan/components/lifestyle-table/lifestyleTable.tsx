@@ -16,6 +16,7 @@ import { CustomPagination } from '../../../content/content-components/custom-pag
 import { PublishLessonModal } from '../../../content/lessons/lesson-components/publish-lesson-modal/publishLessonModal';
 import { UnpublishLessonModal } from '../../../content/lessons/lesson-components/unpublish-lesson-modal/unpublishLessonModal';
 import styles from './lifestyleTable.module.scss';
+import ToggleSwitch from '../../../content/content-components/toggle/toggle';
 
 export interface lifeStyleProps {
     plans: any[];
@@ -131,7 +132,7 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                                 <TableCell className={styles['code']}>{plan.name}</TableCell>
                                 <TableCell>{formatDate(plan.createdAt)}</TableCell>
                                 <TableCell onClick={(event) => event.stopPropagation()}>
-                                    <Switch
+                                    {/* <Switch
                                         checked={plan.isPublished}
                                         onChange={() => {
                                             setSelectedPlanIndex(index);
@@ -139,6 +140,15 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                                                 ? setOpenUnpublishModal(true)
                                                 : setOpenPublishModal(true);
                                         }}
+                                    /> */}
+                                    <ToggleSwitch
+                                        isPublished={plan.isPublished} // Pass the isPublished state
+                                        onToggle={() => {
+                                            setSelectedPlanIndex(index);
+                                            plan.isPublished
+                                                ? setOpenUnpublishModal(true)
+                                                : setOpenPublishModal(true);
+                                        }} // Handle the toggle event
                                     />
                                 </TableCell>
                             </TableRow>
@@ -178,7 +188,8 @@ export const LifestyleTable: React.FC<lifeStyleProps> = ({
                             <p>Are you sure you wish to unpublish this plan?</p>
                             <br />
                             <p>
-                                This plan will be saved to ‘Drafts’ and won’t be visible to patients.
+                                This plan will be saved to ‘Drafts’ and won’t be visible to
+                                patients.
                             </p>
                         </>
                     }

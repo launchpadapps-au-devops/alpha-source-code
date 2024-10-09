@@ -33,10 +33,12 @@ export const PrivacyPolicy = ({ className }: PrivacyPolicyProps) => {
     useEffect(() => {
         if (data?.data?.content) {
             // Initialize editable content with fetched content
-            setEditableContent(data.data.content.map((item: any) => ({
-                heading: item.heading,
-                body: item.body
-            })));
+            setEditableContent(
+                data.data.content.map((item: any) => ({
+                    heading: item.heading,
+                    body: item.body,
+                }))
+            );
         }
     }, [data]);
 
@@ -52,24 +54,29 @@ export const PrivacyPolicy = ({ className }: PrivacyPolicyProps) => {
         // Prepare the content to match the expected format
         const accordionData = editableContent.map((item) => ({
             heading: item.heading,
-            body: item.body
+            body: item.body,
         }));
-    
+
         // Log the payload to ensure correct structure
         console.log('Payload to be sent:', { type: 'privacy_policy', content: accordionData });
-    
+
         // Ensure the content is not empty
-        if (accordionData.length === 0 || accordionData.some(item => !item.heading || !item.body)) {
+        if (
+            accordionData.length === 0 ||
+            accordionData.some((item) => !item.heading || !item.body)
+        ) {
             console.error('Content cannot be empty.');
             return;
         }
-    
+
         // Dispatch the postPolicyThunk with the correct payload structure
-        dispatch(postPolicyThunk({ 
-            type: 'privacy_policy', 
-            content: accordionData 
-        }));
-    
+        dispatch(
+            postPolicyThunk({
+                type: 'privacy_policy',
+                content: accordionData,
+            })
+        );
+
         // Exit edit mode after saving
         setIsEditing(false);
     };
@@ -86,11 +93,20 @@ export const PrivacyPolicy = ({ className }: PrivacyPolicyProps) => {
                 <div className={styles['terms-header']}>
                     <span>View & update Privacy Policy for Patient Application</span>
                     {!isEditing && (
-                        <AppButton buttonText="Edit" icon="edit" showLeftIcon onButtonClick={handleEditClick} />
+                        <AppButton
+                            buttonText="Edit"
+                            icon="edit"
+                            showLeftIcon
+                            onButtonClick={handleEditClick}
+                        />
                     )}
                     {isEditing && (
                         <div className={styles['save-buttons-wrapper']}>
-                            <AppButton className={classNames(AppButton_module['button-blue-outlined'])} buttonText="Cancel" onButtonClick={handleCancelClick} />
+                            <AppButton
+                                className={classNames(AppButton_module['button-blue-outlined'])}
+                                buttonText="Cancel"
+                                onButtonClick={handleCancelClick}
+                            />
                             <AppButton buttonText="Save" onButtonClick={handleSaveClick} />
                         </div>
                     )}
@@ -100,8 +116,12 @@ export const PrivacyPolicy = ({ className }: PrivacyPolicyProps) => {
                 </span>
                 <div className={styles.divider} />
                 <span className={styles['accordion-list-heading']}>
-                    Last updated {new Date(data?.data?.updatedAt).toLocaleDateString()}
+                    Last updated{' '}
+                    {data?.data?.updatedAt
+                        ? new Date(data.data.updatedAt).toLocaleDateString()
+                        : 'No updates available'}
                 </span>
+
                 <ul className={styles['accordion-list-wrapper']}>
                     {editableContent.map((item, index) => (
                         <li key={index}>
@@ -110,7 +130,9 @@ export const PrivacyPolicy = ({ className }: PrivacyPolicyProps) => {
                                 accordionText={item.heading}
                                 accordionContent={item.body}
                                 isEditing={isEditing}
-                                onContentChange={(key, value) => handleContentChange(index, key, value)}
+                                onContentChange={(key, value) =>
+                                    handleContentChange(index, key, value)
+                                }
                             />
                         </li>
                     ))}

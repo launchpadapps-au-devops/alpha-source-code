@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import './dropDown.scss';
@@ -26,10 +26,26 @@ const Dropdown: React.FC<DropdownProps> = ({
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState<string[]>(selectedValue);
+    const dropdownRef = useRef<HTMLDivElement>(null); // Ref for the dropdown
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
+
+    // Close dropdown if clicked outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false); // Close dropdown
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside); // Add click listener
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside); // Cleanup listener on unmount
+        };
+    }, []);
 
     // Populate selectedOptions in edit mode from selectedValue
     useEffect(() => {
@@ -96,7 +112,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     };
 
     return (
-        <div className="dropdown-container">
+        <div className="dropdown-container" ref={dropdownRef}>
             <div className={`dropdown-header ${className}`} onClick={toggleDropdown}>
                 <div className="selected-tags">
                     {selectedOptions.map((option) => (

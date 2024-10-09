@@ -661,6 +661,7 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
     const handleDiscardChanges = () => {
         setDirty(false); // Reset dirty state
         // Navigate away or allow navigation
+        navigate(-1); // Navigate to the previous page
     };
 
     const handleCancelNavigation = () => {
@@ -693,7 +694,7 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
                     <UnsavedChangesModal
                         open={showPrompt}
                         handleSaveAsDraft={saveAsDraft}
-                        handleCancel={handleDiscardChanges}
+                        handleDontSave={handleDiscardChanges}
                         closeModal={handleCancelNavigation}
                         descriptionText="You have unsaved changes. Do you want to save them before leaving?"
                     />

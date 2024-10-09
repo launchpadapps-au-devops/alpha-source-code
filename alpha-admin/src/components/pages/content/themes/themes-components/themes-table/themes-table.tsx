@@ -19,6 +19,7 @@ import { LessonSidebar, Lesson } from '../lessonsidebar/lessonSidebar';
 import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { updateThemeThunk } from '../themeSlice';
+import ToggleSwitch from '../../../content-components/toggle/toggle';
 
 export interface ThemesTableProps {
     themes: any;
@@ -56,7 +57,7 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
     const itemsPerPage = 10;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    
+
     const handleNextPage = () => {
         if (currentPage < totalPages) {
             onPageChange(currentPage + 1);
@@ -77,12 +78,14 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
 
     const handleToggle = (theme: any, index: number) => {
         const isCurrentlyPublished = theme.isPublished;
-        const themeHasUnpublishedLessons = theme.lessons?.some((lesson: any) => !lesson.isPublished);
-    
+        const themeHasUnpublishedLessons = theme.lessons?.some(
+            (lesson: any) => !lesson.isPublished
+        );
+
         if (!isCurrentlyPublished) {
             // Set selected theme index
             setSelectedThemeIndex(index);
-            
+
             // Show modal for publishing based on lesson status
             if (themeHasUnpublishedLessons) {
                 // Show "unpublished lessons" modal
@@ -107,7 +110,6 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
             dispatch(updateThemeThunk({ id: theme.id, theme: newData }));
         }
     };
-    
 
     const handlePublish = () => {
         if (selectedThemeIndex !== null) {
@@ -169,9 +171,9 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
 
     const formatDate = (data: any) => {
         const date = new Date(data);
-        return `${
-            date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-        }/${date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)}/${date.getFullYear()}`;
+        return `${date.getDate() > 9 ? date.getDate() : '0' + date.getDate()}/${
+            date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
+        }/${date.getFullYear()}`;
     };
 
     return (
@@ -220,9 +222,13 @@ export const ThemesTable: React.FC<ThemesTableProps> = ({
                                     {theme.habits ? <CheckCircleOutlineIcon /> : ''}
                                 </TableCell>
                                 <TableCell onClick={(event) => event.stopPropagation()}>
-                                    <Switch
+                                    {/* <Switch
                                         checked={theme.isPublished}
                                         onChange={() => handleToggle(theme, index)}
+                                    /> */}
+                                    <ToggleSwitch
+                                        isPublished={theme.isPublished} // Pass the isPublished state
+                                        onToggle={(e) => handleToggle(theme, index)} // Handle the toggle event
                                     />
                                 </TableCell>
                                 <TableCell onClick={(event) => event.stopPropagation()}>

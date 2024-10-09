@@ -1,43 +1,100 @@
 .lesson-content {
-  padding: 20px;
-  width: 100%;
-  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+
+  .dashboard-card-header {
+    color: #22272b;
+    /* Headline/Medium */
+    font-family: 'Public Sans';
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 22px; /* 122.222% */
+    cursor: pointer;
+  }
+
+  h4 {
+    margin-top: 20px;
+  }
+
+  .cover-image-section {
+    margin-top: 10px;
+
+    .cover-image-label {
+      color: var(--Neutral-Black, #231f20);
+
+      /* Subheading/Medium */
+      font-family: 'Public Sans';
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 20px; /* 142.857% */
+    }
+
+    .cover-image-hint {
+      color: var(--Neutral-Charcoal-charcoal-500, #808080);
+
+      /* Body/Regular */
+      font-family: 'Public Sans';
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 22px; /* 137.5% */
+      margin-bottom: 10px;
+    }
+  }
+
+  .subtitle-section {
+    margin-top: 30px;
+
+    .subtitle-label {
+      color: var(--Shades-Black, #000);
+
+      /* Subheading/Medium */
+      font-family: 'Public Sans';
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 20px; /* 142.857% */
+    }
+  }
 
   .custom-editor {
     width: 100%;
     padding: 12px;
-    border: 1px solid #22272B; 
+    border: 1px solid #22272b;
     border-radius: 6px;
-    background: var(--Shades-White, #FFF);
+    background: var(--Shades-White, #fff);
     box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-}
-
-.uploaded-image-preview {
-  display: flex;
-  flex-direction: column; // Ensures the image is above the button
-  align-items: center;
-  margin-top: 10px;
-
-  .uploaded-image {
-      max-width: 30%; // Adjust the image size if needed
-      height: auto;
   }
 
-  .edit-image-section {
+  .uploaded-image-preview {
+    display: flex;
+    flex-direction: column; // Ensures the image is above the button
+    align-items: center;
+    margin-top: 10px;
+
+    .uploaded-image {
+      max-width: 30%; // Adjust the image size if needed
+      height: auto;
+    }
+
+    .edit-image-section {
       margin-top: 10px; // Add spacing between the image and text
       text-align: center; // Center-align the text below the image
 
       .remove-uploaded-image-button {
-          background: none; // Remove background
-          border: none; // Remove border
-          color: #146CFD; // Apply the custom color
-          cursor: pointer;
-          font-size: 14px;
-          text-decoration: underline; // Optional: add underline to the text
+        background: none; // Remove background
+        border: none; // Remove border
+        color: #146cfd; // Apply the custom color
+        cursor: pointer;
+        font-size: 14px;
+        text-decoration: underline; // Optional: add underline to the text
       }
+    }
   }
-}
-
 
   .screen {
     margin-bottom: 20px;
@@ -58,7 +115,7 @@
       font-weight: bold;
     }
 
-    input[type="file"] {
+    input[type='file'] {
       display: block;
     }
 
@@ -68,16 +125,16 @@
       width: 100%;
       margin-bottom: 32px;
 
-      input[type="text"] {
+      input[type='text'] {
         width: 100%;
         padding: 12px;
-        border: 1px solid #22272B; /* Example color, update as needed */
+        border: 1px solid #22272b; /* Example color, update as needed */
         border-radius: 6px;
-        background: var(--Shades-White, #FFF);
+        background: var(--Shades-White, #fff);
         box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
 
         &:focus {
-          border-color: #146CFD;
+          border-color: #146cfd;
         }
       }
     }
@@ -101,13 +158,13 @@
           width: 90%;
         }
 
-        input[type="text"] {
+        input[type='text'] {
           flex-grow: 1;
           padding: 12px;
           padding-right: 40px; /* Adjust padding to make space for the checkbox */
-          border: 1px solid #22272B; /* Example color, update as needed */
+          border: 1px solid #22272b; /* Example color, update as needed */
           border-radius: 6px;
-          background: var(--Shades-White, #FFF);
+          background: var(--Shades-White, #fff);
           box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
         }
 

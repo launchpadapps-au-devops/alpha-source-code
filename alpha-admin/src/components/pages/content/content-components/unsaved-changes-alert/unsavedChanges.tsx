@@ -44,7 +44,10 @@ export const UnsavedChangesModal = ({
                     <p>{descriptionText}</p>
                 </div>
                 <div className={styles['button-group']}>
-                    <AppButton buttonText="Save as draft" onButtonClick={handleSaveAsDraft}/>
+                    <AppButton buttonText="Save as draft" onButtonClick={() => {
+                         handleSaveAsDraft?.();
+                          closeModal?.(); 
+                    }}/>
                     <EditButton buttonText="Don't save" onButtonClick={handleDontSave} />
                     <EditButton buttonText="Cancel" onButtonClick={closeModal} />
                 </div>

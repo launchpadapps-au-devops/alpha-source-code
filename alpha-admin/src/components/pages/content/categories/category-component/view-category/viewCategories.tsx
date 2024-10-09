@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { List, Pagination } from '@mui/material';
-import CategoryItem from '../categoryItem/categoryItem';
+import { List, ListItem, ListItemText, Pagination } from '@mui/material';
 import styles from './viewCategories.module.scss';
 import { PublishCategoryModal } from '../publish-category-modal/PublishCategoryModal';
 import { useAppDispatch, useAppSelector } from '../../../../../../app/hooks';
@@ -66,7 +65,6 @@ export const ViewCategories: React.FC = () => {
             fetchStaffData(currentPage - 1);
         }
     };
-    
 
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
@@ -131,14 +129,16 @@ export const ViewCategories: React.FC = () => {
             </div>
             <List>
                 {activeCategories.map((category: Category, index: number) => (
-                    <CategoryItem
-                        key={index}
-                        name={category.name}
-                        published={category.isPublished}
-                        onToggle={() => handleToggle(category, index)}
-                    />
+                    <ListItem className={styles.list}>
+                        <ListItemText>
+                        {category.name}
+                        </ListItemText>
+                        <ToggleSwitch
+                            isPublished={category.isPublished} // Pass the isPublished state
+                            onToggle={(e) => handleToggle(category, index)}
+                        />
+                    </ListItem>
                 ))}
-                {/* <ToggleSwitch/> */}
             </List>
             <div className={styles.pagination}>
                 <CustomPagination
@@ -153,14 +153,14 @@ export const ViewCategories: React.FC = () => {
                 <PublishCategoryModal
                     open={openModal}
                     descriptionText={
-                    <>
-                    <p>
-                    Are you sure you wish to publish this category?
-                    </p><br />
-                    <p>
-                      All lessons and themes tagged with this category will now be visible to patients.
-                    </p>
-                    </>
+                        <>
+                            <p>Are you sure you wish to publish this category?</p>
+                            <br />
+                            <p>
+                                All lessons and themes tagged with this category will now be visible
+                                to patients.
+                            </p>
+                        </>
                     }
                     title="Publish Category"
                     closeModal={handleCloseModal}

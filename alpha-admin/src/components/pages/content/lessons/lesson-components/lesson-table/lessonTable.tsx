@@ -16,7 +16,6 @@ import { PublishLessonModal } from '../publish-lesson-modal/publishLessonModal';
 import { UnpublishLessonModal } from '../unpublish-lesson-modal/unpublishLessonModal';
 import { useAppDispatch } from '../../../../../../app/hooks';
 import { fetchLessonsThunk, updateLessonThunk } from '../lessonsSlice';
-import CategoryItem from '../../../categories/category-component/categoryItem/categoryItem';
 import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
 import ToggleSwitch from '../../../content-components/toggle/toggle';
 
