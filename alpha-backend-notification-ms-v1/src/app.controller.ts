@@ -91,4 +91,16 @@ export class AppController {
       data: { id: data.id }
     }
   }
+
+  @Put('bulk')
+  async bulkUpdateNotification(
+    @Headers('x-request-userId') reqUserId: string,
+    @Body() payload: Notification[]
+  ) {
+    const data = await this.appService.bulkUpdateNotification(payload, { userId: reqUserId });
+    return {
+      message: `Bulk Notification Updated Successfully`,
+      data: data.map(({ id }) => ({ id }))
+    }
+  }
 }

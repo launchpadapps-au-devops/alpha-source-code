@@ -31,6 +31,16 @@ export class AppService {
     );
   }
 
+  async bulkUpdateNotification(data: Partial<Notification> [], reqUser = { userId: null }) {
+    return await notificationService.addUpdateBulkNotification(
+      data.map(d => ({
+        ...d,
+        createdBy: reqUser.userId,
+        updatedBy: reqUser.userId,
+      })) as any
+    )
+  }
+
   async findAllNotification(
     page: PaginationDto = { page: 1, limit: 10 },
     sorting: SortingDto = { sortField: 'updatedAt', sortOrder: 'DESC' },
