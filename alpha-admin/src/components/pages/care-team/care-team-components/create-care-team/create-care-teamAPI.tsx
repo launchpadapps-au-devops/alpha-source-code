@@ -1,5 +1,6 @@
 import axios from "axios";
 import { config } from '../../../../../config/config';
+import apiClient from "../../../login/axios-setup";
 // import { useSelector } from "react-redux";
 // import { LoginUser } from "../../../../login/loginSlice";
 
@@ -14,7 +15,7 @@ const getStaff = async (page:any): Promise<staff> => {
     const token = 'token';
     let apiURL = `${config.BASE_URL}/gateway/v1/staff?page=${page}&limit=10`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
@@ -30,7 +31,7 @@ const getStaffRole = async (staffId: any): Promise<any> => {
     const token = 'token';
     let apiURL = `${config.BASE_URL}/gateway/v1/staff/${staffId}`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
@@ -45,7 +46,7 @@ const inviteStaff = async (staffId: string) => {
     const accessToken = localStorage.getItem('accessToken');
     let apiURL = `${config.BASE_URL}/gateway/v1/staff/${staffId}/invite`;
     try {
-      const response = await axios.post(apiURL,
+      const response = await apiClient.post(apiURL,
         {},
         {
           headers: {
@@ -82,7 +83,7 @@ const addNewStaffService = async (data: staffFormData): Promise<void> => {
     // Set default password if not provided
 
     try {
-        const response = await axios.post(apiURL, data, {
+        const response = await apiClient.post(apiURL, data, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
 

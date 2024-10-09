@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { config } from '../../../../../config/config';
+import apiClient from '../../../login/axios-setup';
 
 // Define the data structure for the response
 interface StepsPerDay {
@@ -39,7 +40,7 @@ const getPatientDataOverview = async (patientId: string): Promise<UserDataOvervi
     const apiURL = `${config.BASE_URL}/gateway/v1/data-analytics/patient-data/overview/${patientId}`;
 
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

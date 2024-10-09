@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { config } from '../../../../config/config';
+import apiClient from '../../login/axios-setup';
 
 interface Plan {
     id: any;
@@ -23,7 +24,7 @@ const getPlans = async (page:any): Promise<PlansResponse> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/plan?page=${page}&limit=10`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -38,7 +39,7 @@ const getPlanById = async (id: number): Promise<PlanResponse> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/plan/${id}`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -53,7 +54,7 @@ const addPlan = async (plan: { name: string; description: string }): Promise<voi
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/plan`;
     try {
-        const response = await axios.post(apiURL, plan, {
+        const response = await apiClient.post(apiURL, plan, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -73,7 +74,7 @@ const updatePlan = async (
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/plan/${id}`;
     try {
-        const response = await axios.put(apiURL, plan, {
+        const response = await apiClient.put(apiURL, plan, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

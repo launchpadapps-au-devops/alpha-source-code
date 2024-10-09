@@ -1,5 +1,6 @@
 import axios from "axios";
 import { config } from "../../../../../config/config";
+import apiClient from "../../../login/axios-setup";
 
 // Function to normalize the gender value
 const normalizeGender = (gender: string): string => {
@@ -25,7 +26,7 @@ export const fetchPatientsDataByGender = async (gender?: string): Promise<any> =
     }
 
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -56,7 +57,7 @@ export const fetchPatientsDataByPlan = async (planId?: number): Promise<any> => 
     }
 
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

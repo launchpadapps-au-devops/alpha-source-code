@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { config } from '../../../../../config/config';
+import apiClient from '../../../login/axios-setup';
 
 interface Category {
     id: number;
@@ -23,7 +24,7 @@ const getCategories = async (page: any): Promise<CategoriesResponse> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/category?page=${page}&limit=10&status=ACTIVE`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -38,7 +39,7 @@ const getCategoriesForLesson = async (limit: any): Promise<CategoriesResponse> =
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/category?limit=${limit}`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -53,7 +54,7 @@ const getCategoryById = async (id: number): Promise<CategoryResponse> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/category/${id}`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -68,7 +69,7 @@ const addCategory = async (category: { name: string; description: string }): Pro
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/category`;
     try {
-        const response = await axios.post(apiURL, category, {
+        const response = await apiClient.post(apiURL, category, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -87,7 +88,7 @@ const addCategoriesBulk = async (
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/category/bulk`;
     try {
-        const response = await axios.post(
+        const response = await apiClient.post(
             apiURL,
             { categories },
             {
@@ -111,7 +112,7 @@ const updateCategory = async (
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/category/${id}`;
     try {
-        const response = await axios.put(apiURL, category, {
+        const response = await apiClient.put(apiURL, category, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

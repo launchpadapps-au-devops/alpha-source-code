@@ -5,9 +5,9 @@ import { Icon } from '../../icon/icon';
 import { AppButton } from '../../app-button/app-button';
 import AppButton_module from '../../app-button/app-button.module.scss';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../../top-navigation/navigation-component/profile-menu/logOutAPI';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoginSliceState, setLoggedOut } from '../login/loginSlice';
+import { logout } from './logOutAPI';
 
 export interface LogoutProps {
     className?: string;

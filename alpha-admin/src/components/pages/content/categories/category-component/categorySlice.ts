@@ -95,6 +95,7 @@ export const addCategoryThunk = createAsyncThunk(
             const newCategory = {
                 name: name,
                 image: 'https://sample.com/sample.jpg',
+
                 isPublished: true,
                 description: 'description',
                 metadata: {

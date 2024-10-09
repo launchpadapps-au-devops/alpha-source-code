@@ -1,5 +1,6 @@
 import axios from "axios";
 import { config } from "../../../../config/config";
+import apiClient from "../../login/axios-setup";
 
 // Fetch nutrition data for a specific day (date in dd/MM/yyyy format)
 export const nutritionAPI = async (id: string, fromDate: string, toDate: string): Promise<any> => {
@@ -7,7 +8,7 @@ export const nutritionAPI = async (id: string, fromDate: string, toDate: string)
     const apiURL = `${config.BASE_URL}/gateway/v1/data-analytics/patient-data/overview/${id}?fromDate=${fromDate}&toDate=${toDate}`;
 
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

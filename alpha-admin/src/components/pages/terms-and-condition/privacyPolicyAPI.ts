@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { config } from '../../../config/config';
+import apiClient from '../login/axios-setup';
 
 // GET request to fetch terms and conditions
 export const fetchPolicy = async (type: string) => {
   try {
     const accessToken = localStorage.getItem('accessToken');
-    const response = await axios.get(`${config.BASE_URL}/gateway/v1/policy/${type}`, {
+    const response = await apiClient.get(`${config.BASE_URL}/gateway/v1/policy/${type}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -25,7 +26,7 @@ export const postPolicy = async (policy: { type: string; content: { heading: str
             throw new Error('No access token found');
         }
 
-        const response = await axios.post(`${config.BASE_URL}/gateway/v1/policy`, policy, {
+        const response = await apiClient.post(`${config.BASE_URL}/gateway/v1/policy`, policy, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

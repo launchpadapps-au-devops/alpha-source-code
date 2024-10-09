@@ -2,6 +2,7 @@ import axios from "axios";
 import { config } from "../../../config/config";
 import { CreatePatientData } from "./create-patient/create-patient";
 import { EditPatientData } from "./edit-patient/editPatient";
+import apiClient from "../login/axios-setup";
 
 export interface MetaData {
     page: number;
@@ -60,7 +61,7 @@ export const getPatients = async (
     }
 
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -85,7 +86,7 @@ export const addPatientAPI = async (patientData: CreatePatientData): Promise<Pat
     const apiURL = `${config.BASE_URL}/gateway/v1/patient`;
 
     try {
-        const response = await axios.post(apiURL, patientData, {
+        const response = await apiClient.post(apiURL, patientData, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -101,7 +102,7 @@ export const getPatientProfile = async (id: any): Promise<any> => {
     const apiURL = `${config.BASE_URL}/gateway/v1/patient/${id}`;
 
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -117,7 +118,7 @@ export const sentInvite = async (id: any): Promise<any> => {
     const apiURL = `${config.BASE_URL}/gateway/v1/patient/${id}/invite`;
 
     try {
-        const response = await axios.post(apiURL,{}, {
+        const response = await apiClient.post(apiURL,{}, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -134,7 +135,7 @@ export const updatePatientProfile = async (patientData: EditPatientData , id:str
     const apiURL = `${config.BASE_URL}/gateway/v1/patient/${id}`;
 
     try {
-        const response = await axios.put(apiURL, patientData, {
+        const response = await apiClient.put(apiURL, patientData, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

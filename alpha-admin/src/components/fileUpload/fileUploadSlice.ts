@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { config } from '../../config/config'; // Assume config contains your BASE_URL
+import apiClient from '../pages/login/axios-setup';
 
 interface FileUploadState {
     loading: boolean;
@@ -25,7 +26,7 @@ export const uploadFile = createAsyncThunk(
         formData.append('file', file);
 
         try {
-            const response = await axios.post(apiURL, formData, {
+            const response = await apiClient.post(apiURL, formData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     'Content-Type': 'multipart/form-data',

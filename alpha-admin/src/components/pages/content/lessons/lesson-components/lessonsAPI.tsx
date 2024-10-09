@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { config } from '../../../../../config/config';
+import apiClient from '../../../login/axios-setup';
 
 interface Lesson {
     id: number;
@@ -23,7 +24,7 @@ const getLessons = async (page:any): Promise<LessonsResponse> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/lesson?page=${page}&limit=10`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -38,7 +39,7 @@ const getLessonById = async (id: number): Promise<LessonResponse> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/lesson/${id}`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -53,7 +54,7 @@ const addLesson = async (lesson: { title: string; content: string }): Promise<vo
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/lesson`;
     try {
-        const response = await axios.post(apiURL, lesson, {
+        const response = await apiClient.post(apiURL, lesson, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -70,7 +71,7 @@ const addLessonsBulk = async (lessons: { title: string; content: string }[]): Pr
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/lesson/bulk`;
     try {
-        const response = await axios.post(
+        const response = await apiClient.post(
             apiURL,
             { lessons },
             {
@@ -94,7 +95,7 @@ const updateLesson = async (
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/lesson/${id}`;
     try {
-        const response = await axios.put(apiURL, lesson, {
+        const response = await apiClient.put(apiURL, lesson, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

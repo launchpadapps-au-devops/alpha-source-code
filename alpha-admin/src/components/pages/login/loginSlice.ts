@@ -3,6 +3,8 @@ import axios from 'axios';
 import { login } from './loginAPI'; // Assuming this is the login function you've implemented to call the login API
 import { config } from '../../../config/config';
 import { l } from 'vite/dist/node/types.d-aGj9QkWt';
+import apiClient from './axios-setup';
+
 
 export interface UserDetails {
     accessToken: string;
@@ -67,7 +69,7 @@ export const loginThunk = createAsyncThunk(
             const accessToken = response.data.accessToken;
 
             // Second, call the profile API to fetch user details
-            const profileResponse = await axios.get(
+            const profileResponse = await apiClient.get(
                 `${config.BASE_URL}/gateway/v1/staff/my-profile`,
                 {
                     headers: {
@@ -107,6 +109,25 @@ export const loginThunk = createAsyncThunk(
     }
 );
 
+const handleSessionExpiration = (state: LoginSliceState) => {
+    state.loggedIn = false;
+    state.userDetails = {
+        accessToken: '',
+        accessTokenExpiresAt: '',
+        refreshToken: '',
+        refreshTokenExpiresAt: '',
+    };
+    state.userType = null;
+    state.loading = false;
+    state.error = null;
+    localStorage.removeItem('userId');
+    localStorage.removeItem('email');
+    localStorage.removeItem('roles');
+    localStorage.removeItem('fullName');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+};
+
 // Create the auth slice
 export const authSlice = createSlice({
     name: 'auth',
@@ -144,6 +165,9 @@ export const authSlice = createSlice({
             state.userType = null;
             localStorage.clear();
         },
+        resetInitializer: (state) => {
+            handleSessionExpiration(state);
+        },
 
     },
     extraReducers: (builder) => {
@@ -172,5 +196,5 @@ export const authSlice = createSlice({
 });
 
 // Export the actions and reducer
-export const { initializeUser, setLoading, setLoggedOut } = authSlice.actions;
+export const { initializeUser, setLoading, setLoggedOut, resetInitializer } = authSlice.actions;
 export default authSlice.reducer;

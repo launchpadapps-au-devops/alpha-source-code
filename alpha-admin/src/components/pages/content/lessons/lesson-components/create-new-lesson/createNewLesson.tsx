@@ -494,7 +494,7 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
         // Run validation
         const isValid = validateFields();
     
-        if (isValid) {
+        // if (isValid) {
             const formattedData = formatData(updatedData);
             setData(formattedData); // Update the state with the formatted data
             setShowPreview(true);  
@@ -537,21 +537,21 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
                 // Show preview when not in edit mode
                 setShowPreview(true);
             }
-        } else {
-            // Prevent preview and show validation errors
-            console.log('Validation failed', errors);
-            // Show validation error notification
-            setNotification({
-                isVisible: true,
-                message: 'Validation failed. Please fix the errors and try again.',
-                type: 'error',
-            });
+        // } else {
+        //     // Prevent preview and show validation errors
+        //     console.log('Validation failed', errors);
+        //     // Show validation error notification
+        //     setNotification({
+        //         isVisible: true,
+        //         message: 'Validation failed. Please fix the errors and try again.',
+        //         type: 'error',
+        //     });
     
-            // Hide notification after 3 seconds
-            setTimeout(() => {
-                setNotification((prev) => ({ ...prev, isVisible: false }));
-            }, 3000);
-        }
+        //     // Hide notification after 3 seconds
+        //     setTimeout(() => {
+        //         setNotification((prev) => ({ ...prev, isVisible: false }));
+        //     }, 3000);
+        // }
     };
     
 
@@ -565,74 +565,74 @@ export const CreateNewLesson = ({ className }: { className?: string }) => {
     
         console.log('Formatted data:', Data);
     
-        if (isEditMode) {
-            // If in edit mode, update the existing lesson
-            dispatch(updateLessonThunk({ id: params.id, data: Data }))
-                .then((response: any) => {
-                    if (response.payload.statusCode === 200 || response.payload.statusCode === 201) {
-                        // Show success notification
-                        setNotification({
-                            isVisible: true,
-                            message: 'Lesson saved as draft successfully!',
-                            type: 'success',
-                        });
+        // if (isEditMode) {
+        //     // If in edit mode, update the existing lesson
+        //     dispatch(updateLessonThunk({ id: params.id, data: Data }))
+        //         .then((response: any) => {
+        //             if (response.payload.statusCode === 200 || response.payload.statusCode === 201) {
+        //                 // Show success notification
+        //                 setNotification({
+        //                     isVisible: true,
+        //                     message: 'Lesson saved as draft successfully!',
+        //                     type: 'success',
+        //                 });
     
-                        // Hide notification after 3 seconds and navigate to lessons page
-                        setTimeout(() => {
-                            setNotification((prev) => ({ ...prev, isVisible: false }));
-                            navigate('/content/lessons'); // Navigate to the lessons page
-                        }, 1000);
-                    }
-                })
-                .catch((error: any) => {
-                    console.error('Error updating draft:', error);
-                    // Show error notification
-                    setNotification({
-                        isVisible: true,
-                        message: 'Failed to save draft. Please try again.',
-                        type: 'error',
-                    });
+        //                 // Hide notification after 3 seconds and navigate to lessons page
+        //                 setTimeout(() => {
+        //                     setNotification((prev) => ({ ...prev, isVisible: false }));
+        //                     navigate('/content/lessons'); // Navigate to the lessons page
+        //                 }, 1000);
+        //             }
+        //         })
+        //         .catch((error: any) => {
+        //             console.error('Error updating draft:', error);
+        //             // Show error notification
+        //             setNotification({
+        //                 isVisible: true,
+        //                 message: 'Failed to save draft. Please try again.',
+        //                 type: 'error',
+        //             });
     
-                    // Hide notification after 3 seconds
-                    setTimeout(() => {
-                        setNotification((prev) => ({ ...prev, isVisible: false }));
-                    }, 3000);
-                });
-        } else {
-            // If in create mode, add a new lesson as draft
-            dispatch(addLessonThunk(Data))
-                .then((response: any) => {
-                    if (response.payload.statusCode === 200 || response.payload.statusCode === 201) {
-                        // Show success notification
-                        setNotification({
-                            isVisible: true,
-                            message: 'Lesson saved as draft successfully!',
-                            type: 'success',
-                        });
+        //             // Hide notification after 3 seconds
+        //             setTimeout(() => {
+        //                 setNotification((prev) => ({ ...prev, isVisible: false }));
+        //             }, 3000);
+        //         });
+        // } else {
+        //     // If in create mode, add a new lesson as draft
+        //     dispatch(addLessonThunk(Data))
+        //         .then((response: any) => {
+        //             if (response.payload.statusCode === 200 || response.payload.statusCode === 201) {
+        //                 // Show success notification
+        //                 setNotification({
+        //                     isVisible: true,
+        //                     message: 'Lesson saved as draft successfully!',
+        //                     type: 'success',
+        //                 });
     
-                        // Hide notification after 3 seconds and navigate to lessons page
-                        setTimeout(() => {
-                            setNotification((prev) => ({ ...prev, isVisible: false }));
-                            navigate('/content/lessons');
-                            setDirty(false); // Reset the dirty state after saving
-                        }, 1000);
-                    }
-                })
-                .catch((error: any) => {
-                    console.error('Error adding draft:', error);
-                    // Show error notification
-                    setNotification({
-                        isVisible: true,
-                        message: 'Failed to save draft. Please try again.',
-                        type: 'error',
-                    });
+        //                 // Hide notification after 3 seconds and navigate to lessons page
+        //                 setTimeout(() => {
+        //                     setNotification((prev) => ({ ...prev, isVisible: false }));
+        //                     navigate('/content/lessons');
+        //                     setDirty(false); // Reset the dirty state after saving
+        //                 }, 1000);
+        //             }
+        //         })
+        //         .catch((error: any) => {
+        //             console.error('Error adding draft:', error);
+        //             // Show error notification
+        //             setNotification({
+        //                 isVisible: true,
+        //                 message: 'Failed to save draft. Please try again.',
+        //                 type: 'error',
+        //             });
     
-                    // Hide notification after 3 seconds
-                    setTimeout(() => {
-                        setNotification((prev) => ({ ...prev, isVisible: false }));
-                    }, 3000);
-                });
-        }
+        //             // Hide notification after 3 seconds
+        //             setTimeout(() => {
+        //                 setNotification((prev) => ({ ...prev, isVisible: false }));
+        //             }, 3000);
+        //         });
+        // }
     };
     
 

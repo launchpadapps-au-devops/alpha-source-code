@@ -1,5 +1,6 @@
 import axios from "axios";
 import { config } from '../../../../../config/config';
+import apiClient from "../../../login/axios-setup";
 
 interface editStaffData {
     firstName: string;
@@ -16,7 +17,7 @@ const editStaffService = async (id: string | undefined, data: editStaffData): Pr
 
     try {
         console.log('data', data);
-        const response = await axios.put(apiURL, data, {
+        const response = await apiClient.put(apiURL, data, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             }

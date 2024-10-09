@@ -1,5 +1,6 @@
 import axios from "axios";
 import { config } from "../../../../config/config";
+import apiClient from "../../login/axios-setup";
 
 
 export const onBoardingAssessment = async (id: any): Promise<any> => {
@@ -7,7 +8,7 @@ export const onBoardingAssessment = async (id: any): Promise<any> => {
     const apiURL = `${config.BASE_URL}/gateway/v1/health-data/questionaries?userId=${id}`;
 
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -24,7 +25,7 @@ export const getHealthCheckinResponse = async (userId: any, surveyType: string):
 
 
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

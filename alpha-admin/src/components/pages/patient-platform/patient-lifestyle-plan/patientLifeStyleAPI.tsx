@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { config } from "../../../../config/config";
 import { Plan } from "../../lifestyle-plan/components/lifeStyleSlice";
+import apiClient from "../../login/axios-setup";
 
 interface PlansResponse {
     success: boolean;
@@ -19,7 +20,7 @@ export const getLifestylePlans = async (page = 1, limit = 10): Promise<PlansResp
     const apiURL = `${config.BASE_URL}/gateway/v1/plan?page=${page}&limit=${limit}`;
 
     try {
-        const response = await axios.get<PlansResponse>(apiURL, {
+        const response = await apiClient.get<PlansResponse>(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -43,7 +44,7 @@ export const assignLifestylePlan = async (userId: string, planId: string): Promi
     const apiURL = `${config.BASE_URL}/gateway/v1/user-lifestyle-plan/assign`;
 
     try {
-        const response = await axios.post<AssignPlanResponse>(apiURL, 
+        const response = await apiClient.post<AssignPlanResponse>(apiURL, 
             { userId, planId },  // Include the request body with userId and planId
             {
                 headers: {

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { config } from '../../../../config/config';
+import apiClient from '../../login/axios-setup';
 
 interface Tip {
     data: any;
@@ -24,7 +25,7 @@ const getTips = async (page: any): Promise<TipsResponse> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/daily-tip?page=${page}&limit=10`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -39,7 +40,7 @@ const getTipByDay = async (day: string): Promise<TipResponse> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/daily-tip/${day}`;
     try {
-        const response = await axios.get(apiURL, {
+        const response = await apiClient.get(apiURL, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -54,7 +55,7 @@ const addTip = async (tip: any): Promise<void> => {
     const accessToken = localStorage.getItem('accessToken');
     const apiURL = `${config.BASE_URL}/gateway/v1/daily-tip`;
     try {
-        const response = await axios.post(
+        const response = await apiClient.post(
             apiURL,
             { dailyTipData: tip },
             {

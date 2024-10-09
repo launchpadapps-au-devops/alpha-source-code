@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { List, ListItem, ListItemText, Pagination } from '@mui/material';
+import { List, ListItem, ListItemText } from '@mui/material';
 import styles from './viewCategories.module.scss';
 import { PublishCategoryModal } from '../publish-category-modal/PublishCategoryModal';
 import { useAppDispatch, useAppSelector } from '../../../../../../app/hooks';
 import { fetchCategoriesThunk, updateCategoryThunk } from '../categorySlice';
-// import {TableFooter} from '../../../content-components/table-footer/TableFooter';
 import { CustomPagination } from '../../../content-components/custom-pagination/customPagination';
 import ToggleSwitch from '../../../content-components/toggle/toggle';
+import { resetInitializer, setLoggedOut } from '../../../../login/loginSlice';
+import { useNavigate } from 'react-router-dom';
 
 interface Category {
     id: number;
@@ -29,25 +30,38 @@ export const ViewCategories: React.FC = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const navigate = useNavigate();
 
     const activeCategories = categories.filter(
         (category: Category) => category.status.toLowerCase() === 'active'
     );
+
+    const checkUnauthorized = (status: number) => {
+        if (status === 401) {
+            // dispatch(setLoggedOut());
+            dispatch(resetInitializer())
+            navigate('/');
+        }
+    };
 
     useEffect(() => {
         dispatch(fetchCategoriesThunk(1)).then((response: any) => {
             if (response.payload) {
                 setTotalPages(response.payload.meta.totalPages);
                 setTotalRecords(response.payload.meta.totalRecords);
+            } else if (response.error && response.error.status === 401) {
+                checkUnauthorized(response.error.status);
             }
         });
     }, [dispatch]);
 
-    const fetchStaffData = (page: number) => {
+    const fetchCategoriesData = (page: number) => {
         dispatch(fetchCategoriesThunk(page)).then((res: any) => {
             if (res.payload) {
                 setTotalPages(res.payload.meta.totalPages);
                 setTotalRecords(res.payload.meta.totalRecords);
+            } else if (res.error && res.error.status === 401) {
+                checkUnauthorized(res.error.status);
             }
         });
     };
@@ -55,42 +69,38 @@ export const ViewCategories: React.FC = () => {
     const handleNextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
-            fetchStaffData(currentPage + 1);
+            fetchCategoriesData(currentPage + 1);
         }
     };
 
     const handlePreviousPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
-            fetchStaffData(currentPage - 1);
+            fetchCategoriesData(currentPage - 1);
         }
     };
 
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
-        fetchStaffData(pageNumber);
+        fetchCategoriesData(pageNumber);
     };
-
-    useEffect(() => {
-        fetchStaffData(1);
-    }, [dispatch]);
 
     const handleToggle = (category: Category, index: number) => {
         const newCategory = {
             ...category,
-            isPublished: !category.isPublished, // Toggle the isPublished flag
+            isPublished: !category.isPublished,
         };
 
         if (!category.isPublished) {
-            // Only open the modal if the category is being published
             setOpenModal(true);
             setSelectedCategoryIndex(index);
         } else {
-            // If unpublishing, proceed without showing the modal
             dispatch(updateCategoryThunk({ id: category.id, data: newCategory })).then(
                 (response: any) => {
                     if (response.payload) {
                         dispatch(fetchCategoriesThunk(1));
+                    } else if (response.error && response.error.status === 401) {
+                        checkUnauthorized(response.error.status);
                     }
                 }
             );
@@ -129,13 +139,11 @@ export const ViewCategories: React.FC = () => {
             </div>
             <List>
                 {activeCategories.map((category: Category, index: number) => (
-                    <ListItem className={styles.list}>
-                        <ListItemText>
-                        {category.name}
-                        </ListItemText>
+                    <ListItem className={styles.list} key={category.id}>
+                        <ListItemText>{category.name}</ListItemText>
                         <ToggleSwitch
-                            isPublished={category.isPublished} // Pass the isPublished state
-                            onToggle={(e) => handleToggle(category, index)}
+                            isPublished={category.isPublished}
+                            onToggle={() => handleToggle(category, index)}
                         />
                     </ListItem>
                 ))}
